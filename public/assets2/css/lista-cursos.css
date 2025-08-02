@@ -1,0 +1,49 @@
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.badge {
+    font-weight: 500;
+    padding: 0.5em 1em;
+}
+
+.filter-section {
+    position: sticky;
+    top: 20px;
+}
+
+.price-range-slider {
+    width: 100%;
+}
+
+.view-toggle-btn.active {
+    background-color: var(--bs-primary);
+    color: white;
+}
+
+.course-card-footer {
+    background: linear-gradient(to right, #f8f9fa, #ffffff);
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease forwards;
+}

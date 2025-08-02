@@ -1,0 +1,71 @@
+/* foro.css */
+
+/* Establece el fondo del cuerpo en un tono de celeste */
+body {
+    background-color: #E6F7FF;
+    font-family: Arial, sans-serif;
+}
+
+/* Estilo para el contenedor principal del foro */
+.foro-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo para el título del foro */
+.foro-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Estilo para cada comentario en el foro */
+.comment {
+    background-color: #F0F9FF;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+/* Estilo para el nombre del autor del comentario */
+.comment .author {
+    font-weight: bold;
+    color: #007BFF;
+}
+
+/* Estilo para el texto del comentario */
+.comment .comment-text {
+    margin-top: 5px;
+}
+
+/* Estilo para el formulario de comentario */
+.comment-form {
+    margin-top: 20px;
+}
+
+.comment-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #CCC;
+    border-radius: 5px;
+    resize: vertical;
+}
+
+.comment-form button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.comment-form button:hover {
+    background-color: #0056b3;
+}

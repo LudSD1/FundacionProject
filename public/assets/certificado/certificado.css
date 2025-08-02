@@ -1,0 +1,106 @@
+/* General Styles */
+body {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 50px auto;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    text-align: center;
+    position: relative;
+  }
+
+  .certificate {
+    background: url('../assets/img/fondo.jpg') center/cover no-repeat;
+    padding: 20px;
+  }
+
+  .certificate-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .logo {
+    max-height: 100px;
+  }
+
+  .certificate-title {
+    font-size: 24px;
+    color: #1a4789;
+    margin: 15px 0 20px;
+  }
+
+  .certificate-content {
+    text-align: left;
+    padding: 20px;
+  }
+
+  .certificate-text {
+    font-size: 16px;
+    color: #1a4789;
+    margin: 10px 0;
+  }
+
+  .student-name {
+    font-size: 22px;
+    color: #1a4789;
+    font-weight: bold;
+    margin: 15px 0;
+  }
+
+  .certificate-footer {
+    text-align: right;
+    font-size: 14px;
+    color: #1a4789;
+    margin-top: 20px;
+  }
+
+  .signature {
+    text-align: center;
+    margin-top: 40px;
+  }
+
+  .signature img {
+    max-height: 55px;
+    display: inline-block;
+  }
+
+  .signature p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #1a4789;
+  }
+
+  .button-container {
+    margin: 20px 0;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 10px;
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background-color: #63becf;
+    color: #fff;
+    border: 1px solid #63becf;
+  }
+
+  .btn-primary:hover {
+    background-color: #52a7b7;
+  }

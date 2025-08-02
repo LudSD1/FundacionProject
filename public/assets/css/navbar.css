@@ -1,0 +1,30 @@
+/* Estilos para la barra de navegación */
+.navbar {
+    display: flex;
+    justify-content: center;
+    background-color: #2A81C2;
+    padding: 10px 0;
+}
+
+.nav-link {
+    margin: 0 10px;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.nav-link:hover {
+    color: #39a6cb;
+}
+.logo-img {
+    background-image: url('/assets/img/logo2.png');
+}
+/* Estilos para la imagen del logo en la barra de navegación */
+.navbar-brand-img {
+    width: 100px; /* Tamaño de la imagen */
+    height: auto; /* Ajusta la altura automáticamente según el ancho */
+    /* Otros estilos que desees aplicar */
+}
+
+
