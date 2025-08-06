@@ -25,12 +25,13 @@
         "psr/simple-cache": "2.0",
         "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/browsershot": "^3.60",
+        "spatie/laravel-backup": "^9.3",
         "spatie/laravel-permission": "^5.10",
         "spatie/simple-excel": "^3.2"
     },
     "require-dev": {
         "beyondcode/laravel-er-diagram-generator": "^4.0",
-        "fakerphp/faker": "^1.9.1",
+        "fakerphp/faker": "^1.24",
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.0.1",
         "laravel/vonage-notification-channel": "^3.0",

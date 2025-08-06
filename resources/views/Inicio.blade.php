@@ -3,7 +3,6 @@
 @endsection
 
 @section('content')
-
       @if (!auth()->user()->hasVerifiedEmail())
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
             <div class="d-flex align-items-center">

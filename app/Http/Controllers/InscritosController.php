@@ -61,11 +61,10 @@ class InscritosController extends Controller
     // En CursosController.php
     public function store(Request $request)
     {
-        // Validar que los campos requeridos estén presentes
         $request->validate([
             'curso_id' => 'required|integer|exists:cursos,id',
             'estudiante_id' => 'required|array',
-            'estudiante_id.*' => 'required|string', // Cambiado para aceptar strings encriptados
+            'estudiante_id.*' => 'required|string',
         ], [
             'curso_id.required' => 'El campo curso es obligatorio.',
             'curso_id.integer' => 'El campo curso debe ser un número entero.',
@@ -79,7 +78,7 @@ class InscritosController extends Controller
         $curso_id = $request->input('curso_id');
         $estudiante_ids_encrypted = $request->input('estudiante_id');
 
-        // Desencriptar los IDs de estudiantes
+
         $estudiante_ids = [];
         $ids_invalidos = [];
 
@@ -87,18 +86,17 @@ class InscritosController extends Controller
             try {
                 $decrypted_id = decrypt($encrypted_id);
 
-                // Validar que el ID desencriptado sea un entero y que el usuario exista
                 if (is_numeric($decrypted_id) && User::where('id', $decrypted_id)->exists()) {
                     $estudiante_ids[] = (int) $decrypted_id;
                 } else {
                     $ids_invalidos[] = $encrypted_id;
                 }
-            } catch (Exception $e) {
+            } catch (DecryptException $e) {
                 $ids_invalidos[] = $encrypted_id;
             }
         }
+        
 
-        // Si hay IDs inválidos, retornar error
         if (!empty($ids_invalidos)) {
             Log::channel('admin')->warning('IDs de estudiantes inválidos en inscripción', [
                 'admin_id' => auth()->id(),
@@ -111,18 +109,15 @@ class InscritosController extends Controller
                 ->withInput();
         }
 
-        // Si no hay estudiantes válidos
         if (empty($estudiante_ids)) {
             return redirect()->back()
                 ->withErrors(['estudiante_id' => 'No se proporcionaron estudiantes válidos.'])
                 ->withInput();
         }
 
-        // Obtener información del curso
         $curso = Cursos::find($curso_id);
 
         try {
-            // Log del intento de inscripción
             Log::channel('admin')->info('Intento de inscripción masiva', [
                 'admin_id' => auth()->id(),
                 'curso_id' => $curso_id,
@@ -131,7 +126,6 @@ class InscritosController extends Controller
                 'estudiante_ids' => $estudiante_ids
             ]);
 
-            // Verificar que los estudiantes no estén ya inscritos en el curso
             $inscritos = Inscritos::where('cursos_id', $curso_id)
                 ->whereIn('estudiante_id', $estudiante_ids)
                 ->pluck('estudiante_id')
@@ -148,47 +142,29 @@ class InscritosController extends Controller
                 ]);
 
                 return redirect()->back()
-                    ->withErrors(['estudiante_id' => 'Algunos estudiantes ya están inscritos en este curso: ' . implode(', ', $usuariosInscritos)])
+                    ->withErrors(['estudiante_id' => 'Algunos estudiantes ya están inscritos: ' . implode(', ', $usuariosInscritos)])
                     ->withInput();
             }
 
-            // Filtrar estudiantes no inscritos
             $estudiantesNoInscritos = array_diff($estudiante_ids, $inscritos);
 
-            // VERIFICAR CUPOS DISPONIBLES (solo si el curso tiene cupos limitados)
-            if ($curso->cupos > 0) { // Si cupos = 0, significa ilimitado
-                // Contar inscripciones actuales
+            if ($curso->cupos > 0) {
                 $inscripcionesActuales = Inscritos::where('cursos_id', $curso_id)->count();
                 $cuposDisponibles = $curso->cupos - $inscripcionesActuales;
 
                 if ($cuposDisponibles <= 0) {
-                    Log::channel('admin')->error('Curso sin cupos disponibles', [
-                        'admin_id' => auth()->id(),
-                        'curso_id' => $curso_id,
-                        'cupos_totales' => $curso->cupos,
-                        'inscritos_actuales' => $inscripcionesActuales
-                    ]);
-
                     return redirect()->back()
                         ->withErrors(['curso_id' => 'El curso no tiene cupos disponibles.'])
                         ->withInput();
                 }
 
                 if (count($estudiantesNoInscritos) > $cuposDisponibles) {
-                    Log::channel('admin')->warning('Intento de inscribir más estudiantes que cupos disponibles', [
-                        'admin_id' => auth()->id(),
-                        'curso_id' => $curso_id,
-                        'estudiantes_solicitados' => count($estudiantesNoInscritos),
-                        'cupos_disponibles' => $cuposDisponibles
-                    ]);
-
                     return redirect()->back()
                         ->withErrors(['estudiante_id' => "Solo hay {$cuposDisponibles} cupos disponibles, pero intentas inscribir " . count($estudiantesNoInscritos) . " estudiantes."])
                         ->withInput();
                 }
             }
 
-            // Inscribir a los estudiantes
             $inscritosExitosos = [];
             foreach ($estudiantesNoInscritos as $estudiante_id) {
                 $inscrito = Inscritos::create([
@@ -198,14 +174,12 @@ class InscritosController extends Controller
                     'progreso' => 0,
                 ]);
 
-                // Otorgar XP por inscripción
                 $xpBase = $curso->tipo == 'congreso' ? 100 : 50;
                 $this->xpService->addXP($inscrito, $xpBase, "Inscripción en {$curso->nombreCurso}");
 
                 $inscritosExitosos[] = $estudiante_id;
             }
 
-            // Log de éxito
             $nombresInscritos = User::whereIn('id', $inscritosExitosos)->pluck('name')->toArray();
             Log::channel('admin')->info('Inscripción masiva exitosa', [
                 'admin_id' => auth()->id(),
@@ -221,8 +195,7 @@ class InscritosController extends Controller
                 'success',
                 'Se inscribieron correctamente ' . count($inscritosExitosos) . ' estudiantes: ' . implode(', ', $nombresInscritos)
             );
-        } catch (Exception $e) {
-            // Log de error
+        } catch (\Exception $e) {
             Log::channel('admin')->error('Error en inscripción masiva', [
                 'admin_id' => auth()->id(),
                 'curso_id' => $curso_id,
@@ -231,11 +204,10 @@ class InscritosController extends Controller
             ]);
 
             return redirect()->back()
-                ->withErrors(['error' => 'Ocurrió un error durante la inscripción. Por favor, inténtalo de nuevo.'])
+                ->withErrors(['error' => 'Ocurrió un error durante la inscripción.'])
                 ->withInput();
         }
     }
-
 
 
     public function update(Request $request, $id)

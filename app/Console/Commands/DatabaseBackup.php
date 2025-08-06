@@ -27,16 +27,38 @@ class DatabaseBackup extends Command
      */
     public function handle()
     {
+        // Buscar mysqldump en el sistema
+        $mysqldumpPath = $this->findMysqldump();
+        if (!$mysqldumpPath) {
+            $this->error('❌ mysqldump no está disponible en el sistema');
+            $this->error('Por favor instala MySQL client o asegúrate de que mysqldump esté en el PATH');
+            return 1;
+        }
+
+        $this->info("🔍 Usando mysqldump desde: {$mysqldumpPath}");
+
         $database = env('DB_DATABASE');
         $username = env('DB_USERNAME');
         $password = env('DB_PASSWORD');
-        $host = env('DB_HOST');
+        $host = env('DB_HOST', '127.0.0.1');
         $port = env('DB_PORT', '3306');
 
         if (!$database) {
-            $this->error('No se encontró configuración de base de datos');
+            $this->error('❌ No se encontró configuración de base de datos');
+            $this->error('Verifica que DB_DATABASE esté configurado en el archivo .env');
             return 1;
         }
+
+        if (!$username) {
+            $this->error('❌ No se encontró usuario de base de datos');
+            $this->error('Verifica que DB_USERNAME esté configurado en el archivo .env');
+            return 1;
+        }
+
+        $this->info("🔧 Configuración de backup:");
+        $this->info("   Host: {$host}:{$port}");
+        $this->info("   Base de datos: {$database}");
+        $this->info("   Usuario: {$username}");
 
         $date = Carbon::now()->format('Y-m-d_H-i-s');
         $backupPath = $this->option('path') ?: storage_path('backups');
@@ -50,27 +72,66 @@ class DatabaseBackup extends Command
         $filename = "backup_{$database}_{$date}.sql";
         $fullPath = $backupPath . DIRECTORY_SEPARATOR . $filename;
 
-        // Construir comando mysqldump
-        $command = "mysqldump";
-        $command .= " --user={$username}";
-        $command .= " --host={$host}";
-        $command .= " --port={$port}";
+        // Construir comando mysqldump de forma segura
+        $command = [
+            escapeshellarg($mysqldumpPath),
+            '--user=' . escapeshellarg($username),
+            '--host=' . escapeshellarg($host),
+            '--port=' . escapeshellarg($port),
+            '--single-transaction',
+            '--routines',
+            '--triggers',
+            '--result-file=' . escapeshellarg($fullPath)
+        ];
 
         if ($password) {
-            $command .= " --password={$password}";
+            $command[] = '--password=' . escapeshellarg($password);
         }
 
-        $command .= " --single-transaction";
-        $command .= " --routines";
-        $command .= " --triggers";
-        $command .= " {$database}";
-        $command .= " > \"{$fullPath}\"";
+        $command[] = escapeshellarg($database);
+
+        // Convertir array a string para ejecución
+        $commandString = implode(' ', $command);
 
         $this->info("Iniciando backup de la base de datos: {$database}");
         $this->info("Archivo: {$filename}");
 
-        // Ejecutar comando
-        exec($command, $output, $return);
+        // Ejecutar comando y capturar tanto stdout como stderr
+        $descriptorspec = [
+            0 => ["pipe", "r"],  // stdin
+            1 => ["pipe", "w"],  // stdout
+            2 => ["pipe", "w"]   // stderr
+        ];
+
+        $process = proc_open($commandString, $descriptorspec, $pipes);
+        $output = [];
+        $errorOutput = [];
+
+        if (is_resource($process)) {
+            // Cerrar stdin
+            fclose($pipes[0]);
+
+            // Leer stdout
+            $stdout = stream_get_contents($pipes[1]);
+            fclose($pipes[1]);
+
+            // Leer stderr
+            $stderr = stream_get_contents($pipes[2]);
+            fclose($pipes[2]);
+
+            // Obtener código de retorno
+            $return = proc_close($process);
+
+            if (!empty($stdout)) {
+                $output = explode("\n", trim($stdout));
+            }
+            if (!empty($stderr)) {
+                $errorOutput = explode("\n", trim($stderr));
+            }
+        } else {
+            $return = 1;
+            $errorOutput = ['No se pudo ejecutar el comando mysqldump'];
+        }
 
         if ($return === 0 && file_exists($fullPath)) {
             $fileSize = filesize($fullPath);
@@ -118,24 +179,107 @@ class DatabaseBackup extends Command
             return 0;
         } else {
             $this->error('❌ Error creando el backup');
-            $this->error('Comando ejecutado: ' . $command);
+            $this->error('Comando ejecutado: ' . $commandString);
+
+            if (!empty($errorOutput)) {
+                $this->error('Errores del comando:');
+                foreach ($errorOutput as $line) {
+                    if (!empty(trim($line))) {
+                        $this->error($line);
+                    }
+                }
+            }
 
             if (!empty($output)) {
                 $this->error('Salida del comando:');
                 foreach ($output as $line) {
-                    $this->error($line);
+                    if (!empty(trim($line))) {
+                        $this->error($line);
+                    }
+                }
+            }
+
+            // Verificar si el archivo existe pero está vacío
+            if (file_exists($fullPath)) {
+                $fileSize = filesize($fullPath);
+                $this->error("Archivo creado pero con tamaño: {$fileSize} bytes");
+                if ($fileSize == 0) {
+                    $this->error('El archivo de backup está vacío. Posibles causas:');
+                    $this->error('- Credenciales de base de datos incorrectas');
+                    $this->error('- mysqldump no está instalado o no está en el PATH');
+                    $this->error('- Permisos insuficientes para acceder a la base de datos');
+                    $this->error('- La base de datos no existe o está vacía');
                 }
             }
 
             Log::channel('admin')->error('Database backup failed', [
                 'database' => $database,
-                'command' => $command,
+                'command' => $commandString,
                 'return_code' => $return,
                 'output' => $output,
+                'error_output' => $errorOutput,
+                'file_exists' => file_exists($fullPath),
+                'file_size' => file_exists($fullPath) ? filesize($fullPath) : 0,
                 'timestamp' => now()
             ]);
 
             return 1;
         }
+    }
+
+    /**
+     * Buscar mysqldump en ubicaciones comunes del sistema
+     */
+    private function findMysqldump(): ?string
+    {
+        // Primero intentar desde PATH
+        $command = 'mysqldump --version';
+        $descriptorspec = [
+            0 => ["pipe", "r"],
+            1 => ["pipe", "w"],
+            2 => ["pipe", "w"]
+        ];
+
+        $process = proc_open($command, $descriptorspec, $pipes);
+        if (is_resource($process)) {
+            fclose($pipes[0]);
+            fclose($pipes[1]);
+            fclose($pipes[2]);
+            $return = proc_close($process);
+            if ($return === 0) {
+                return 'mysqldump';
+            }
+        }
+
+        // Buscar en ubicaciones comunes de Windows
+        $commonPaths = [
+            'C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqldump.exe',
+            'C:\Program Files\MySQL\MySQL Server 5.7\bin\mysqldump.exe',
+            'C:\Program Files\MySQL\MySQL Workbench 8.0 CE\mysqldump.exe',
+            'C:\Program Files (x86)\MySQL\MySQL Server 8.0\bin\mysqldump.exe',
+            'C:\Program Files (x86)\MySQL\MySQL Server 5.7\bin\mysqldump.exe',
+            'C:\xampp\mysql\bin\mysqldump.exe',
+            'C:\wamp64\bin\mysql\mysql8.0.21\bin\mysqldump.exe',
+            'C:\laragon\bin\mysql\mysql-8.0.30-winx64\bin\mysqldump.exe'
+        ];
+
+        foreach ($commonPaths as $path) {
+            if (file_exists($path)) {
+                // Verificar que funcione
+                $testCommand = escapeshellarg($path) . ' --version';
+                $process = proc_open($testCommand, $descriptorspec, $pipes);
+                if (is_resource($process)) {
+                    fclose($pipes[0]);
+                    fclose($pipes[1]);
+                    fclose($pipes[2]);
+                    $return = proc_close($process);
+                    if ($return === 0) {
+                        return $path;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 }

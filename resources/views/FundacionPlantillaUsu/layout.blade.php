@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('titulo', 'Inicio')</title>
     <meta name="description" content="@yield('description', 'Fundación Educar Para La Vida')">
-
+    <link href="{{ asset('./assets/img/Acceder.png') }}" rel="icon" type="image/png">
     <!-- CSS Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">

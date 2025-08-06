@@ -49,7 +49,7 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $estudiante->name }} {{ $estudiante->lastname1 }} {{ $estudiante->lastname2 }}</td>
-                        <td>{{ $estudiante->Celular }}</td>
+                        <td>+{{ $estudiante->Celular }}</td>
                         <td>{{ $estudiante->email }}</td>
                         <td class="text-center">
                             <a class="btn btn-sm btn-info" href="{{ route('perfil', [encrypt($estudiante->id)]) }}" title="Ver perfil">
