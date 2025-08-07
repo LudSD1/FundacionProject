@@ -68,92 +68,7 @@
         @yield('contentini')
     </div>
 
-    <!-- Footer -->
-    {{-- <footer class="bg-white border-top mt-5 py-5">
-        <div class="container">
-            <div class="row gy-4 justify-content-between">
-                <!-- Contact Information -->
-                <div class="col-lg-4 col-md-6">
-                    <h5 class="text-primary fw-bold mb-4 section-title">Fundación Educar Para La Vida</h5>
-                    <ul class="list-unstyled">
-                        <li class="contact-item mb-3">
-                            <div class="icon-box">
-                                <i class="bi bi-geo-alt text-primary"></i>
-                            </div>
-                            <span>Bolivia</span>
-                        </li>
-                        <li class="contact-item mb-3">
-                            <div class="icon-box">
-                                <i class="bi bi-telephone text-primary"></i>
-                            </div>
-                            <span>+591 72087186</span>
-                        </li>
-                        <li class="contact-item">
-                            <div class="icon-box">
-                                <i class="bi bi-envelope text-primary"></i>
-                            </div>
-                            <span>contacto@educarparalavida.org.bo</span>
-                        </li>
-                    </ul>
-                </div>
 
-                <!-- Quick Links -->
-                <div class="col-lg-3 col-md-6">
-                    <h5 class="text-primary fw-bold mb-4 section-title">Enlaces Rápidos</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-3">
-                            <a href="https://educarparalavida.org.bo/web/Inicio.html" class="footer-link">
-                                <i class="bi bi-chevron-right me-2"></i>
-                                <span>Inicio</span>
-                            </a>
-                        </li>
-                        <li class="mb-3">
-                            <a href="https://educarparalavida.org.bo/web/Quienes-somos.html" class="footer-link">
-                                <i class="bi bi-chevron-right me-2"></i>
-                                <span>Quiénes Somos</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://educarparalavida.org.bo/web/Proyectos-y-servicios.html" class="footer-link">
-                                <i class="bi bi-chevron-right me-2"></i>
-                                <span>Servicios</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Social Media -->
-                <div class="col-lg-4 col-md-6">
-                    <h5 class="text-primary fw-bold mb-4 section-title">Síguenos en</h5>
-                    <div class="d-flex gap-3">
-                        <a href="https://www.facebook.com/profile.php?id=100063510101095" class="social-btn" target="_blank" aria-label="Facebook">
-                            <i class="bi bi-facebook fs-5"></i>
-                        </a>
-                        <a href="https://www.instagram.com/fundeducarparalavida/" class="social-btn" target="_blank" aria-label="Instagram">
-                            <i class="bi bi-instagram fs-5"></i>
-                        </a>
-                        <a href="https://api.whatsapp.com/send?phone=59172087186" class="social-btn" target="_blank" aria-label="WhatsApp">
-                            <i class="bi bi-whatsapp fs-5"></i>
-                        </a>
-                        <a href="https://x.com/FUNDVIDA2" class="social-btn" target="_blank" aria-label="Twitter">
-                            <i class="bi bi-twitter-x fs-5"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <hr class="my-5 opacity-25">
-
-            <!-- Copyright -->
-            <div class="text-center">
-                <p class="text-muted mb-0">
-                    &copy; <span id="current-year"></span>
-                    <span class="text-primary">Fundación Educar para la Vida</span>.
-                    Todos los derechos reservados.
-                </p>
-            </div>
-        </div>
-    </footer> --}}
 
     <!-- Optimized Styles -->
     <style>
@@ -384,6 +299,7 @@
                         <a href="https://api.whatsapp.com/send?phone=%3C+59172087186%3E" class="whatsapp" aria-label="WhatsApp"><i
                                 class="bi bi-whatsapp"></i></a>
                     </div>
+                        @include('components.achievements')
                 </div>
             </div>
         </div>
@@ -399,7 +315,7 @@
     </div>
 </footer>
 
-    @include('components.achievements')
+
 
     <!-- Essential Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

@@ -54,10 +54,21 @@ class EmailVerificationController extends Controller
      */
     public function verify(Request $request, $id, $hash)
     {
+
+
         Log::info('Iniciando verificación de email para usuario ID: ' . $id);
 
+        // Desencriptar el ID del usuario
+        try {
+            $decryptedId = $id;
+            Log::info('ID desencriptado: ' . $decryptedId);
+        } catch (\Exception $e) {
+            Log::error('Error al desencriptar ID: ' . $e->getMessage());
+            return redirect()->route('Inicio')->with('error', 'El enlace de verificación no es válido.');
+        }
+
         // Buscar el usuario
-        $user = \App\Models\User::findOrFail($id);
+        $user = \App\Models\User::findOrFail($decryptedId);
 
         // Verificar si ya está verificado
         if ($user->hasVerifiedEmail()) {
@@ -78,17 +89,18 @@ class EmailVerificationController extends Controller
         }
 
         // Marcar como verificado
-        if ($user->markEmailAsVerified()) {
+        try {
+            $user->markEmailAsVerified();
             Log::info('Email verificado exitosamente para usuario: ' . $user->email);
 
             // Disparar evento de verificación
             event(new Verified($user));
 
             return redirect()->route('Inicio')->with('success', '¡Tu cuenta ha sido verificada correctamente!');
+        } catch (\Exception $e) {
+            Log::error('Error al marcar email como verificado para usuario: ' . $user->email . ' - Error: ' . $e->getMessage());
+            return redirect()->route('Inicio')->with('error', 'Ocurrió un error durante la verificación.');
         }
-
-        Log::error('Error al marcar email como verificado para usuario: ' . $user->email);
-        return redirect()->route('Inicio')->with('error', 'Ocurrió un error durante la verificación.');
     }
 
     /**

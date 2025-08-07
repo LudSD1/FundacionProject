@@ -30,7 +30,7 @@ class EmailVerificationTest extends TestCase
             'verification.verify',
             now()->addMinutes(60),
             [
-                'id' => $user->id,
+                'id' => encrypt($user->id),
                 'hash' => sha1($user->email),
             ]
         );
@@ -62,7 +62,7 @@ class EmailVerificationTest extends TestCase
             'verification.verify',
             now()->addMinutes(60),
             [
-                'id' => $user->id,
+                'id' => encrypt($user->id),
                 'hash' => 'invalid-hash',
             ]
         );
@@ -91,7 +91,7 @@ class EmailVerificationTest extends TestCase
             'verification.verify',
             now()->subMinutes(10), // Expirada hace 10 minutos
             [
-                'id' => $user->id,
+                'id' => encrypt($user->id),
                 'hash' => sha1($user->email),
             ]
         );
@@ -120,7 +120,7 @@ class EmailVerificationTest extends TestCase
             'verification.verify',
             now()->addMinutes(60),
             [
-                'id' => $user->id,
+                'id' => encrypt($user->id),
                 'hash' => sha1($user->email),
             ]
         );

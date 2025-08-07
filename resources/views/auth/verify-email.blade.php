@@ -53,7 +53,7 @@
 
                     <p class="text-center">
                         {{ __('Si no recibiste el correo electrónico, revisa tu carpeta de spam o') }}
-                        <form method="POST" action="{{ route('verification.resend') }}" class="d-inline">
+                        <form method="POST" action="{{ url('/email/resend-verification-notification') }}" class="d-inline">
                             @csrf
                             <button type="submit" class="btn btn-link p-0 m-0 align-baseline">
                                 {{ __('haz clic aquí para solicitar otro') }}

@@ -31,7 +31,38 @@ use Illuminate\Validation\Rule;
 class AdministradorController extends Controller
 {
 
+    public function cambiarRol(Request $request, $usuarioEncriptado)
+    {
+        try {
 
+
+            // Desencriptar el ID del usuario
+            $usuarioId = $usuarioEncriptado;
+
+            // Validar los datos
+            $request->validate([
+                'nuevo_rol' => 'required|string|in:Estudiante,Docente,Administrador',
+                'confirmar_cambio' => 'required|accepted'
+            ]);
+
+            // Buscar el usuario
+            $usuario = User::findOrFail($usuarioId);
+            $nuevoRol = $request->nuevo_rol;
+
+            // Guardar rol anterior para el mensaje
+            $rolAnterior = $usuario->getRoleNames()->first() ?? 'Sin rol';
+
+            // Remover todos los roles actuales y asignar el nuevo
+            $usuario->syncRoles([$nuevoRol]);
+
+            // Mensaje de éxito
+            $mensaje = "El rol de {$usuario->name} {$usuario->lastname1} ha sido cambiado de '{$rolAnterior}' a '{$nuevoRol}'.";
+
+            return back()->with('success', $mensaje);
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error al cambiar el rol: ' . $e->getMessage()]);
+        }
+    }
 
     public function storeEstudiante(Request $request)
     {
@@ -73,14 +104,14 @@ class AdministradorController extends Controller
         $user->fechadenac = $newDate;
         $user->CiudadReside = $request->CiudadReside;
         $user->PaisReside = $request->PaisReside;
-        $passwordPlain = substr($request->name,0,1).substr($request->lastname1,0,1).substr($request->lastname2,0,1).$request->CI;
+        $passwordPlain = substr($request->name, 0, 1) . substr($request->lastname1, 0, 1) . substr($request->lastname2, 0, 1) . $request->CI;
         $user->password = bcrypt($passwordPlain);
 
         try {
             Mail::to($user->email)->send(new CredencialesAcceso($user, $passwordPlain));
         } catch (\Exception $e) {
             // Puedes loggear el error si falla el envío pero no interrumpir el flujo
-            Log::error('Error enviando credenciales: '.$e->getMessage());
+            Log::error('Error enviando credenciales: ' . $e->getMessage());
         }
 
         $estudiante =  $user;
@@ -163,14 +194,14 @@ class AdministradorController extends Controller
         $user->fechadenac = $newDate;
         $user->CiudadReside = $request->CiudadReside;
         $user->PaisReside = $request->PaisReside;
-        $passwordPlain = substr($request->name,0,1).substr($request->lastname1,0,1).substr($request->lastname2,0,1).$request->CI;
+        $passwordPlain = substr($request->name, 0, 1) . substr($request->lastname1, 0, 1) . substr($request->lastname2, 0, 1) . $request->CI;
         $user->password = bcrypt($passwordPlain);
 
         try {
             Mail::to($user->email)->send(new CredencialesAcceso($user, $passwordPlain));
         } catch (\Exception $e) {
             // Puedes loggear el error si falla el envío pero no interrumpir el flujo
-            Log::error('Error enviando credenciales: '.$e->getMessage());
+            Log::error('Error enviando credenciales: ' . $e->getMessage());
         }
 
         $user->save();
@@ -202,8 +233,6 @@ class AdministradorController extends Controller
         ]);
 
         return redirect()->route('ListaDocentes')->with('success', 'Docente registrado exitosamente!');
-
-
     }
 
 
@@ -247,7 +276,7 @@ class AdministradorController extends Controller
         $user->lastname1 = $request->lastname1;
         $user->lastname2 = $request->lastname2;
         $user->Celular = $request->CelularT;
-        $user->email = substr($request->nombreT,0,1).substr($request->appT,0,1).substr($request->appM,0,1).$request->CIT.'@fundvida.com';
+        $user->email = substr($request->nombreT, 0, 1) . substr($request->appT, 0, 1) . substr($request->appM, 0, 1) . $request->CIT . '@fundvida.com';
         $user->CI = $request->CI;
         $orgDate = $request->fechadenac;
 
@@ -258,7 +287,7 @@ class AdministradorController extends Controller
         $user->fechadenac = $newDate;
         $user->CiudadReside = $request->CiudadReside;
         $user->PaisReside = $request->PaisReside;
-        $user->password = bcrypt(substr($request->nombreT,0,1).substr($request->appT,0,1).substr($request->appM,0,1).$request->CIT);
+        $user->password = bcrypt(substr($request->nombreT, 0, 1) . substr($request->appT, 0, 1) . substr($request->appM, 0, 1) . $request->CIT);
 
         $estudiante = $user;
 
@@ -303,8 +332,6 @@ class AdministradorController extends Controller
         ]);
 
         return redirect()->route('ListaEstudiantes')->with('success', 'Estudiante registrado exitosamente!');
-
-
     }
 
 
@@ -389,9 +416,9 @@ class AdministradorController extends Controller
         $usuario = User::findOrFail($id);
 
         $atributosD = DB::table('atributos_docentes')
-        ->where('docente_id', '=', $id) // joining the contacts table , where user_id and contact_user_id are same
-        ->select('atributos_docentes.*')
-        ->get();
+            ->where('docente_id', '=', $id) // joining the contacts table , where user_id and contact_user_id are same
+            ->select('atributos_docentes.*')
+            ->get();
 
         $atributosTutor = DB::table('tutor_representante_legals')
             ->where('estudiante_id', '=', $id) // joining the contacts table , where user_id and contact_user_id are same
@@ -401,12 +428,9 @@ class AdministradorController extends Controller
 
 
         return view('EditarUsuario', ['atributosD' => $atributosD], ['atributosTutor' => $atributosTutor])->with('usuario', $usuario)->with('success', 'Editado exitosamente!');
-
-
-
     }
 
-    public function EditUser($id ,Request $request)
+    public function EditUser($id, Request $request)
     {
 
 
@@ -414,7 +438,7 @@ class AdministradorController extends Controller
             'name' => 'required',
             'lastname1' => 'required',
             'Celular' => 'required',
-            'email' => 'required|unique:users,email,'.$id,
+            'email' => 'required|unique:users,email,' . $id,
             'fechadenac' => 'required|date|before_or_equal:today',
         ], [
             'name.required' => 'El campo nombre es obligatorio.',
@@ -477,14 +501,14 @@ class AdministradorController extends Controller
             event(new UsuarioEvent($user, 'modificacion'));
 
             $user->save();
-        } elseif($user->tutor) {
+        } elseif ($user->tutor) {
 
             $request->validate([
                 'nombreT' => 'required|string|max:255',
                 'appT' => 'required|string|max:255',
                 'apmT' => 'required|string|max:255',  // Puede ser nulo
                 'Direccion' => 'nullable|string|max:255',  // Puede ser nulo
-            ],[
+            ], [
                 'nombreT.required' => 'El campo nombre del tutor es obligatorio.',
                 'nombreT.string' => 'El campo nombre del tutor debe ser una cadena de texto.',
                 'nombreT.max' => 'El campo nombre del tutor no debe exceder los :max caracteres.',
@@ -541,7 +565,7 @@ class AdministradorController extends Controller
             event(new UsuarioEvent($user, 'modificacion'));
 
             $user->save();
-        }else{
+        } else {
 
             // Log de actividad del administrador para estudiante regular
             Log::channel('admin')->info('Estudiante editado por administrador', [
@@ -562,176 +586,168 @@ class AdministradorController extends Controller
             event(new UsuarioEvent($user, 'modificacion'));
 
             $user->save();
-
         }
 
         return redirect()->route('Inicio')->with('success', 'Editado exitosamente!');
+    }
+    public function viewLogs()
+    {
+        // Buscar el archivo de log más reciente
+        $logPath = storage_path('logs');
+        $logFiles = glob($logPath . '/admin-*.log');
 
-}
-public function viewLogs()
-{
-    // Buscar el archivo de log más reciente
-    $logPath = storage_path('logs');
-    $logFiles = glob($logPath . '/admin-*.log');
+        $logs = [];
 
-    $logs = [];
+        if (!empty($logFiles)) {
+            // Ordenar por fecha de modificación (más reciente primero)
+            usort($logFiles, function ($a, $b) {
+                return filemtime($b) - filemtime($a);
+            });
 
-    if (!empty($logFiles)) {
-        // Ordenar por fecha de modificación (más reciente primero)
-        usort($logFiles, function($a, $b) {
-            return filemtime($b) - filemtime($a);
-        });
+            $logFile = $logFiles[0]; // Tomar el más reciente
 
-        $logFile = $logFiles[0]; // Tomar el más reciente
+            if (file_exists($logFile)) {
+                $logContent = file_get_contents($logFile);
+                $logLines = explode("\n", $logContent);
 
-        if (file_exists($logFile)) {
-            $logContent = file_get_contents($logFile);
-            $logLines = explode("\n", $logContent);
-
-            // Procesar las últimas 100 líneas
-            $logs = array_slice(array_reverse($logLines), 0, 100);
+                // Procesar las últimas 100 líneas
+                $logs = array_slice(array_reverse($logLines), 0, 100);
+            }
         }
+
+        return view('Administrador.logs', compact('logs'));
     }
 
-    return view('Administrador.logs', compact('logs'));
-}
-
-public function testLog()
-{
-    // Método de prueba para verificar que los logs funcionen
-    Log::channel('admin')->info('Prueba de log del administrador', [
-        'admin_id' => auth()->id(),
-        'admin_name' => auth()->user()->name ?? 'Sistema',
-        'action' => 'test_log',
-        'message' => 'Esta es una prueba para verificar que el sistema de logs funciona correctamente',
-        'timestamp' => now(),
-        'ip' => request()->ip()
-    ]);
-
-    return redirect()->route('admin.logs')->with('success', 'Log de prueba creado exitosamente');
-}
-
-public function listBackups()
-{
-    $backupPath = storage_path('backups');
-    $backups = [];
-
-    if (is_dir($backupPath)) {
-        $files = glob($backupPath . '/*.{sql,sql.gz}', GLOB_BRACE);
-
-        foreach ($files as $file) {
-            $backups[] = [
-                'name' => basename($file),
-                'path' => $file,
-                'size' => filesize($file),
-                'size_mb' => round(filesize($file) / 1024 / 1024, 2),
-                'date' => date('Y-m-d H:i:s', filemtime($file)),
-                'timestamp' => filemtime($file),
-                'is_compressed' => str_ends_with($file, '.gz')
-            ];
-        }
-
-        // Ordenar por fecha (más reciente primero)
-        usort($backups, function($a, $b) {
-            return $b['timestamp'] - $a['timestamp'];
-        });
-    }
-
-    return view('Administrador.backups', compact('backups'));
-}
-
-public function createBackup(Request $request)
-{
-    try {
-        $compress = $request->has('compress');
-
-        // Ejecutar comando de backup
-        $command = 'backup:database';
-        if ($compress) {
-            $command .= ' --compress';
-        }
-
-        Artisan::call($command);
-        $output = Artisan::output();
-
-        // Log de la acción
-        Log::channel('admin')->info('Manual backup requested', [
+    public function testLog()
+    {
+        // Método de prueba para verificar que los logs funcionen
+        Log::channel('admin')->info('Prueba de log del administrador', [
             'admin_id' => auth()->id(),
             'admin_name' => auth()->user()->name ?? 'Sistema',
-            'action' => 'create_backup',
-            'compressed' => $compress,
+            'action' => 'test_log',
+            'message' => 'Esta es una prueba para verificar que el sistema de logs funciona correctamente',
             'timestamp' => now(),
             'ip' => request()->ip()
         ]);
 
-        if (str_contains($output, '✅')) {
-            return redirect()->back()->with('success', 'Backup creado exitosamente');
-        } else {
-            return redirect()->back()->with('error', 'Error creando el backup: ' . $output);
+        return redirect()->route('admin.logs')->with('success', 'Log de prueba creado exitosamente');
+    }
+
+    public function listBackups()
+    {
+        $backupPath = storage_path('backups');
+        $backups = [];
+
+        if (is_dir($backupPath)) {
+            $files = glob($backupPath . '/*.{sql,sql.gz}', GLOB_BRACE);
+
+            foreach ($files as $file) {
+                $backups[] = [
+                    'name' => basename($file),
+                    'path' => $file,
+                    'size' => filesize($file),
+                    'size_mb' => round(filesize($file) / 1024 / 1024, 2),
+                    'date' => date('Y-m-d H:i:s', filemtime($file)),
+                    'timestamp' => filemtime($file),
+                    'is_compressed' => str_ends_with($file, '.gz')
+                ];
+            }
+
+            // Ordenar por fecha (más reciente primero)
+            usort($backups, function ($a, $b) {
+                return $b['timestamp'] - $a['timestamp'];
+            });
         }
 
-    } catch (\Exception $e) {
-        Log::channel('admin')->error('Backup failed', [
-            'error' => $e->getMessage(),
-            'admin_id' => auth()->id(),
-            'timestamp' => now()
-        ]);
-
-        return redirect()->back()->with('error', 'Error creando el backup: ' . $e->getMessage());
-    }
-}
-
-public function downloadBackup($filename)
-{
-    $backupPath = storage_path('backups/' . $filename);
-
-    if (file_exists($backupPath)) {
-        // Log de descarga
-        Log::channel('admin')->info('Backup downloaded', [
-            'filename' => $filename,
-            'admin_id' => auth()->id(),
-            'admin_name' => auth()->user()->name ?? 'Sistema',
-            'action' => 'download_backup',
-            'timestamp' => now(),
-            'ip' => request()->ip()
-        ]);
-
-        return response()->download($backupPath);
+        return view('Administrador.backups', compact('backups'));
     }
 
-    return redirect()->back()->with('error', 'Archivo no encontrado');
-}
+    public function createBackup(Request $request)
+    {
+        try {
+            $compress = $request->has('compress');
 
-public function deleteBackup($filename)
-{
-    $backupPath = storage_path('backups/' . $filename);
+            // Ejecutar comando de backup
+            $command = 'backup:database';
+            if ($compress) {
+                $command .= ' --compress';
+            }
 
-    if (file_exists($backupPath)) {
-        $fileSize = filesize($backupPath);
+            Artisan::call($command);
+            $output = Artisan::output();
 
-        if (unlink($backupPath)) {
-            // Log de eliminación
-            Log::channel('admin')->info('Backup deleted', [
-                'filename' => $filename,
-                'size' => $fileSize,
+            // Log de la acción
+            Log::channel('admin')->info('Manual backup requested', [
                 'admin_id' => auth()->id(),
                 'admin_name' => auth()->user()->name ?? 'Sistema',
-                'action' => 'delete_backup',
+                'action' => 'create_backup',
+                'compressed' => $compress,
                 'timestamp' => now(),
                 'ip' => request()->ip()
             ]);
 
-            return redirect()->back()->with('success', 'Backup eliminado exitosamente');
-        } else {
-            return redirect()->back()->with('error', 'Error eliminando el backup');
+            if (str_contains($output, '✅')) {
+                return redirect()->back()->with('success', 'Backup creado exitosamente');
+            } else {
+                return redirect()->back()->with('error', 'Error creando el backup: ' . $output);
+            }
+        } catch (\Exception $e) {
+            Log::channel('admin')->error('Backup failed', [
+                'error' => $e->getMessage(),
+                'admin_id' => auth()->id(),
+                'timestamp' => now()
+            ]);
+
+            return redirect()->back()->with('error', 'Error creando el backup: ' . $e->getMessage());
         }
     }
 
-    return redirect()->back()->with('error', 'Archivo no encontrado');
+    public function downloadBackup($filename)
+    {
+        $backupPath = storage_path('backups/' . $filename);
+
+        if (file_exists($backupPath)) {
+            // Log de descarga
+            Log::channel('admin')->info('Backup downloaded', [
+                'filename' => $filename,
+                'admin_id' => auth()->id(),
+                'admin_name' => auth()->user()->name ?? 'Sistema',
+                'action' => 'download_backup',
+                'timestamp' => now(),
+                'ip' => request()->ip()
+            ]);
+
+            return response()->download($backupPath);
+        }
+
+        return redirect()->back()->with('error', 'Archivo no encontrado');
+    }
+
+    public function deleteBackup($filename)
+    {
+        $backupPath = storage_path('backups/' . $filename);
+
+        if (file_exists($backupPath)) {
+            $fileSize = filesize($backupPath);
+
+            if (unlink($backupPath)) {
+                // Log de eliminación
+                Log::channel('admin')->info('Backup deleted', [
+                    'filename' => $filename,
+                    'size' => $fileSize,
+                    'admin_id' => auth()->id(),
+                    'admin_name' => auth()->user()->name ?? 'Sistema',
+                    'action' => 'delete_backup',
+                    'timestamp' => now(),
+                    'ip' => request()->ip()
+                ]);
+
+                return redirect()->back()->with('success', 'Backup eliminado exitosamente');
+            } else {
+                return redirect()->back()->with('error', 'Error eliminando el backup');
+            }
+        }
+
+        return redirect()->back()->with('error', 'Archivo no encontrado');
+    }
 }
-
-
-}
-
-
-

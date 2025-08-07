@@ -43,20 +43,18 @@ class CustomVerifyEmail extends Notification
             'verification.verify',
             now()->addMinutes(60), // Expira en 60 minutos
             [
-                'id' => $notifiable->getKey(),
+                'id' => encrypt($notifiable->getKey()), // Encrypt the ID to match the trait
                 'hash' => sha1($notifiable->getEmailForVerification()),
             ]
         );
 
-        $esVerificacion = Str::contains($actionText, 'Verificar');
-
         return (new MailMessage)
             ->subject('Verifica tu correo electrónico')
-            ->view('vendor.notifications.email', [
-                'actionText' => $actionText,
-                'actionUrl' => $actionUrl,
-                'esVerificacion' => $esVerificacion,
-            ]);
+            ->greeting('¡Hola!')
+            ->line('Por favor, haz clic en el botón de abajo para verificar tu dirección de correo electrónico.')
+            ->action($actionText, $actionUrl)
+            ->line('Si no creaste una cuenta, no es necesario realizar ninguna acción.')
+            ->salutation('Saludos, ' . config('app.name'));
     }
 
     /**

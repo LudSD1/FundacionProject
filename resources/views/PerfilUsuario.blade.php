@@ -62,7 +62,7 @@ Perfil {{$usuario->name}} {{$usuario->lastname1}} {{$usuario->lastname2}}
                         {{ $usuario->name }} {{ $usuario->lastname1 }}
                     </h3>
 
-                    <div class="badge badge-pill badge-primary mb-3">
+                    <div class="text-bg-secondary rounded mb-3">
                         {{ $usuario->roles->pluck('name')[0] }}
                     </div>
 

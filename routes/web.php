@@ -181,6 +181,7 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::post('/HabilitarCurso/{id}', [AportesController::class, 'habilitarCurso'])->name('habilitar.curso');
 
+        Route::post('/cambiar-rol/{usuario}', [AdministradorController::class, 'cambiarRol'])->name('CambiarRolUser');
 
         Route::post('/reenviar-recibo/{id}', [AportesController::class, 'reenviarRecibo'])->name('recibo.reenviar')->middleware('auth');
         Route::post('/Curso/{id}', [CursosController::class, 'update'])->name('cursos.update');

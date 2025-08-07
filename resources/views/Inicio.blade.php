@@ -43,4 +43,3 @@
 @endif
 
 
-{{-- Script de verificación de email movido al layout global --}}
