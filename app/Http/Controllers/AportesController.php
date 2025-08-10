@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Mail\ReciboPagoMail;
 use Illuminate\Support\Facades\Mail;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class AportesController extends Controller
 {
@@ -68,19 +69,38 @@ class AportesController extends Controller
     public function generarRecibo($id)
     {
         try {
-
             $aporte = Aportes::with(['user', 'curso'])->findOrFail($id);
 
-            // Validación: solo el dueño o un admin puede ver el recibo
+            // Validación
             if (auth()->user()->id !== $aporte->estudiante_id && !auth()->user()->hasRole('Administrador')) {
                 abort(403, 'No tienes permiso para ver este recibo.');
             }
 
-            // Mostrar vista según el rol
+            // Usar codigopago en lugar de ID encriptado
+            $codigoPago = $aporte->codigopago ?? $aporte->id;
+            $urlRecibo = route('recibo.verificar', ['codigo' => $codigoPago]);
+
+            // QR en formato SVG (más pequeño y escalable)
+            $qrSvg = QrCode::format('svg')
+                ->size(200)
+                ->errorCorrection('M')
+                ->generate($urlRecibo);
+
+            // Codificar SVG en base64
+            $qrCodeBase64 = base64_encode($qrSvg);
+
             if (auth()->user()->hasRole('Administrador')) {
-                return view('Administrador.recibo-pago', ['pago' => $aporte]);
+                return view('Administrador.recibo-pago', [
+                    'pago'   => $aporte,
+                    'qrCode' => $qrCodeBase64,
+                    'qrFormat' => 'svg' // Indicador de formato
+                ]);
             } else {
-                return view('aportes.recibo', ['aporte' => $aporte]);
+                return view('aportes.recibo', [
+                    'aporte' => $aporte,
+                    'qrCode' => $qrCodeBase64,
+                    'qrFormat' => 'svg'
+                ]);
             }
         } catch (\Exception $e) {
             \Log::error('Error generando recibo: ' . $e->getMessage());
@@ -88,6 +108,34 @@ class AportesController extends Controller
         }
     }
 
+    public function verificarReciboPorCodigo($codigo)
+    {
+        try {
+            // Buscar por codigopago o por ID si es numérico
+            $aporte = Aportes::with(['user', 'curso'])
+                ->where('codigopago', $codigo)
+                ->orWhere('id', is_numeric($codigo) ? $codigo : null)
+                ->firstOrFail();
+
+            // Generar QR SVG para la verificación también
+            $qrSvg = QrCode::format('svg')
+                ->size(200)
+                ->errorCorrection('M')
+                ->generate($codigo);
+
+            $qrCodeBase64 = base64_encode($qrSvg);
+
+            // Vista pública del recibo (sin datos sensibles)
+            return view('aportes.recibo', [
+                'aporte' => $aporte,
+                'qrCode' => $qrCodeBase64,
+                'qrFormat' => 'svg',
+                'esVerificacion' => true
+            ]);
+        } catch (\Exception $e) {
+            abort(404, 'Recibo no encontrado');
+        }
+    }
     public function reenviarRecibo($id)
     {
         try {
@@ -104,7 +152,7 @@ class AportesController extends Controller
             }
 
             // Generar URL del recibo
-            $reciboUrl = route('recibo.generar', $aporte->id);
+            $reciboUrl = route('recibo.verificar', ['codigo' => $aporte->codigopago]);
 
             \Log::info('URL del recibo generada: ' . $reciboUrl);
 

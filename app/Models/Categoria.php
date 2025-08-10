@@ -37,11 +37,17 @@ class Categoria extends BaseModel
         return $this->belongsTo(Categoria::class, 'parent_id');
     }
 
+    public function hasActiveChildren()
+    {
+        return $this->children()->whereNull('deleted_at')->exists();
+    }
+
     // 🔁 Relación: muchas categorías pueden pertenecer a muchos cursos
     public function cursos()
     {
         return $this->belongsToMany(Cursos::class, 'curso_categoria', 'categoria_id', 'curso_id');
     }
+    
 
 
 

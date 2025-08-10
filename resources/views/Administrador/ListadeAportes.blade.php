@@ -42,7 +42,7 @@
                                 <a href="{{ route('descargar.comprobante', basename($aportes->comprobante)) }}" class="btn btn-sm btn-primary">
                                     <i class="bi bi-download"></i> Comprobante
                                 </a>
-                                <a href="{{ route('recibo.generar', $aportes->id) }}" target="_blank" class="btn btn-sm btn-success">
+                                <a href="{{ route('recibo.generar',encrypt($aportes->id)) }}" target="_blank" class="btn btn-sm btn-success">
                                     <i class="bi bi-receipt"></i> Recibo
                                 </a>
                                 <button type="button" class="btn btn-sm btn-info reenviar-email-btn"

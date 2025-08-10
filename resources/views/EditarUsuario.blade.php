@@ -10,52 +10,32 @@ Editar Perfil
 <div class="container">
     <div class="border p-3">
         <!-- Botón de Volver -->
-        <a href="javascript:history.back()" class="btn btn-primary mb-4">
+
+      <a href="javascript:history.back()" class="btn btn-primary mb-4">
             &#9668; Volver
         </a>
-
                 <ul class="nav nav-tabs" id="profileTabs" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab" aria-controls="personal" aria-selected="true">
                     <i class="fas fa-user"></i> Datos Personales
                 </button>
             </li>
+            @hasrole('Administrador')
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="role-tab" data-bs-toggle="tab" data-bs-target="#role" type="button" role="tab" aria-controls="role" aria-selected="false">
                     <i class="fas fa-user-cog"></i> Cambiar Rol
                 </button>
             </li>
+            @endhasrole
         </ul>
 
 
 
         <div class="container">
     <div class="border p-3">
-        <!-- Botón de Volver -->
-        <a href="javascript:history.back()" class="btn btn-primary mb-4">
-            &#9668; Volver
-        </a>
-
-        <!-- Pestañas de Navegación -->
-        <ul class="nav nav-tabs" id="profileTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab" aria-controls="personal" aria-selected="true">
-                    <i class="fas fa-user"></i> Datos Personales
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="role-tab" data-bs-toggle="tab" data-bs-target="#role" type="button" role="tab" aria-controls="role" aria-selected="false">
-                    <i class="fas fa-user-cog"></i> Cambiar Rol
-                </button>
-            </li>
-        </ul>
-
-        <!-- Contenido de las Pestañas -->
         <div class="tab-content" id="profileTabContent">
-            <!-- Pestaña de Datos Personales -->
             <div class="tab-pane fade show active" id="personal" role="tabpanel" aria-labelledby="personal-tab">
                 <div class="mt-3">
-                    <!-- Formulario de Datos Personales -->
                     <form action="{{ route('EditarperfilUser', encrypt($usuario->id)) }}" method="POST">
                         @csrf
                         <h4 class="mb-4">Datos Personales de {{ $usuario->name }} {{ $usuario->lastname1 }} {{ $usuario->lastname2 }}</h4>
@@ -196,6 +176,8 @@ Editar Perfil
             </div>
 
             <!-- Pestaña de Cambiar Rol -->
+            @hasrole('Administrador')
+
             <div class="tab-pane fade" id="role" role="tabpanel" aria-labelledby="role-tab">
                 <div class="mt-3">
                     {{-- {{ route('CambiarRolUser', encrypt($usuario->id)) }} --}}
@@ -292,6 +274,7 @@ Editar Perfil
                     </form>
                 </div>
             </div>
+            @endrole
         </div>
 
 

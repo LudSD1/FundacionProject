@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cursos;
-use App\Models\Expositor;
 use App\Models\Expositores;
-use BotMan\BotMan\Storages\Storage;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
 class ExpositoresController extends Controller
@@ -52,11 +51,29 @@ class ExpositoresController extends Controller
             'biografia' => 'nullable|string',
             'imagen' => 'nullable|image|max:2048',
             'linkedin' => 'nullable|url'
+        ], [
+            'nombre.required' => 'El campo nombre es obligatorio.',
+            'nombre.string' => 'El nombre debe ser un texto válido.',
+            'nombre.max' => 'El nombre no puede tener más de 100 caracteres.',
+
+            'especialidad.required' => 'La especialidad es obligatoria.',
+            'especialidad.string' => 'La especialidad debe ser un texto válido.',
+            'especialidad.max' => 'La especialidad no puede tener más de 100 caracteres.',
+
+            'empresa.required' => 'La empresa es obligatoria.',
+            'empresa.string' => 'La empresa debe ser un texto válido.',
+            'empresa.max' => 'La empresa no puede tener más de 100 caracteres.',
+
+            'biografia.string' => 'La biografía debe ser un texto válido.',
+
+            'imagen.image' => 'El archivo debe ser una imagen.',
+            'imagen.max' => 'La imagen no puede superar los 2MB.',
+
+            'linkedin.url' => 'La URL de LinkedIn no es válida.'
         ]);
 
         if ($request->hasFile('imagen')) {
-            // Eliminar imagen anterior si existe
-            if ($expositor->imagen) {
+            if ($expositor->imagen && Storage::disk('public')->exists($expositor->imagen)) {
                 Storage::disk('public')->delete($expositor->imagen);
             }
             $data['imagen'] = $request->file('imagen')->store('expositores', 'public');
@@ -66,6 +83,7 @@ class ExpositoresController extends Controller
 
         return back()->with('success', 'Expositor actualizado correctamente');
     }
+
 
 
     public function destroy($id)

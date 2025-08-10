@@ -106,13 +106,11 @@ class MenuController extends Controller
     }
     public function index()
     {
-        // Consultas optimizadas por conteo si solo usas los totales
         $totalCursos = Cursos::whereNull('deleted_at')->count();
         $totalEstudiantes = User::role('Estudiante')->whereNull('deleted_at')->count();
         $totalDocentes = User::role('Docente')->whereNull('deleted_at')->count();
         $totalInscritos = Inscritos::whereNull('deleted_at')->count();
-
-        // Para listas completas que podrías necesitar en tabs o tablas
+        $metodosPago = PaymentMethod::all();
         $categorias = Categoria::whereNull('deleted_at')->get();
         $certificados = Certificado::whereNull('deleted_at')->get();
         $aportes = Aportes::whereNull('deleted_at')->get();
@@ -141,7 +139,7 @@ class MenuController extends Controller
             'totalEstudiantes',
             'totalDocentes',
             'totalInscritos',
-        ));
+        ))->with('metodosPago', $metodosPago);
     }
 
 

@@ -12,18 +12,28 @@
             <h2 class="mb-0"><i class="fas fa-user-graduate me-2"></i>Asignar Cursos a Estudiantes</h2>
         </div>
         <div class="card-body">
-            <form action="{{ route('inscribir') }}" method="POST">
+            <form action="{{ route('inscribir') }}" method="POST" id="formulario-inscripcion">
                 @csrf
                 <div class="row">
                     <div class="col-md-12 mb-4">
                         <div class="form-group">
-                            <label for="curso_id" class=" form-label fw-bold">Seleccionar Curso</label>
-                            <select class="form-control" id="curso_id" name="curso_id" required>
+                            <label for="curso_id" class="form-label fw-bold">Seleccionar Curso</label>
+                            <select class="form-control @error('curso_id') is-invalid @enderror" id="curso_id" name="curso_id" required>
                                 <option value="">Seleccione un curso</option>
                                 @foreach($cursos as $curso)
-                                    <option value="{{ $curso->id }}">{{ $curso->nombreCurso }} - {{ $curso->fecha_ini }} a {{ $curso->fecha_fin }}</option>
+                                    <option value="{{ $curso->id }}" {{ old('curso_id') == $curso->id ? 'selected' : '' }}>
+                                        {{ $curso->nombreCurso }} - {{ $curso->fecha_ini }} a {{ $curso->fecha_fin }}
+                                        @if($curso->cupos > 0)
+                                            ({{ $curso->cupos - $curso->inscritos_count }} cupos disponibles)
+                                        @else
+                                            (Cupos ilimitados)
+                                        @endif
+                                    </option>
                                 @endforeach
                             </select>
+                            @error('curso_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
 
@@ -44,7 +54,7 @@
                                     <div id="lista-estudiantes" class="list-group">
                                         <!-- Los estudiantes se cargarán aquí dinámicamente -->
                                         <div class="text-center text-muted py-5">
-                                            <i class="fa fa-info-circle "></i>
+                                            <i class="fa fa-info-circle"></i>
                                             <p>Seleccione un curso para ver los estudiantes disponibles</p>
                                         </div>
                                     </div>
@@ -53,12 +63,15 @@
                                     <span id="contador-seleccionados" class="text-muted">0 estudiantes seleccionados</span>
                                 </div>
                             </div>
+                            @error('estudiante_id')
+                                <div class="text-danger mt-2">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                 </div>
 
                 <div class="mt-4 d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary" id="btn-inscribir">
                         <i class="fas fa-save me-1"></i> Inscribir Estudiantes
                     </button>
                 </div>
@@ -67,9 +80,101 @@
     </div>
 </div>
 
+<!-- SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
     $(document).ready(function() {
+        // Mostrar alertas de Laravel con SweetAlert
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: '{{ session('success') }}',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#28a745'
+            });
+        @endif
+
+        @if($errors->any())
+            let errorMessages = '';
+            @foreach($errors->all() as $error)
+                errorMessages += '{{ $error }}\n';
+            @endforeach
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Error en la inscripción',
+                text: errorMessages,
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#dc3545'
+            });
+        @endif
+
+        // Confirmación antes de enviar el formulario
+        $('#formulario-inscripcion').on('submit', function(e) {
+            e.preventDefault();
+
+            const estudiantesSeleccionados = $('.estudiante-checkbox:checked').length;
+            const cursoSeleccionado = $('#curso_id option:selected').text();
+
+            if (estudiantesSeleccionados === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Atención',
+                    text: 'Debe seleccionar al menos un estudiante para inscribir.',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#ffc107'
+                });
+                return;
+            }
+
+            if (!$('#curso_id').val()) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Atención',
+                    text: 'Debe seleccionar un curso.',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#ffc107'
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: '¿Confirmar inscripción?',
+                html: `
+                    <div class="text-left">
+                        <p><strong>Curso:</strong> ${cursoSeleccionado}</p>
+                        <p><strong>Estudiantes a inscribir:</strong> ${estudiantesSeleccionados}</p>
+                    </div>
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#007bff',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, inscribir',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Mostrar loading mientras procesa
+                    Swal.fire({
+                        title: 'Procesando inscripción...',
+                        text: 'Por favor espere',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        willOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // Enviar formulario
+                    this.submit();
+                }
+            });
+        });
+
         // Cargar estudiantes cuando se selecciona un curso
         $('#curso_id').change(function() {
             var curso_id = $(this).val();
@@ -91,10 +196,11 @@
                         }
 
                         $.each(data, function(key, value) {
+                            const isSelected = @json(old('estudiante_id', [])).includes(value.id);
                             $('#lista-estudiantes').append(
                                 '<div class="list-group-item list-group-item-action">' +
                                 '<div class="form-check">' +
-                                '<input class="form-check-input estudiante-checkbox" type="checkbox" name="estudiante_id[]" value="' + value.id + '" id="estudiante_' + value.id + '">' +
+                                '<input class="form-check-input estudiante-checkbox" type="checkbox" name="estudiante_id[]" value="' + value.id + '" id="estudiante_' + value.id + '"' + (isSelected ? ' checked' : '') + '>' +
                                 '<label class="form-check-label w-100" for="estudiante_' + value.id + '">' +
                                 '<div class="d-flex justify-content-between align-items-center">' +
                                 '<div><strong>' + value.name + ' ' + value.lastname1 + ' ' + value.lastname2 + '</strong></div>' +
@@ -108,12 +214,21 @@
 
                         actualizarContador();
                     },
-                    error: function() {
+                    error: function(xhr, status, error) {
                         $('#lista-estudiantes').html('<div class="alert alert-danger">Error al cargar los estudiantes. Intente nuevamente.</div>');
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'No se pudieron cargar los estudiantes. Intente nuevamente.',
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#dc3545'
+                        });
                     }
                 });
             } else {
                 $('#lista-estudiantes').html('<div class="text-center text-muted py-5"><i class="fas fa-info-circle mb-2 display-6"></i><p>Seleccione un curso para ver los estudiantes disponibles</p></div>');
+                actualizarContador();
             }
         });
 
@@ -130,6 +245,8 @@
                 var text = $(this).text().toLowerCase();
                 $(this).toggle(text.includes(searchTerm));
             });
+
+            actualizarBotonSeleccionar();
         });
 
         // Seleccionar todos los estudiantes
@@ -152,6 +269,7 @@
         // Actualizar contador cuando se marcan checkboxes
         $(document).on('change', '.estudiante-checkbox', function() {
             actualizarContador();
+            actualizarBotonSeleccionar();
         });
 
         // Función para actualizar el contador de estudiantes seleccionados
@@ -159,6 +277,17 @@
             var count = $('.estudiante-checkbox:checked').length;
             $('#contador-seleccionados').text(count + ' estudiante' + (count !== 1 ? 's' : '') + ' seleccionado' + (count !== 1 ? 's' : ''));
         }
+
+        // Función para actualizar el botón "Seleccionar Todos"
+        function actualizarBotonSeleccionar() {
+            var todosSeleccionados = $('.estudiante-checkbox:visible:not(:checked)').length === 0;
+            $('#seleccionar-todos').text(todosSeleccionados ? 'Deseleccionar Todos' : 'Seleccionar Todos');
+        }
+
+        // Cargar curso seleccionado si hay old input
+        @if(old('curso_id'))
+            $('#curso_id').trigger('change');
+        @endif
     });
 </script>
 @endsection

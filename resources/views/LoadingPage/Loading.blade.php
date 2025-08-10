@@ -64,7 +64,7 @@
         <div class="loading-spinner"></div>
         <p>Por favor, no cierres esta página ni actualices el navegador mientras completamos tu transacción.</p>
         <p class="info-text">Este proceso puede tardar unos segundos. Recibirás una confirmación cuando se complete.</p>
-        <a href="{{ route('inicio') }}" class="btn btn-primary">Ir al inicio</a>
+        <a href="{{ route('Inicio') }}" class="btn btn-primary">Ir al inicio</a>
     </div>
 </body>
 </html>

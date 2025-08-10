@@ -190,8 +190,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/categorias', [CategoriaController::class, 'index'])->name('categorias.index');
         Route::post('/categorias', [CategoriaController::class, 'store'])->name('categorias.store');
         Route::put('/categorias/{categoria}', [CategoriaController::class, 'update'])->name('categorias.update');
-        Route::delete('/categorias/{categoria}', [CategoriaController::class, 'destroy'])->name('categorias.destroy');
+        Route::delete('/categorias/{id}', [CategoriaController::class, 'destroy'])->name('categorias.destroy');
         Route::post('/categorias/{id}/restore', [CategoriaController::class, 'restore'])->name('categorias.restore');
+        Route::delete('/categorias/{id}/force', [CategoriaController::class, 'forceDelete'])
+            ->name('categorias.forceDelete');
 
         Route::get('certificadosCongreso/generarAdm/{id}/', [CertificadoController::class, 'generarCertificadoAdmin'])->name('certificadosCongreso.generar.admin');
 
@@ -515,7 +517,11 @@ Route::group(['middleware' => ['auth']], function () {
             ->name('cursos.calificaciones');
 
         Route::get('/recibo/{id}', [AportesController::class, 'generarRecibo'])->name('recibo.generar');
+
     });
+        Route::get('/recibo/verificar/{codigo}', [AportesController::class, 'verificarReciboPorCodigo'])
+    ->name('recibo.verificar');
+
 
 
     Route::get('certificado/qr/{codigo}', [CertificadoController::class, 'descargarQR'])->name('descargar.qr');

@@ -245,7 +245,7 @@
                     </div>
                     <div class="info-item">
                         <span class="info-label">Modalidad:</span>
-                        <span class="info-value">{{ $pago->curso->modalidad ?? 'N/A' }}</span>
+                        <span class="info-value">{{ $pago->curso->formato ?? 'N/A' }}</span>
                     </div>
                 </div>
             </div>
@@ -320,7 +320,8 @@
             <div class="qr-code">
                 <p><strong>Escanea para verificar el recibo</strong></p>
                 <div style="width: 100px; height: 100px; background: #f8f9fa; border: 1px solid #dee2e6; margin: 0 auto; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
-                    <span style="color: #6c757d; font-size: 0.8em;">QR Code</span>
+                    {{-- <span style="color: #6c757d; font-size: 0.8em;">QR Code</span> --}}
+                    <img src="data:image/svg+xml;base64,{{ $qrCode }}" alt="Código QR">
                 </div>
             </div>
         </div>

@@ -57,8 +57,6 @@ class InscritosController extends Controller
         return response()->json($estudiantesNoInscritos);
     }
 
-
-    // En CursosController.php
     public function store(Request $request)
     {
         $request->validate([
@@ -76,12 +74,12 @@ class InscritosController extends Controller
         ]);
 
         $curso_id = $request->input('curso_id');
-        $estudiante_ids_encrypted = $request->input('estudiante_id');
-
+        $estudiante_ids_encrypted = array_unique($request->input('estudiante_id')); // Eliminar duplicados
 
         $estudiante_ids = [];
         $ids_invalidos = [];
 
+        // Procesar y validar IDs encriptados
         foreach ($estudiante_ids_encrypted as $encrypted_id) {
             try {
                 $decrypted_id = decrypt($encrypted_id);
@@ -95,8 +93,8 @@ class InscritosController extends Controller
                 $ids_invalidos[] = $encrypted_id;
             }
         }
-        
 
+        // Verificar IDs inválidos
         if (!empty($ids_invalidos)) {
             Log::channel('admin')->warning('IDs de estudiantes inválidos en inscripción', [
                 'admin_id' => auth()->id(),
@@ -115,6 +113,9 @@ class InscritosController extends Controller
                 ->withInput();
         }
 
+        // Eliminar duplicados finales después del descifrado
+        $estudiante_ids = array_unique($estudiante_ids);
+
         $curso = Cursos::find($curso_id);
 
         try {
@@ -126,6 +127,7 @@ class InscritosController extends Controller
                 'estudiante_ids' => $estudiante_ids
             ]);
 
+            // Verificar estudiantes ya inscritos
             $inscritos = Inscritos::where('cursos_id', $curso_id)
                 ->whereIn('estudiante_id', $estudiante_ids)
                 ->pluck('estudiante_id')
@@ -148,53 +150,109 @@ class InscritosController extends Controller
 
             $estudiantesNoInscritos = array_diff($estudiante_ids, $inscritos);
 
+            // Verificar cupos disponibles antes de la transacción
             if ($curso->cupos > 0) {
                 $inscripcionesActuales = Inscritos::where('cursos_id', $curso_id)->count();
                 $cuposDisponibles = $curso->cupos - $inscripcionesActuales;
 
                 if ($cuposDisponibles <= 0) {
+                    Log::channel('admin')->warning('Intento de inscripción sin cupos disponibles', [
+                        'admin_id' => auth()->id(),
+                        'curso_id' => $curso_id,
+                        'cupos_solicitados' => count($estudiantesNoInscritos),
+                        'cupos_disponibles' => $cuposDisponibles
+                    ]);
+
                     return redirect()->back()
                         ->withErrors(['curso_id' => 'El curso no tiene cupos disponibles.'])
                         ->withInput();
                 }
 
                 if (count($estudiantesNoInscritos) > $cuposDisponibles) {
+                    Log::channel('admin')->warning('Intento de inscripción excede cupos disponibles', [
+                        'admin_id' => auth()->id(),
+                        'curso_id' => $curso_id,
+                        'cupos_solicitados' => count($estudiantesNoInscritos),
+                        'cupos_disponibles' => $cuposDisponibles
+                    ]);
+
                     return redirect()->back()
                         ->withErrors(['estudiante_id' => "Solo hay {$cuposDisponibles} cupos disponibles, pero intentas inscribir " . count($estudiantesNoInscritos) . " estudiantes."])
                         ->withInput();
                 }
             }
 
-            $inscritosExitosos = [];
-            foreach ($estudiantesNoInscritos as $estudiante_id) {
-                $inscrito = Inscritos::create([
-                    'estudiante_id' => $estudiante_id,
-                    'cursos_id' => $curso_id,
-                    'pago_completado' => true,
-                    'progreso' => 0,
+            // Usar transacción de base de datos para garantizar atomicidad
+            return DB::transaction(function () use ($estudiantesNoInscritos, $curso_id, $curso) {
+                // Verificar cupos nuevamente dentro de la transacción para evitar condiciones de carrera
+                if ($curso->cupos > 0) {
+                    $inscripcionesActuales = Inscritos::where('cursos_id', $curso_id)->lockForUpdate()->count();
+                    $cuposDisponibles = $curso->cupos - $inscripcionesActuales;
+
+                    if ($cuposDisponibles <= 0 || count($estudiantesNoInscritos) > $cuposDisponibles) {
+                        throw new \Exception('Cupos insuficientes al momento de la inscripción');
+                    }
+                }
+
+                $inscritosExitosos = [];
+                $erroresInscripcion = [];
+
+                // Crear inscripciones
+                foreach ($estudiantesNoInscritos as $estudiante_id) {
+                    try {
+                        $inscrito = Inscritos::create([
+                            'estudiante_id' => $estudiante_id,
+                            'cursos_id' => $curso_id,
+                            'pago_completado' => true,
+                            'progreso' => 0,
+                        ]);
+
+                        // Agregar XP
+                        $xpBase = $curso->tipo == 'congreso' ? 100 : 50;
+                        $this->xpService->addXP($inscrito, $xpBase, "Inscripción en {$curso->nombreCurso}");
+
+                        $inscritosExitosos[] = $estudiante_id;
+                    } catch (\Exception $e) {
+                        $erroresInscripcion[] = [
+                            'estudiante_id' => $estudiante_id,
+                            'error' => $e->getMessage()
+                        ];
+
+                        Log::channel('admin')->error('Error al inscribir estudiante individual', [
+                            'admin_id' => auth()->id(),
+                            'curso_id' => $curso_id,
+                            'estudiante_id' => $estudiante_id,
+                            'error' => $e->getMessage()
+                        ]);
+                    }
+                }
+
+                // Si hay errores en inscripciones individuales, lanzar excepción para revertir transacción
+                if (!empty($erroresInscripcion) && empty($inscritosExitosos)) {
+                    throw new \Exception('No se pudo inscribir a ningún estudiante');
+                }
+
+                $nombresInscritos = User::whereIn('id', $inscritosExitosos)->pluck('name')->toArray();
+
+                Log::channel('admin')->info('Inscripción masiva exitosa', [
+                    'admin_id' => auth()->id(),
+                    'curso_id' => $curso_id,
+                    'curso_nombre' => $curso->nombreCurso,
+                    'estudiantes_inscritos' => count($inscritosExitosos),
+                    'estudiante_ids' => $inscritosExitosos,
+                    'nombres_estudiantes' => $nombresInscritos,
+                    'cupos_restantes' => $curso->cupos > 0 ? ($curso->cupos - Inscritos::where('cursos_id', $curso_id)->count()) : 'Ilimitado',
+                    'errores_individuales' => $erroresInscripcion
                 ]);
 
-                $xpBase = $curso->tipo == 'congreso' ? 100 : 50;
-                $this->xpService->addXP($inscrito, $xpBase, "Inscripción en {$curso->nombreCurso}");
+                $mensaje = 'Se inscribieron correctamente ' . count($inscritosExitosos) . ' estudiantes: ' . implode(', ', $nombresInscritos);
 
-                $inscritosExitosos[] = $estudiante_id;
-            }
+                if (!empty($erroresInscripcion)) {
+                    $mensaje .= '. Algunos estudiantes no pudieron ser inscritos debido a errores individuales.';
+                }
 
-            $nombresInscritos = User::whereIn('id', $inscritosExitosos)->pluck('name')->toArray();
-            Log::channel('admin')->info('Inscripción masiva exitosa', [
-                'admin_id' => auth()->id(),
-                'curso_id' => $curso_id,
-                'curso_nombre' => $curso->nombreCurso,
-                'estudiantes_inscritos' => count($inscritosExitosos),
-                'estudiante_ids' => $inscritosExitosos,
-                'nombres_estudiantes' => $nombresInscritos,
-                'cupos_restantes' => $curso->cupos > 0 ? ($curso->cupos - Inscritos::where('cursos_id', $curso_id)->count()) : 'Ilimitado'
-            ]);
-
-            return redirect()->back()->with(
-                'success',
-                'Se inscribieron correctamente ' . count($inscritosExitosos) . ' estudiantes: ' . implode(', ', $nombresInscritos)
-            );
+                return redirect()->back()->with('success', $mensaje);
+            });
         } catch (\Exception $e) {
             Log::channel('admin')->error('Error en inscripción masiva', [
                 'admin_id' => auth()->id(),
@@ -204,7 +262,7 @@ class InscritosController extends Controller
             ]);
 
             return redirect()->back()
-                ->withErrors(['error' => 'Ocurrió un error durante la inscripción.'])
+                ->withErrors(['error' => 'Ocurrió un error durante la inscripción: ' . $e->getMessage()])
                 ->withInput();
         }
     }

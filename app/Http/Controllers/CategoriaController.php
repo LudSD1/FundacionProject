@@ -12,16 +12,29 @@ class CategoriaController extends Controller
     public function index(Request $request)
     {
         $busqueda = $request->input('busqueda');
+        $tab = $request->input('tab', 'activas'); // Por defecto mostrar activas
 
-        $categorias = Categoria::with('parent')
-            ->withTrashed()
-            ->when($busqueda, function ($query, $busqueda) {
-                $query->where('name', 'like', '%' . $busqueda . '%');
-            })
-            ->orderBy('id', 'desc')
-            ->get();
+        $query = Categoria::with('parent');
 
-        return view('categorias.index', compact('categorias'));
+        // Aplicar filtro según el tab seleccionado
+        if ($tab === 'eliminadas') {
+            $query->onlyTrashed();
+        } else {
+            $query->whereNull('deleted_at');
+        }
+
+        // Aplicar búsqueda si existe
+        if ($busqueda) {
+            $query->where('name', 'like', '%' . $busqueda . '%');
+        }
+
+        $categorias = $query->orderBy('id', 'desc')->get();
+
+        // Contar para los tabs
+        $countActivas = Categoria::whereNull('deleted_at')->count();
+        $countEliminadas = Categoria::onlyTrashed()->count();
+
+        return view('categorias.index', compact('categorias', 'tab', 'countActivas', 'countEliminadas'));
     }
 
 
@@ -93,13 +106,48 @@ class CategoriaController extends Controller
 
         return back()->with('success', 'Categoría actualizada exitosamente.');
     }
-    public function destroy($id)
-    {
+
+public function destroy(Request $request, $id)
+{
+    try {
         $categoria = Categoria::findOrFail($id);
+
+        if ($categoria->hasActiveChildren()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se puede eliminar esta categoría porque tiene subcategorías activas.',
+                'children_count' => $categoria->children->count()
+            ], 422);
+        }
+
+        $categoria->cursos()->detach();
         $categoria->delete();
 
-        return back()->with('success', 'Categoría eliminada exitosamente.');
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Categoría eliminada exitosamente.',
+                'categoria_id' => $categoria->id,
+                'categoria_name' => $categoria->name
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Categoría eliminada exitosamente.');
+
+    } catch (\Exception $e) {
+        dd($e->getMessage()); // Esto mostrará el error real
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar la categoría: ' . $e->getMessage()
+            ], 500);
+        }
+
+        return redirect()->back()->with('error', 'Error al eliminar la categoría.');
     }
+}
+
     public function show($id)
     {
         $categoria = Categoria::findOrFail($id);
