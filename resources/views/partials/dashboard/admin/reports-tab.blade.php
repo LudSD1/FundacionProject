@@ -100,12 +100,12 @@
                     <td>
                         <div class="btn-group">
                             <!-- Ver detalles -->
-                            <a href="{{ route('rfc', $curso->id) }}" class="btn btn-outline-primary btn-sm"
+                            <a href="{{ route('rfc', encrypt($curso->id)) }}" class="btn btn-outline-primary btn-sm"
                                 data-bs-toggle="tooltip" title="Ver detalles">
                                 <i class="bi bi-eye"></i>
                             </a>
                             <!-- Editar -->
-                            <a href="{{ route('editarCurso', $curso->id) }}" class="btn btn-outline-secondary btn-sm"
+                            <a href="{{ route('editarCurso', encrypt($curso->id)) }}" class="btn btn-outline-secondary btn-sm"
                                 data-bs-toggle="tooltip" title="Editar curso">
                                 <i class="bi bi-pencil"></i>
                             </a>

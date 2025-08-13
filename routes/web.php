@@ -197,14 +197,9 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('certificadosCongreso/generarAdm/{id}/', [CertificadoController::class, 'generarCertificadoAdmin'])->name('certificadosCongreso.generar.admin');
 
-        Route::post('/cursos/{id}/activar-certificados', [CursosController::class, 'activarCertificados'])
-            ->name('cursos.activarCertificados');
 
 
         // Route::get('/certificates', [cer::class, 'index'])->name('certificates.index');
-        Route::post('/certificates/{id}', [CertificadoController::class, 'store'])->name('certificates.store');
-        Route::post('/certificates/update/{id}', [CertificadoController::class, 'update'])->name('certificates.update');
-        Route::delete('/certificates-delete/{id}', [CertificadoController::class, 'destroy'])->name('certificates.destroy');
 
 
         //Pagos
@@ -281,9 +276,16 @@ Route::group(['middleware' => ['auth']], function () {
         Route::delete('/cursos/{curso}/expositores/{expositor}', [ExpositoresController::class, 'quitarExpositor'])->name('cursos.quitarExpositor');
         Route::put('/cursos/{id}', [CursosController::class, 'updateCategories'])->name('cursos.updateCategories');
 
+  Route::post('/cursos/{id}/activar-certificados', [CursosController::class, 'activarCertificados'])
+            ->name('cursos.activarCertificados');
 
         Route::get('/certificados/vista-previa/{curso_id}', [CertificadoController::class, 'vistaPreviaCertificado'])
             ->name('certificados.vistaPrevia');
+
+        Route::post('/certificates/{id}', [CertificadoController::class, 'store'])->name('certificates.store');
+        Route::post('/certificates/update/{id}', [CertificadoController::class, 'update'])->name('certificates.update');
+        Route::delete('/certificates-delete/{id}', [CertificadoController::class, 'destroy'])->name('certificates.destroy');
+
 
         //Curso
         Route::get('/sumario',  [MenuController::class, 'analytics'])->name('sumario');
@@ -394,10 +396,23 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/AsignarCursos', [InscritosController::class, 'index'])->name('AsignarCurso');
         Route::post('/AsignarCursos', [InscritosController::class, 'store'])->name('inscribir');
         //QuitarInscripcion
-        Route::get('/QuitarInscripcion/{id}', [InscritosController::class, 'delete'])->name('quitar');
+
+        Route::post('/quitarInscripcion/{id}', [InscritosController::class, 'quitarInscripcion'])->name('quitarInscripcion');
+
         Route::get('/RestaurarInscripcion/{id}', [InscritosController::class, 'restaurarInscrito'])->name('restaurarIncripcion');
         //ListaDeInscritos
-        Route::get('listaRestirados/cursoid={id}', [CursosController::class, 'listaRetirados'])->name('listaretirados');
+        Route::get('listaRetirados/cursoid={id}', [CursosController::class, 'listaRetirados'])->name('listaretirados');
+                // Retirar estudiantes masivamente
+        Route::post('/cursos/retirar-masivo', [InscritosController::class, 'retirarEstudiantesMasivo'])
+            ->name('cursos.retirarMasivo');
+
+        // Restaurar estudiantes masivamente
+        Route::post('/cursos/restaurar-masivo', [InscritosController::class, 'restaurarEstudiantesMasivo'])
+            ->name('cursos.restaurarMasivo');
+
+        // Restaurar todos los estudiantes de un curso
+        Route::post('/cursos/{cursoId}/restaurar-todos', [InscritosController::class, 'restaurarTodosEstudiantes'])
+            ->name('cursos.restaurarTodos');
         //ASISTENCIA
         Route::get('listaAsistencia/cursoid={id}', [AsistenciaController::class, 'show'])->name('asistencias');
         Route::get('DarAsistencia/cursoid={id}', [AsistenciaController::class, 'index2'])->name('darasistencias');

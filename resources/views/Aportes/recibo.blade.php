@@ -346,9 +346,9 @@
     <div class="page-container">
         <!-- Botones de acción -->
         <div class="action-buttons">
-            <button class="btn btn-secondary" onclick="goBack()">
+            <a class="btn btn-secondary" href="{{ route('Ini cio') }}">
                 ← Volver
-            </button>
+            </a>
             <button class="btn btn-primary" id="generatePdfBtn">
                 📄 Generar PDF
             </button>

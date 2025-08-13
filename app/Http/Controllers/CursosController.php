@@ -138,6 +138,7 @@ class CursosController extends Controller
             'qrCode' => $qrCode,
             'template' => $certificado_template,
             'expositores' => $expositores,
+            'esDocente' =>  $esDocente,
         ]);
     }
 

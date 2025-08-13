@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use App\Services\XPService;
 use App\Services\AchievementService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class InscritosController extends Controller
 {
@@ -364,30 +365,59 @@ class InscritosController extends Controller
     }
 
 
-    public function delete($id)
+    public function quitarInscripcion($id)
     {
-        $inscritos = Inscritos::find($id);
+        $inscritos = Inscritos::findOrFail($id);
 
-
+        // Disparar evento
         event(new InscritoEvent($inscritos->estudiantes, $inscritos->cursos, 'eliminacion'));
 
+        // Registrar en canal admin
+        if (auth()->user()->hasRole('Administrador') || auth()->user()->hasRole('Docente')) {
+            Log::channel('admin')->warning('Inscripción retirada por usuario autorizado', [
+                'usuario_id' => auth()->id(),
+                'usuario_nombre' => auth()->user()->name,
+                'usuario_rol' => auth()->user()->getRoleNames()->implode(', '),
+                'curso_id' => $inscritos->cursos->id ?? null,
+                'curso_nombre' => $inscritos->cursos->nombreCurso ?? null,
+                'estudiante_id' => $inscritos->estudiantes->id ?? null,
+                'estudiante_nombre' => $inscritos->estudiantes->name ?? 'Desconocido',
+                'fecha' => now()->toDateTimeString()
+            ]);
+        }
+
+        // Eliminar inscripción
         $inscritos->delete();
 
-        return back()->with('success', 'Inscripcion retirada');
+        return back()->with('success', 'Inscripción retirada');
     }
 
 
     public function restaurarInscrito($id)
     {
-        $inscritos = Inscritos::onlyTrashed()->find($id);
+        $inscritos = Inscritos::onlyTrashed()->findOrFail($id);
 
-
+        // Disparar evento
         event(new InscritoEvent($inscritos->estudiantes, $inscritos->cursos, 'restauracion'));
 
+        // Registrar en canal admin
+        if (auth()->user()->hasRole('Administrador') || auth()->user()->hasRole('Docente')) {
+            Log::channel('admin')->warning('Inscripción restaurada por usuario autorizado', [
+                'usuario_id' => auth()->id(),
+                'usuario_nombre' => auth()->user()->name,
+                'usuario_rol' => auth()->user()->getRoleNames()->implode(', '),
+                'curso_id' => $inscritos->cursos->id ?? null,
+                'curso_nombre' => $inscritos->cursos->nombreCurso ?? null,
+                'estudiante_id' => $inscritos->estudiantes->id ?? null,
+                'estudiante_nombre' => $inscritos->estudiantes->name ?? 'Desconocido',
+                'fecha' => now()->toDateTimeString()
+            ]);
+        }
 
+        // Restaurar inscripción
         $inscritos->restore();
 
-        return back()->with('success', 'Inscripcion restaurada!');
+        return back()->with('success', 'Inscripción restaurada!');
     }
 
     public function completado($id)
@@ -475,6 +505,337 @@ class InscritosController extends Controller
 
         return redirect()->route('Curso', $id)->with('success', '¡Te has inscrito correctamente!');
     }
+
+
+     public function retirarEstudiantesMasivo(Request $request)
+    {
+        // Validar la request
+        $validator = Validator::make($request->all(), [
+            'inscripciones' => 'required|array|min:1',
+            'inscripciones.*' => 'required|integer|exists:inscritos,id',
+            'curso_id' => 'required|integer|exists:cursos,id'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Datos inválidos',
+                'errors' => $validator->errors()
+            ], 400);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $inscripcionIds = $request->inscripciones;
+            $cursoId = $request->curso_id;
+
+            // Verificar que el usuario tenga permisos
+            $curso = Cursos::findOrFail($cursoId);
+            if (!auth()->user()->hasRole('Administrador') &&
+                auth()->user()->id != $curso->docente_id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No tienes permisos para realizar esta acción'
+                ], 403);
+            }
+
+            // Obtener las inscripciones a retirar
+            $inscripciones = Inscritos::whereIn('id', $inscripcionIds)
+                ->where('cursos_id', $cursoId)
+                ->with('estudiantes')
+                ->get();
+
+            if ($inscripciones->count() != count($inscripcionIds)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Algunas inscripciones no fueron encontradas o no pertenecen al curso'
+                ], 400);
+            }
+
+            $estudiantesRetirados = [];
+            $errores = [];
+
+            foreach ($inscripciones as $inscripcion) {
+                try {
+                    // Marcar como eliminado (soft delete)
+                    $inscripcion->delete();
+
+                    // Registrar el estudiante retirado
+                    $estudiantesRetirados[] = [
+                        'id' => $inscripcion->id,
+                        'nombre' => $inscripcion->estudiantes ?
+                            $inscripcion->estudiantes->name . ' ' .
+                            $inscripcion->estudiantes->lastname1 . ' ' .
+                            $inscripcion->estudiantes->lastname2 :
+                            'Estudiante ID: ' . $inscripcion->id
+                    ];
+
+                    // Log de la acción
+                    Log::info('Inscripción retirada masivamente', [
+                        'inscripcion_id' => $inscripcion->id,
+                        'curso_id' => $cursoId,
+                        'usuario' => auth()->user()->id,
+                        'estudiante' => $inscripcion->estudiantes->name ?? 'N/A'
+                    ]);
+
+                } catch (\Exception $e) {
+                    $errores[] = [
+                        'inscripcion_id' => $inscripcion->id,
+                        'error' => $e->getMessage()
+                    ];
+                }
+            }
+
+            DB::commit();
+
+            $message = 'Se retiraron ' . count($estudiantesRetirados) . ' estudiante(s) exitosamente.';
+            if (!empty($errores)) {
+                $message .= ' Se produjeron ' . count($errores) . ' errore(s).';
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'retirados' => $estudiantesRetirados,
+                'errores' => $errores,
+                'total_procesados' => count($inscripcionIds),
+                'exitosos' => count($estudiantesRetirados),
+                'fallidos' => count($errores)
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('Error en retiro masivo de estudiantes', [
+                'error' => $e->getMessage(),
+                'usuario' => auth()->user()->id,
+                'curso_id' => $request->curso_id
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error interno del servidor: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Restaurar múltiples estudiantes a un curso
+     */
+    public function restaurarEstudiantesMasivo(Request $request)
+    {
+        // Validar la request
+        $validator = Validator::make($request->all(), [
+            'inscripciones' => 'required|array|min:1',
+            'inscripciones.*' => 'required|integer',
+            'curso_id' => 'required|integer|exists:cursos,id'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Datos inválidos',
+                'errors' => $validator->errors()
+            ], 400);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $inscripcionIds = $request->inscripciones;
+            $cursoId = $request->curso_id;
+
+            // Verificar que el usuario tenga permisos
+            $curso = Cursos::findOrFail($cursoId);
+            if (!auth()->user()->hasRole('Administrador') &&
+                auth()->user()->id != $curso->docente_id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No tienes permisos para realizar esta acción'
+                ], 403);
+            }
+
+            // Obtener las inscripciones eliminadas (soft deleted)
+            $inscripciones = Inscritos::withTrashed()
+                ->whereIn('id', $inscripcionIds)
+                ->where('cursos_id', $cursoId)
+                ->whereNotNull('deleted_at') // Solo las eliminadas
+                ->with('estudiantes')
+                ->get();
+
+            if ($inscripciones->count() != count($inscripcionIds)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Algunas inscripciones no fueron encontradas, no pertenecen al curso o no están retiradas'
+                ], 400);
+            }
+
+            $estudiantesRestaurados = [];
+            $errores = [];
+
+            foreach ($inscripciones as $inscripcion) {
+                try {
+                    // Verificar si el estudiante ya está inscrito activamente
+                    $inscripcionActiva = Inscritos::where('estudiantes_id', $inscripcion->estudiantes_id)
+                        ->where('cursos_id', $cursoId)
+                        ->whereNull('deleted_at')
+                        ->first();
+
+                    if ($inscripcionActiva) {
+                        $errores[] = [
+                            'inscripcion_id' => $inscripcion->id,
+                            'error' => 'El estudiante ya está inscrito activamente'
+                        ];
+                        continue;
+                    }
+
+                    // Restaurar la inscripción
+                    $inscripcion->restore();
+
+                    // Registrar el estudiante restaurado
+                    $estudiantesRestaurados[] = [
+                        'id' => $inscripcion->id,
+                        'nombre' => $inscripcion->estudiantes ?
+                            $inscripcion->estudiantes->name . ' ' .
+                            $inscripcion->estudiantes->lastname1 . ' ' .
+                            $inscripcion->estudiantes->lastname2 :
+                            'Estudiante ID: ' . $inscripcion->id
+                    ];
+
+                    // Log de la acción
+                    Log::info('Inscripción restaurada masivamente', [
+                        'inscripcion_id' => $inscripcion->id,
+                        'curso_id' => $cursoId,
+                        'usuario' => auth()->user()->id,
+                        'estudiante' => $inscripcion->estudiantes->name ?? 'N/A'
+                    ]);
+
+                } catch (\Exception $e) {
+                    $errores[] = [
+                        'inscripcion_id' => $inscripcion->id,
+                        'error' => $e->getMessage()
+                    ];
+                }
+            }
+
+            DB::commit();
+
+            $message = 'Se restauraron ' . count($estudiantesRestaurados) . ' estudiante(s) exitosamente.';
+            if (!empty($errores)) {
+                $message .= ' Se produjeron ' . count($errores) . ' errore(s).';
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'restaurados' => $estudiantesRestaurados,
+                'errores' => $errores,
+                'total_procesados' => count($inscripcionIds),
+                'exitosos' => count($estudiantesRestaurados),
+                'fallidos' => count($errores)
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('Error en restauración masiva de estudiantes', [
+                'error' => $e->getMessage(),
+                'usuario' => auth()->user()->id,
+                'curso_id' => $request->curso_id
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error interno del servidor: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Restaurar todos los estudiantes retirados de un curso
+     */
+    public function restaurarTodosEstudiantes(Request $request, $cursoId)
+    {
+        try {
+            // Desencriptar el ID si viene encriptado
+            if (!is_numeric($cursoId)) {
+                $cursoId = decrypt($cursoId);
+            }
+
+            $curso = Cursos::findOrFail($cursoId);
+
+            // Verificar permisos
+            if (!auth()->user()->hasRole('Administrador') &&
+                auth()->user()->id != $curso->docente_id) {
+                return redirect()->back()->with('error', 'No tienes permisos para realizar esta acción');
+            }
+
+            DB::beginTransaction();
+
+            // Obtener todas las inscripciones eliminadas del curso
+            $inscripcionesEliminadas = Inscritos::withTrashed()
+                ->where('cursos_id', $cursoId)
+                ->whereNotNull('deleted_at')
+                ->with('estudiantes')
+                ->get();
+
+            if ($inscripcionesEliminadas->isEmpty()) {
+                return redirect()->back()->with('info', 'No hay estudiantes retirados para restaurar');
+            }
+
+            $restaurados = 0;
+            $errores = 0;
+
+            foreach ($inscripcionesEliminadas as $inscripcion) {
+                try {
+                    // Verificar duplicados
+                    $duplicado = Inscritos::where('estudiante_id', $inscripcion->estudiantes_id)
+                        ->where('cursos_id', $cursoId)
+                        ->whereNull('deleted_at')
+                        ->first();
+
+
+                    if (!$duplicado) {
+                        $inscripcion->restore();
+                        $restaurados++;
+
+                        Log::info('Inscripción restaurada (todos)', [
+                            'inscripcion_id' => $inscripcion->id,
+                            'curso_id' => $cursoId,
+                            'usuario' => auth()->user()->id
+                        ]);
+                    } else {
+                        $errores++;
+                    }
+                } catch (\Exception $e) {
+                    $errores++;
+                }
+            }
+
+            DB::commit();
+
+            $message = "Se restauraron $restaurados estudiante(s) exitosamente.";
+            if ($errores > 0) {
+                $message .= " $errores inscripción(es) no se pudieron restaurar (posiblemente duplicadas).";
+            }
+
+            return redirect()->back()->with('success', $message);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('Error restaurando todos los estudiantes', [
+                'error' => $e->getMessage(),
+                'curso_id' => $cursoId,
+                'usuario' => auth()->user()->id
+            ]);
+
+            return redirect()->back()->with('error', 'Error al restaurar estudiantes: ' . $e->getMessage());
+        }
+    }
+
+
+
+
+
 
 
     public function actualizarPago(Request $request, $inscrito_id)

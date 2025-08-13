@@ -168,30 +168,122 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Función para generar el PDF
-            function generatePdf() {
+            // Función para generar el PDF con mejoras
+            function generatePdf(format = 'letter') {
                 var element = document.getElementById('container');
 
-                // Opciones para html2pdf
+                // Mostrar indicador de carga
+                const loadingIndicator = document.createElement('div');
+                loadingIndicator.innerHTML = `
+                    <div class="position-fixed top-50 start-50 translate-middle bg-white p-4 rounded shadow" style="z-index: 9999;">
+                        <div class="d-flex align-items-center">
+                            <div class="spinner-border text-primary me-3" role="status"></div>
+                            <span>Generando PDF...</span>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(loadingIndicator);
+
+                // Configuración mejorada
                 const opt = {
-                    margin: 10,
-                    filename: 'listadeEstudiantes.pdf',
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2 },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                    margin: [10, 10, 10, 10], // top, left, bottom, right
+                    filename: `lista_estudiantes_${new Date().toISOString().split('T')[0]}.pdf`,
+                    image: {
+                        type: 'jpeg',
+                        quality: 1.0 // Máxima calidad
+                    },
+                    html2canvas: {
+                        scale: 3, // Mayor escala para mejor calidad
+                        useCORS: true,
+                        letterRendering: true,
+                        logging: false
+                    },
+                    jsPDF: {
+                        unit: 'mm',
+                        format: format,
+                        orientation: 'portrait',
+                        compress: true
+                    },
+                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
                 };
 
-                // Generar PDF
-                html2pdf().set(opt).from(element).save();
+                // Generar PDF con manejo de errores
+                html2pdf()
+                    .set(opt)
+                    .from(element)
+                    .save()
+                    .then(() => {
+                        // Remover indicador de carga
+                        document.body.removeChild(loadingIndicator);
+                        console.log('PDF generado exitosamente');
+                    })
+                    .catch((error) => {
+                        document.body.removeChild(loadingIndicator);
+                        alert('Error al generar el PDF: ' + error.message);
+                        console.error('Error:', error);
+                    });
             }
 
-            // Obtén el enlace por su ID
-            var generatePdfLink = document.getElementById('generatePdfLink');
+            // Función para previsualizar PDF
+            function previewPdf() {
+                var element = document.getElementById('container');
 
-            // Agrega un evento de clic al enlace que llame a la función generatePdf
-            generatePdfLink.addEventListener('click', function (event) {
+                const opt = {
+                    margin: [10, 10, 10, 10],
+                    filename: 'preview.pdf',
+                    image: { type: 'jpeg', quality: 0.8 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' }
+                };
+
+                html2pdf()
+                    .set(opt)
+                    .from(element)
+                    .outputPdf('dataurlnewwindow'); // Abre en nueva ventana
+            }
+
+            // Event listeners
+            document.getElementById('generatePdfLink').addEventListener('click', function (event) {
                 event.preventDefault();
-                generatePdf();
+                generatePdf('letter'); // Tamaño carta por defecto
+            });
+
+            // Agregar botón de previsualización si no existe
+            const previewBtn = document.createElement('a');
+            previewBtn.href = '#';
+            previewBtn.className = 'btn custom-btn';
+            previewBtn.id = 'previewPdfLink';
+            previewBtn.innerHTML = '👁️ Previsualizar';
+            previewBtn.addEventListener('click', function(event) {
+                event.preventDefault();
+                previewPdf();
+            });
+
+            // Insertar botón de previsualización
+            const buttonContainer = document.querySelector('.d-flex.justify-content-center.gap-3');
+            buttonContainer.appendChild(previewBtn);
+
+            // Agregar selector de formato
+            const formatSelector = document.createElement('select');
+            formatSelector.className = 'form-select d-inline-block w-auto ms-2';
+            formatSelector.innerHTML = `
+                <option value="letter">Carta (8.5x11")</option>
+                <option value="a4">A4 (210x297mm)</option>
+                <option value="legal">Legal (8.5x14")</option>
+            `;
+
+            const formatLabel = document.createElement('span');
+            formatLabel.className = 'me-2 text-muted small';
+            formatLabel.textContent = 'Formato:';
+
+            buttonContainer.appendChild(formatLabel);
+            buttonContainer.appendChild(formatSelector);
+
+            // Actualizar función de generación para usar el formato seleccionado
+            document.getElementById('generatePdfLink').addEventListener('click', function (event) {
+                event.preventDefault();
+                const selectedFormat = formatSelector.value;
+                generatePdf(selectedFormat);
             });
         });
     </script>

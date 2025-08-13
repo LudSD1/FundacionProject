@@ -36,16 +36,38 @@ class MenuController extends Controller
             ->findOrFail($id);
 
         $metodosPago = PaymentMethod::all();
-        $usuarioInscrito = null;
+        // $usuarioInscrito = null;
+        // $usuarioRetirado = null;
         $yaHaPagado = false;
         $pagoAnterior = null;
+        $estadoInscripcion = 'no_inscrito'; // no_inscrito, activo, retirado
 
         if (Auth::check()) {
             // Verificar inscripción activa
-            $usuarioInscrito = Inscritos::where('estudiante_id', Auth::id())
+            $usuarioInscrito = Inscritos::where('estudiante_id', auth()->user()->id)
                 ->where('cursos_id', $id)
                 ->whereNull('deleted_at')
                 ->first();
+
+            // Verificar si fue retirado anteriormente (eliminado)
+            $usuarioRetirado = Inscritos::withTrashed() // Asegura que incluya registros eliminados
+                ->where('estudiante_id', auth()->user()->id)
+                ->where('cursos_id', $id)
+                ->whereNotNull('deleted_at')
+                ->orderBy('deleted_at', 'desc')
+                ->first();
+
+
+
+
+            // Determinar estado de inscripción
+            if ($usuarioInscrito) {
+                $estadoInscripcion = 'activo';
+            } elseif ($usuarioRetirado) {
+                $estadoInscripcion = 'retirado';
+            }
+
+
 
             // Verificar si ya pagó este curso anteriormente (incluso si fue desinscrito)
             if ($curso->precio > 0) {
@@ -70,6 +92,8 @@ class MenuController extends Controller
         return view('cursosDetalle', [
             'cursos' => $curso,
             'usuarioInscrito' => $usuarioInscrito,
+            'usuarioRetirado' => $usuarioRetirado,
+            'estadoInscripcion' => $estadoInscripcion,
             'usuarioCalifico' => $usuarioCalifico,
             'calificacionUsuario' => $calificacionUsuario,
             'yaHaPagado' => $yaHaPagado,
@@ -368,7 +392,7 @@ class MenuController extends Controller
         return view('Administrador.CrearCursos')->with('docente', $docente)->with('horario', $horario);
     }
 
- public function calendario(Request $request)
+    public function calendario(Request $request)
     {
         $user = Auth::user();
         $fechaInicio = $request->get('fecha_inicio', now()->startOfMonth());
@@ -426,16 +450,16 @@ class MenuController extends Controller
         return Actividad::with([
             'subtema.tema.curso',
             'tipoActividad',
-            'entregas' => function($query) {
+            'entregas' => function ($query) {
                 $query->where('user_id', Auth::id());
             }
         ])
-        ->whereHas('subtema.tema', function ($query) use ($cursosIds) {
-            $query->whereIn('curso_id', $cursosIds);
-        })
-        ->whereBetween('fecha_limite', [$fechaInicio, $fechaFin])
-        ->orderBy('fecha_limite', 'asc')
-        ->get();
+            ->whereHas('subtema.tema', function ($query) use ($cursosIds) {
+                $query->whereIn('curso_id', $cursosIds);
+            })
+            ->whereBetween('fecha_limite', [$fechaInicio, $fechaFin])
+            ->orderBy('fecha_limite', 'asc')
+            ->get();
     }
 
     private function formatearEventosParaCalendario($actividades)
@@ -482,7 +506,7 @@ class MenuController extends Controller
         $total = $actividades->count();
         $entregadas = $actividades->filter(fn($a) => $a->entregas->isNotEmpty())->count();
         $pendientes = $total - $entregadas;
-        $proximasVencer = $actividades->filter(function($a) {
+        $proximasVencer = $actividades->filter(function ($a) {
             return $a->fecha_limite->isBetween(now(), now()->addDays(3)) && $a->entregas->isEmpty();
         })->count();
 

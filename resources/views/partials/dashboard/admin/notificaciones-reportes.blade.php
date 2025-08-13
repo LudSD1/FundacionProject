@@ -1,4 +1,4 @@
-@push('styles')
+    @push('styles')
     <link rel="stylesheet" href="{{ asset('css/dashboard-tabs.css') }}">
     <style>
         /* Estilos específicos para el contenedor principal */

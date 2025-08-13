@@ -86,35 +86,28 @@
                         <a class="btn btn-primary" href="{{ route('listacurso', [encrypt($cursos->id)]) }}">
                             <i class="fas fa-users me-2"></i> Participantes
                         </a>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalHorario">
-                            <i class="fa fa-calendar me-2"></i> Horarios
-                        </button>
 
-                        <a href="{{ route('historialAsistencias', encrypt($cursos->id)) }}" class="btn btn-primary">
-                            <i class="fas fa-clipboard-list me-2"></i> Asistencias
-                        </a>
+                        @if ($cursos->tipo == 'Curso')
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalHorario">
+                                <i class="fa fa-calendar me-2"></i> Horarios
+                            </button>
+
+                            <a href="{{ route('historialAsistencias', encrypt($cursos->id)) }}" class="btn btn-primary">
+                                <i class="fas fa-clipboard-list me-2"></i> Asistencias
+                            </a>
+                        @endif
+
 
                         <!-- Admin/Teacher Actions -->
-                        @if ($cursos->docente_id == auth()->user()->id || auth()->user()->hasRole('Administrador'))
+                        @if ($esDocente || auth()->user()->hasRole('Administrador'))
+
                             <div class="dropdown">
                                 <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton"
                                     data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fas fa-cog me-2"></i> Gestionar Curso
                                 </button>
                                 <ul class="dropdown-menu shadow" aria-labelledby="dropdownMenuButton">
-                                    <li>
-                                        <a class="dropdown-item py-2" href="#" data-bs-toggle="modal"
-                                            data-bs-target="#modalCrearHorario">
-                                            <i class="fas fa-calendar-plus text-primary me-2"></i> Crear Horarios
-                                        </a>
-                                    </li>
 
-                                    <li>
-                                        <a class="dropdown-item py-2" href="#" data-bs-toggle="modal"
-                                            data-bs-target="#qrModal">
-                                            <i class="fas fa-qrcode text-dark me-2"></i> Generar Código QR
-                                        </a>
-                                    </li>
 
                                     <li>
                                         <a class="dropdown-item py-2" href="{{ route('curso-imagenes.index', $cursos) }}">
@@ -128,7 +121,21 @@
                                         </li>
                                         @if ($cursos->tipo == 'curso')
                                             <li>
-                                                <a class="dropdown-item py-2" href="{{ route('repF', [encrypt($cursos->id)]) }}"
+                                                <a class="dropdown-item py-2" href="#" data-bs-toggle="modal"
+                                                    data-bs-target="#modalCrearHorario">
+                                                    <i class="fas fa-calendar-plus text-primary me-2"></i> Crear Horarios
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a class="dropdown-item py-2" href="#" data-bs-toggle="modal"
+                                                    data-bs-target="#qrModal">
+                                                    <i class="fas fa-qrcode text-dark me-2"></i> Generar Código QR
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item py-2"
+                                                    href="{{ route('repF', [encrypt($cursos->id)]) }}"
                                                     onclick="mostrarAdvertencia2(event)">
                                                     <i class="fas fa-star text-warning me-2"></i> Calificaciones
                                                 </a>
@@ -141,7 +148,8 @@
                                             </li>
                                         @endif
                                         <li>
-                                            <a class="dropdown-item py-2" href="{{ route('editarCurso', [encrypt($cursos->id)]) }}">
+                                            <a class="dropdown-item py-2"
+                                                href="{{ route('editarCurso', [encrypt($cursos->id)]) }}">
                                                 <i class="fas fa-edit text-info me-2"></i> Editar Curso
                                             </a>
                                         </li>
@@ -157,7 +165,8 @@
                                     @endif
                                     @role('Administrador')
                                         <li>
-                                            <a class="dropdown-item py-2" href="{{ route('editarCurso', [encrypt($cursos->id)]) }}">
+                                            <a class="dropdown-item py-2"
+                                                href="{{ route('editarCurso', [encrypt($cursos->id)]) }}">
                                                 <i class="fas fa-edit text-info me-2"></i> Editar Curso
                                             </a>
                                         </li>
@@ -192,7 +201,7 @@
                                             </li>
                                         @endif
                                     @endif
-                                    @if (auth()->user()->hasRole('Administrador'))
+                                    @if (auth()->user()->hasRole('Administrador') || $esDocente)
                                         @if (!isset($template))
                                             <li>
                                                 <a class="dropdown-item py-2" href="#" data-bs-toggle="modal"
@@ -870,7 +879,7 @@
 
 @section('content')
     @if (
-        (auth()->user()->hasRole('Docente') && $cursos->docente_id == auth()->user()->id) ||
+        (auth()->user()->hasRole('Docente') && $esDocente) ||
             (auth()->user()->hasRole('Estudiante') && $inscritos))
 
         @section('nav')
@@ -963,8 +972,10 @@
             <!-- Contenido principal -->
             <div class="card shadow border-0 rounded-3 overflow-hidden">
                 <!-- Pestañas de navegación -->
+                
                 <div class="card-header bg-white p-0 border-bottom">
                     <ul class="nav nav-tabs nav-fill" id="course-tabs" role="tablist">
+
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active px-4 py-3" id="temario-tab" data-bs-toggle="tab"
                                 data-bs-target="#tab-actividades" type="button" role="tab"
@@ -1457,7 +1468,6 @@
             });
         }
     });
-
 </script>
 
 @include('layout')

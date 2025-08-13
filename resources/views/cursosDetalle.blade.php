@@ -30,360 +30,418 @@
 
 
 
+                        @if ($estadoInscripcion == 'retirado')
 
-
-
-
-                        <div class="card shadow-lg rounded-3 border-0 overflow-hidden">
-                            @if ($usuarioInscrito)
-                                <div class="card-header bg-light py-3 px-4 border-bottom">
-                                    <h4 class="mb-0 fw-bold">
-                                        <i class="bi bi-mortarboard-fill me-2 text-success"></i>
-                                        @if ($cursos->tipo == 'curso')
-                                            Acceso al Curso
-                                        @else
-                                            Obtener Cerificado
-                                        @endif
-
-                                    </h4>
-                                </div>
-                                <div class="card-body p-4">
-
-                                    @if ($cursos->tipo == 'curso')
-                                        <a class="btn btn-sm btn-success" href="{{ route('Curso', encrypt($cursos->id)) }}">
-                                            <i class="bi bi-door-open me-2"></i> Ir al Curso
-                                        </a>
-                                    @else
-                                        @if (is_null($usuarioInscrito->certificado))
-                                            <p>Ponte en contacto con el colaborador del evento.</p>
-                                        @else
-                                            <ul>
-                                                <li class="text-success">
-                                                    <i class="bi bi-award-fill me-2"></i>
-                                                    <a href="{{ route('verificar.certificado', $usuarioInscrito->certificado->codigo_certificado) }}"
-                                                        target="_blank">Descargar Certificado</a>
-                                                </li>
-                                            </ul>
-                                        @endif
-                                    @endif
-                                </div>
-                            @else
-                                <div class="card-header bg-light py-3 px-4 border-bottom">
-                                    <h4 class="mb-0 fw-bold">
-                                        @if ($cursos->tipo == 'curso')
-                                            <i class="bi bi-mortarboard-fill me-2 text-success"></i>Acceso al Curso
-                                        @else
-                                            <i class="bi bi-calendar-event me-2 text-primary"></i>Registro al Congreso
-                                        @endif
-                                    </h4>
-                                </div>
-                                <div class="card-body p-4">
-                                    @if ($cursos->tipo == 'curso')
-                                        <div class="text-center mb-4">
-                                            <span class="badge bg-success-subtle text-success px-3 py-2 mb-2">Oferta
-                                                Especial</span>
-                                            <h3 class="fw-bold text-success mb-1">Bs. {{ number_format($cursos->precio, 2) }}
-                                            </h3>
-                                            <p class="text-muted">Pago único, acceso de por vida</p>
-                                            <div class="d-flex justify-content-center align-items-center gap-2 mb-2">
-                                                <i class="bi bi-check-circle-fill text-success"></i>
-                                                <span>Certificado Digital Incluido</span>
-                                            </div>
-                                            <div class="d-flex justify-content-center align-items-center gap-2">
-                                                <i class="bi bi-check-circle-fill text-success"></i>
-                                                <span>Soporte 24/7</span>
+                            <div class="container mt-5">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-8">
+                                        <div class="alert alert-warning" role="alert">
+                                            <h4 class="alert-heading">Fuiste retirado de este curso</h4>
+                                            <p>Lamentamos informarte que has sido retirado de este curso. Si crees que esto
+                                                es un error, por favor contacta al administrador.</p>
+                                            <hr>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <p class="mb-0">Fecha de retiro:
+                                                    <strong>{{ $usuarioRetirado->deleted_at->format('d/m/Y') }}</strong></p>
+                                                <a href="{{ route('Inicio') }}" class="btn btn-outline-primary">
+                                                    Volver a los cursos
+                                                </a>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            <div class="card shadow-lg rounded-3 border-0 overflow-hidden">
+                                @if ($usuarioInscrito)
+                                    <div class="card-header bg-light py-3 px-4 border-bottom">
+                                        <h4 class="mb-0 fw-bold">
+                                            <i class="bi bi-mortarboard-fill me-2 text-success"></i>
+                                            @if ($cursos->tipo == 'curso')
+                                                Acceso al Curso
+                                            @else
+                                                Obtener Cerificado
+                                            @endif
 
-                                        <button class="btn btn-success w-100 py-3 fw-bold fs-5" data-bs-toggle="modal"
-                                            data-bs-target="#{{ auth()->check() ? 'compraCursoModal' : 'loginRequiredModal' }}">
-                                            <i class="bi bi-credit-card me-2"></i> Comprar Ahora
-                                        </button>
+                                        </h4>
+                                    </div>
+                                    <div class="card-body p-4">
 
-                                        <!-- Modal para usuarios autenticados -->
-                                        @auth
-                                            <div class="modal fade" id="compraCursoModal" tabindex="-1"
-                                                aria-labelledby="compraCursoModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="compraCursoModalLabel">
-                                                                {{ $cursos->precio > 0 ? 'Completar Compra' : 'Confirmar Inscripción' }}
-                                                            </h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                aria-label="Close"></button>
-                                                        </div>
-                                                        <form action="{{ route('registrarpagoPost' ) }}" method="POST"
-                                                            enctype="multipart/form-data">
-                                                            @csrf
-                                                            <div class="modal-body">
-                                                                <!-- Nombre / Razón Social -->
-                                                                <div class="mb-3">
-                                                                    <label class="form-label">Usuario:</label>
-                                                                    <input type="text" name="user"
-                                                                        value="{{ auth()->user()->name }} {{ auth()->user()->lastname1 }} {{ auth()->user()->lastname2 }}"
-                                                                        class="form-control" readonly>
-                                                                </div>
+                                        @if ($cursos->tipo == 'curso')
+                                            <a class="btn btn-sm btn-success"
+                                                href="{{ route('Curso', encrypt($cursos->id)) }}">
+                                                <i class="bi bi-door-open me-2"></i> Ir al Curso
+                                            </a>
+                                        @else
+                                            @if (is_null($usuarioInscrito->certificado))
+                                                <p>Ponte en contacto con el colaborador del evento.</p>
+                                            @else
+                                                <ul>
+                                                    <li class="text-success">
+                                                        <i class="bi bi-award-fill me-2"></i>
+                                                        <a href="{{ route('verificar.certificado', $usuarioInscrito->certificado->codigo_certificado) }}"
+                                                            target="_blank">Descargar Certificado</a>
+                                                    </li>
+                                                </ul>
+                                            @endif
+                                        @endif
+                                    </div>
+                                @else
+                                    <div class="card-header bg-light py-3 px-4 border-bottom">
+                                        <h4 class="mb-0 fw-bold">
+                                            @if ($cursos->tipo == 'curso')
+                                                <i class="bi bi-mortarboard-fill me-2 text-success"></i>Acceso al Curso
+                                            @else
+                                                <i class="bi bi-calendar-event me-2 text-primary"></i>Registro al Congreso
+                                            @endif
+                                        </h4>
+                                    </div>
+                                    <div class="card-body p-4">
+                                        @if ($cursos->tipo == 'curso')
+                                            <div class="text-center mb-4">
+                                                <span class="badge bg-success-subtle text-success px-3 py-2 mb-2">Oferta
+                                                    Especial</span>
+                                                <h3 class="fw-bold text-success mb-1">Bs.
+                                                    {{ number_format($cursos->precio, 2) }}
+                                                </h3>
+                                                <p class="text-muted">Pago único, acceso de por vida</p>
+                                                <div class="d-flex justify-content-center align-items-center gap-2 mb-2">
+                                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                                    <span>Certificado Digital Incluido</span>
+                                                </div>
+                                                <div class="d-flex justify-content-center align-items-center gap-2">
+                                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                                    <span>Soporte 24/7</span>
+                                                </div>
+                                            </div>
 
-                                                                <hr>
+                                            <button class="btn btn-success w-100 py-3 fw-bold fs-5" data-bs-toggle="modal"
+                                                data-bs-target="#{{ auth()->check() ? 'compraCursoModal' : 'loginRequiredModal' }}">
+                                                <i class="bi bi-credit-card me-2"></i> Comprar Ahora
+                                            </button>
 
-                                                                <!-- Campo oculto con ID del estudiante -->
-                                                                <input type="hidden" name="estudiante_id"
-                                                                    value="{{ auth()->user()->id }}">
+                                            <!-- Modal para usuarios autenticados -->
+                                            @auth
+                                                <div class="modal fade" id="compraCursoModal" tabindex="-1"
+                                                    aria-labelledby="compraCursoModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="compraCursoModalLabel">
+                                                                    {{ $cursos->precio > 0 ? 'Completar Compra' : 'Confirmar Inscripción' }}
+                                                                </h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                    aria-label="Close"></button>
+                                                            </div>
+                                                            <form action="{{ route('registrarpagoPost') }}" method="POST"
+                                                                enctype="multipart/form-data">
+                                                                @csrf
+                                                                <div class="modal-body">
+                                                                    <!-- Nombre / Razón Social -->
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Usuario:</label>
+                                                                        <input type="text" name="user"
+                                                                            value="{{ auth()->user()->name }} {{ auth()->user()->lastname1 }} {{ auth()->user()->lastname2 }}"
+                                                                            class="form-control" readonly>
+                                                                    </div>
 
-                                                                <!-- Curso (selección única) -->
-                                                                <div class="mb-3">
-                                                                    <label class="form-label">Curso:</label>
-                                                                    <select name="curso_id" class="form-select">
-                                                                        <option value="{{ $cursos->id }}" selected>
-                                                                            {{ $cursos->nombreCurso }}
-                                                                            ({{ $cursos->precio > 0 ? 'Bs' . number_format($cursos->precio, 2) : 'Gratuito' }})
-                                                                        </option>
-                                                                    </select>
-                                                                </div>
+                                                                    <hr>
 
-                                                                @if ($cursos->precio > 0)
-                                                                    <div class="row">
-                                                                        <!-- Monto a Pagar -->
-                                                                        <div class="col-md-6 mb-3">
-                                                                            <label class="form-label">Monto a Pagar:</label>
-                                                                            <div class="input-group">
-                                                                                <input type="number" name="montopagar"
-                                                                                    class="form-control"
-                                                                                    value="{{ $cursos->precio }}"
-                                                                                    min="1" step="any" required
-                                                                                    readonly>
-                                                                                <span class="input-group-text">Bs</span>
+                                                                    <!-- Campo oculto con ID del estudiante -->
+                                                                    <input type="hidden" name="estudiante_id"
+                                                                        value="{{ auth()->user()->id }}">
+
+                                                                    <!-- Curso (selección única) -->
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label">Curso:</label>
+                                                                        <select name="curso_id" class="form-select">
+                                                                            <option value="{{ $cursos->id }}" selected>
+                                                                                {{ $cursos->nombreCurso }}
+                                                                                ({{ $cursos->precio > 0 ? 'Bs' . number_format($cursos->precio, 2) : 'Gratuito' }})
+                                                                            </option>
+                                                                        </select>
+                                                                    </div>
+
+                                                                    @if ($cursos->precio > 0)
+                                                                        <div class="row">
+                                                                            <!-- Monto a Pagar -->
+                                                                            <div class="col-md-6 mb-3">
+                                                                                <label class="form-label">Monto a Pagar:</label>
+                                                                                <div class="input-group">
+                                                                                    <input type="number" name="montopagar"
+                                                                                        class="form-control"
+                                                                                        value="{{ $cursos->precio }}"
+                                                                                        min="1" step="any" required
+                                                                                        readonly>
+                                                                                    <span class="input-group-text">Bs</span>
+                                                                                </div>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
 
+                                                                        <div class="mb-3">
+                                                                            <label class="form-label">Comprobante:</label>
+                                                                            <input type="file" name="comprobante"
+                                                                                class="form-control" accept=".pdf,.jpg,.png"
+                                                                                required>
+                                                                            <small class="text-muted">Formatos aceptados: PDF,
+                                                                                JPG,
+                                                                                PNG (Max. 2MB)</small>
+                                                                        </div>
+                                                                    @endif
+
+                                                                    <!-- Descripción -->
                                                                     <div class="mb-3">
-                                                                        <label class="form-label">Comprobante:</label>
-                                                                        <input type="file" name="comprobante"
-                                                                            class="form-control" accept=".pdf,.jpg,.png"
-                                                                            required>
-                                                                        <small class="text-muted">Formatos aceptados: PDF, JPG,
-                                                                            PNG (Max. 2MB)</small>
-                                                                    </div>
-                                                                @endif
-
-                                                                <!-- Descripción -->
-                                                                <div class="mb-3">
-                                                                    <label class="form-label">Descripción:</label>
-                                                                    <textarea name="descripcion" class="form-control" rows="3" required>
+                                                                        <label class="form-label">Descripción:</label>
+                                                                        <textarea name="descripcion" class="form-control" rows="3" required>
 
                                                                     </textarea>
-                                                                </div>
+                                                                    </div>
 
-                                                                @if ($cursos->precio > 0)
-                                                                    <div class="m-3">
-                                                                        <h6 class="text-center mb-3">
-                                                                            <i class="bi bi-credit-card me-2"></i>Métodos de Pago Disponibles
-                                                                        </h6>
+                                                                    @if ($cursos->precio > 0)
+                                                                        <div class="m-3">
+                                                                            <h6 class="text-center mb-3">
+                                                                                <i class="bi bi-credit-card me-2"></i>Métodos
+                                                                                de
+                                                                                Pago Disponibles
+                                                                            </h6>
 
-                                                                        @if($metodosPago->where('is_active', true)->count() > 0)
-                                                                            <div id="paymentMethodsCarousel" class="carousel slide" data-bs-ride="carousel">
-                                                                                <div class="carousel-inner">
-                                                                                    @foreach($metodosPago->where('is_active', true)->sortBy('sort_order') as $index => $metodo)
-                                                                                        <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-                                                                                            <div class="card border-0 shadow-sm">
-                                                                                                <div class="card-body text-center p-3">
-                                                                                                    <h6 class="card-title text-primary mb-2">
-                                                                                                        {{ $metodo->name }}
-                                                                                                    </h6>
+                                                                            @if ($metodosPago->where('is_active', true)->count() > 0)
+                                                                                <div id="paymentMethodsCarousel"
+                                                                                    class="carousel slide"
+                                                                                    data-bs-ride="carousel">
+                                                                                    <div class="carousel-inner">
+                                                                                        @foreach ($metodosPago->where('is_active', true)->sortBy('sort_order') as $index => $metodo)
+                                                                                            <div
+                                                                                                class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                                                                                                <div
+                                                                                                    class="card border-0 shadow-sm">
+                                                                                                    <div
+                                                                                                        class="card-body text-center p-3">
+                                                                                                        <h6
+                                                                                                            class="card-title text-primary mb-2">
+                                                                                                            {{ $metodo->name }}
+                                                                                                        </h6>
 
-                                                                                                    @if($metodo->qr_image)
-                                                                                                        <div class="mb-3">
-                                                                                                            <img src="{{ $metodo->qr_image_url }}"
-                                                                                                                 alt="QR {{ $metodo->name }}"
-                                                                                                                 class="img-fluid rounded"
-                                                                                                                 style="max-height: 200px; max-width: 200px;">
-                                                                                                        </div>
-                                                                                                    @endif
+                                                                                                        @if ($metodo->qr_image)
+                                                                                                            <div
+                                                                                                                class="mb-3">
+                                                                                                                <img src="{{ $metodo->qr_image_url }}"
+                                                                                                                    alt="QR {{ $metodo->name }}"
+                                                                                                                    class="img-fluid rounded"
+                                                                                                                    style="max-height: 200px; max-width: 200px;">
+                                                                                                            </div>
+                                                                                                        @endif
 
-                                                                                                    @if($metodo->account_holder)
-                                                                                                        <p class="mb-1">
-                                                                                                            <strong>Titular:</strong> {{ $metodo->account_holder }}
-                                                                                                        </p>
-                                                                                                    @endif
+                                                                                                        @if ($metodo->account_holder)
+                                                                                                            <p class="mb-1">
+                                                                                                                <strong>Titular:</strong>
+                                                                                                                {{ $metodo->account_holder }}
+                                                                                                            </p>
+                                                                                                        @endif
 
-                                                                                                    @if($metodo->account_number)
-                                                                                                        <p class="mb-1">
-                                                                                                            <strong>Cuenta:</strong> {{ $metodo->account_number }}
-                                                                                                        </p>
-                                                                                                    @endif
+                                                                                                        @if ($metodo->account_number)
+                                                                                                            <p class="mb-1">
+                                                                                                                <strong>Cuenta:</strong>
+                                                                                                                {{ $metodo->account_number }}
+                                                                                                            </p>
+                                                                                                        @endif
 
-                                                                                                    @if($metodo->description)
-                                                                                                        <p class="text-muted small mb-2">{{ $metodo->description }}</p>
-                                                                                                    @endif
+                                                                                                        @if ($metodo->description)
+                                                                                                            <p
+                                                                                                                class="text-muted small mb-2">
+                                                                                                                {{ $metodo->description }}
+                                                                                                            </p>
+                                                                                                        @endif
 
-                                                                                                    @if($metodo->additional_info && count($metodo->additional_info) > 0)
-                                                                                                        <div class="mt-2">
-                                                                                                            @foreach($metodo->additional_info as $info)
-                                                                                                                @if(isset($info['key']) && isset($info['value']) && !empty($info['key']) && !empty($info['value']))
-                                                                                                                    <small class="d-block text-muted">
-                                                                                                                        <strong>{{ $info['key'] }}:</strong> {{ $info['value'] }}
-                                                                                                                    </small>
-                                                                                                                @endif
-                                                                                                            @endforeach
-                                                                                                        </div>
-                                                                                                    @endif
+                                                                                                        @if ($metodo->additional_info && count($metodo->additional_info) > 0)
+                                                                                                            <div
+                                                                                                                class="mt-2">
+                                                                                                                @foreach ($metodo->additional_info as $info)
+                                                                                                                    @if (isset($info['key']) && isset($info['value']) && !empty($info['key']) && !empty($info['value']))
+                                                                                                                        <small
+                                                                                                                            class="d-block text-muted">
+                                                                                                                            <strong>{{ $info['key'] }}:</strong>
+                                                                                                                            {{ $info['value'] }}
+                                                                                                                        </small>
+                                                                                                                    @endif
+                                                                                                                @endforeach
+                                                                                                            </div>
+                                                                                                        @endif
+                                                                                                    </div>
                                                                                                 </div>
                                                                                             </div>
-                                                                                        </div>
-                                                                                    @endforeach
-                                                                                </div>
+                                                                                        @endforeach
+                                                                                    </div>
 
-                                                                                @if($metodosPago->where('is_active', true)->count() > 1)
-                                                                                    <!-- Controles del carousel -->
-                                                                                    <button class="carousel-control-prev" type="button" data-bs-target="#paymentMethodsCarousel" data-bs-slide="prev">
-                                                                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                                                        <span class="visually-hidden">Anterior</span>
-                                                                                    </button>
-                                                                                    <button class="carousel-control-next" type="button" data-bs-target="#paymentMethodsCarousel" data-bs-slide="next">
-                                                                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                                                                        <span class="visually-hidden">Siguiente</span>
-                                                                                    </button>
+                                                                                    @if ($metodosPago->where('is_active', true)->count() > 1)
+                                                                                        <!-- Controles del carousel -->
+                                                                                        <button class="carousel-control-prev"
+                                                                                            type="button"
+                                                                                            data-bs-target="#paymentMethodsCarousel"
+                                                                                            data-bs-slide="prev">
+                                                                                            <span
+                                                                                                class="carousel-control-prev-icon"
+                                                                                                aria-hidden="true"></span>
+                                                                                            <span
+                                                                                                class="visually-hidden">Anterior</span>
+                                                                                        </button>
+                                                                                        <button class="carousel-control-next"
+                                                                                            type="button"
+                                                                                            data-bs-target="#paymentMethodsCarousel"
+                                                                                            data-bs-slide="next">
+                                                                                            <span
+                                                                                                class="carousel-control-next-icon"
+                                                                                                aria-hidden="true"></span>
+                                                                                            <span
+                                                                                                class="visually-hidden">Siguiente</span>
+                                                                                        </button>
 
-                                                                                    <!-- Indicadores -->
-                                                                                    <div class="carousel-indicators">
-                                                                                        @foreach($metodosPago->where('is_active', true)->sortBy('sort_order') as $index => $metodo)
-                                                                                            <button type="button"
+                                                                                        <!-- Indicadores -->
+                                                                                        <div class="carousel-indicators">
+                                                                                            @foreach ($metodosPago->where('is_active', true)->sortBy('sort_order') as $index => $metodo)
+                                                                                                <button type="button"
                                                                                                     data-bs-target="#paymentMethodsCarousel"
                                                                                                     data-bs-slide-to="{{ $index }}"
                                                                                                     class="{{ $index === 0 ? 'active' : '' }}"
                                                                                                     aria-label="Método {{ $index + 1 }}"></button>
-                                                                                        @endforeach
-                                                                                    </div>
-                                                                                @endif
-                                                                            </div>
-                                                                        @else
-                                                                            <!-- Fallback si no hay métodos de pago configurados -->
-                                                                            <div class="text-center">
-                                                                                <img src="{{ asset('assets/img/pago.png') }}"
-                                                                                    alt="Métodos de pago" class="img-fluid">
-                                                                            </div>
-                                                                        @endif
+                                                                                            @endforeach
+                                                                                        </div>
+                                                                                    @endif
+                                                                                </div>
+                                                                            @else
+                                                                                <!-- Fallback si no hay métodos de pago configurados -->
+                                                                                <div class="text-center">
+                                                                                    <img src="{{ asset('assets/img/pago.png') }}"
+                                                                                        alt="Métodos de pago"
+                                                                                        class="img-fluid">
+                                                                                </div>
+                                                                            @endif
 
-                                                                        <small class="text-muted d-block text-center mt-3">
-                                                                            Por favor adjunte su comprobante de pago
-                                                                        </small>
-                                                                    </div>
-                                                                @endif
+                                                                            <small class="text-muted d-block text-center mt-3">
+                                                                                Por favor adjunte su comprobante de pago
+                                                                            </small>
+                                                                        </div>
+                                                                    @endif
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary"
+                                                                        data-bs-dismiss="modal">Cancelar</button>
+                                                                    <button type="submit" class="btn btn-success">
+                                                                        {{ $cursos->precio > 0 ? 'Confirmar Compra' : 'Confirmar Inscripción' }}
+                                                                    </button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endauth
+
+                                            @guest
+                                                <div class="modal fade" id="loginRequiredModal" tabindex="-1"
+                                                    aria-labelledby="loginRequiredModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="loginRequiredModalLabel">Acceso
+                                                                    Requerido</h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary"
-                                                                    data-bs-dismiss="modal">Cancelar</button>
-                                                                <button type="submit" class="btn btn-success">
-                                                                    {{ $cursos->precio > 0 ? 'Confirmar Compra' : 'Confirmar Inscripción' }}
-                                                                </button>
+                                                            <div class="modal-body text-center">
+                                                                <i class="bi bi-exclamation-circle text-warning"
+                                                                    style="font-size: 3rem;"></i>
+                                                                <h4 class="my-3">Debes iniciar sesión para continuar</h4>
+                                                                <p>Para realizar una compra necesitas tener una cuenta en
+                                                                    nuestro
+                                                                    sistema.</p>
                                                             </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endauth
-
-                                        @guest
-                                            <div class="modal fade" id="loginRequiredModal" tabindex="-1"
-                                                aria-labelledby="loginRequiredModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="loginRequiredModalLabel">Acceso
-                                                                Requerido</h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body text-center">
-                                                            <i class="bi bi-exclamation-circle text-warning"
-                                                                style="font-size: 3rem;"></i>
-                                                            <h4 class="my-3">Debes iniciar sesión para continuar</h4>
-                                                            <p>Para realizar una compra necesitas tener una cuenta en nuestro
-                                                                sistema.</p>
-                                                        </div>
-                                                        <div class="modal-footer justify-content-center">
-                                                            <a href="{{ route('login') }}" class="btn btn-primary me-2">
-                                                                <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
-                                                            </a>
-                                                            <a href="{{ route('signin') }}" class="btn btn-success">
-                                                                <i class="bi bi-person-plus"></i> Registrarse
-                                                            </a>
+                                                            <div class="modal-footer justify-content-center">
+                                                                <a href="{{ route('login') }}" class="btn btn-primary me-2">
+                                                                    <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                                                                </a>
+                                                                <a href="{{ route('signin') }}" class="btn btn-success">
+                                                                    <i class="bi bi-person-plus"></i> Registrarse
+                                                                </a>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        @endguest
-                                    @else
-                                        <!-- Información del Congreso -->
-                                        <div class="text-center mb-4">
+                                            @endguest
+                                        @else
+                                            <!-- Información del Congreso -->
+                                            <div class="text-center mb-4">
 
-                                            @if (isset($cursos->precio) && $cursos->precio > 0)
-                                                <h3 class="fw-bold text-primary mb-1">$
-                                                    {{ number_format($cursos->precio, 2) }}
-                                                </h3>
-                                            @else
-                                                <h3 class="fw-bold text-primary mb-1">Acceso Gratuito</h3>
-                                            @endif
+                                                @if (isset($cursos->precio) && $cursos->precio > 0)
+                                                    <h3 class="fw-bold text-primary mb-1">$
+                                                        {{ number_format($cursos->precio, 2) }}
+                                                    </h3>
+                                                @else
+                                                    <h3 class="fw-bold text-primary mb-1">Acceso Gratuito</h3>
+                                                @endif
 
-                                            <div class="d-flex justify-content-center align-items-center gap-2 mb-2">
-                                                <i class="bi bi-check-circle-fill text-primary"></i>
-                                                <span>Material del Congreso</span>
-                                            </div>
-                                            <div class="d-flex justify-content-center align-items-center gap-2">
-                                                <i class="bi bi-check-circle-fill text-primary"></i>
-                                                <span>Certificado de Asistencia</span>
-                                            </div>
-                                        </div>
-
-                                        @if ($cursos->certificados_disponibles = true)
-                                            @if (auth()->user())
-                                                <div class="text-center mb-3">
-                                                    <h3>Tiempo Disponible</h3>
-                                                    <div id="countdown-timer"
-                                                        class="badge bg-primary-subtle text-primary px-3 py-2"></div>
+                                                <div class="d-flex justify-content-center align-items-center gap-2 mb-2">
+                                                    <i class="bi bi-check-circle-fill text-primary"></i>
+                                                    <span>Material del Congreso</span>
                                                 </div>
+                                                <div class="d-flex justify-content-center align-items-center gap-2">
+                                                    <i class="bi bi-check-circle-fill text-primary"></i>
+                                                    <span>Certificado de Asistencia</span>
+                                                </div>
+                                            </div>
 
-
-                                                <form action="{{ route('certificados.obtener', encrypt($cursos->id)) }}"
-                                                    method="POST">
-                                                    @csrf
-                                                    <input type="hidden" name="congreso_id"
-                                                        value="{{ $cursos->id }}">
-
-                                                    <div class="d-grid gap-2">
-                                                        <button type="submit" class="btn btn-success btn-lg py-3">
-                                                            <i class="bi bi-award-fill me-2"></i>
-                                                            Obtener Mi Certificado Ahora
-                                                        </button>
-                                                    </div>
-                                                </form>
-                                            @else
-                                                <div class="text-center mb-3">
-                                                    <h3>Tiempo Disponinble</h4>
+                                            @if ($cursos->certificados_disponibles = true)
+                                                @if (auth()->user())
+                                                    <div class="text-center mb-3">
+                                                        <h3>Tiempo Disponible</h3>
                                                         <div id="countdown-timer"
                                                             class="badge bg-primary-subtle text-primary px-3 py-2"></div>
+                                                    </div>
+
+
+                                                    <form
+                                                        action="{{ route('certificados.obtener', encrypt($cursos->id)) }}"
+                                                        method="POST">
+                                                        @csrf
+                                                        <input type="hidden" name="congreso_id"
+                                                            value="{{ $cursos->id }}">
+
+                                                        <div class="d-grid gap-2">
+                                                            <button type="submit" class="btn btn-success btn-lg py-3">
+                                                                <i class="bi bi-award-fill me-2"></i>
+                                                                Obtener Mi Certificado Ahora
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                @else
+                                                    <div class="text-center mb-3">
+                                                        <h3>Tiempo Disponinble</h4>
+                                                            <div id="countdown-timer"
+                                                                class="badge bg-primary-subtle text-primary px-3 py-2">
+                                                            </div>
+                                                    </div>
+                                                    <button
+                                                        class="btn btn-primary w-100 py-3 fw-bold fs-5 d-flex align-items-center justify-content-center gap-2"
+                                                        data-bs-toggle="modal" data-bs-target="#opcionesRegistroModal">
+                                                        <i class="bi bi-person-plus-fill"></i>
+                                                        <span>Registrarse Ahora</span>
+                                                    </button>
+                                                @endif
+                                            @else
+                                                <div class="d-grid gap-2">
+                                                    <button class="btn btn-info btn-lg py-3">
+                                                        <i class="bi bi-award-fill me-2"></i>
+                                                        El certificado no esta disponible
+                                                    </button>
                                                 </div>
-                                                <button
-                                                    class="btn btn-primary w-100 py-3 fw-bold fs-5 d-flex align-items-center justify-content-center gap-2"
-                                                    data-bs-toggle="modal" data-bs-target="#opcionesRegistroModal">
-                                                    <i class="bi bi-person-plus-fill"></i>
-                                                    <span>Registrarse Ahora</span>
-                                                </button>
                                             @endif
-                                        @else
-                                            <div class="d-grid gap-2">
-                                                <button class="btn btn-info btn-lg py-3">
-                                                    <i class="bi bi-award-fill me-2"></i>
-                                                    El certificado no esta disponible
-                                                </button>
-                                            </div>
                                         @endif
-                                    @endif
-                                </div>
-                            @endif
-                        </div>
+                                    </div>
+                                @endif
+                            </div>
+
+
+                        @endif
+
 
 
 
@@ -1102,7 +1160,8 @@
                                                 </div>
                                             </div>
                                             @if (auth()->id() === $calificacion->user_id)
-                                                <form action="{{ route('calificaciones.destroy', encrypt($calificacion->id)) }}"
+                                                <form
+                                                    action="{{ route('calificaciones.destroy', encrypt($calificacion->id)) }}"
                                                     method="POST">
                                                     @csrf
                                                     @method('DELETE')
@@ -1112,7 +1171,8 @@
                                                 </form>
                                             @endif
                                             @hasrole('Administrador')
-                                                <form action="{{ route('calificaciones.destroy', encrypt($calificacion->id)) }}"
+                                                <form
+                                                    action="{{ route('calificaciones.destroy', encrypt($calificacion->id)) }}"
                                                     method="POST">
                                                     @csrf
                                                     @method('DELETE')
