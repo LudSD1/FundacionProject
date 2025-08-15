@@ -1,16 +1,18 @@
-<div class="tab-pane fade {{ $index === 0 ? 'show active' : '' }}" id="tema-{{ $tema->id }}" role="tabpanel" aria-labelledby="tema-{{ $tema->id }}-tab">
+<div class="tab-pane fade {{ $index === 0 ? 'show active' : '' }}" id="tema-{{ $tema->id }}" role="tabpanel"
+    aria-labelledby="tema-{{ $tema->id }}-tab">
     <div class="card my-3">
         <div class="card-body">
             <h1>{{ $tema->titulo_tema }}</h1>
 
-            @if($tema->imagen)
-                <img class="img-fluid" src="{{ asset('storage/' . $tema->imagen) }}" alt="Imagen del tema" style="max-width: 500px; height: auto;">
+            @if ($tema->imagen)
+                <img class="img-fluid" src="{{ asset('storage/' . $tema->imagen) }}" alt="Imagen del tema"
+                    style="max-width: 500px; height: auto;">
             @endif
 
             <div class="my-3">
                 <button class="btn btn-link" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#descripcionTema-{{ $tema->id }}" aria-expanded="false"
-                        aria-controls="descripcionTema-{{ $tema->id }}">
+                    data-bs-target="#descripcionTema-{{ $tema->id }}" aria-expanded="false"
+                    aria-controls="descripcionTema-{{ $tema->id }}">
                     Ver Descripción del Tema
                 </button>
                 <div class="collapse" id="descripcionTema-{{ $tema->id }}">
@@ -20,16 +22,23 @@
                 </div>
             </div>
 
-            @if(auth()->user()->hasRole('Docente') && $cursos->docente_id == auth()->user()->id)
+            @if (auth()->user()->hasRole('Docente') && $cursos->docente_id == auth()->user()->id)
                 <div class="mb-3">
                     <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
-                            data-bs-target="#modalSubtema-{{ $tema->id }}">
+                        data-bs-target="#modalSubtema-{{ $tema->id }}">
                         <i class="fas fa-plus me-1"></i> Agregar Subtema
                     </button>
                     <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal"
-                            data-bs-target="#modalEditarTema-{{ $tema->id }}">
+                        data-bs-target="#modalEditarTema-{{ $tema->id }}">
                         <i class="fas fa-edit me-1"></i> Editar Tema
                     </button>
+                    <form class="d-inline" action="{{ route('temas.delete', encrypt($tema->id)) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                            <i class="fas fa-trash me-1"></i> Eliminar Tema
+                        </button>
+                    </form>
                 </div>
             @endif
             <div class="modal fade" id="modalEditarTema-{{ $tema->id }}" tabindex="-1" aria-hidden="true">
@@ -39,14 +48,17 @@
                             <h5 class="modal-title">
                                 <i class="fas fa-edit me-2"></i>Editar Tema: {{ $tema->titulo_tema }}
                             </h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
                         </div>
-                        <form method="POST" action="{{ route('temas.update', encrypt($tema->id)) }}" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('temas.update', encrypt($tema->id)) }}"
+                            enctype="multipart/form-data">
                             @csrf
                             <div class="modal-body">
                                 <div class="mb-3">
                                     <label for="titulo" class="form-label">Título*</label>
-                                    <input type="text" class="form-control" name="titulo" value="{{ $tema->titulo_tema }}" required>
+                                    <input type="text" class="form-control" name="titulo"
+                                        value="{{ $tema->titulo_tema }}" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="descripcion" class="form-label">Descripción</label>
@@ -54,8 +66,9 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Imagen Actual</label>
-                                    @if($tema->imagen)
-                                        <img src="{{ asset('storage/'.$tema->imagen) }}" class="img-thumbnail mb-2" style="max-height: 150px;">
+                                    @if ($tema->imagen)
+                                        <img src="{{ asset('storage/' . $tema->imagen) }}" class="img-thumbnail mb-2"
+                                            style="max-height: 150px;">
                                     @else
                                         <p class="text-muted">No hay imagen cargada</p>
                                     @endif
@@ -76,38 +89,40 @@
             </div>
 
             <div class="accordion" id="subtemasAccordion-{{ $tema->id }}">
-                @foreach($tema->subtemas as $subtemaIndex => $subtema)
+                @foreach ($tema->subtemas as $subtemaIndex => $subtema)
                     @php
-                        $desbloqueado = auth()->user()->hasRole('Docente') ||
-                                      (auth()->user()->hasRole('Estudiante') && $subtema->estaDesbloqueado($inscritos2->id ?? null));
+                        $desbloqueado =
+                            auth()->user()->hasRole('Docente') ||
+                            (auth()->user()->hasRole('Estudiante') &&
+                                $subtema->estaDesbloqueado($inscritos2->id ?? null));
                     @endphp
 
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="subtemaHeading-{{ $subtema->id }}">
-                            @if(!$desbloqueado && auth()->user()->hasRole('Estudiante'))
+                            @if (!$desbloqueado && auth()->user()->hasRole('Estudiante'))
                                 <button class="accordion-button collapsed" type="button" disabled>
                                     {{ $subtema->titulo_subtema }} <i class="fas fa-lock ms-2"></i>
                                 </button>
                             @else
                                 <button class="accordion-button {{ $subtemaIndex === 0 ? '' : 'collapsed' }}"
-                                        type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#subtemaCollapse-{{ $subtema->id }}"
-                                        aria-expanded="{{ $subtemaIndex === 0 ? 'true' : 'false' }}"
-                                        aria-controls="subtemaCollapse-{{ $subtema->id }}">
+                                    type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#subtemaCollapse-{{ $subtema->id }}"
+                                    aria-expanded="{{ $subtemaIndex === 0 ? 'true' : 'false' }}"
+                                    aria-controls="subtemaCollapse-{{ $subtema->id }}">
                                     {{ $subtema->titulo_subtema }}
                                 </button>
                             @endif
                         </h2>
 
-                        @if($desbloqueado || auth()->user()->hasRole('Docente'))
+                        @if ($desbloqueado || auth()->user()->hasRole('Docente'))
                             <div id="subtemaCollapse-{{ $subtema->id }}"
-                                 class="accordion-collapse collapse {{ $subtemaIndex === 0 ? 'show' : '' }}"
-                                 aria-labelledby="subtemaHeading-{{ $subtema->id }}"
-                                 data-bs-parent="#subtemasAccordion-{{ $tema->id }}">
+                                class="accordion-collapse collapse {{ $subtemaIndex === 0 ? 'show' : '' }}"
+                                aria-labelledby="subtemaHeading-{{ $subtema->id }}"
+                                data-bs-parent="#subtemasAccordion-{{ $tema->id }}">
                                 <div class="accordion-body">
                                     @include('partials.cursos.subtema_item', [
                                         'subtema' => $subtema,
-                                        'tema' => $tema
+                                        'tema' => $tema,
                                     ])
                                 </div>
                             </div>
@@ -118,4 +133,3 @@
         </div>
     </div>
 </div>
-

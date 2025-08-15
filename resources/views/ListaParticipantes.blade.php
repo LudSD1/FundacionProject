@@ -7,7 +7,7 @@
         <!-- Header con botones de acción -->
         <div class="row mb-4">
             <div class="col-md-6">
-                <a href="{{ route('Curso', ['id' => $cursos->id]) }}" class="btn btn-outline-primary btn-lg shadow-sm">
+                <a href="{{ route('Curso', ['id' => encrypt($cursos->id)]) }}" class="btn btn-outline-primary btn-lg shadow-sm">
                     <i class="bi bi-arrow-left-circle me-2"></i>Volver al Curso
                 </a>
             </div>
@@ -199,7 +199,7 @@
 
                                                     @if ($cursos->tipo == 'congreso')
                                                         <a class="btn btn-sm btn-outline-success"
-                                                            href="{{ route('certificadosCongreso.generar.admin', [encrypt($inscrito->id)]) }}"
+                                                            href="{{ route('certificados.reenviar.email', encrypt($inscrito->id)) }}"
                                                             data-bs-toggle="tooltip"
                                                             title="{{ !isset($inscrito->certificado) ? 'Generar Certificado' : 'Reenviar Certificado' }}">
                                                             <i class="bi bi-award"></i>

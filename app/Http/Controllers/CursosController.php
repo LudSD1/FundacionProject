@@ -40,6 +40,7 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Models\Actividad;
 use App\Exports\CursoReporteExport;
+use App\Models\Subtema;
 use Maatwebsite\Excel\Facades\Excel;
 
 class CursosController extends Controller
@@ -481,5 +482,91 @@ class CursosController extends Controller
         ]);
 
         return back()->with('success', 'Enlace de YouTube actualizado correctamente.');
+    }
+
+
+    public function elementosEliminados($id)
+    {
+        $curso = Cursos::findOrFail($id);
+
+        // Obtener temas eliminados del curso
+        $temasEliminados = Tema::onlyTrashed()
+            ->where('curso_id', $id)
+            ->get();
+
+        // Obtener IDs de temas (incluyendo los no eliminados) para buscar subtemas
+        $todosTemasIds = Tema::where('curso_id', $id)->withTrashed()->pluck('id');
+
+        // Obtener subtemas eliminados relacionados con el curso
+        $subtemasEliminados = Subtema::onlyTrashed()
+            ->whereIn('tema_id', $todosTemasIds)
+            ->get();
+
+        // Obtener IDs de subtemas (incluyendo los no eliminados) para buscar actividades
+        $todosSubtemasIds = Subtema::whereIn('tema_id', $todosTemasIds)->withTrashed()->pluck('id');
+
+        // Obtener actividades eliminadas relacionadas con el curso
+        $actividadesEliminadas = Actividad::onlyTrashed()
+            ->whereIn('subtema_id', $todosSubtemasIds)
+            ->get();
+
+        // Obtener foros eliminados del curso
+        $forosEliminados = Foro::onlyTrashed()
+            ->where('cursos_id', $id)
+            ->get();
+
+        // Obtener recursos eliminados del curso
+        $recursosEliminados = Recursos::onlyTrashed()
+            ->where('cursos_id', $id)
+            ->get();
+
+        // Contar inscritos en el curso para comparación
+        $cantidadInscritos = Inscritos::where('cursos_id', $id)->count();
+
+        return view('Cursos.elementos_eliminados', compact(
+            'curso',
+            'temasEliminados',
+            'subtemasEliminados',
+            'actividadesEliminadas',
+            'forosEliminados',
+            'recursosEliminados',
+            'cantidadInscritos'
+        ));
+    }
+
+    public function restaurarElemento(Request $request)
+    {
+        $tipo = $request->tipo;
+        $id = $request->id;
+        $cursoId = $request->curso_id;
+
+        try {
+            switch ($tipo) {
+                case 'tema':
+                    $elemento = Tema::onlyTrashed()->findOrFail($id);
+                    break;
+                case 'subtema':
+                    $elemento = Subtema::onlyTrashed()->findOrFail($id);
+                    break;
+                case 'actividad':
+                    $elemento = Actividad::onlyTrashed()->findOrFail($id);
+                    break;
+                case 'foro':
+                    $elemento = Foro::onlyTrashed()->findOrFail($id);
+                    break;
+                case 'recurso':
+                    $elemento = Recursos::onlyTrashed()->findOrFail($id);
+                    break;
+                default:
+                    return redirect()->back()->with('error', 'Tipo de elemento no válido');
+            }
+
+            // Restaurar el elemento
+            $elemento->restore();
+
+            return redirect()->back()->with('success', 'Elemento restaurado correctamente');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error al restaurar: ' . $e->getMessage());
+        }
     }
 }

@@ -530,4 +530,37 @@ class CertificadoController extends Controller
         return back()
             ->with('success', 'Inscripción completada. Tu certificado ha sido enviado por email.');
     }
+
+    public function reenviarCertificadoPorEmail($inscrito_id)
+    {
+        try {
+            // Buscar inscripción con la relación del estudiante
+            $inscripcion = Inscritos::with('estudiantes')->findOrFail($inscrito_id);
+
+            // Verificar que el estudiante tenga email
+            if (!$inscripcion->estudiantes || !$inscripcion->estudiantes->email) {
+                return back()->with('error', 'El estudiante no tiene un email registrado.');
+            }
+
+            // Buscar certificado
+            $certificado = Certificado::where('curso_id', $inscripcion->cursos_id)
+                ->where('inscrito_id', $inscripcion->id)
+                ->first();
+
+            if (!$certificado) {
+                return back()->with('error', 'Este inscrito no tiene un certificado generado.');
+            }
+
+            // Generar enlace de verificación
+            $link_verificacion = route('verificar.certificado', ['codigo' => $certificado->codigo_certificado]);
+
+            // Reenviar notificación usando el email del estudiante
+            $inscripcion->estudiantes->notify(new CertificadoGeneradoNotification($inscripcion, $link_verificacion));
+
+            return back()->with('success', "Correo de certificado reenviado exitosamente a {$inscripcion->estudiantes->email}.");
+        } catch (\Exception $e) {
+            Log::error('Error al reenviar certificado por email usando inscrito ID: ' . $e->getMessage());
+            return back()->with('error', 'Ocurrió un error al reenviar el correo del certificado.');
+        }
+    }
 }

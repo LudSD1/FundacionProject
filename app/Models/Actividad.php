@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Actividad extends BaseModel
 {
 
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'actividades';
     protected $fillable = [
@@ -41,6 +43,8 @@ class Actividad extends BaseModel
 
 
 
+
+
     public function getPuntajeMaximoAttribute()
     {
         return $this->tiposEvaluacion->sum('pivot.puntaje_maximo');
@@ -67,13 +71,20 @@ class Actividad extends BaseModel
     }
 
 
-    public function tiposEvaluacion()
+    public function tiposEvaluacion(): BelongsToMany
     {
-        return $this->belongsToMany(TipoEvaluacion::class, 'actividad_tipos_evaluacion')
-            ->withPivot('puntaje_maximo', 'es_obligatorio') // Campos adicionales en la tabla pivote
-            ->withTimestamps(); // Si la tabla pivote tiene timestamps
+        return $this->belongsToMany(
+            TipoEvaluacion::class,
+            'actividad_tipos_evaluacion', // nombre de la tabla pivot
+            'actividad_id',              // foreign key de este modelo
+            'tipo_evaluacion_id'         // foreign key del modelo relacionado
+        )
+        ->withPivot([
+            'puntaje_maximo',
+            'es_obligatorio'
+        ])
+        ->withTimestamps(); // incluye created_at y updated_at de la pivot
     }
-
 
 
     public function cuestionarios()

@@ -16,4 +16,9 @@ class TipoActividad extends BaseModel
     ];
 
     protected $table = 'tipo_actividades';
+
+    public function actividades()
+    {
+        return $this->hasMany(Actividad::class, 'tipo_actividad_id');
+    }
 }

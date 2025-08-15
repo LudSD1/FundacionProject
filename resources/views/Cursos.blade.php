@@ -87,7 +87,7 @@
                             <i class="fas fa-users me-2"></i> Participantes
                         </a>
 
-                        @if ($cursos->tipo == 'Curso')
+                        @if ($cursos->tipo == 'curso')
                             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalHorario">
                                 <i class="fa fa-calendar me-2"></i> Horarios
                             </button>
@@ -115,7 +115,7 @@
                                         </a>
                                     </li>
 
-                                    @if ($cursos->docente_id == auth()->user()->id)
+                                    @if ($esDocente)
                                         <li>
                                             <hr class="dropdown-divider">
                                         </li>
@@ -126,6 +126,7 @@
                                                     <i class="fas fa-calendar-plus text-primary me-2"></i> Crear Horarios
                                                 </a>
                                             </li>
+
 
                                             <li>
                                                 <a class="dropdown-item py-2" href="#" data-bs-toggle="modal"
@@ -144,6 +145,12 @@
                                                 <a class="dropdown-item py-2"
                                                     href="{{ route('asistencias', [encrypt($cursos->id)]) }}">
                                                     <i class="fas fa-check text-success me-2"></i> Dar Asistencia
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ route('cursos.elementos-eliminados', encrypt($cursos->id)) }}"
+                                                    class="dropdown-item py-2">
+                                                    <i class="fas fa-trash text-success me-2"></i> Ver elementos eliminados
                                                 </a>
                                             </li>
                                         @endif
@@ -182,7 +189,8 @@
                                             <li>
                                                 <button type="button" class="dropdown-item py-2" data-bs-toggle="modal"
                                                     data-bs-target="#certificadoModal">
-                                                    <i class="fas fa-certificate text-warning me-2"></i> Obtener Certificado
+                                                    <i class="fas fa-certificate text-warning me-2"></i> Obtener
+                                                    Certificado
                                                 </button>
                                             </li>
                                         @endif
@@ -631,68 +639,218 @@
     <div class="modal fade" id="modalHorario" tabindex="-1" aria-labelledby="modalHorarioLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalHorarioLabel">Lista de Horarios</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title d-flex align-items-center" id="modalHorarioLabel">
+                        <i class="bi bi-calendar3 me-2"></i>
+                        Lista de Horarios
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Cerrar modal"></button>
                 </div>
-                <div class="modal-body">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Día</th>
-                                <th>Hora Inicio</th>
-                                <th>Hora Fin</th>
-                                @if ($cursos->docente_id == auth()->user()->id || auth()->user()->hasRole('Administrador'))
-                                    <th>Acciones</th>
-                                @endif
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($horarios as $horario)
-                                <tr>
-                                    <td>{{ $horario->horario->dia }}</td>
-                                    <td>{{ Carbon\Carbon::parse($horario->horario->hora_inicio)->format('h:i A') }}</td>
-                                    <td>{{ Carbon\Carbon::parse($horario->horario->hora_fin)->format('h:i A') }}</td>
-                                    @if ($cursos->docente_id == auth()->user()->id || auth()->user()->hasRole('Administrador'))
-                                        <td class="flex">
-                                            <button class="btn btn-sm btn-warning  btn-editar-horario"
-                                                data-id="{{ $horario->id }}" data-dia="{{ $horario->horario->dia }}"
-                                                data-hora-inicio="{{ $horario->horario->hora_inicio }}"
-                                                data-hora-fin="{{ $horario->horario->hora_fin }}" data-bs-toggle="modal"
-                                                data-bs-target="#modalEditarHorario">
-                                                Editar
-                                            </button>
-                                            @if ($horario->trashed())
-                                                <form action="{{ route('horarios.restore', ['id' => $horario->id]) }}"
-                                                    method="POST"
-                                                    onsubmit="return confirm('¿Estás seguro de que deseas restaurar este horario?');">
-                                                    @csrf
-                                                    <button type="submit"
-                                                        class="btn btn-sm btn-success">Restaurar</button>
-                                                </form>
-                                            @else
-                                                <form action="{{ route('horarios.delete', ['id' => $horario->id]) }}"
-                                                    method="POST"
-                                                    onsubmit="return confirm('¿Estás seguro de que deseas eliminar este horario?');">
-                                                    @csrf
-                                                    @method('DELETE')
 
-                                                    <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
-                                                </form>
+                <div class="modal-body p-0">
+                    @if ($horarios->isEmpty())
+                        <div class="text-center py-5">
+                            <i class="bi bi-calendar-x display-4 text-muted"></i>
+                            <p class="mt-3 text-muted">No hay horarios registrados para este curso</p>
+                        </div>
+                    @else
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col" class="fw-semibold">
+                                            <i class="bi bi-calendar-day me-1"></i>
+                                            Día
+                                        </th>
+                                        <th scope="col" class="fw-semibold">
+                                            <i class="bi bi-clock me-1"></i>
+                                            Hora Inicio
+                                        </th>
+                                        <th scope="col" class="fw-semibold">
+                                            <i class="bi bi-clock-fill me-1"></i>
+                                            Hora Fin
+                                        </th>
+                                        <th scope="col" class="fw-semibold">
+                                            <i class="bi bi-hourglass-split me-1"></i>
+                                            Duración
+                                        </th>
+                                        @if ($cursos->docente_id == auth()->user()->id || auth()->user()->hasRole('Administrador'))
+                                            <th scope="col" class="fw-semibold text-center">
+                                                <i class="bi bi-gear me-1"></i>
+                                                Acciones
+                                            </th>
+                                        @endif
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($horarios as $horario)
+                                        <tr class="{{ $horario->trashed() ? 'table-warning' : '' }}">
+                                            <td class="fw-medium">
+                                                <span class="badge bg-light text-dark border">
+                                                    {{ $horario->horario->dia }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="text-success fw-medium">
+                                                    {{ Carbon\Carbon::parse($horario->horario->hora_inicio)->format('h:i A') }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="text-danger fw-medium">
+                                                    {{ Carbon\Carbon::parse($horario->horario->hora_fin)->format('h:i A') }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @php
+                                                    $inicio = Carbon\Carbon::parse($horario->horario->hora_inicio);
+                                                    $fin = Carbon\Carbon::parse($horario->horario->hora_fin);
+                                                    $duracion = $inicio->diff($fin);
+                                                @endphp
+                                                <small class="text-muted">
+                                                    {{ $duracion->h }}h {{ $duracion->i }}m
+                                                </small>
+                                            </td>
+                                            @if ($cursos->docente_id == auth()->user()->id || auth()->user()->hasRole('Administrador'))
+                                                <td>
+                                                    <div class="d-flex gap-2 justify-content-center">
+                                                        @if ($horario->trashed())
+                                                            <span class="badge bg-warning text-dark mb-2">
+                                                                <i class="bi bi-archive"></i> Eliminado
+                                                            </span>
+                                                            <form
+                                                                action="{{ route('horarios.restore', ['id' => $horario->id]) }}"
+                                                                method="POST" class="d-inline"
+                                                                onsubmit="return confirm('¿Estás seguro de que deseas restaurar este horario?');">
+                                                                @csrf
+                                                                <button type="submit"
+                                                                    class="btn btn-sm btn-outline-success"
+                                                                    data-bs-toggle="tooltip" title="Restaurar horario">
+                                                                    <i class="bi bi-arrow-clockwise"></i>
+                                                                    Restaurar
+                                                                </button>
+                                                            </form>
+                                                        @else
+                                                            <button
+                                                                class="btn btn-sm btn-outline-primary btn-editar-horario"
+                                                                data-id="{{ $horario->id }}"
+                                                                data-dia="{{ $horario->horario->dia }}"
+                                                                data-hora-inicio="{{ $horario->horario->hora_inicio }}"
+                                                                data-hora-fin="{{ $horario->horario->hora_fin }}"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#modalEditarHorario"
+                                                                title="Editar horario">
+                                                                <i class="bi bi-pencil"></i>
+                                                                Editar
+                                                            </button>
+                                                            <form
+                                                                action="{{ route('horarios.delete', ['id' => $horario->id]) }}"
+                                                                method="POST" class="d-inline"
+                                                                onsubmit="return confirm('¿Estás seguro de que deseas eliminar este horario? Esta acción se puede revertir.');">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit"
+                                                                    class="btn btn-sm btn-outline-danger"
+                                                                    data-bs-toggle="tooltip" title="Eliminar horario">
+                                                                    <i class="bi bi-trash"></i>
+                                                                    Eliminar
+                                                                </button>
+                                                            </form>
+                                                        @endif
+                                                    </div>
+                                                </td>
                                             @endif
-                                        </td>
-                                    @endif
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+
+                <div class="modal-footer bg-light">
+                    @if ($cursos->docente_id == auth()->user()->id || auth()->user()->hasRole('Administrador'))
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                            data-bs-target="#modalCrearHorario">
+                            <i class="bi bi-plus-circle me-1"></i>
+                            Agregar Horario
+                        </button>
+                    @endif
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-1"></i>
+                        Cerrar
+                    </button>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Estilos adicionales -->
+    <style>
+        .modal-header.bg-primary {
+            border-bottom: none;
+        }
+
+        .modal-footer.bg-light {
+            border-top: 1px solid #dee2e6;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+
+        .btn-group-sm>.btn,
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            border-radius: 0.375rem;
+        }
+
+        @media (max-width: 768px) {
+            .modal-dialog {
+                margin: 0.5rem;
+            }
+
+            .table-responsive {
+                font-size: 0.875rem;
+            }
+
+            .d-flex.gap-2 {
+                flex-direction: column;
+                gap: 0.25rem !important;
+            }
+
+            .btn-sm {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.75rem;
+            }
+        }
+
+        /* Animaciones sutiles */
+        .btn {
+            transition: all 0.2s ease-in-out;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .table tbody tr {
+            transition: background-color 0.2s ease-in-out;
+        }
+    </style>
+
+    <!-- JavaScript para tooltips -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar tooltips de Bootstrap
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            })
+        });
+    </script>
 
     <!-- Modal de QR -->
     <div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
@@ -878,9 +1036,7 @@
 
 
 @section('content')
-    @if (
-        (auth()->user()->hasRole('Docente') && $esDocente) ||
-            (auth()->user()->hasRole('Estudiante') && $inscritos))
+    @if ((auth()->user()->hasRole('Docente') && $esDocente) || (auth()->user()->hasRole('Estudiante') && $inscritos))
 
         @section('nav')
             <!-- Temas y Subtemas -->
@@ -972,7 +1128,7 @@
             <!-- Contenido principal -->
             <div class="card shadow border-0 rounded-3 overflow-hidden">
                 <!-- Pestañas de navegación -->
-                
+
                 <div class="card-header bg-white p-0 border-bottom">
                     <ul class="nav nav-tabs nav-fill" id="course-tabs" role="tablist">
 

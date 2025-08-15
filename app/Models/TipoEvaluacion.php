@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TipoEvaluacion extends BaseModel
@@ -19,11 +20,19 @@ class TipoEvaluacion extends BaseModel
         'updated_at',
         'deleted_at',
     ];
-    public function actividades()
+    public function actividades(): BelongsToMany
     {
-        return $this->belongsToMany(Actividad::class, 'actividad_tipos_evaluacion')
-            ->withPivot('puntaje_maximo', 'es_obligatorio')
-            ->withTimestamps();
+        return $this->belongsToMany(
+            Actividad::class,
+            'actividad_tipos_evaluacion',
+            'tipo_evaluacion_id',
+            'actividad_id'
+        )
+        ->withPivot([
+            'puntaje_maximo',
+            'es_obligatorio'
+        ])
+        ->withTimestamps();
     }
     public function scopeFilter($query, array $filters)
     {

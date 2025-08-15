@@ -11,22 +11,16 @@ use App\Http\Controllers\RecursosController;
 use App\Http\Controllers\InscritosController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\ForoController;
-use App\Http\Controllers\TareasController;
-use App\Http\Controllers\TareasEntregaController;
 use App\Http\Controllers\AsistenciaController;
 use App\Http\Controllers\BoletinController;
 use App\Http\Controllers\CertificadoController;
 use App\Http\Controllers\CuestionarioController;
-use App\Http\Controllers\EvaluacionesController;
-use App\Http\Controllers\EvaluacionEntregaController;
 use App\Http\Controllers\HorarioController;
 use App\Http\Controllers\NotaEntregaController;
 use App\Http\Controllers\PreguntaController;
 use App\Http\Controllers\TemaController;
 use App\Http\Controllers\SubtemaController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Http\Request;
 use App\Http\Controllers\RecursoSubtemaController;
 use App\Http\Controllers\BotManController;
 use App\Http\Controllers\CategoriaController;
@@ -232,6 +226,8 @@ Route::group(['middleware' => ['auth']], function () {
 
 
 
+
+
         //Administrador/Cursos
         Route::get('/ListadeCursos', [MenuController::class, 'ListaDeCursos'])->name('ListadeCursos');
         Route::get('/ListaCursosCerrados', [MenuController::class, 'ListaDeCursosEliminados'])->name('ListadeCursosEliminados');
@@ -276,7 +272,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::delete('/cursos/{curso}/expositores/{expositor}', [ExpositoresController::class, 'quitarExpositor'])->name('cursos.quitarExpositor');
         Route::put('/cursos/{id}', [CursosController::class, 'updateCategories'])->name('cursos.updateCategories');
 
-  Route::post('/cursos/{id}/activar-certificados', [CursosController::class, 'activarCertificados'])
+        Route::post('/cursos/{id}/activar-certificados', [CursosController::class, 'activarCertificados'])
             ->name('cursos.activarCertificados');
 
         Route::get('/certificados/vista-previa/{curso_id}', [CertificadoController::class, 'vistaPreviaCertificado'])
@@ -285,8 +281,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/certificates/{id}', [CertificadoController::class, 'store'])->name('certificates.store');
         Route::post('/certificates/update/{id}', [CertificadoController::class, 'update'])->name('certificates.update');
         Route::delete('/certificates-delete/{id}', [CertificadoController::class, 'destroy'])->name('certificates.destroy');
-
-
+        Route::get('/certificados/reenviar/{inscrito_id}', [CertificadoController::class, 'reenviarCertificadoPorEmail'])->name('certificados.reenviar.email');
         //Curso
         Route::get('/sumario',  [MenuController::class, 'analytics'])->name('sumario');
         Route::get('/getEstudiantesNoInscritos/{curso_id}', [InscritosController::class, 'getEstudiantesNoInscritos']);
@@ -356,13 +351,13 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/curso/{cursoId}/temas', [TemaController::class, 'index'])->name('temas.index');
         Route::post('/curso/{cursoId}/temas', [TemaController::class, 'store'])->name('temas.store');
         Route::post('/curso/{cursoId}/temas/update', [TemaController::class, 'update'])->name('temas.update');
-        Route::post('/curso/{cursoId}/temas/delete', [TemaController::class, 'destroy'])->name('temas.delete');
+        Route::delete('/curso/{cursoId}/temas/delete', [TemaController::class, 'destroy'])->name('temas.delete');
         Route::post('/curso/{cursoId}/temas/restore', [TemaController::class, 'restore'])->name('temas.restore');
 
         // Subtemas
         Route::post('/tema/{temaId}/subtemas', [SubtemaController::class, 'store'])->name('subtemas.store');
         Route::post('/tema/{temaId}/subtemas/update', [SubtemaController::class, 'update'])->name('subtemas.update');
-        Route::post('/tema/{temaId}/subtemas/delete', [SubtemaController::class, 'destroy'])->name('subtemas.destroy');
+        Route::delete('/tema/{temaId}/subtemas/delete', [SubtemaController::class, 'delete'])->name('subtemas.delete');
         Route::post('/tema/{temaId}/subtemas/restore', [SubtemaController::class, 'restore'])->name('subtemas.restore');
 
         //Actividades
@@ -389,7 +384,7 @@ Route::group(['middleware' => ['auth']], function () {
         //RecursosSubtema
         Route::post('CrearRecursoSubtema/cursoid={id}', [RecursoSubtemaController::class, 'store'])->name('CrearRecursosSubtemaPost');
         Route::put('ModificarRecursoSubtema/cursoid={id}', [RecursoSubtemaController::class, 'update'])->name('editarRecursosSubtemaPost');
-        Route::get('QuitarRecursoSubtema/{id}', [RecursoSubtemaController::class, 'delete'])->name('quitarRecursoSubtema');
+        Route::delete('QuitarRecursoSubtema/{id}', [RecursoSubtemaController::class, 'delete'])->name('eliminarRecursosSubtemaPost');
         Route::get('RestaurarRecursoSubtema/{id}', [RecursoSubtemaController::class, 'restore'])->name('restaurarRecursoSubtema');
 
         //AsignarCursos
@@ -402,7 +397,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/RestaurarInscripcion/{id}', [InscritosController::class, 'restaurarInscrito'])->name('restaurarIncripcion');
         //ListaDeInscritos
         Route::get('listaRetirados/cursoid={id}', [CursosController::class, 'listaRetirados'])->name('listaretirados');
-                // Retirar estudiantes masivamente
+        // Retirar estudiantes masivamente
         Route::post('/cursos/retirar-masivo', [InscritosController::class, 'retirarEstudiantesMasivo'])
             ->name('cursos.retirarMasivo');
 
@@ -441,6 +436,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('certificados/generar/{id}/', [CertificadoController::class, 'generarCertificado'])->name('certificados.generar');
         Route::get('certificadosCongreso/generar/{id}/', [CertificadoController::class, 'generarCertificadoCongreso'])->name('certificadosCongreso.generar');
         Route::get('completado/{curso_id}/{estudiante_id}', [InscritosController::class, 'completado'])->name('completado');
+
+        Route::get('/cursos/{id}/elementos-eliminados', [CursosController::class, 'elementosEliminados'])->name('cursos.elementos-eliminados');
+        Route::post('/cursos/restaurar-elemento', [CursosController::class, 'restaurarElemento'])->name('cursos.restaurar-elemento');
     });
     //ENDDOCENTE
 
@@ -454,10 +452,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::delete('/notifications/{id}', [NotificationController::class, 'delete'])->name('notifications.delete');
         Route::delete('/notifications/delete-all-read', [NotificationController::class, 'deleteAllRead'])->name('notifications.delete-all-read');
         //endnotification
-        Route::get('/recursos/descargar/{archivo}', [RecursosController::class, 'descargar'])
-            ->name('recursos.descargar');
+        // Nueva ruta recomendada (por ID)
+        Route::get('/recursos/{id}/descargar', [RecursosController::class, 'descargar'])->name('recursos.descargar');
 
-
+   
         Route::post('/actividad/subir/{id}', [ActividadController::class, 'subirArchivo'])->name('subirArchivo');
         Route::get('/actividad/quitar/{id}', [ActividadController::class, 'quitarEntrega'])->name('quitarEntrega');
 
@@ -532,10 +530,9 @@ Route::group(['middleware' => ['auth']], function () {
             ->name('cursos.calificaciones');
 
         Route::get('/recibo/{id}', [AportesController::class, 'generarRecibo'])->name('recibo.generar');
-
     });
-        Route::get('/recibo/verificar/{codigo}', [AportesController::class, 'verificarReciboPorCodigo'])
-    ->name('recibo.verificar');
+    Route::get('/recibo/verificar/{codigo}', [AportesController::class, 'verificarReciboPorCodigo'])
+        ->name('recibo.verificar');
 
 
 

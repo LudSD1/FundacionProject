@@ -267,40 +267,77 @@ class ActividadController extends Controller
     }
 
 
-    public function update(Request $request, $id)
-    {
-        $actividad = Actividad::findOrFail($id);
 
+    public function update(Request $request, $encryptedId)
+    {
+        // ✅ Desencriptar el ID
+        try {
+            $id = $encryptedId;
+            $actividad = Actividad::findOrFail($id);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Actividad no encontrada.');
+        }
+
+        // ✅ Validación mejorada
         $data = $request->validate([
             'titulo' => 'required|string|max:255',
             'descripcion' => 'nullable|string',
             'fecha_inicio' => 'nullable|date',
-            'fecha_limite' => 'nullable|date',
+            'fecha_limite' => 'nullable|date|after_or_equal:fecha_inicio',
             'tipo_actividad_id' => 'required|exists:tipo_actividades,id',
-            'tipos_evaluacion' => 'required|array',
+            'tipos_evaluacion' => 'required|array|min:1',
             'tipos_evaluacion.*.tipo_evaluacion_id' => 'required|exists:tipo_evaluaciones,id',
-            'tipos_evaluacion.*.puntaje_maximo' => 'required|integer|min:0',
-            'tipos_evaluacion.*.es_obligatorio' => 'required|boolean',
+            'tipos_evaluacion.*.puntaje_maximo' => 'required|integer|min:1|max:1000',
+            'tipos_evaluacion.*.es_obligatorio' => 'required|in:0,1',
+            'archivo' => 'nullable|file|mimes:jpg,jpeg,png,gif,doc,docx,xls,xlsx,ppt,pptx,pdf,txt,mp4,mp3,wav,ogg,zip,rar|max:10240', // 10MB max
         ]);
 
-        $actividad->update([
-            'titulo' => $data['titulo'],
-            'descripcion' => $data['descripcion'],
-            'fecha_inicio' => $data['fecha_inicio'],
-            'fecha_limite' => $data['fecha_limite'],
-            'tipo_actividad_id' => $data['tipo_actividad_id'],
-        ]);
+        try {
+            DB::beginTransaction();
 
-        // Actualizar los tipos de evaluación
-        $actividad->tiposEvaluacion()->sync([]);
-        foreach ($data['tipos_evaluacion'] as $tipoEvaluacion) {
-            $actividad->tiposEvaluacion()->attach($tipoEvaluacion['tipo_evaluacion_id'], [
-                'puntaje_maximo' => $tipoEvaluacion['puntaje_maximo'],
-                'es_obligatorio' => $tipoEvaluacion['es_obligatorio'],
+            // ✅ Manejar archivo si se subió uno nuevo
+            if ($request->hasFile('archivo')) {
+                // Eliminar archivo anterior si existe
+                if ($actividad->archivo && Storage::disk('public')->exists($actividad->archivo)) {
+                    Storage::disk('public')->delete($actividad->archivo);
+                }
+
+                // Guardar nuevo archivo
+                $archivoPath = $request->file('archivo')->store('actividades', 'public');
+                $data['archivo'] = $archivoPath;
+            }
+
+            // ✅ Actualizar datos básicos de la actividad
+            $actividad->update([
+                'titulo' => $data['titulo'],
+                'descripcion' => $data['descripcion'],
+                'fecha_inicio' => $data['fecha_inicio'],
+                'fecha_limite' => $data['fecha_limite'],
+                'tipo_actividad_id' => $data['tipo_actividad_id'],
+                'archivo' => $data['archivo'] ?? $actividad->archivo, // Mantener archivo existente si no hay nuevo
             ]);
-        }
 
-        return redirect()->back()->with('success', 'Actividad actualizada exitosamente.');
+            // ✅ Actualizar tipos de evaluación usando sync() más eficientemente
+            $syncData = [];
+            foreach ($data['tipos_evaluacion'] as $tipoEvaluacion) {
+                $syncData[$tipoEvaluacion['tipo_evaluacion_id']] = [
+                    'puntaje_maximo' => $tipoEvaluacion['puntaje_maximo'],
+                    'es_obligatorio' => (bool) $tipoEvaluacion['es_obligatorio'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            $actividad->tiposEvaluacion()->sync($syncData);
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Actividad actualizada exitosamente.');
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            \Log::error('Error actualizando actividad: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error al actualizar la actividad.')->withInput();
+        }
     }
 
     public function destroy($id)
