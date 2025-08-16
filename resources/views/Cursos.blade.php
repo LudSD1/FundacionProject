@@ -128,12 +128,12 @@
                                             </li>
 
 
-                                            <li>
+                                            {{-- <li>
                                                 <a class="dropdown-item py-2" href="#" data-bs-toggle="modal"
                                                     data-bs-target="#qrModal">
                                                     <i class="fas fa-qrcode text-dark me-2"></i> Generar Código QR
                                                 </a>
-                                            </li>
+                                            </li> --}}
                                             <li>
                                                 <a class="dropdown-item py-2"
                                                     href="{{ route('repF', [encrypt($cursos->id)]) }}"
@@ -852,7 +852,7 @@
         });
     </script>
 
-    <!-- Modal de QR -->
+    {{-- <!-- Modal de QR -->
     <div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -871,7 +871,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <div class="modal fade" id="modalCrearHorario" tabindex="-1" aria-labelledby="modalCrearHorarioLabel"
         aria-hidden="true">

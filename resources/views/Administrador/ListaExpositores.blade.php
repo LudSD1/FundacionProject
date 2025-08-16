@@ -68,7 +68,6 @@
                                         <i class="fa fa-check"></i>
                                     </button>
                                 </form>
-
                                 @else
                                 <form id="form-eliminar-{{ $expositor->id }}" method="POST"
                                     action="{{ route('expositores.destroy', encrypt($expositor->id)) }}"
@@ -81,68 +80,7 @@
                                     </button>
                                 </form>
                                 @endif
-
-                                <div class="modal fade" id="editarExpositorModal" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg">
-                                        <div class="modal-content">
-                                            <div class="modal-header bg-warning text-dark">
-                                                <h5 class="modal-title">Editar Expositor</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <form id="formEditarExpositor" action="{{ route('expositores.update', encrypt($expositor->id)) }}" method="POST"
-                                                enctype="multipart/form-data">
-                                                @csrf
-                                                @method('PUT')
-                                                <input type="hidden" name="id" id="edit_id">
-                                                <div class="modal-body">
-                                                    <div class="row">
-                                                        <div class="col-md-6 mb-3">
-                                                            <label class="form-label">Nombre completo</label>
-                                                            <input type="text" name="nombre" id="edit_nombre" class="form-control" required>
-                                                        </div>
-                                                        <div class="col-md-6 mb-3">
-                                                            <label class="form-label">Especialidad</label>
-                                                            <input type="text" name="especialidad" id="edit_especialidad" class="form-control"
-                                                                required>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="row">
-                                                        <div class="col-md-6 mb-3">
-                                                            <label class="form-label">Empresa</label>
-                                                            <input type="text" name="empresa" id="edit_empresa" class="form-control" required>
-                                                        </div>
-                                                        <div class="col-md-6 mb-3">
-                                                            <label class="form-label">Foto de perfil</label>
-                                                            <input type="file" name="imagen" class="form-control">
-                                                            <small class="text-muted">Dejar en blanco para mantener la imagen actual</small>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Biografía</label>
-                                                        <textarea name="biografia" id="edit_biografia" class="form-control" rows="3"></textarea>
-                                                    </div>
-
-                                                    <div class="row">
-                                                        <div class="col-md-6 mb-3">
-                                                            <label class="form-label">LinkedIn (URL)</label>
-                                                            <input type="url" name="linkedin" id="edit_linkedin" class="form-control">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                                    <button type="submit" class="btn btn-warning">Actualizar</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-
-
+                            </td>
                         </tr>
                     @empty
                         <tr>
@@ -213,10 +151,62 @@
         </div>
     </div>
 
+    <!-- MODAL: Editar Expositor (ÚNICO) -->
+    <div class="modal fade" id="editarExpositorModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title">Editar Expositor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formEditarExpositor" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="id" id="edit_id">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nombre completo</label>
+                                <input type="text" name="nombre" id="edit_nombre" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Especialidad</label>
+                                <input type="text" name="especialidad" id="edit_especialidad" class="form-control" required>
+                            </div>
+                        </div>
 
-    <!-- MODAL: Editar Expositor -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Empresa</label>
+                                <input type="text" name="empresa" id="edit_empresa" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Foto de perfil</label>
+                                <input type="file" name="imagen" class="form-control">
+                                <small class="text-muted">Dejar en blanco para mantener la imagen actual</small>
+                            </div>
+                        </div>
 
+                        <div class="mb-3">
+                            <label class="form-label">Biografía</label>
+                            <textarea name="biografia" id="edit_biografia" class="form-control" rows="3"></textarea>
+                        </div>
 
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">LinkedIn (URL)</label>
+                                <input type="url" name="linkedin" id="edit_linkedin" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-warning">Actualizar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -245,27 +235,35 @@
             });
         });
 
-        // Mostrar modal de edición
+        // Mostrar modal de edición (CORREGIDO)
         function editarExpositor(id) {
             $.get(`/expositores/${id}/edit`, function(data) {
+                // Actualizar el action del formulario dinámicamente
+                $('#formEditarExpositor').attr('action', `/expositores/${id}`);
+
+                // Rellenar los campos del formulario
                 $('#edit_id').val(data.id);
                 $('#edit_nombre').val(data.nombre);
                 $('#edit_especialidad').val(data.especialidad);
                 $('#edit_empresa').val(data.empresa);
                 $('#edit_biografia').val(data.biografia);
                 $('#edit_linkedin').val(data.linkedin);
+
+                // Mostrar el modal
                 $('#editarExpositorModal').modal('show');
+            }).fail(function(xhr) {
+                Swal.fire('Error', 'No se pudo cargar la información del expositor', 'error');
             });
         }
 
-        // Actualizar expositor
+        // Actualizar expositor (CORREGIDO)
         $('#formEditarExpositor').submit(function(e) {
             e.preventDefault();
-            const id = $('#edit_id').val();
             const formData = new FormData(this);
+            const actionUrl = $(this).attr('action');
 
             $.ajax({
-                url: `/expositores/${id}`,
+                url: actionUrl,
                 type: "POST",
                 data: formData,
                 processData: false,
@@ -285,57 +283,40 @@
         });
 
         // Confirmación para desactivar expositor
-        function mostrarAdvertencia(id) {
+        function confirmarDesactivacion(id) {
             Swal.fire({
-                title: '¿Estás seguro?',
-                text: "Esta acción desactivará al expositor. ¿Deseas continuar?",
+                title: '¿Desactivar expositor?',
+                text: 'Esta acción lo marcará como inactivo.',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Sí, desactivar',
                 cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6'
             }).then((result) => {
-                if (result.isConfirmed) eliminarExpositor(id);
+                if (result.isConfirmed) {
+                    document.getElementById(`form-eliminar-${id}`).submit();
+                }
+            });
+        }
+
+        // Confirmación para activar expositor
+        function confirmarActivacion(id) {
+            Swal.fire({
+                title: '¿Activar expositor?',
+                text: 'Esta acción lo marcará como activo.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, activar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(`form-activar-${id}`).submit();
+                }
             });
         }
     </script>
-
-
-<script>
-    function confirmarDesactivacion(id) {
-        Swal.fire({
-            title: '¿Desactivar expositor?',
-            text: 'Esta acción lo marcará como inactivo.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, desactivar',
-            cancelButtonText: 'Cancelar',
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById(`form-eliminar-${id}`).submit();
-            }
-        });
-    }
-
-    function confirmarActivacion(id) {
-        Swal.fire({
-            title: '¿Activar expositor?',
-            text: 'Esta acción lo marcará como activo.',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, activar',
-            cancelButtonText: 'Cancelar',
-            confirmButtonColor: '#28a745',
-            cancelButtonColor: '#6c757d'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById(`form-activar-${id}`).submit();
-            }
-        });
-    }
-</script>
 
 @endsection

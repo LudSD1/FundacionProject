@@ -37,7 +37,7 @@
             <div class="card-body">
                 <div class="mb-4">
                     <span class="badge bg-primary fs-6">Pregunta {{ $loop->iteration }} de {{ $cuestionario->preguntas->count() }}</span>
-                    <h4 class="mt-3">{{ $pregunta->pregunta }}</h4>
+                    <h4 class="mt-3">{{ $pregunta->enunciado }}</h4>
                     <p class="text-muted">Puntos: {{ $pregunta->puntaje }}</p>
                 </div>
 

@@ -262,7 +262,8 @@
                         </div>
                         <div class="col-md-6">
                             <div class="pagination-wrapper float-right">
-                                {{ $asistencias->appends(request()->query())->links() }}
+                           {{ $asistencias->appends(request()->query())->links('vendor.pagination.custom') }}
+
                             </div>
                         </div>
                     </div>
