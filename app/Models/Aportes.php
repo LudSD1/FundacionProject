@@ -21,7 +21,7 @@ class Aportes extends BaseModel
 
     public function curso(): BelongsTo
     {
-        return $this->belongsTo(Cursos::class,  'cursos_id');
+        return $this->belongsTo(Cursos::class,  'cursos_id')->withTrashed();
     }
 
     protected static function boot()

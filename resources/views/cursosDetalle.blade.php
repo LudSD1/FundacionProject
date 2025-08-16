@@ -60,7 +60,7 @@
                                             @if ($cursos->tipo == 'curso')
                                                 Acceso al Curso
                                             @else
-                                                Obtener Cerificado
+                                                Obtener Certificado
                                             @endif
 
                                         </h4>

@@ -23,89 +23,84 @@ class MenuController extends Controller
 {
 
 
-    public function detalle($id)
-    {
-        $curso = Cursos::with([
-            'calificaciones.user',
-            'inscritos' => function ($query) {
-                $query->whereNull('deleted_at');
-            }
-        ])
-            ->withAvg('calificaciones', 'puntuacion')
-            ->withCount('calificaciones')
-            ->findOrFail($id);
+  public function detalle($id)
+{
+    $curso = Cursos::with([
+        'calificaciones.user',
+        'inscritos' => function ($query) {
+            $query->whereNull('deleted_at');
+        }
+    ])
+        ->withAvg('calificaciones', 'puntuacion')
+        ->withCount('calificaciones')
+        ->findOrFail($id);
 
-        $metodosPago = PaymentMethod::all();
-        // $usuarioInscrito = null;
-        // $usuarioRetirado = null;
-        $yaHaPagado = false;
-        $pagoAnterior = null;
-        $estadoInscripcion = 'no_inscrito'; // no_inscrito, activo, retirado
+    $metodosPago = PaymentMethod::all();
 
-        if (Auth::check()) {
-            // Verificar inscripción activa
-            $usuarioInscrito = Inscritos::where('estudiante_id', auth()->user()->id)
+    // Inicializar variables por defecto
+    $usuarioInscrito = null;
+    $usuarioRetirado = null;
+    $yaHaPagado = false;
+    $pagoAnterior = null;
+    $estadoInscripcion = 'no_inscrito'; // no_inscrito, activo, retirado
+    $usuarioCalifico = false;
+    $calificacionUsuario = null;
+
+    // Solo verificar inscripciones y pagos si el usuario está autenticado
+    if (Auth::check()) {
+        // Verificar inscripción activa
+        $usuarioInscrito = Inscritos::where('estudiante_id', auth()->user()->id)
+            ->where('cursos_id', $id)
+            ->whereNull('deleted_at')
+            ->first();
+
+        // Verificar si fue retirado anteriormente (eliminado)
+        $usuarioRetirado = Inscritos::withTrashed()
+            ->where('estudiante_id', auth()->user()->id)
+            ->where('cursos_id', $id)
+            ->whereNotNull('deleted_at')
+            ->orderBy('deleted_at', 'desc')
+            ->first();
+
+        // Determinar estado de inscripción
+        if ($usuarioInscrito) {
+            $estadoInscripcion = 'activo';
+        } elseif ($usuarioRetirado) {
+            $estadoInscripcion = 'retirado';
+        }
+
+        // Verificar si ya pagó este curso anteriormente (incluso si fue desinscrito)
+        if ($curso->precio > 0) {
+            $pagoAnterior = Aportes::where('estudiante_id', Auth::id())
                 ->where('cursos_id', $id)
-                ->whereNull('deleted_at')
+                ->where('monto_pagado', '>=', $curso->precio)
                 ->first();
 
-            // Verificar si fue retirado anteriormente (eliminado)
-            $usuarioRetirado = Inscritos::withTrashed() // Asegura que incluya registros eliminados
-                ->where('estudiante_id', auth()->user()->id)
-                ->where('cursos_id', $id)
-                ->whereNotNull('deleted_at')
-                ->orderBy('deleted_at', 'desc')
-                ->first();
-
-
-
-
-            // Determinar estado de inscripción
-            if ($usuarioInscrito) {
-                $estadoInscripcion = 'activo';
-            } elseif ($usuarioRetirado) {
-                $estadoInscripcion = 'retirado';
-            }
-
-
-
-            // Verificar si ya pagó este curso anteriormente (incluso si fue desinscrito)
-            if ($curso->precio > 0) {
-                $pagoAnterior = Aportes::where('estudiante_id', Auth::id())
-                    ->where('cursos_id', $id)
-                    ->where('monto_pagado', '>=', $curso->precio) // Pago completado
-                    ->first();
-
-                $yaHaPagado = $pagoAnterior !== null;
-            }
+            $yaHaPagado = $pagoAnterior !== null;
         }
 
         // Verificar calificación del usuario
-        $usuarioCalifico = false;
-        $calificacionUsuario = null;
-
-        if (Auth::check()) {
-            $calificacionUsuario = $curso->calificaciones->where('user_id', Auth::id())->first();
-            $usuarioCalifico = $calificacionUsuario !== null;
-        }
-
-        return view('cursosDetalle', [
-            'cursos' => $curso,
-            'usuarioInscrito' => $usuarioInscrito,
-            'usuarioRetirado' => $usuarioRetirado,
-            'estadoInscripcion' => $estadoInscripcion,
-            'usuarioCalifico' => $usuarioCalifico,
-            'calificacionUsuario' => $calificacionUsuario,
-            'yaHaPagado' => $yaHaPagado,
-            'pagoAnterior' => $pagoAnterior,
-            'calificacionesRecientes' => $curso->calificaciones()
-                ->with('user')
-                ->latest()
-                ->take(5)
-                ->get(),
-            'metodosPago' => $metodosPago,
-        ]);
+        $calificacionUsuario = $curso->calificaciones->where('user_id', Auth::id())->first();
+        $usuarioCalifico = $calificacionUsuario !== null;
     }
+
+    return view('cursosDetalle', [
+        'cursos' => $curso,
+        'usuarioInscrito' => $usuarioInscrito,
+        'usuarioRetirado' => $usuarioRetirado,
+        'estadoInscripcion' => $estadoInscripcion,
+        'usuarioCalifico' => $usuarioCalifico,
+        'calificacionUsuario' => $calificacionUsuario,
+        'yaHaPagado' => $yaHaPagado,
+        'pagoAnterior' => $pagoAnterior,
+        'calificacionesRecientes' => $curso->calificaciones()
+            ->with('user')
+            ->latest()
+            ->take(5)
+            ->get(),
+        'metodosPago' => $metodosPago,
+    ]);
+}
 
 
 
