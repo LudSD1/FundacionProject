@@ -962,7 +962,7 @@
     @endif
 
 
-    <section class="mt-5" id="valoraciones">
+ <section class="mt-5" id="valoraciones">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
@@ -1025,22 +1025,18 @@
                             <style>
                                 .rating-stars-input {
                                     direction: rtl;
-                                    /* Orden inverso para facilitar la selección */
                                     unicode-bidi: bidi-override;
                                     display: inline-block;
                                     font-size: 0;
-                                    /* Elimina espacios entre elementos inline */
                                     margin: 10px 0;
                                 }
 
                                 .rating-stars-input input[type="radio"] {
                                     display: none;
-                                    /* Oculta los radios reales */
                                 }
 
                                 .rating-stars-input label {
                                     color: #ddd;
-                                    /* Color de estrellas no seleccionadas */
                                     font-size: 32px;
                                     padding: 0 3px;
                                     cursor: pointer;
@@ -1049,21 +1045,17 @@
                                     position: relative;
                                 }
 
-                                /* Estrella seleccionada y las anteriores */
                                 .rating-stars-input input[type="radio"]:checked~label,
                                 .rating-stars-input label:hover,
                                 .rating-stars-input label:hover~label {
                                     color: #FFD700;
-                                    /* Color dorado para estrellas seleccionadas */
                                     text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
                                 }
 
-                                /* Efecto hover */
                                 .rating-stars-input label:hover {
                                     transform: scale(1.2);
                                 }
 
-                                /* Estilo para cuando el campo es requerido y no está seleccionado */
                                 .rating-stars-input:has(input[type="radio"]:required:not(:checked)) label {
                                     animation: pulse 2s infinite;
                                 }
@@ -1082,7 +1074,6 @@
                                     }
                                 }
 
-                                /* Estilo para pantallas pequeñas */
                                 @media (max-width: 576px) {
                                     .rating-stars-input label {
                                         font-size: 24px;
@@ -1122,15 +1113,22 @@
                                 </div>
                             @elseif($usuarioCalifico)
                                 <div class="alert alert-info">
-                                    <i class="bi bi-info-circle-fill me-2"></i>
-                                    Ya calificaste este curso con {{ $calificacionUsuario->puntuacion }}
-                                    estrellas.
-                                    @if ($calificacionUsuario->comentario)
-                                        <div class="mt-2">
-                                            <strong>Tu comentario:</strong>
-                                            <p class="mb-0">{{ $calificacionUsuario->comentario }}</p>
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <i class="bi bi-info-circle-fill me-2"></i>
+                                            Ya calificaste este curso con {{ $calificacionUsuario->puntuacion }}
+                                            estrellas.
+                                            @if ($calificacionUsuario->comentario)
+                                                <div class="mt-2">
+                                                    <strong>Tu comentario:</strong>
+                                                    <p class="mb-0">{{ $calificacionUsuario->comentario }}</p>
+                                                </div>
+                                            @endif
                                         </div>
-                                    @endif
+                                        <button class="btn btn-sm btn-outline-warning" onclick="editarCalificacion({{ $calificacionUsuario->id }}, {{ $calificacionUsuario->puntuacion }}, '{{ $calificacionUsuario->comentario }}')">
+                                            <i class="bi bi-pencil"></i> Editar
+                                        </button>
+                                    </div>
                                 </div>
                             @elseif(!Auth::check())
                                 <div class="alert alert-warning">
@@ -1159,28 +1157,36 @@
                                                         class="text-muted ms-2">{{ $calificacion->created_at->diffForHumans() }}</small>
                                                 </div>
                                             </div>
-                                            @if (auth()->id() === $calificacion->user_id)
-                                                <form
-                                                    action="{{ route('calificaciones.destroy', encrypt($calificacion->id)) }}"
-                                                    method="POST">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                        <i class="bi bi-trash"></i>
+                                            <div class="d-flex gap-1">
+                                                @if (auth()->id() === $calificacion->user_id)
+                                                    <button type="button" class="btn btn-sm btn-outline-warning"
+                                                            onclick="editarCalificacion({{ $calificacion->id }}, {{ $calificacion->puntuacion }}, '{{ $calificacion->comentario }}')">
+                                                        <i class="bi bi-pencil"></i>
                                                     </button>
-                                                </form>
-                                            @endif
-                                            @hasrole('Administrador')
-                                                <form
-                                                    action="{{ route('calificaciones.destroy', encrypt($calificacion->id)) }}"
-                                                    method="POST">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </form>
-                                            @endrole
+                                                    <form
+                                                        action="{{ route('calificaciones.destroy', encrypt($calificacion->id)) }}"
+                                                        method="POST" class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                                onclick="return confirm('¿Estás seguro de eliminar esta valoración?')">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                                @hasrole('Administrador')
+                                                    <form
+                                                        action="{{ route('calificaciones.destroy', encrypt($calificacion->id)) }}"
+                                                        method="POST" class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                                onclick="return confirm('¿Estás seguro de eliminar esta valoración?')">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                @endrole
+                                            </div>
                                         </div>
                                         @if ($calificacion->comentario)
                                             <p class="mt-2 mb-0">{{ $calificacion->comentario }}</p>
@@ -1208,6 +1214,117 @@
             </div>
         </div>
     </section>
+
+    <!-- Modal para Editar Valoración -->
+    <div class="modal fade" id="editarCalificacionModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title">
+                        <i class="bi bi-pencil-square me-2"></i>Editar tu valoración
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formEditarCalificacion" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Tu calificación:</label>
+                            <div class="rating-stars-input" id="editStarsContainer">
+                                @for ($i = 5; $i >= 1; $i--)
+                                    <input type="radio" id="edit_star{{ $i }}" name="puntuacion"
+                                        value="{{ $i }}" required>
+                                    <label for="edit_star{{ $i }}">★</label>
+                                @endfor
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_comentario" class="form-label">Comentario (opcional):</label>
+                            <textarea name="comentario" id="edit_comentario" class="form-control" rows="3"
+                                      placeholder="¿Qué te pareció el curso?"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="bi bi-check-lg me-1"></i>Actualizar Valoración
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts para manejar la edición -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function editarCalificacion(id, puntuacion, comentario) {
+            // Actualizar la acción del formulario
+            document.getElementById('formEditarCalificacion').action = `/calificaciones/${id}`;
+
+            // Establecer la puntuación actual
+            document.getElementById(`edit_star${puntuacion}`).checked = true;
+
+            // Establecer el comentario actual
+            document.getElementById('edit_comentario').value = comentario || '';
+
+            // Mostrar el modal
+            new bootstrap.Modal(document.getElementById('editarCalificacionModal')).show();
+        }
+
+        // Manejar el envío del formulario de edición
+        document.getElementById('formEditarCalificacion').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const actionUrl = this.action;
+
+            fetch(actionUrl, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-HTTP-Method-Override': 'PUT'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Cerrar modal
+                    bootstrap.Modal.getInstance(document.getElementById('editarCalificacionModal')).hide();
+
+                    // Mostrar mensaje de éxito
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Actualizado!',
+                        text: data.message || 'Tu valoración ha sido actualizada correctamente',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+
+                    // Recargar la página después de un breve delay
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Ocurrió un error al actualizar la valoración'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ocurrió un error inesperado'
+                });
+            });
+        });
+    </script>
 @endsection
 
 

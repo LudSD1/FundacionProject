@@ -15,6 +15,12 @@ class CursoCalificacionController extends Controller
         $request->validate([
             'puntuacion' => 'required|numeric|min:1|max:5',
             'comentario' => 'nullable|string|max:500'
+        ], [
+            'puntuacion.required' => 'Por favor, califica el curso',
+            'puntuacion.numeric' => 'La calificación debe ser un número entre 1 y 5',
+            'puntuacion.min' => 'La calificación mínima es 1',
+            'puntuacion.max' => 'La calificación máxima es 5',
+            'comentario.max' => 'El comentario no puede exceder los 500 caracteres',
         ]);
 
         // Verificar duplicado
@@ -128,6 +134,31 @@ class CursoCalificacionController extends Controller
 
         $calificacion->delete();
         return back()->with('success', 'Calificación eliminada');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $calificacion = CursoCalificacion::findOrFail($id);
+
+        // Verificar que el usuario puede editar esta calificación
+        if (auth()->id() !== $calificacion->user_id && !auth()->user()->hasRole('Administrador')) {
+            return response()->json(['success' => false, 'message' => 'No autorizado'], 403);
+        }
+
+        $request->validate([
+            'puntuacion' => 'required|integer|min:1|max:5',
+            'comentario' => 'nullable|string|max:1000'
+        ]);
+
+        $calificacion->update([
+            'puntuacion' => $request->puntuacion,
+            'comentario' => $request->comentario
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Valoración actualizada correctamente'
+        ]);
     }
 
     // Ver todas las calificaciones (opcional)

@@ -455,7 +455,7 @@ Route::group(['middleware' => ['auth']], function () {
         // Nueva ruta recomendada (por ID)
         Route::get('/recursos/{id}/descargar', [RecursosController::class, 'descargar'])->name('recursos.descargar');
 
-   
+
         Route::post('/actividad/subir/{id}', [ActividadController::class, 'subirArchivo'])->name('subirArchivo');
         Route::get('/actividad/quitar/{id}', [ActividadController::class, 'quitarEntrega'])->name('quitarEntrega');
 
@@ -521,7 +521,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/cursos/{curso}/calificar', [CursoCalificacionController::class, 'store'])
             ->name('cursos.calificar');
 
-        // Eliminar calificación (opcional)
+        // Actualizar calificación
+        Route::put('/calificaciones/{id}', [CursoCalificacionController::class, 'update'])
+            ->name('calificaciones.update')
+            ->middleware('auth');
         Route::delete('/calificaciones/{calificacion}', [CursoCalificacionController::class, 'destroy'])
             ->name('calificaciones.destroy');
 
