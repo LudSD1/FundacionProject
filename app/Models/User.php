@@ -91,31 +91,31 @@ class User extends Authenticatable implements MustVerifyEmail
 
 
 
-    protected static function boot()
-    {
-        parent::boot();
+    // protected static function boot()
+    // {
+    //     parent::boot();
 
-        static::deleting(function ($user) {
-            $user->inscritos()->get()->each->delete();
-            $user->foromensaje()->delete();
-            $user->entregatarea()->delete();
-            $user->entregaevaluacion()->delete();
-        });
+    //     static::deleting(function ($user) {
+    //         $user->inscritos()->get()->each->delete();
+    //         $user->foromensaje()->delete();
+    //         $user->entregatarea()->delete();
+    //         $user->entregaevaluacion()->delete();
+    //     });
 
-        static::restoring(function ($user) {
-            $user->inscritos()->onlyTrashed()->get()->each(function ($inscrito) {
-                $inscrito->restore();
-                $inscrito->asistencia()->onlyTrashed()->get()->each->restore();
-                $inscrito->notatarea()->onlyTrashed()->get()->each->restore();
-                $inscrito->notaevaluacion()->onlyTrashed()->get()->each->restore();
-                $inscrito->boletines()->onlyTrashed()->get()->each->restore();
-            });
-            $user->foromensaje()->restore();
-            $user->entregatarea()->restore();
-            $user->entregaevaluacion()->restore();
-            // Agrega más relaciones aquí si es necesario
-        });
-    }
+    //     static::restoring(function ($user) {
+    //         $user->inscritos()->onlyTrashed()->get()->each(function ($inscrito) {
+    //             $inscrito->restore();
+    //             $inscrito->asistencia()->onlyTrashed()->get()->each->restore();
+    //             $inscrito->notatarea()->onlyTrashed()->get()->each->restore();
+    //             $inscrito->notaevaluacion()->onlyTrashed()->get()->each->restore();
+    //             $inscrito->boletines()->onlyTrashed()->get()->each->restore();
+    //         });
+    //         $user->foromensaje()->restore();
+    //         $user->entregatarea()->restore();
+    //         $user->entregaevaluacion()->restore();
+    //         // Agrega más relaciones aquí si es necesario
+    //     });
+    // }
 
     public function sendEmailVerificationNotification()
     {

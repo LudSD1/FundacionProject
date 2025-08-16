@@ -80,7 +80,7 @@ Editar Perfil
                             </div>
                             <div class="col-md-6">
                                 <label for="CI" class="form-label">Cédula de Identidad</label>
-                                <input type="text" class="form-control" value="{{ $usuario->CI }}" name="CI">
+                                <input type="text" class="form-control" value="{{ $usuario->CI }}" name="ci">
                             </div>
                         </div>
 
@@ -312,6 +312,32 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+
+@if ($errors->any())
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error de validación',
+            html: `{!! implode('<br>', $errors->all()) !!}`,
+            confirmButtonText: 'Entendido'
+        });
+    });
+</script>
+@endif
+
+@if(session('success'))
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: '{{ session('success') }}',
+            confirmButtonText: 'Entendido'
+        });
+    });
+</script>
+@endif
 
 <!-- Script para alternar la visibilidad de la contraseña -->
 <script>

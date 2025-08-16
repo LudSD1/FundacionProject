@@ -434,11 +434,13 @@ class AdministradorController extends Controller
     {
 
 
+
         $request->validate([
             'name' => 'required',
             'lastname1' => 'required',
             'Celular' => 'required',
             'email' => 'required|unique:users,email,' . $id,
+            'ci' => 'required|unique:users,ci,' . $id,  // Add this line
             'fechadenac' => 'required|date|before_or_equal:today',
         ], [
             'name.required' => 'El campo nombre es obligatorio.',
@@ -446,6 +448,8 @@ class AdministradorController extends Controller
             'Celular.required' => 'El campo celular es obligatorio.',
             'email.required' => 'El campo correo electrónico es obligatorio.',
             'email.unique' => 'El correo electrónico ya está registrado.',
+            'ci.required' => 'El campo cédula es obligatorio.',  // Add this
+            'ci.unique' => 'La cédula ya está registrada.',      // Add this
             'fechadenac.required' => 'El campo fecha de nacimiento es obligatorio.',
             'fechadenac.before_or_equal' => 'El campo fecha de nacimiento debe ser valido.',
         ]);
@@ -455,7 +459,7 @@ class AdministradorController extends Controller
         $user->name = $request->name;
         $user->lastname1 = $request->lastname1;
         $user->lastname2 = $request->lastname2 ?? '';
-        $user->CI = $request->CI;
+        $user->CI = $request->ci;
         $user->email = $request->email;
         $user->Celular = $request->Celular;
         $user->fechadenac = $request->fechadenac;
@@ -588,7 +592,7 @@ class AdministradorController extends Controller
             $user->save();
         }
 
-        return redirect()->route('Inicio')->with('success', 'Editado exitosamente!');
+        return back()->with('success', 'Editado exitosamente!');
     }
     public function viewLogs()
     {

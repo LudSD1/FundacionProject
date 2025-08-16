@@ -63,7 +63,7 @@ class AportesController extends Controller
         }
 
         // Generar y mostrar el recibo
-        return view('Administrador.recibo-pago', ['pago' => $aporte]);
+        return back()->with('success', 'Recibo generado y enviado por correo electrónico.');
     }
 
     public function generarRecibo($id)
