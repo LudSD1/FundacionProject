@@ -94,6 +94,8 @@
     </div>
 </nav>
 
+
+
 <!-- Optional CSS Enhancements -->
 <style>
     :root {
@@ -174,5 +176,7 @@
 
         @yield('content')
     </div>
-  
+
 @endsection
+
+

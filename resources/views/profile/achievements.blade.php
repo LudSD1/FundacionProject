@@ -10,7 +10,7 @@
                     <h2 class="mb-0">Nivel {{ $userLevel }}</h2>
                     <p class="text-muted">{{ $currentXP }} / {{ $nextLevelXP }} XP</p>
                     <div class="progress" style="height: 20px;">
-                        <div class="progress-bar bg-success" role="progressbar" 
+                        <div class="progress-bar bg-success" role="progressbar"
                              style="width: {{ ($currentXP / $nextLevelXP) * 100 }}%">
                         </div>
                     </div>
@@ -76,7 +76,7 @@
                                 <span class="badge bg-success">Desbloqueado - {{ $achievement->earned_at->format('d/m/Y') }}</span>
                             @else
                                 <div class="progress" style="height: 20px;">
-                                    <div class="progress-bar bg-info" role="progressbar" 
+                                    <div class="progress-bar bg-info" role="progressbar"
                                          style="width: {{ ($achievement->current_progress / $achievement->requirement_value) * 100 }}%">
                                         {{ $achievement->current_progress }}/{{ $achievement->requirement_value }}
                                     </div>
@@ -104,4 +104,4 @@
     justify-content: center;
 }
 </style>
-@endsection 
+@endsection

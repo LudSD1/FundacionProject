@@ -26,7 +26,7 @@ class MenuController extends Controller
   public function detalle($id)
 {
     $curso = Cursos::with([
-        'calificaciones.user',
+        'calificaciones.user',  
         'inscritos' => function ($query) {
             $query->whereNull('deleted_at');
         }

@@ -1,7 +1,7 @@
 <!-- Floating XP Button -->
 @auth
     <div class="floating-xp-button">
-        <button type="button" class="btn btn-dark rounded-circle p-3 shadow-lg" data-bs-toggle="offcanvas"
+        <button type="button" class="btn btn-primary rounded-circle p-3 shadow-lg" data-bs-toggle="offcanvas"
             data-bs-target="#xpOffcanvas" aria-controls="xpOffcanvas">
             <i class="bi bi-trophy-fill"></i>
         </button>
