@@ -23,7 +23,6 @@
         </div>
 
         <div class="card-body">
-
             <form action="{{ route('darasistenciasPostMultiple', encrypt($cursos->id)) }}" method="POST">
                 @csrf
                 <div class="form-row align-items-center mb-4">
@@ -68,6 +67,7 @@
 
                                             <select name="asistencia[{{ $index }}][tipo_asistencia]"
                                                     class="form-control attendance-select"
+                                                    data-row-index="{{ $index }}"
                                                     @if($cursos->fecha_fin && now() > $cursos->fecha_fin) disabled @endif>
                                                 <option value="">Seleccione...</option>
                                                 <option value="Presente">Presente</option>
@@ -77,7 +77,9 @@
                                             </select>
                                         </td>
                                         <td class="text-center">
-                                            <span class="">Pendiente</span>
+                                            <span class="status-badge status-pending" id="status-{{ $index }}">
+                                                <i class="fas fa-clock text-warning"></i> Pendiente
+                                            </span>
                                         </td>
                                     </tr>
                                 @endif
@@ -95,9 +97,15 @@
 
                 @if(auth()->user()->hasRole('Docente') && (!$cursos->fecha_fin || now() <= $cursos->fecha_fin))
                     <div class="text-center mt-4">
-                        <button type="submit" class="btn btn-primary btn-lg">
+                        <button type="submit" class="btn btn-primary btn-lg" id="save-btn">
                             <i class="fas fa-save"></i> Guardar Asistencias
                         </button>
+                        <div class="mt-2">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle"></i>
+                                Solo se registrarán las asistencias con tipo seleccionado
+                            </small>
+                        </div>
                     </div>
                 @endif
             </form>
@@ -122,9 +130,81 @@ document.addEventListener("DOMContentLoaded", function() {
 
     document.getElementById('fecha_asistencia').value = getCurrentDate();
 
-    // Cambiar color del select según la asistencia
+    // Función para contar selecciones realizadas
+    function updateSelectionCount() {
+        const selects = document.querySelectorAll('.attendance-select');
+        const selectedCount = Array.from(selects).filter(select => select.value !== '').length;
+        const totalCount = selects.length;
+
+        const saveBtn = document.getElementById('save-btn');
+        if (saveBtn) {
+            if (selectedCount === 0) {
+                saveBtn.classList.add('btn-secondary');
+                saveBtn.classList.remove('btn-primary');
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> Guardar Asistencias (0/' + totalCount + ')';
+            } else {
+                saveBtn.classList.remove('btn-secondary');
+                saveBtn.classList.add('btn-primary');
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> Guardar Asistencias (' + selectedCount + '/' + totalCount + ')';
+            }
+        }
+    }
+
+    // Función para confirmar envío del formulario
+    function confirmSubmission() {
+        const selects = document.querySelectorAll('.attendance-select');
+        const selectedCount = Array.from(selects).filter(select => select.value !== '').length;
+
+        if (selectedCount === 0) {
+            alert('Debe seleccionar al menos un tipo de asistencia antes de guardar.');
+            return false;
+        }
+
+        return confirm(`¿Está seguro de registrar la asistencia para ${selectedCount} estudiante(s)?`);
+    }
+
+    // Agregar evento al formulario
+    document.getElementById('attendance-form').addEventListener('submit', function(e) {
+        if (!confirmSubmission()) {
+            e.preventDefault();
+        }
+    });
+
+    // Función para actualizar el estado visual
+    function updateStatusDisplay(selectElement, statusElement) {
+        const value = selectElement.value;
+
+        // Limpiar todas las clases de estado
+        statusElement.className = 'status-badge';
+
+        switch(value) {
+            case 'Presente':
+                statusElement.innerHTML = '<i class="fas fa-check-circle text-success"></i> Presente';
+                statusElement.classList.add('status-present');
+                break;
+            case 'Retraso':
+                statusElement.innerHTML = '<i class="fas fa-clock text-warning"></i> Retraso';
+                statusElement.classList.add('status-late');
+                break;
+            case 'Licencia':
+                statusElement.innerHTML = '<i class="fas fa-info-circle text-info"></i> Con Licencia';
+                statusElement.classList.add('status-excuse');
+                break;
+            case 'Falta':
+                statusElement.innerHTML = '<i class="fas fa-times-circle text-danger"></i> Ausente';
+                statusElement.classList.add('status-absent');
+                break;
+            default:
+                statusElement.innerHTML = '<i class="fas fa-clock text-warning"></i> Pendiente';
+                statusElement.classList.add('status-pending');
+                break;
+        }
+    }
+
+    // Cambiar color del select y actualizar estado según la asistencia
     document.querySelectorAll('.attendance-select').forEach(select => {
         select.addEventListener('change', function() {
+            // Actualizar estilos del select
             this.classList.remove('border-success', 'border-warning', 'border-info', 'border-danger');
 
             if(this.value === 'Presente') {
@@ -136,8 +216,21 @@ document.addEventListener("DOMContentLoaded", function() {
             } else if(this.value === 'Falta') {
                 this.classList.add('border-danger');
             }
+
+            // Actualizar el estado visual
+            const rowIndex = this.getAttribute('data-row-index');
+            const statusElement = document.getElementById(`status-${rowIndex}`);
+            if(statusElement) {
+                updateStatusDisplay(this, statusElement);
+            }
+
+            // Actualizar contador de selecciones
+            updateSelectionCount();
         });
     });
+
+    // Inicializar contador al cargar la página
+    updateSelectionCount();
 });
 </script>
 
@@ -153,6 +246,79 @@ document.addEventListener("DOMContentLoaded", function() {
 }
 .attendance-select.border-danger {
     border-color: #dc3545 !important;
+}
+
+.status-badge {
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    min-width: 100px;
+}
+
+.status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-present {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-late {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-excuse {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.status-absent {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Estilos para alertas personalizadas */
+.alert {
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.alert i {
+    margin-right: 8px;
+}
+
+.alert ul {
+    padding-left: 20px;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border-left: 4px solid #28a745;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border-left: 4px solid #ffc107;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border-left: 4px solid #dc3545;
+}
+
+/* Animación para el botón de guardar */
+#save-btn {
+    transition: all 0.3s ease;
+}
+
+#save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 </style>
 @endsection

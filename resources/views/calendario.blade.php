@@ -359,31 +359,36 @@
 
             // Función para mostrar detalles de actividad
             function mostrarDetalleActividad(event) {
-                const modal = new bootstrap.Modal(document.getElementById('modal-actividad'));
-                document.getElementById('modal-titulo').textContent = event.title;
-                document.getElementById('btn-ver-actividad').href = event.extendedProps.url;
-
-                const contenido = `
-                    <div class="row">
-                        <div class="col-md-6">
-                            <strong>Curso:</strong> ${event.extendedProps.nombreCurso}<br>
-                            <strong>Tipo:</strong> ${event.extendedProps.tipo}<br>
-                            <strong>Estado:</strong>
-                            <span class="badge ${event.extendedProps.estado === 'Entregada' ? 'bg-success' : 'bg-warning'}">
-                                ${event.extendedProps.estado}
-                            </span>
-                        </div>
-                        <div class="col-md-6">
-                            <strong>Fecha límite:</strong> ${new Date(event.start).toLocaleString('es-ES')}<br>
-                            <strong>Puntos:</strong> ${event.extendedProps.puntos || 'No especificado'}
-                        </div>
-                    </div>
-                    <hr>
-                    <strong>Descripción:</strong><br>
-                    <p>${event.extendedProps.descripcion || 'Sin descripción disponible'}</p>
-                `;
-
-                document.getElementById('modal-contenido').innerHTML = contenido;
+                // Código existente para mostrar detalles de la actividad
+                document.getElementById('activityTitle').textContent = event.title;
+                document.getElementById('activityCourse').textContent = event.extendedProps.nombreCurso;
+                document.getElementById('activityType').textContent = event.extendedProps.tipo;
+                document.getElementById('activityStatus').textContent = event.extendedProps.estado;
+                document.getElementById('activityPoints').textContent = event.extendedProps.puntos;
+                document.getElementById('activityDescription').textContent = event.extendedProps.descripcion;
+                document.getElementById('viewActivityBtn').href = event.extendedProps.url;
+                
+                // Añadir horarios del curso si están disponibles
+                const horariosContainer = document.getElementById('activitySchedule');
+                horariosContainer.innerHTML = '';
+                
+                if (event.extendedProps.horarios && event.extendedProps.horarios.length > 0) {
+                    const horariosList = document.createElement('ul');
+                    horariosList.className = 'list-unstyled';
+                    
+                    event.extendedProps.horarios.forEach(horario => {
+                        const item = document.createElement('li');
+                        item.innerHTML = `<i class="bi bi-calendar-day me-1"></i> ${horario.dia}: ${horario.hora_inicio} - ${horario.hora_fin}`;
+                        horariosList.appendChild(item);
+                    });
+                    
+                    horariosContainer.appendChild(horariosList);
+                } else {
+                    horariosContainer.textContent = 'No hay horarios disponibles';
+                }
+                
+                // Mostrar el modal
+                const modal = new bootstrap.Modal(document.getElementById('activityDetailModal'));
                 modal.show();
             }
 

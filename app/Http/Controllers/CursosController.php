@@ -41,6 +41,7 @@ use Carbon\Carbon;
 use App\Models\Actividad;
 use App\Exports\CursoReporteExport;
 use App\Models\Subtema;
+use App\Services\AdminLogger;
 use Maatwebsite\Excel\Facades\Excel;
 
 class CursosController extends Controller
@@ -181,114 +182,174 @@ class CursosController extends Controller
 
         return view('Administrador.EditarCursos')->with('docente', $docente)->with('horario', $horario)->with('cursos', $cursos)->with('categorias', $categorias);
     }
+
+
     public function EditC($id, Request $request)
     {
-        $user = auth()->user();
+        try {
+            $user = auth()->user();
 
-        // Reglas base que aplican a todos
-        $validationRules = [
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string',
-            'formato' => 'required|in:Presencial,Virtual,Híbrido',
-            'tipo' => 'required|in:curso,congreso',
-            'nota' => 'nullable|numeric|min:0|max:100',
-            'archivo' => 'nullable|file|mimes:pdf|max:20480', // PDF hasta 20MB
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // Imagen hasta 5MB
-            'eliminar_archivo' => 'nullable|boolean',
-            'eliminar_imagen' => 'nullable|boolean'
-        ];
+            // Reglas base
+            $validationRules = [
+                'nombre' => 'required|string|max:255',
+                'descripcion' => 'nullable|string',
+                'formato' => 'required|in:Presencial,Virtual,Híbrido',
+                'tipo' => 'required|in:curso,congreso',
+                'nota' => 'nullable|numeric|min:0|max:100',
+                'archivo' => 'nullable|file|mimes:pdf|max:20480',
+                'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+                'eliminar_archivo' => 'nullable|boolean',
+                'eliminar_imagen' => 'nullable|boolean'
+            ];
 
+            // Reglas extra para admins
+            if ($user->hasRole('Administrador')) {
+                $validationRules['fecha_ini'] = 'required|date_format:Y-m-d\TH:i';
+                $validationRules['fecha_fin'] = 'required|date_format:Y-m-d\TH:i|after_or_equal:fecha_ini';
+                $validationRules['docente_id'] = 'required|exists:users,id';
+                $validationRules['duracion'] = 'required|integer|min:1';
+                $validationRules['cupos'] = 'required|integer|min:1';
+                $validationRules['precio'] = 'required|numeric|min:0';
+            }
 
+            $request->validate($validationRules, [
+                'nombre.required' => 'El nombre del curso es obligatorio.',
+                'nombre.max' => 'El nombre no puede tener más de 255 caracteres.',
+                'formato.required' => 'Debe seleccionar un formato.',
+                'formato.in' => 'El formato debe ser Presencial, Virtual o Híbrido.',
+                'tipo.required' => 'Debe indicar el tipo de evento.',
+                'tipo.in' => 'El tipo debe ser curso o congreso.',
+                'nota.numeric' => 'La nota debe ser un número.',
+                'nota.min' => 'La nota mínima permitida es 0.',
+                'nota.max' => 'La nota máxima permitida es 100.',
+                'archivo.mimes' => 'El archivo debe ser un PDF.',
+                'archivo.max' => 'El archivo no puede superar los 2MB.',
+                'imagen.image' => 'El archivo debe ser una imagen.',
+                'imagen.mimes' => 'La imagen debe ser de tipo jpeg, png, jpg o gif.',
+                'imagen.max' => 'La imagen no puede superar los 2MB.',
+            ]);
 
+            $curso = Cursos::findOrFail($id);
 
-        // Solo admin puede cambiar fechas y docente
-        if ($user->hasRole('Administrador')) {
-            $validationRules['fecha_ini'] = 'required|date_format:Y-m-d\TH:i';
-            $validationRules['fecha_fin'] = 'required|date_format:Y-m-d\TH:i|after_or_equal:fecha_ini';
-            $validationRules['docente_id'] = 'required|exists:users,id';
-            $validationRules['duracion'] = 'required|integer|min:1';
-            $validationRules['cupos'] = 'required|integer|min:1';
-            $validationRules['precio'] = 'required|numeric|min:0';
-        }
+            // Datos básicos
+            $curso->nombreCurso = $request->nombre;
+            $curso->descripcionC = $request->descripcion ?? null;
+            $curso->formato = $request->formato;
+            $curso->tipo = $request->tipo;
+            $curso->notaAprobacion = $request->nota ?? null;
+            $curso->edad_dirigida = $request->edad_id ?? null;
+            $curso->nivel = $request->nivel_id ?? null;
 
-        $request->validate($validationRules);
-
-        $curso = Cursos::findOrFail($id);
-
-        // Campos básicos para todos
-        $curso->nombreCurso = $request->nombre;
-        $curso->descripcionC = $request->descripcion ?? null;
-        $curso->formato = $request->formato;
-        $curso->tipo = $request->tipo;
-        $curso->notaAprobacion = $request->nota ?? null;
-        $curso->edad_dirigida = $request->edad_id ?? null;
-        $curso->nivel = $request->nivel_id ?? null;
-
-        if ($request->hasFile('archivo')) {
-            // Eliminar archivo anterior si existe
-            if ($curso->archivoContenidodelCurso) {
+            // Manejo de archivo PDF
+            if ($request->hasFile('archivo')) {
+                if ($curso->archivoContenidodelCurso) {
+                    Storage::delete('public/' . $curso->archivoContenidodelCurso);
+                }
+                $curso->archivoContenidodelCurso = $request->file('archivo')->store('cursos/pdf', 'public');
+            } elseif ($request->boolean('eliminar_archivo')) {
                 Storage::delete('public/' . $curso->archivoContenidodelCurso);
+                $curso->archivoContenidodelCurso = null;
             }
-            $curso->archivoContenidodelCurso = $request->file('archivo')->store('cursos/pdf', 'public');
-        } elseif ($request->has('eliminar_archivo')) {
-            // Eliminar archivo si se marcó el checkbox
-            Storage::delete('public/' . $curso->archivoContenidodelCurso);
-            $curso->archivoContenidodelCurso = null;
-        }
 
-        // Manejo de la imagen
-        if ($request->hasFile('imagen')) {
-            // Eliminar imagen anterior si existe
-            if ($curso->imagen) {
+            // Manejo de la imagen
+            if ($request->hasFile('imagen')) {
+                if ($curso->imagen) {
+                    Storage::delete('public/' . $curso->imagen);
+                }
+                $curso->imagen = $request->file('imagen')->store('cursos/imagenes', 'public');
+            } elseif ($request->boolean('eliminar_imagen')) {
                 Storage::delete('public/' . $curso->imagen);
+                $curso->imagen = null;
             }
-            $curso->imagen = $request->file('imagen')->store('cursos/imagenes', 'public');
-        } elseif ($request->has('eliminar_imagen')) {
-            // Eliminar imagen si se marcó el checkbox
-            Storage::delete('public/' . $curso->imagen);
-            $curso->imagen = null;
+
+            // Solo admin puede modificar fechas y demás
+            if ($user->hasRole('Administrador')) {
+                $curso->fecha_ini = Carbon::createFromFormat('Y-m-d\TH:i', $request->fecha_ini)->format('Y-m-d H:i:s');
+                $curso->fecha_fin = Carbon::createFromFormat('Y-m-d\TH:i', $request->fecha_fin)->format('Y-m-d H:i:s');
+                $curso->estado = Carbon::parse($request->fecha_fin)->isFuture() ? 'Activo' : 'Expirado';
+
+                $curso->docente_id = $request->docente_id;
+                $curso->duracion = $request->duracion;
+                $curso->cupos = $request->cupos;
+                $curso->precio = $request->precio;
+                $curso->visibilidad = $request->visibilidad;
+            }
+
+            $curso->save();
+
+            // Log de auditoría
+            AdminLogger::info('Curso actualizado', [
+                'curso_id'   => $curso->id,
+                'curso_nombre' => $curso->nombreCurso,
+                'editado_por'  => $user->id,
+                'rol_usuario'  => $user->getRoleNames()->first(),
+            ]);
+
+            return back()->with('success', 'Curso actualizado correctamente');
+        } catch (\Exception $e) {
+            AdminLogger::error('Error al editar curso', $e);
+            return back()->withErrors(['error' => 'Ocurrió un error al actualizar el curso.']);
         }
-        $curso->fecha_ini = Carbon::createFromFormat('Y-m-d\TH:i', $request->fecha_ini)->format('Y-m-d H:i:s');
-        $curso->fecha_fin = Carbon::createFromFormat('Y-m-d\TH:i', $request->fecha_fin)->format('Y-m-d H:i:s');
-        $curso->estado = Carbon::parse($request->fecha_fin)->isFuture() ? 'Activo' : 'Expirado';
-
-
-
-
-
-        // Solo admin actualiza estos campos
-        if ($user->hasRole('Administrador')) {
-            $curso->docente_id = $request->docente_id;
-            $curso->duracion = $request->duracion;
-            $curso->cupos = $request->cupos;
-            $curso->precio = $request->precio;
-            $curso->visibilidad = $request->visibilidad;
-        }
-
-
-        $curso->save();
-
-        return back()->with('success', 'Curso actualizado correctamente');
     }
+
 
     public function updateCategories(Request $request, $id) // o Curso $curso si usas route model binding
     {
-        $curso = Cursos::findOrFail($id);
-        $curso->categorias()->sync($request->categorias ?? []);
+        try {
+            $curso = Cursos::findOrFail($id);
 
-        return back()->with('success', 'Curso actualizado correctamente');
+            // // Validar que categorías sean un array de enteros existentes en la tabla categorias
+            // $request->validate([
+            //     'categorias' => 'nullable|array',
+            //     'categorias.*' => 'exists:categorias,id'
+            // ], [
+            //     'categorias.array' => 'El formato de categorías no es válido.',
+            //     'categorias.*.exists' => 'Alguna de las categorías seleccionadas no existe.'
+            // ]);
+
+            // Actualizar categorías
+            $curso->categorias()->sync($request->categorias ?? []);
+
+            // Registrar en logs de administración
+            AdminLogger::info('Categorías de curso actualizadas', [
+                'curso_id'   => $curso->id,
+                'curso_nombre' => $curso->nombreCurso,
+                'categorias_asignadas' => $request->categorias ?? [],
+                'admin_id' => auth()->id(),
+            ]);
+
+            return back()->with('success', 'Categorías actualizadas correctamente');
+        } catch (\Exception $e) {
+            AdminLogger::error('Error al actualizar categorías de curso', $e);
+
+            return back()->withErrors(['error' => 'No se pudo actualizar las categorías.']);
+        }
     }
 
 
     public function eliminarCurso($id)
     {
+        try {
+            $curso = Cursos::findOrFail($id);
 
-        $cursos = Cursos::findOrFail($id);
-        event(new CursoEvent($cursos, 'borrado'));
+            // Lanzar evento
+            event(new CursoEvent($curso, 'borrado'));
 
-        $cursos->delete();
+            // Soft delete (si usas SoftDeletes)
+            $curso->delete();
 
-        return redirect(route('Inicio'))->with('success', 'Cursos elimnado Correctamante');
+            // Registrar en log de administración
+            AdminLogger::info('Curso eliminado', [
+                'curso_id'   => $curso->id,
+                'curso_nombre' => $curso->nombreCurso,
+                'eliminado_por' => auth()->id(),
+            ]);
+
+            return redirect(route('Inicio'))->with('success', 'Curso eliminado correctamente');
+        } catch (\Exception $e) {
+            AdminLogger::error('Error al eliminar curso', $e);
+            return back()->withErrors(['error' => 'No se pudo eliminar el curso.']);
+        }
     }
 
 
@@ -348,13 +409,27 @@ class CursosController extends Controller
 
     public function restaurarCurso($id)
     {
+        try {
+            $cursoEliminado = Cursos::onlyTrashed()->findOrFail($id);
 
-        $cursoEliminado = Cursos::onlyTrashed()->find($id);
-        event(new CursoEvent($cursoEliminado, 'restaurado'));
+            // Restaurar el curso
+            $cursoEliminado->restore();
 
-        $cursoEliminado->restore();
+            // Lanzar evento (si lo usas para notificaciones, etc.)
+            event(new CursoEvent($cursoEliminado, 'restaurado'));
 
-        return back()->with('success', 'Curso restaurado correctamente');
+            // Registrar en logs de administración
+            AdminLogger::info('Curso restaurado', [
+                'curso_id'   => $cursoEliminado->id,
+                'curso_nombre' => $cursoEliminado->nombreCurso,
+            ]);
+
+            return back()->with('success', 'Curso restaurado correctamente');
+        } catch (\Exception $e) {
+            AdminLogger::error('Error al restaurar curso', $e);
+
+            return back()->withErrors(['error' => 'No se pudo restaurar el curso.']);
+        }
     }
 
     public function ReporteFinalCurso($id)

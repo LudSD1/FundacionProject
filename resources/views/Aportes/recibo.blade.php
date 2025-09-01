@@ -346,7 +346,7 @@
     <div class="page-container">
         <!-- Botones de acción -->
         <div class="action-buttons">
-            <a class="btn btn-secondary" href="{{ route('Ini cio') }}">
+            <a class="btn btn-secondary" href="{{ route('Inicio') }}">
                 ← Volver
             </a>
             <button class="btn btn-primary" id="generatePdfBtn">

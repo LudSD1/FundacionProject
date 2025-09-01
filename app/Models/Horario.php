@@ -15,6 +15,8 @@ class Horario extends BaseModel
 
     public function cursos()
     {
-        return $this->belongsToMany(Cursos::class, 'curso_horarios'); // Verifica el nombre de la tabla pivote
+        return $this->belongsToMany(Cursos::class, 'curso_horario', 'horario_id', 'curso_id')
+                    ->withTimestamps()
+                    ->withPivot('id');
     }
 }

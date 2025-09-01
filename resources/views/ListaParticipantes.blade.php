@@ -209,15 +209,16 @@
                                                     @if ($cursos->tipo == 'curso')
                                                         <div class="btn-group">
                                                             <a class="btn btn-sm btn-outline-primary"
-                                                                href="{{ route('boletin', [$inscrito->id]) }}"
+                                                                href="{{ route('boletin', [encrypt($inscrito->id)]) }}"
                                                                 data-bs-toggle="tooltip" title="Ver Boletín">
                                                                 <i class="bi bi-journal-text"></i>
                                                             </a>
                                                             <a class="btn btn-sm btn-outline-primary"
-                                                                href="{{ route('verBoletin2', [$inscrito->id]) }}"
+                                                                href="{{ route('verBoletin2', [encrypt($inscrito->id)]) }}"
                                                                 data-bs-toggle="tooltip" title="Calificaciones Finales">
                                                                 <i class="bi bi-journal-check"></i>
                                                             </a>
+                                                            
                                                         </div>
                                                     @endif
                                                 @endif

@@ -241,7 +241,6 @@
         </div>
     </div>
 
-
     <div class="modal fade" id="certificadoModal" tabindex="-1" aria-labelledby="certificadoModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
@@ -1488,20 +1487,23 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const buscador = document.getElementById('buscadorExpositores');
-        const items = document.querySelectorAll('.expositor-item');
+        // Verificar si el elemento existe antes de continuar
+        if (buscador) {
+            const items = document.querySelectorAll('.expositor-item');
 
-        buscador.addEventListener('input', function() {
-            const filtro = this.value.toLowerCase();
+            buscador.addEventListener('input', function() {
+                const filtro = this.value.toLowerCase();
 
-            items.forEach(item => {
-                const nombre = item.getAttribute('data-nombre');
-                if (nombre.includes(filtro)) {
-                    item.style.display = '';
-                } else {
-                    item.style.display = 'none';
-                }
+                items.forEach(item => {
+                    const nombre = item.getAttribute('data-nombre');
+                    if (nombre.includes(filtro)) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
             });
-        });
+        }
     });
 </script>
 
@@ -1623,6 +1625,152 @@
                 editFontSizeRange.value = this.value;
             });
         }
+    });
+</script>
+
+<!-- Tour con Driver.js -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Verificar si Driver está disponible
+        if (typeof Driver === 'undefined') {
+            console.error('Driver.js no está cargado correctamente');
+            return;
+        }
+        
+        // Botón para iniciar el tour
+        const tourButton = document.createElement('button');
+        tourButton.innerHTML = '<i class="fas fa-question-circle"></i> Tour de ayuda';
+        tourButton.className = 'btn btn-info position-fixed guide-btn';
+        tourButton.style.bottom = '20px';
+        tourButton.style.right = '20px';
+        tourButton.style.zIndex = '1000';
+        document.body.appendChild(tourButton);
+
+        // Configurar el driver
+        const driver = new Driver({
+            animate: true,
+            opacity: 0.75,
+            padding: 10,
+            allowClose: true,
+            overlayClickNext: false,
+            doneBtnText: 'Finalizar',
+            closeBtnText: 'Cerrar',
+            nextBtnText: 'Siguiente',
+            prevBtnText: 'Anterior'
+        });
+
+        // Función auxiliar para encontrar elementos por texto contenido
+        function findElementByText(selector, text) {
+            const elements = document.querySelectorAll(selector);
+            return Array.from(elements).find(el => el.textContent.includes(text));
+        }
+
+        // Definir los pasos del tour
+        const steps = [
+            {
+                element: 'h1',
+                popover: {
+                    title: 'Título del Curso',
+                    description: 'Este es el nombre del curso que estás visualizando.',
+                    position: 'bottom'
+                }
+            },
+            {
+                element: '.collapse-toggle',
+                popover: {
+                    title: 'Mostrar/Ocultar Información',
+                    description: 'Haz clic aquí para mostrar u ocultar la información principal del curso.',
+                    position: 'left'
+                }
+            },
+            {
+                element: '.d-flex.align-items-center.mb-4',
+                popover: {
+                    title: 'Información del Docente',
+                    description: 'Aquí puedes ver quién imparte este curso. Puedes hacer clic en su nombre para ver su perfil.',
+                    position: 'bottom'
+                }
+            }
+        ];
+
+        // Añadir pasos condicionales si los elementos existen
+        const estadoElement = findElementByText('.card-title', 'Estado');
+        if (estadoElement) {
+            steps.push({
+                element: estadoElement,
+                popover: {
+                    title: 'Estado del Curso',
+                    description: 'Muestra si el curso está activo o si los certificados están disponibles.',
+                    position: 'top'
+                }
+            });
+        }
+
+        const tipoElement = findElementByText('.card-title', 'Tipo');
+        if (tipoElement) {
+            steps.push({
+                element: tipoElement,
+                popover: {
+                    title: 'Tipo de Curso',
+                    description: 'Indica si es un curso regular o un congreso.',
+                    position: 'top'
+                }
+            });
+        }
+
+        const descripcionElement = findElementByText('.card-title', 'Descripción');
+        if (descripcionElement) {
+            steps.push({
+                element: descripcionElement,
+                popover: {
+                    title: 'Descripción del Curso',
+                    description: 'Aquí encontrarás los detalles y objetivos del curso.',
+                    position: 'top'
+                }
+            });
+        }
+
+        const participantesBtn = findElementByText('.btn-primary', 'Participantes');
+        if (participantesBtn) {
+            steps.push({
+                element: participantesBtn,
+                popover: {
+                    title: 'Lista de Participantes',
+                    description: 'Haz clic aquí para ver todos los estudiantes inscritos en este curso.',
+                    position: 'top'
+                }
+            });
+        }
+
+        const horarioBtn = document.querySelector('.btn-primary[data-bs-target="#modalHorario"]');
+        if (horarioBtn) {
+            steps.push({
+                element: horarioBtn,
+                popover: {
+                    title: 'Horarios del Curso',
+                    description: 'Consulta los días y horas en que se imparte este curso.',
+                    position: 'top'
+                }
+            });
+        }
+
+        const dropdownBtn = document.querySelector('#dropdownMenuButton');
+        if (dropdownBtn) {
+            steps.push({
+                element: '#dropdownMenuButton',
+                popover: {
+                    title: 'Gestionar Curso',
+                    description: 'Si eres docente o administrador, aquí encontrarás todas las opciones para gestionar el curso.',
+                    position: 'left'
+                }
+            });
+        }
+
+        // Iniciar el tour al hacer clic en el botón
+        tourButton.addEventListener('click', function() {
+            driver.defineSteps(steps);
+            driver.start();
+        });
     });
 </script>
 

@@ -37,7 +37,7 @@ use App\Http\Controllers\XPController;
 use Illuminate\Support\Facades\Storage;
 
 Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
-
+Route::get('/mejores-cursos', [MenuController::class, 'mejoresCursosPorCategoria'])->name('mejores.cursos');
 Route::get('/botman/tinker', function () {
     return view('botman.tinker');
 });

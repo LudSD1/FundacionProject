@@ -23,6 +23,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TestMail;
 use App\Models\Horario;
+use App\Services\AdminLogger;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Artisan;
@@ -34,10 +35,8 @@ class AdministradorController extends Controller
     public function cambiarRol(Request $request, $usuarioEncriptado)
     {
         try {
-
-
             // Desencriptar el ID del usuario
-            $usuarioId = $usuarioEncriptado;
+            $usuarioId = $usuarioEncriptado; // aquí podrías usar decrypt() si realmente viene encriptado
 
             // Validar los datos
             $request->validate([
@@ -55,11 +54,21 @@ class AdministradorController extends Controller
             // Remover todos los roles actuales y asignar el nuevo
             $usuario->syncRoles([$nuevoRol]);
 
+            // Registrar en logs de administración
+            AdminLogger::info('Cambio de rol realizado', [
+                'usuario_id'   => $usuario->id,
+                'usuario_name' => $usuario->name . ' ' . $usuario->lastname1,
+                'rol_anterior' => $rolAnterior,
+                'rol_nuevo'    => $nuevoRol,
+            ]);
+
             // Mensaje de éxito
             $mensaje = "El rol de {$usuario->name} {$usuario->lastname1} ha sido cambiado de '{$rolAnterior}' a '{$nuevoRol}'.";
 
             return back()->with('success', $mensaje);
         } catch (\Exception $e) {
+            AdminLogger::error('Error al cambiar el rol', $e); // también lo logueamos
+
             return back()->withErrors(['error' => 'Error al cambiar el rol: ' . $e->getMessage()]);
         }
     }
@@ -116,10 +125,10 @@ class AdministradorController extends Controller
 
         $estudiante =  $user;
 
-        // event(new EstudianteEvent($estudiante,'', 'registro'));
 
         $user->save();
         $user->assignRole('Estudiante');
+        $user->sendEmailVerificationNotification();
 
         // Log de actividad del administrador
         Log::channel('admin')->info('Estudiante creado por administrador', [
@@ -206,6 +215,7 @@ class AdministradorController extends Controller
 
         $user->save();
         $user->assignRole('Docente');
+        $user->sendEmailVerificationNotification();
 
         $atributosDocentes = new atributosDocente();
 
@@ -383,11 +393,44 @@ class AdministradorController extends Controller
             'visibilidad' => 'required|in:publico,privado',
             'cupos' => 'required|integer|min:1',
             'precio' => 'required|numeric|min:0',
+        ], [
+            'nombre.required' => 'El nombre es obligatorio.',
+            'nombre.string' => 'El nombre debe ser una cadena de texto.',
+
+            'docente_id.required' => 'Debes seleccionar un docente.',
+            'docente_id.integer' => 'El ID del docente debe ser un número entero.',
+            'docente_id.exists' => 'El docente seleccionado no existe en el sistema.',
+
+            'fecha_ini.required' => 'La fecha de inicio es obligatoria.',
+            'fecha_ini.date' => 'La fecha de inicio debe ser una fecha válida.',
+            'fecha_ini.date_format' => 'La fecha de inicio debe tener el formato YYYY-MM-DD.',
+
+            'fecha_fin.required' => 'La fecha de finalización es obligatoria.',
+            'fecha_fin.date' => 'La fecha de finalización debe ser una fecha válida.',
+            'fecha_fin.date_format' => 'La fecha de finalización debe tener el formato YYYY-MM-DD.',
+            'fecha_fin.after_or_equal' => 'La fecha de finalización debe ser igual o posterior a la fecha de inicio.',
+
+            'duracion.required' => 'La duración es obligatoria.',
+            'duracion.integer' => 'La duración debe ser un número entero.',
+            'duracion.min' => 'La duración debe ser al menos de 1 día.',
+
+            'visibilidad.required' => 'Debes seleccionar la visibilidad.',
+            'visibilidad.in' => 'La visibilidad debe ser "publico" o "privado".',
+
+            'cupos.required' => 'Debes indicar la cantidad de cupos.',
+            'cupos.integer' => 'Los cupos deben ser un número entero.',
+            'cupos.min' => 'Debe haber al menos 1 cupo disponible.',
+
+            'precio.required' => 'El precio es obligatorio.',
+            'precio.numeric' => 'El precio debe ser un valor numérico.',
+            'precio.min' => 'El precio no puede ser negativo.',
         ]);
     }
 
     private function crearCurso($request)
     {
+
+
         $curso = new Cursos;
         $curso->nombreCurso = $request->nombre;
         $curso->codigoCurso = $request->nombre . '_' . $request->docente_id . '_' . date("Ymd", strtotime($request->fecha_ini));

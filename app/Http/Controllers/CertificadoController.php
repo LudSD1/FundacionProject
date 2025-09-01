@@ -390,6 +390,8 @@ class CertificadoController extends Controller
 
         $user->assignRole('Estudiante');
 
+        // Enviar correo de verificación
+        $user->sendEmailVerificationNotification();
 
         // Inscribir al usuario en el congreso
         $inscripcion = Inscritos::create([
@@ -405,7 +407,7 @@ class CertificadoController extends Controller
         Auth::login($user);
 
         return redirect()->route('Inicio')
-            ->with('success', '¡Registro exitoso! Has sido inscrito en el congreso y tu certificado está listo.');
+            ->with('success', '¡Registro exitoso! Has sido inscrito en el congreso y tu certificado está listo. Por favor, verifica tu correo electrónico para activar tu cuenta.');
     }
 
     private function generarCertificadoIndividual($cursoId, $inscritoId, $user)

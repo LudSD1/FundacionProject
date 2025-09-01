@@ -26,6 +26,78 @@
     <link href="{{ asset('assets2/vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets2/vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets2/css/style.css') }}" rel="stylesheet">
+     <script src="https://cdn.jsdelivr.net/npm/driver.js@latest/dist/driver.js.iife.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@latest/dist/driver.css" />
+
+    <style>
+        /* Estilos personalizados para Driver.js */
+        .driver-popover {
+            border-radius: 12px !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+            border: none !important;
+        }
+
+        .driver-popover-title {
+            font-weight: 600 !important;
+            color: #0d6efd !important;
+            font-size: 1.1em !important;
+        }
+
+        .driver-popover-description {
+            color: #495057 !important;
+            line-height: 1.5 !important;
+        }
+
+        .driver-popover-footer {
+            border-top: 1px solid #e9ecef !important;
+            padding-top: 12px !important;
+        }
+
+        .driver-popover-next-btn,
+        .driver-popover-prev-btn,
+        .driver-popover-close-btn {
+            border-radius: 8px !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .driver-popover-next-btn {
+            background: linear-gradient(135deg, #0d6efd, #0056b3) !important;
+        }
+
+        .driver-popover-next-btn:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3) !important;
+        }
+
+        .guide-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            padding: 10px 15px;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #17a2b8, #138496);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .guide-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(23, 162, 184, 0.4);
+        }
+
+        .guide-btn i {
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-5px); }
+            60% { transform: translateY(-3px); }
+        }
+    </style>
 
 
 
@@ -272,7 +344,7 @@
         });
     </script>
 
-   
+
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

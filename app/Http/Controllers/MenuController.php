@@ -23,84 +23,84 @@ class MenuController extends Controller
 {
 
 
-  public function detalle($id)
-{
-    $curso = Cursos::with([
-        'calificaciones.user',  
-        'inscritos' => function ($query) {
-            $query->whereNull('deleted_at');
-        }
-    ])
-        ->withAvg('calificaciones', 'puntuacion')
-        ->withCount('calificaciones')
-        ->findOrFail($id);
+    public function detalle($id)
+    {
+        $curso = Cursos::with([
+            'calificaciones.user',
+            'inscritos' => function ($query) {
+                $query->whereNull('deleted_at');
+            }
+        ])
+            ->withAvg('calificaciones', 'puntuacion')
+            ->withCount('calificaciones')
+            ->findOrFail($id);
 
-    $metodosPago = PaymentMethod::all();
+        $metodosPago = PaymentMethod::all();
 
-    // Inicializar variables por defecto
-    $usuarioInscrito = null;
-    $usuarioRetirado = null;
-    $yaHaPagado = false;
-    $pagoAnterior = null;
-    $estadoInscripcion = 'no_inscrito'; // no_inscrito, activo, retirado
-    $usuarioCalifico = false;
-    $calificacionUsuario = null;
+        // Inicializar variables por defecto
+        $usuarioInscrito = null;
+        $usuarioRetirado = null;
+        $yaHaPagado = false;
+        $pagoAnterior = null;
+        $estadoInscripcion = 'no_inscrito'; // no_inscrito, activo, retirado
+        $usuarioCalifico = false;
+        $calificacionUsuario = null;
 
-    // Solo verificar inscripciones y pagos si el usuario está autenticado
-    if (Auth::check()) {
-        // Verificar inscripción activa
-        $usuarioInscrito = Inscritos::where('estudiante_id', auth()->user()->id)
-            ->where('cursos_id', $id)
-            ->whereNull('deleted_at')
-            ->first();
-
-        // Verificar si fue retirado anteriormente (eliminado)
-        $usuarioRetirado = Inscritos::withTrashed()
-            ->where('estudiante_id', auth()->user()->id)
-            ->where('cursos_id', $id)
-            ->whereNotNull('deleted_at')
-            ->orderBy('deleted_at', 'desc')
-            ->first();
-
-        // Determinar estado de inscripción
-        if ($usuarioInscrito) {
-            $estadoInscripcion = 'activo';
-        } elseif ($usuarioRetirado) {
-            $estadoInscripcion = 'retirado';
-        }
-
-        // Verificar si ya pagó este curso anteriormente (incluso si fue desinscrito)
-        if ($curso->precio > 0) {
-            $pagoAnterior = Aportes::where('estudiante_id', Auth::id())
+        // Solo verificar inscripciones y pagos si el usuario está autenticado
+        if (Auth::check()) {
+            // Verificar inscripción activa
+            $usuarioInscrito = Inscritos::where('estudiante_id', auth()->user()->id)
                 ->where('cursos_id', $id)
-                ->where('monto_pagado', '>=', $curso->precio)
+                ->whereNull('deleted_at')
                 ->first();
 
-            $yaHaPagado = $pagoAnterior !== null;
+            // Verificar si fue retirado anteriormente (eliminado)
+            $usuarioRetirado = Inscritos::withTrashed()
+                ->where('estudiante_id', auth()->user()->id)
+                ->where('cursos_id', $id)
+                ->whereNotNull('deleted_at')
+                ->orderBy('deleted_at', 'desc')
+                ->first();
+
+            // Determinar estado de inscripción
+            if ($usuarioInscrito) {
+                $estadoInscripcion = 'activo';
+            } elseif ($usuarioRetirado) {
+                $estadoInscripcion = 'retirado';
+            }
+
+            // Verificar si ya pagó este curso anteriormente (incluso si fue desinscrito)
+            if ($curso->precio > 0) {
+                $pagoAnterior = Aportes::where('estudiante_id', Auth::id())
+                    ->where('cursos_id', $id)
+                    ->where('monto_pagado', '>=', $curso->precio)
+                    ->first();
+
+                $yaHaPagado = $pagoAnterior !== null;
+            }
+
+            // Verificar calificación del usuario
+            $calificacionUsuario = $curso->calificaciones->where('user_id', Auth::id())->first();
+            $usuarioCalifico = $calificacionUsuario !== null;
         }
 
-        // Verificar calificación del usuario
-        $calificacionUsuario = $curso->calificaciones->where('user_id', Auth::id())->first();
-        $usuarioCalifico = $calificacionUsuario !== null;
+        return view('cursosDetalle', [
+            'cursos' => $curso,
+            'usuarioInscrito' => $usuarioInscrito,
+            'usuarioRetirado' => $usuarioRetirado,
+            'estadoInscripcion' => $estadoInscripcion,
+            'usuarioCalifico' => $usuarioCalifico,
+            'calificacionUsuario' => $calificacionUsuario,
+            'yaHaPagado' => $yaHaPagado,
+            'pagoAnterior' => $pagoAnterior,
+            'calificacionesRecientes' => $curso->calificaciones()
+                ->with('user')
+                ->latest()
+                ->take(5)
+                ->get(),
+            'metodosPago' => $metodosPago,
+        ]);
     }
-
-    return view('cursosDetalle', [
-        'cursos' => $curso,
-        'usuarioInscrito' => $usuarioInscrito,
-        'usuarioRetirado' => $usuarioRetirado,
-        'estadoInscripcion' => $estadoInscripcion,
-        'usuarioCalifico' => $usuarioCalifico,
-        'calificacionUsuario' => $calificacionUsuario,
-        'yaHaPagado' => $yaHaPagado,
-        'pagoAnterior' => $pagoAnterior,
-        'calificacionesRecientes' => $curso->calificaciones()
-            ->with('user')
-            ->latest()
-            ->take(5)
-            ->get(),
-        'metodosPago' => $metodosPago,
-    ]);
-}
 
 
 
@@ -387,33 +387,33 @@ class MenuController extends Controller
         return view('Administrador.CrearCursos')->with('docente', $docente)->with('horario', $horario);
     }
 
-    public function calendario(Request $request)
+    public function calendario()
     {
         $user = Auth::user();
-        $fechaInicio = $request->get('fecha_inicio', now()->startOfMonth());
-        $fechaFin = $request->get('fecha_fin', now()->endOfMonth());
-
-        // Obtener cursos según el rol (optimizado con eager loading)
         $cursos = $this->obtenerCursosPorRol($user);
 
+        // Si no hay cursos, mostrar calendario vacío con mensaje
         if ($cursos->isEmpty()) {
             return view('calendario', [
-                'actividades' => collect(),
                 'cursos' => collect(),
-                'eventos' => []
-            ]);
+                'eventos' => [],
+                'estadisticas' => [
+                    'total' => 0,
+                    'entregadas' => 0,
+                    'pendientes' => 0,
+                    'proximasVencer' => 0
+                ]
+            ])->with('warning', 'No tienes cursos asignados.');
         }
 
-        // Obtener actividades con filtros y eager loading optimizado
+        $fechaInicio = now()->subMonths(1);
+        $fechaFin = now()->addMonths(6);
+
         $actividades = $this->obtenerActividadesPorCursos($cursos, $fechaInicio, $fechaFin);
-
-        // Formatear eventos para el calendario
         $eventos = $this->formatearEventosParaCalendario($actividades);
+        $estadisticas = $this->calcularEstadisticas($actividades, auth()->user());
 
-        // Estadísticas adicionales
-        $estadisticas = $this->calcularEstadisticas($actividades, $user);
-
-        return view('calendario', compact('actividades', 'cursos', 'eventos', 'estadisticas'));
+        return view('calendario', compact('cursos', 'eventos', 'estadisticas'));
     }
 
     private function obtenerCursosPorRol($user)
@@ -457,29 +457,99 @@ class MenuController extends Controller
             ->get();
     }
 
+    public function mejoresCursosPorCategoria()
+    {
+        // Obtener todas las categorías activas que tienen cursos
+        $categorias = Categoria::whereNull('deleted_at')
+            ->whereHas('cursos', function ($query) {
+                $query->whereNull('deleted_at');
+            })
+            ->with(['cursos' => function ($query) {
+                $query->whereNull('deleted_at')
+                    ->withAvg('calificaciones', 'puntuacion')
+                    ->withCount('calificaciones')
+                    ->withCount('inscritos')
+                    ->orderByDesc('calificaciones_avg_puntuacion')
+                    ->orderByDesc('calificaciones_count')
+                    ->take(5); // Limitar a los 5 mejores cursos por categoría
+            }])
+            ->get();
+
+        // Filtrar categorías que no tienen cursos con calificaciones
+        $categoriasConCursos = $categorias->filter(function ($categoria) {
+            return $categoria->cursos->isNotEmpty();
+        });
+
+        // Estadísticas generales
+        $stats = [
+            'total_categorias' => $categoriasConCursos->count(),
+            'total_cursos' => $categoriasConCursos->sum(function ($categoria) {
+                return $categoria->cursos->count();
+            }),
+            'promedio_general' => $categoriasConCursos->flatMap(function ($categoria) {
+                return $categoria->cursos;
+            })->avg('calificaciones_avg_puntuacion')
+        ];
+
+        return view('mejoresCursosPorCategoria', [
+            'categorias' => $categoriasConCursos,
+            'stats' => $stats
+        ]);
+    }
+
     private function formatearEventosParaCalendario($actividades)
     {
         return $actividades->map(function ($actividad) {
+            // Verificar si tipoActividad existe antes de acceder a su nombre
             $color = $this->obtenerColorPorTipo($actividad->tipoActividad->nombre ?? 'default');
-            $entregada = $actividad->entregas->isNotEmpty();
+
+            // Verificar si la actividad está completada usando ActividadCompletion
+            $entregada = $actividad->isCompletedByInscrito(auth()->user()->inscrito->id ?? 0);
+
+            // Verificar si fecha_limite existe y es un objeto DateTime
+            if (!$actividad->fecha_limite) {
+                return null; // Omitir actividades sin fecha límite
+            }
+
+            // Obtener el curso asociado a la actividad
+            $curso = $actividad->subtema->tema->curso ?? null;
 
             return [
                 'id' => $actividad->id,
-                'title' => $actividad->nombre,
+                'title' => $actividad->titulo ?? 'Sin título',
                 'start' => $actividad->fecha_limite->format('Y-m-d H:i:s'),
                 'end' => $actividad->fecha_limite->addHour()->format('Y-m-d H:i:s'),
                 'color' => $entregada ? '#28a745' : $color,
                 'textColor' => '#ffffff',
                 'extendedProps' => [
-                    'curso' => $actividad->subtema->tema->curso->nombre,
+                    'nombreCurso' => $curso ? $curso->nombreCurso : 'Sin curso',
+                    'curso' => $curso ? $curso->id : '',
                     'tipo' => $actividad->tipoActividad->nombre ?? 'Actividad',
-                    'descripcion' => $actividad->descripcion,
+                    'descripcion' => $actividad->descripcion ?? 'Sin descripción',
                     'estado' => $entregada ? 'Entregada' : 'Pendiente',
-                    'puntos' => $actividad->puntos,
-                    'url' => route('actividades.show', $actividad->id)
+                    'puntos' => $actividad->puntaje_maximo ?? 0,
+                    'url' => route('actividades.show', $actividad->id),
+                    // Añadir información de horarios del curso si está disponible
+                    'horarios' => $curso ? $this->obtenerHorariosCurso($curso) : []
                 ]
             ];
-        })->values()->toArray();
+        })->filter()->values()->toArray(); // Filtrar valores nulos
+    }
+
+    // Método para obtener los horarios formateados del curso
+    private function obtenerHorariosCurso($curso)
+    {
+        if (!$curso || !$curso->horarios) {
+            return [];
+        }
+
+        return $curso->horarios->map(function ($horario) {
+            return [
+                'dia' => $horario->dia,
+                'hora_inicio' => $horario->hora_inicio,
+                'hora_fin' => $horario->hora_fin,
+            ];
+        })->toArray();
     }
 
     private function obtenerColorPorTipo($tipo)
@@ -498,11 +568,12 @@ class MenuController extends Controller
 
     private function calcularEstadisticas($actividades, $user)
     {
+        $inscritoId = $user->inscrito->id ?? 0;
         $total = $actividades->count();
-        $entregadas = $actividades->filter(fn($a) => $a->entregas->isNotEmpty())->count();
+        $entregadas = $actividades->filter(fn($a) => $a->isCompletedByInscrito($inscritoId))->count();
         $pendientes = $total - $entregadas;
-        $proximasVencer = $actividades->filter(function ($a) {
-            return $a->fecha_limite->isBetween(now(), now()->addDays(3)) && $a->entregas->isEmpty();
+        $proximasVencer = $actividades->filter(function ($a) use ($inscritoId) {
+            return $a->fecha_limite->isBetween(now(), now()->addDays(3)) && !$a->isCompletedByInscrito($inscritoId);
         })->count();
 
         return compact('total', 'entregadas', 'pendientes', 'proximasVencer');

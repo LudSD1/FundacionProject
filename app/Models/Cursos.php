@@ -95,7 +95,9 @@ class Cursos extends BaseModel
 
     public function horarios()
     {
-        return $this->belongsToMany(Horario::class, 'curso_horarios');
+        return $this->belongsToMany(Horario::class, 'cursos_horarios', 'curso_id', 'horario_id')
+                    ->withTimestamps()
+                    ->withPivot('id');
     }
     public function inscritos(): HasMany
     {

@@ -26,15 +26,15 @@ class AsistenciaController extends Controller
         $cursos = Cursos::findOrFail($cursoId);
 
         $query = Asistencia::with(['inscritos.estudiantes'])
-                          ->where('curso_id', $cursoId);
+            ->where('curso_id', $cursoId);
 
         // Aplicar filtros
         if ($request->filled('busqueda')) {
             $busqueda = $request->busqueda;
-            $query->whereHas('inscritos.estudiantes', function($q) use ($busqueda) {
+            $query->whereHas('inscritos.estudiantes', function ($q) use ($busqueda) {
                 $q->where('name', 'LIKE', "%{$busqueda}%")
-                  ->orWhere('lastname1', 'LIKE', "%{$busqueda}%")
-                  ->orWhere('lastname2', 'LIKE', "%{$busqueda}%");
+                    ->orWhere('lastname1', 'LIKE', "%{$busqueda}%")
+                    ->orWhere('lastname2', 'LIKE', "%{$busqueda}%");
             });
         }
 
@@ -55,8 +55,8 @@ class AsistenciaController extends Controller
             switch ($request->sort) {
                 case 'estudiante':
                     $query->join('inscritos', 'asistencias.inscrito_id', '=', 'inscritos.id')
-                          ->join('users', 'inscritos.estudiante_id', '=', 'users.id')
-                          ->orderBy('users.name', $request->get('direction', 'asc'));
+                        ->join('users', 'inscritos.estudiante_id', '=', 'users.id')
+                        ->orderBy('users.name', $request->get('direction', 'asc'));
                     break;
                 case 'fecha':
                     $query->orderBy('fechaasistencia', $request->get('direction', 'desc'));
@@ -73,58 +73,107 @@ class AsistenciaController extends Controller
 
     public function store(Request $request)
     {
-
+        // Validación general del request
+        $request->validate([
+            'fecha_asistencia' => 'required|date',
+            'asistencia' => 'required|array',
+            'asistencia.*.tipo_asistencia' => 'required|in:Presente,Retraso,Licencia,Falta',
+            'asistencia.*.curso_id' => 'required|exists:cursos,id',
+            'asistencia.*.inscritos_id' => 'required|exists:inscritos,id'
+        ], [
+            'fecha_asistencia.required' => 'La fecha es obligatoria.',
+            'fecha_asistencia.date' => 'La fecha debe ser válida.',
+            'asistencia.required' => 'Debe seleccionar al menos una asistencia.',
+            'asistencia.*.tipo_asistencia.required' => 'Debe seleccionar el tipo de asistencia para todos los estudiantes.',
+            'asistencia.*.tipo_asistencia.in' => 'El tipo de asistencia debe ser válido.',
+        ]);
 
         $asistencias = $request->input('asistencia');
+        $fechaAsistencia = $request->fecha_asistencia;
 
-        $errors = []; // Initialize an array to store validation errors
+        $errors = [];
+        $successCount = 0;
+        $duplicateCount = 0;
+        $studentNames = [];
 
-        foreach ($asistencias as $asistencia) {
-            $curso_id = $asistencia['curso_id'];
-            $inscritos_id = $asistencia['inscritos_id'];
-            $fechaAsistencia = $request->fecha_asistencia;
-            $tipoasistencia = $asistencia['tipo_asistencia'];
+        DB::beginTransaction();
 
-            // Define validation rules for tipoasistencia
-            $tipoasistenciaRules = ['required']; // Customize the allowed types
+        try {
+            foreach ($asistencias as $index => $asistencia) {
+                // Saltar si no se seleccionó tipo de asistencia
+                if (empty($asistencia['tipo_asistencia'])) {
+                    continue;
+                }
 
-            // Validate the tipoasistencia field
-            $validator = Validator::make(['tipoasistencia' => $tipoasistencia], [
-                'tipoasistencia' => $tipoasistenciaRules,
-            ]);
+                $curso_id = $asistencia['curso_id'];
+                $inscritos_id = $asistencia['inscritos_id'];
+                $tipoasistencia = $asistencia['tipo_asistencia'];
 
-            if ($validator->fails()) {
-                // Add an error message to the $errors array
-                $errors[] = "Validation failed for tipoasistencia: " . implode(', ', $validator->errors()->get('tipoasistencia'));
-            } else {
-                // Check for an existing record
+                // Verificar si ya existe la asistencia para esta fecha
                 $existingRecord = DB::table('asistencia')
                     ->where('curso_id', $curso_id)
                     ->where('inscripcion_id', $inscritos_id)
-                    ->where('fechaasistencia', $fechaAsistencia)
+                    ->whereDate('fechaasistencia', $fechaAsistencia)
                     ->first();
 
                 if (!$existingRecord) {
-                    // Insert the record if no matching combination exists
+                    // Insertar nueva asistencia
                     DB::table('asistencia')->insert([
                         'tipoAsitencia' => $tipoasistencia,
                         'fechaasistencia' => $fechaAsistencia,
-                        'curso_id' =>  $curso_id,
+                        'curso_id' => $curso_id,
                         'inscripcion_id' => $inscritos_id,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
+
+                    $successCount++;
                 } else {
-                    // Add an error message to the $errors array
-                    $errors[] = "Ya realizaste la asistencia de hoy";
+                    // Obtener nombre del estudiante para el mensaje
+                    $inscrito = Inscritos::with('estudiantes')->find($inscritos_id);
+                    if ($inscrito && $inscrito->estudiantes) {
+                        $studentName = $inscrito->estudiantes->name . ' ' .
+                            $inscrito->estudiantes->lastname1 . ' ' .
+                            $inscrito->estudiantes->lastname2;
+                        $studentNames[] = $studentName;
+                    }
+                    $duplicateCount++;
                 }
             }
-        }
 
-        if (!empty($errors)) {
-            return back()->with('error', 'Se produjeron errores de validación. Por favor verifique los datos.');
-        } else {
-            return back()->with('success', 'Asistencia registrada Correctamente.');
+            DB::commit();
+
+            // Preparar mensajes de respuesta
+            $messages = [];
+
+            if ($successCount > 0) {
+                $messages[] = "Se registraron {$successCount} asistencias correctamente.";
+            }
+
+            if ($duplicateCount > 0) {
+                $studentList = !empty($studentNames) ? implode(', ', array_slice($studentNames, 0, 3)) : '';
+                if (count($studentNames) > 3) {
+                    $studentList .= ' y ' . (count($studentNames) - 3) . ' más';
+                }
+
+                if ($duplicateCount == 1) {
+                    $messages[] = "Ya existe asistencia registrada para: {$studentList}";
+                } else {
+                    $messages[] = "Ya existe asistencia registrada para {$duplicateCount} estudiantes" .
+                        (!empty($studentList) ? ": {$studentList}" : "");
+                }
+            }
+
+            if ($successCount > 0 && $duplicateCount == 0) {
+                return back()->with('success', implode(' ', $messages));
+            } elseif ($successCount > 0 && $duplicateCount > 0) {
+                return back()->with('warning', implode(' ', $messages));
+            } else {
+                return back()->with('error', $duplicateCount > 0 ? implode(' ', $messages) : 'No se pudo registrar ninguna asistencia.');
+            }
+        } catch (\Exception $e) {
+            DB::rollback();
+            return back()->with('error', 'Error al registrar las asistencias: ' . $e->getMessage());
         }
     }
 
@@ -132,19 +181,33 @@ class AsistenciaController extends Controller
 
     public function edit(Request $request)
     {
+        $request->validate([
+            'asistencia' => 'required|array',
+            'asistencia.*.id' => 'required|exists:asistencia,id',
+            'asistencia.*.tipo_asistencia' => 'required|in:Presente,Retraso,Licencia,Falta'
+        ]);
 
         $asistencias = $request->input('asistencia');
+        $updateCount = 0;
 
-        foreach ($asistencias as $asistencias) {
+        DB::beginTransaction();
 
-            $asistenciaid = $asistencias['id'];
-            $asistencia = Asistencia::findOrFail($asistenciaid);
+        try {
+            foreach ($asistencias as $asistenciaData) {
+                $asistenciaid = $asistenciaData['id'];
+                $asistencia = Asistencia::findOrFail($asistenciaid);
 
-            $asistencia->tipoAsitencia = $asistencias['tipo_asistencia'];
-            $asistencia->save();
+                $asistencia->tipoAsitencia = $asistenciaData['tipo_asistencia'];
+                $asistencia->save();
+                $updateCount++;
+            }
+
+            DB::commit();
+            return back()->with('success', "Se actualizaron {$updateCount} asistencias correctamente.");
+        } catch (\Exception $e) {
+            DB::rollback();
+            return back()->with('error', 'Error al actualizar las asistencias: ' . $e->getMessage());
         }
-
-        return back()->with('success', 'Asistencia editada Correctamente');
     }
 
     public function index2($id)
@@ -158,43 +221,59 @@ class AsistenciaController extends Controller
 
     public function store2(Request $request)
     {
-
         $messages = [
             'estudiante.required' => 'El campo estudiante es obligatorio.',
             'fecha.required' => 'El campo fecha es obligatorio.',
+            'fecha.date' => 'La fecha debe ser válida.',
             'curso_id.required' => 'El campo curso_id es obligatorio.',
             'asistencia.required' => 'El campo asistencia es obligatorio.',
+            'asistencia.in' => 'El tipo de asistencia debe ser válido.',
         ];
 
         $request->validate([
-            'estudiante' => 'required',
-            'fecha' => 'required',
-            'curso_id' => 'required',
-            'asistencia' => 'required',
+            'estudiante' => 'required|exists:inscritos,id',
+            'fecha' => 'required|date',
+            'curso_id' => 'required|exists:cursos,id',
+            'asistencia' => 'required|in:Presente,Retraso,Licencia,Falta',
         ], $messages);
 
+        // Verificar si ya existe la asistencia
         $existingRecord = DB::table('asistencia')
             ->where('curso_id', $request->curso_id)
             ->where('inscripcion_id', $request->estudiante)
-            ->where('fechaasistencia', $request->fecha)
+            ->whereDate('fechaasistencia', $request->fecha)
             ->first();
 
         if (!$existingRecord) {
-            // Insert the record if no matching combination exists
-            DB::table('asistencia')->insert([
-                'tipoAsitencia' => $request->asistencia,
-                'fechaasistencia' => $request->fecha,
-                'curso_id' => $request->curso_id,
-                'inscripcion_id' => $request->estudiante,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            try {
+                // Insertar nueva asistencia
+                DB::table('asistencia')->insert([
+                    'tipoAsitencia' => $request->asistencia,
+                    'fechaasistencia' => $request->fecha,
+                    'curso_id' => $request->curso_id,
+                    'inscripcion_id' => $request->estudiante,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
 
-            return back()
-                ->with('success', 'Asistencia registrada exitosamente.');
+                return back()->with('success', 'Asistencia registrada exitosamente.');
+            } catch (\Exception $e) {
+                return back()->with('error', 'Error al registrar la asistencia: ' . $e->getMessage());
+            }
         } else {
-            // Use the Laravel validation error bag for consistency
-            return back()->withErrors(['error' => 'Ya realizaste la asistencia de ese estudiante']);
+            // Obtener el nombre del estudiante para un mensaje más informativo
+            $inscrito = Inscritos::with('estudiantes')->find($request->estudiante);
+            $studentName = 'este estudiante';
+
+            if ($inscrito && $inscrito->estudiantes) {
+                $studentName = $inscrito->estudiantes->name . ' ' .
+                    $inscrito->estudiantes->lastname1 . ' ' .
+                    $inscrito->estudiantes->lastname2;
+            }
+
+            return back()->withErrors([
+                'error' => "Ya existe una asistencia registrada para {$studentName} en la fecha {$request->fecha}."
+            ])->withInput();
         }
     }
 }
