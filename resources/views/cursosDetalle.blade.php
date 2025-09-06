@@ -11,9 +11,9 @@
                         <h3>
 
                             @if ($cursos->tipo == 'curso')
-                                Curso: {{ $cursos->nombreCurso }}
+                                {{ $cursos->nombreCurso }}
                             @elseif ($cursos->tipo == 'congreso')
-                                Congreso: {{ $cursos->nombreCurso }}
+                                {{ $cursos->nombreCurso }}
                             @endif
                         </h3>
                         <h2>{{ $cursos->descripcionC }}</h2>
