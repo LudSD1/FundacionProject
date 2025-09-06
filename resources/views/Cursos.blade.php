@@ -1631,16 +1631,10 @@
 <!-- Tour con Driver.js -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Verificar si Driver está disponible
-        if (typeof Driver === 'undefined') {
-            console.error('Driver.js no está cargado correctamente');
-            return;
-        }
-        
         // Botón para iniciar el tour
         const tourButton = document.createElement('button');
         tourButton.innerHTML = '<i class="fas fa-question-circle"></i> Tour de ayuda';
-        tourButton.className = 'btn btn-info position-fixed guide-btn';
+        tourButton.className = 'btn btn-info position-fixed';
         tourButton.style.bottom = '20px';
         tourButton.style.right = '20px';
         tourButton.style.zIndex = '1000';
@@ -1658,12 +1652,6 @@
             nextBtnText: 'Siguiente',
             prevBtnText: 'Anterior'
         });
-
-        // Función auxiliar para encontrar elementos por texto contenido
-        function findElementByText(selector, text) {
-            const elements = document.querySelectorAll(selector);
-            return Array.from(elements).find(el => el.textContent.includes(text));
-        }
 
         // Definir los pasos del tour
         const steps = [
@@ -1690,85 +1678,77 @@
                     description: 'Aquí puedes ver quién imparte este curso. Puedes hacer clic en su nombre para ver su perfil.',
                     position: 'bottom'
                 }
-            }
-        ];
-
-        // Añadir pasos condicionales si los elementos existen
-        const estadoElement = findElementByText('.card-title', 'Estado');
-        if (estadoElement) {
-            steps.push({
-                element: estadoElement,
+            },
+            {
+                element: '.card-title:contains("Estado")',
                 popover: {
                     title: 'Estado del Curso',
                     description: 'Muestra si el curso está activo o si los certificados están disponibles.',
                     position: 'top'
                 }
-            });
-        }
-
-        const tipoElement = findElementByText('.card-title', 'Tipo');
-        if (tipoElement) {
-            steps.push({
-                element: tipoElement,
+            },
+            {
+                element: '.card-title:contains("Tipo")',
                 popover: {
                     title: 'Tipo de Curso',
                     description: 'Indica si es un curso regular o un congreso.',
                     position: 'top'
                 }
-            });
-        }
-
-        const descripcionElement = findElementByText('.card-title', 'Descripción');
-        if (descripcionElement) {
-            steps.push({
-                element: descripcionElement,
+            },
+            {
+                element: '.card-title:contains("Descripción")',
                 popover: {
                     title: 'Descripción del Curso',
                     description: 'Aquí encontrarás los detalles y objetivos del curso.',
                     position: 'top'
                 }
-            });
-        }
-
-        const participantesBtn = findElementByText('.btn-primary', 'Participantes');
-        if (participantesBtn) {
-            steps.push({
-                element: participantesBtn,
+            },
+            {
+                element: '.btn-primary:contains("Participantes")',
                 popover: {
                     title: 'Lista de Participantes',
                     description: 'Haz clic aquí para ver todos los estudiantes inscritos en este curso.',
                     position: 'top'
                 }
-            });
-        }
-
-        const horarioBtn = document.querySelector('.btn-primary[data-bs-target="#modalHorario"]');
-        if (horarioBtn) {
-            steps.push({
-                element: horarioBtn,
+            },
+            {
+                element: '.btn-primary[data-bs-target="#modalHorario"]',
                 popover: {
                     title: 'Horarios del Curso',
                     description: 'Consulta los días y horas en que se imparte este curso.',
                     position: 'top'
+                },
+                onNext: () => {
+                    // Solo mostrar si el elemento existe
+                    if (!document.querySelector('#dropdownMenuButton')) {
+                        driver.moveNext();
+                    }
                 }
-            });
-        }
-
-        const dropdownBtn = document.querySelector('#dropdownMenuButton');
-        if (dropdownBtn) {
-            steps.push({
+            },
+            {
                 element: '#dropdownMenuButton',
                 popover: {
                     title: 'Gestionar Curso',
                     description: 'Si eres docente o administrador, aquí encontrarás todas las opciones para gestionar el curso.',
                     position: 'left'
                 }
-            });
-        }
+            }
+        ];
+
+        // Filtrar pasos para elementos que existen en la página
+        const validSteps = steps.filter(step => {
+            let selector = step.element;
+            if (selector.includes(':contains')) {
+                const text = selector.match(/:contains\("(.+?)"\)/)[1];
+                selector = selector.split(':contains')[0];
+                return Array.from(document.querySelectorAll(selector)).some(el => el.textContent.includes(text));
+            }
+            return document.querySelector(selector);
+        });
 
         // Iniciar el tour al hacer clic en el botón
         tourButton.addEventListener('click', function() {
-            driver.defineSteps(steps);
+            driver.defineSteps(validSteps);
             driver.start();
         });
     });

@@ -42,7 +42,8 @@
                                             <hr>
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <p class="mb-0">Fecha de retiro:
-                                                    <strong>{{ $usuarioRetirado->deleted_at->format('d/m/Y') }}</strong></p>
+                                                    <strong>{{ $usuarioRetirado->deleted_at->format('d/m/Y') }}</strong>
+                                                </p>
                                                 <a href="{{ route('Inicio') }}" class="btn btn-outline-primary">
                                                     Volver a los cursos
                                                 </a>
@@ -73,7 +74,7 @@
                                                 <i class="bi bi-door-open me-2"></i> Ir al Curso
                                             </a>
                                         @else
-                                            @if (is_null($usuarioInscrito->certificado))
+                                            @if ($usuarioInscrito->certificado === null)
                                                 <p>Ponte en contacto con el colaborador del evento.</p>
                                             @else
                                                 <ul>
@@ -962,7 +963,7 @@
     @endif
 
 
- <section class="mt-5" id="valoraciones">
+    <section class="mt-5" id="valoraciones">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
@@ -1125,7 +1126,8 @@
                                                 </div>
                                             @endif
                                         </div>
-                                        <button class="btn btn-sm btn-outline-warning" onclick="editarCalificacion({{ $calificacionUsuario->id }}, {{ $calificacionUsuario->puntuacion }}, '{{ $calificacionUsuario->comentario }}')">
+                                        <button class="btn btn-sm btn-outline-warning"
+                                            onclick="editarCalificacion({{ $calificacionUsuario->id }}, {{ $calificacionUsuario->puntuacion }}, '{{ $calificacionUsuario->comentario }}')">
                                             <i class="bi bi-pencil"></i> Editar
                                         </button>
                                     </div>
@@ -1160,7 +1162,7 @@
                                             <div class="d-flex gap-1">
                                                 @if (auth()->id() === $calificacion->user_id)
                                                     <button type="button" class="btn btn-sm btn-outline-warning"
-                                                            onclick="editarCalificacion({{ $calificacion->id }}, {{ $calificacion->puntuacion }}, '{{ $calificacion->comentario }}')">
+                                                        onclick="editarCalificacion({{ $calificacion->id }}, {{ $calificacion->puntuacion }}, '{{ $calificacion->comentario }}')">
                                                         <i class="bi bi-pencil"></i>
                                                     </button>
                                                     <form
@@ -1169,7 +1171,7 @@
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                                onclick="return confirm('¿Estás seguro de eliminar esta valoración?')">
+                                                            onclick="return confirm('¿Estás seguro de eliminar esta valoración?')">
                                                             <i class="bi bi-trash"></i>
                                                         </button>
                                                     </form>
@@ -1181,7 +1183,7 @@
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                                onclick="return confirm('¿Estás seguro de eliminar esta valoración?')">
+                                                            onclick="return confirm('¿Estás seguro de eliminar esta valoración?')">
                                                             <i class="bi bi-trash"></i>
                                                         </button>
                                                     </form>
@@ -1242,7 +1244,7 @@
                         <div class="mb-3">
                             <label for="edit_comentario" class="form-label">Comentario (opcional):</label>
                             <textarea name="comentario" id="edit_comentario" class="form-control" rows="3"
-                                      placeholder="¿Qué te pareció el curso?"></textarea>
+                                placeholder="¿Qué te pareció el curso?"></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -1281,48 +1283,48 @@
             const actionUrl = this.action;
 
             fetch(actionUrl, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-HTTP-Method-Override': 'PUT'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Cerrar modal
-                    bootstrap.Modal.getInstance(document.getElementById('editarCalificacionModal')).hide();
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-HTTP-Method-Override': 'PUT'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Cerrar modal
+                        bootstrap.Modal.getInstance(document.getElementById('editarCalificacionModal')).hide();
 
-                    // Mostrar mensaje de éxito
-                    Swal.fire({
-                        icon: 'success',
-                        title: '¡Actualizado!',
-                        text: data.message || 'Tu valoración ha sido actualizada correctamente',
-                        timer: 1500,
-                        showConfirmButton: false
-                    });
+                        // Mostrar mensaje de éxito
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Actualizado!',
+                            text: data.message || 'Tu valoración ha sido actualizada correctamente',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
 
-                    // Recargar la página después de un breve delay
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1500);
-                } else {
+                        // Recargar la página después de un breve delay
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message || 'Ocurrió un error al actualizar la valoración'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: data.message || 'Ocurrió un error al actualizar la valoración'
+                        text: 'Ocurrió un error inesperado'
                     });
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Ocurrió un error inesperado'
                 });
-            });
         });
     </script>
 @endsection

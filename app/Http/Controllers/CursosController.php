@@ -199,13 +199,13 @@ class CursosController extends Controller
                 'archivo' => 'nullable|file|mimes:pdf|max:20480',
                 'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
                 'eliminar_archivo' => 'nullable|boolean',
-                'eliminar_imagen' => 'nullable|boolean'
+                'eliminar_imagen' => 'nullable|boolean',
+                'fecha_ini' => 'required|date_format:Y-m-d\TH:i',
+                'fecha_fin' => 'required|date_format:Y-m-d\TH:i|after_or_equal:fecha_ini',
             ];
 
-            // Reglas extra para admins
+            // Reglas extra solo para admins
             if ($user->hasRole('Administrador')) {
-                $validationRules['fecha_ini'] = 'required|date_format:Y-m-d\TH:i';
-                $validationRules['fecha_fin'] = 'required|date_format:Y-m-d\TH:i|after_or_equal:fecha_ini';
                 $validationRules['docente_id'] = 'required|exists:users,id';
                 $validationRules['duracion'] = 'required|integer|min:1';
                 $validationRules['cupos'] = 'required|integer|min:1';
@@ -227,7 +227,13 @@ class CursosController extends Controller
                 'imagen.image' => 'El archivo debe ser una imagen.',
                 'imagen.mimes' => 'La imagen debe ser de tipo jpeg, png, jpg o gif.',
                 'imagen.max' => 'La imagen no puede superar los 2MB.',
+                'fecha_ini.required' => 'La fecha de inicio es obligatoria.',
+                'fecha_ini.date_format' => 'La fecha de inicio debe tener el formato válido.',
+                'fecha_fin.required' => 'La fecha de fin es obligatoria.',
+                'fecha_fin.date_format' => 'La fecha de fin debe tener el formato válido.',
+                'fecha_fin.after_or_equal' => 'La fecha de fin debe ser posterior o igual a la fecha de inicio.',
             ]);
+
 
             $curso = Cursos::findOrFail($id);
 
@@ -288,7 +294,7 @@ class CursosController extends Controller
             return back()->with('success', 'Curso actualizado correctamente');
         } catch (\Exception $e) {
             AdminLogger::error('Error al editar curso', $e);
-            return back()->withErrors(['error' => 'Ocurrió un error al actualizar el curso.']);
+            return back()->withErrors(['info' => 'Ocurrió un error al actualizar el curso.']);
         }
     }
 

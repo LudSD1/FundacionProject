@@ -209,26 +209,32 @@
                 });
             }
 
-            // SweetAlert notifications
-            @if (session('success'))
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Éxito!',
-                    text: "{{ session('success') }}",
-                    confirmButtonText: 'Entendido'
-                });
-            @endif
 
-            @if (session('error'))
-                Swal.fire({
-                    icon: 'error',
-                    title: '¡Error!',
-                    text: "{{ session('error') }}",
-                    confirmButtonText: 'Reintentar'
-                });
-            @endif
         });
     </script>
+
+    @if (session('success'))
+        <script>
+        Swal.fire({
+        icon: 'success',
+        title: '¡Éxito!',
+        text: "{{ session('success') }}",
+        confirmButtonText: 'Entendido'
+        });
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+        Swal.fire({
+        icon: 'error',
+        title: '¡Error!',
+        text: "{{ session('error') }}",
+        confirmButtonText: 'Reintentar'
+        });
+        </script>
+    @endif
+
     @if (session('info'))
         <script>
             Swal.fire({
@@ -243,11 +249,7 @@
             });
         </script>
     @endif
-    <script>
-        document.getElementById('toggleSidebar').addEventListener('click', function() {
-            document.getElementById('sidebar').classList.toggle('show');
-        });
-    </script>
+
 </body>
 
 </html>

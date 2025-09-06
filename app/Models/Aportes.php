@@ -23,7 +23,7 @@ class Aportes extends BaseModel
     {
         return $this->belongsTo(Cursos::class,  'cursos_id')->withTrashed();
     }
-
+ 
     protected static function boot()
     {
         parent::boot();

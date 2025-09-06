@@ -1,5 +1,3 @@
-
-
 @extends('layout')
 
 @section('titulo', 'Editar Curso')
@@ -29,14 +27,15 @@
                 <div class="container-fluid py-4">
                     <nav aria-label="breadcrumb" class="mb-4">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{ route('ListadeCursos') }}" class="text-primary">Cursos</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('ListadeCursos') }}"
+                                    class="text-primary">Cursos</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Editar Curso</li>
                         </ol>
                     </nav>
 
                     <div class="card shadow">
                         <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                            <a href="{{ route('Curso', $cursos->id)}}" class="btn btn-sm btn-primary">
+                            <a href="{{ route('Curso', $cursos->id) }}" class="btn btn-sm btn-primary">
                                 <i class="fas fa-arrow-left"></i> Volver
                             </a>
                             <h6 class="m-0 fw-bold text-primary">Editar Curso: {{ $cursos->nombreCurso }}</h6>
@@ -44,25 +43,39 @@
 
                         <div class="card-body">
 
+                            {{-- Mensaje de éxito --}}
                             @if (session('success'))
-                                <div class="alert alert-success alert-dismissible fade show">
-                                    {{ session('success') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
+                                <script>
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Éxito',
+                                        text: '{{ session('success') }}',
+                                        confirmButtonText: 'Aceptar'
+                                    })
+                                </script>
                             @endif
 
+                            {{-- Mensajes de error --}}
                             @if ($errors->any())
-                                <div class="alert alert-danger alert-dismissible fade show">
-                                    <ul class="mb-0">
-                                        @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
+                                <script>
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Errores de validación',
+                                        html: `
+                <ul style="text-align:left;">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            `,
+                                        confirmButtonText: 'Entendido'
+                                    })
+                                </script>
                             @endif
 
-                            <form action="{{ route('editarCursoPost', $cursos->id) }}" method="POST" enctype="multipart/form-data">
+
+                            <form action="{{ route('editarCursoPost', $cursos->id) }}" method="POST"
+                                enctype="multipart/form-data">
                                 @csrf
 
                                 <div class="row mb-4">
@@ -74,7 +87,8 @@
                                                 value="{{ $cursos->nombreCurso }}" required>
                                         @else
                                             <input type="hidden" name="nombre" value="{{ $cursos->nombreCurso }}">
-                                            <input type="text" class="form-control" value="{{ $cursos->nombreCurso }}" disabled>
+                                            <input type="text" class="form-control" value="{{ $cursos->nombreCurso }}"
+                                                disabled>
                                         @endif
                                     </div>
 
@@ -90,17 +104,17 @@
                                 <div class="row mb-4">
                                     <div class="col-md-3">
                                         <label for="fecha_ini" class="form-label">Fecha Inicio</label>
-                                            <input type="datetime-local" class="form-control" id="fecha_ini" name="fecha_ini"
-                                                value="{{ old('fecha_ini', $cursos->fecha_ini ? \Carbon\Carbon::parse($cursos->fecha_ini)->format('Y-m-d\TH:i') : '') }}"
-                                                required>
+                                        <input type="datetime-local" class="form-control" id="fecha_ini" name="fecha_ini"
+                                            value="{{ old('fecha_ini', $cursos->fecha_ini ? \Carbon\Carbon::parse($cursos->fecha_ini)->format('Y-m-d\TH:i') : '') }}"
+                                            required>
 
                                     </div>
 
                                     <div class="col-md-3">
                                         <label for="fecha_fin" class="form-label">Fecha Fin</label>
-                                            <input type="datetime-local" class="form-control" id="fecha_fin" name="fecha_fin"
-                                                value="{{ old('fecha_fin', $cursos->fecha_fin ? \Carbon\Carbon::parse($cursos->fecha_fin)->format('Y-m-d\TH:i') : '') }}"
-                                                required>
+                                        <input type="datetime-local" class="form-control" id="fecha_fin" name="fecha_fin"
+                                            value="{{ old('fecha_fin', $cursos->fecha_fin ? \Carbon\Carbon::parse($cursos->fecha_fin)->format('Y-m-d\TH:i') : '') }}"
+                                            required>
 
                                     </div>
 
@@ -112,16 +126,19 @@
                                                 <option value="Presencial"
                                                     {{ $cursos->formato === 'Presencial' ? 'selected' : '' }}>
                                                     Presencial</option>
-                                                <option value="Virtual" {{ $cursos->formato === 'Virtual' ? 'selected' : '' }}>
+                                                <option value="Virtual"
+                                                    {{ $cursos->formato === 'Virtual' ? 'selected' : '' }}>
                                                     Virtual
                                                 </option>
-                                                <option value="Híbrido" {{ $cursos->formato === 'Híbrido' ? 'selected' : '' }}>
+                                                <option value="Híbrido"
+                                                    {{ $cursos->formato === 'Híbrido' ? 'selected' : '' }}>
                                                     Híbrido
                                                 </option>
                                             </select>
                                         @else
                                             <input type="hidden" name="formato" value="{{ $cursos->formato }}">
-                                            <input type="text" class="form-control" value="{{ $cursos->formato }}" disabled>
+                                            <input type="text" class="form-control" value="{{ $cursos->formato }}"
+                                                disabled>
                                         @endif
                                     </div>
 
@@ -133,14 +150,16 @@
                                                 <option value="curso" {{ $cursos->tipo === 'curso' ? 'selected' : '' }}>
                                                     Curso
                                                 </option>
-                                                <option value="congreso" {{ $cursos->tipo === 'congreso' ? 'selected' : '' }}>
+                                                <option value="congreso"
+                                                    {{ $cursos->tipo === 'congreso' ? 'selected' : '' }}>
                                                     Evento
                                                 </option>
                                             </select>
                                         @else
                                             <input type="hidden" name="tipo" value="{{ $cursos->tipo }}">
                                             <input type="text" class="form-control"
-                                                value="{{ $cursos->tipo == 'congreso' ? 'Evento' : $cursos->tipo }}" disabled>
+                                                value="{{ $cursos->tipo == 'congreso' ? 'Evento' : $cursos->tipo }}"
+                                                disabled>
                                         @endif
                                     </div>
                                 </div>
@@ -218,7 +237,8 @@
 
                                 <div class="col-md-6 mb-4">
                                     <label for="archivo" class="form-label">Archivo del Curso (PDF)</label>
-                                    <input type="file" class="form-control" id="archivo" name="archivo" accept=".pdf">
+                                    <input type="file" class="form-control" id="archivo" name="archivo"
+                                        accept=".pdf">
 
                                     @if ($cursos->archivoContenidodelCurso)
                                         <div class="mt-3">
@@ -231,9 +251,10 @@
                                                         {{ basename($cursos->archivoContenidodelCurso) }}
                                                     </a>
                                                     <div class="form-check mt-2">
-                                                        <input class="form-check-input" type="checkbox" id="eliminar_archivo"
-                                                            name="eliminar_archivo">
-                                                        <label class="form-check-label text-danger" for="eliminar_archivo">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="eliminar_archivo" name="eliminar_archivo">
+                                                        <label class="form-check-label text-danger"
+                                                            for="eliminar_archivo">
                                                             <small>Eliminar archivo actual</small>
                                                         </label>
                                                     </div>
@@ -245,21 +266,22 @@
 
                                 <div class="col-md-6 mb-4">
                                     <label for="imagen" class="form-label">Imagen del Curso</label>
-                                    <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
+                                    <input type="file" class="form-control" id="imagen" name="imagen"
+                                        accept="image/*">
 
                                     @if ($cursos->imagen)
                                         <div class="mt-3">
                                             <div class="d-flex align-items-center">
                                                 <div class="me-3">
                                                     <img src="{{ asset('storage/' . $cursos->imagen) }}"
-                                                        alt="Imagen actual del curso" style="max-width: 80px; max-height: 80px;"
-                                                        class="img-thumbnail">
+                                                        alt="Imagen actual del curso"
+                                                        style="max-width: 80px; max-height: 80px;" class="img-thumbnail">
                                                 </div>
                                                 <div>
                                                     <small class="d-block">Imagen actual:</small>
                                                     <div class="form-check mt-2">
-                                                        <input class="form-check-input" type="checkbox" id="eliminar_imagen"
-                                                            name="eliminar_imagen">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="eliminar_imagen" name="eliminar_imagen">
                                                         <label class="form-check-label text-danger" for="eliminar_imagen">
                                                             <small>Eliminar imagen actual</small>
                                                         </label>
@@ -300,7 +322,8 @@
                     </div>
 
                     <div class="card-body">
-                        <form id="categoriasForm" action="{{ route('cursos.updateCategories', $cursos->id) }}" method="POST">
+                        <form id="categoriasForm" action="{{ route('cursos.updateCategories', $cursos->id) }}"
+                            method="POST">
                             @csrf
                             @method('PUT')
                             <div class="row" id="contenedorCategorias">
@@ -332,7 +355,6 @@
     </div>
 @endsection
 
-@push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     $(document).ready(function() {
@@ -389,7 +411,8 @@
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error',
-                                text: xhr.responseJSON.message || 'Ocurrió un error al guardar',
+                                text: xhr.responseJSON.message ||
+                                    'Ocurrió un error al guardar',
                             });
                         }
                     });
@@ -398,4 +421,3 @@
         });
     });
 </script>
-@endpush
