@@ -154,7 +154,6 @@ class UserController extends Controller
         $user->PaisReside = $request->PaisReside ?? '';
         $user->CiudadReside = $request->CiudadReside ?? '';
         $user->updated_at = now();
-
     }
 
 
@@ -364,15 +363,23 @@ class UserController extends Controller
         }
     }
 
-    public function eliminarUsuario($id)
+    public function delete($id)
     {
+        try {
+        } catch (DecryptException $e) {
+            return back()->with('error', 'ID inválido');
+        }
 
-        $usuario = User::find($id);
+        $usuario = User::findOrFail($id);
+
         event(new UsuarioEvent($usuario, 'eliminacion'));
+
         $usuario->delete();
 
         return back()->with('success', 'Usuario Dado de Baja');
     }
+
+
     public function restaurarUsuario($id)
     {
 
@@ -388,8 +395,4 @@ class UserController extends Controller
     {
         return view('notificaciones');
     }
-
-
-
-
 }

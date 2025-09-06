@@ -212,7 +212,7 @@ class MenuController extends Controller
         // 3. Filtro de visibilidad basado en rol
         $isAdmin = auth()->user() && auth()->user()->hasRole('Administrador');
         if (!$isAdmin) {
-            $query->where('visibilidad', 'Público');
+            $query->where('visibilidad', 'Público   ');
         } elseif ($request->filled('visibilidad')) {
             $query->where('visibilidad', $validated['visibilidad']);
         }

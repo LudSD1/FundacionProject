@@ -214,7 +214,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/ListaDocentesEliminados', [MenuController::class, 'ListaDocentesEliminados'])->name('DocentesEliminados');
         Route::get('/CrearDocente', [MenuController::class, 'storeDIndex'])->name('CrearDocente');
         Route::post('/CrearDocente', [AdministradorController::class, 'storeDocente'])->name('CrearDocentePost');
-        Route::get('/deleteUser/{id}', [UserController::class, 'eliminarUsuario'])->name('eliminarUser');
+        Route::post('/EliminarUsuario/{id}', [UserController::class, 'delete'])->name('deleteUser');
         //Expositores
 
         Route::get('/expositores', [ExpositoresController::class, 'ListaExpositores'])->name('ListaExpositores');
