@@ -109,20 +109,25 @@ class MenuController extends Controller
 
     public function home()
     {
-        $currentDate = Carbon::now(); // Fecha actual
+        $currentDate = Carbon::now(); 
 
-        // Filtrar congresos cuya fecha_fin no ha pasado
         $congresos = Cursos::where('tipo', 'congreso')
             ->where('fecha_fin', '>=', $currentDate)
+            ->where('estado', 'Activo')
+            ->where('visibilidad', 'Público')
             ->get();
 
-        // Filtrar cursos cuya fecha_fin no ha pasado
         $cursos = Cursos::where('tipo', 'curso')
             ->where('fecha_fin', '>=', $currentDate)
+            ->where('estado', 'Activo')
+            ->where('visibilidad', 'Público')
             ->get();
 
         return view('landing')->with('congresos', $congresos)->with('cursos', $cursos);
     }
+
+
+
     public function index()
     {
         $totalCursos = Cursos::whereNull('deleted_at')->count();
@@ -207,7 +212,7 @@ class MenuController extends Controller
         // 3. Filtro de visibilidad basado en rol
         $isAdmin = auth()->user() && auth()->user()->hasRole('Administrador');
         if (!$isAdmin) {
-            $query->where('visibilidad', 'publico');
+            $query->where('visibilidad', 'Público');
         } elseif ($request->filled('visibilidad')) {
             $query->where('visibilidad', $validated['visibilidad']);
         }
