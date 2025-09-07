@@ -34,18 +34,13 @@ class EmailVerificationController extends Controller
 
             Log::info('Email de verificación enviado exitosamente');
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Se ha enviado un email de verificación a tu dirección de correo electrónico.'
-            ]);
+            return back()->with('success', 'Se ha enviado un email de verificación a tu dirección de correo electrónico.');
+
         } catch (\Exception $e) {
             Log::error('Error al enviar email de verificación: ' . $e->getMessage());
             Log::error('Stack trace: ' . $e->getTraceAsString());
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al enviar el email de verificación: ' . $e->getMessage()
-            ], 500);
+            return back()->with('error', 'Error al enviar el email de verificación: ' . $e->getMessage());
         }
     }
 
