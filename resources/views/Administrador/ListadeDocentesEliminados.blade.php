@@ -7,137 +7,177 @@
 
 
 @section('content')
-<div class="border p-3">
-<a href="javascript:history.back()" class="btn btn-primary">
-    &#9668; Volver
-</a>
-<br>
-    <div class="col-lg-12 row">
-        <form class="navbar-search navbar-search form-inline mr-3 d-none d-md-flex ml-lg-auto">
-            <div class="input-group input-group-alternative">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-search"></i></span>
-                </div>
-                <input class="form-control" placeholder="Buscar" type="text" id="searchInput">
+<div class="container-fluid">
+    <!-- Header con botón de volver -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="{{ route('ListaDocentes' ) }}" class="btn btn-primary d-flex align-items-center gap-2">
+                    <i class="fas fa-arrow-left"></i>
+                    Volver
+                </a>
+                <h4 class="mb-0 text-muted">Docentes Eliminados</h4>
             </div>
-        </form>
+        </div>
     </div>
 
+    <!-- Barra de búsqueda -->
+    <div class="row mb-3">
+        <div class="col-lg-6 col-md-8">
+            <div class="input-group">
+                <span class="input-group-text bg-light">
+                    <i class="fas fa-search text-muted"></i>
+                </span>
+                <input class="form-control" placeholder="Buscar docente..." type="text" id="searchInput">
+            </div>
+        </div>
+    </div>
 
+    <!-- Tabla responsive -->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col" class="fw-semibold">#</th>
+                            <th scope="col" class="fw-semibold">Nombre y Apellidos</th>
+                            <th scope="col" class="fw-semibold">Celular</th>
+                            <th scope="col" class="fw-semibold">Correo</th>
+                            <th scope="col" class="fw-semibold text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($docente as $docente)
+                        <tr>
+                            <td class="text-muted">
+                                {{ $loop->iteration }}
+                            </td>
+                            <td class="fw-medium">
+                                {{ $docente->name }}
+                                {{ $docente->lastname1 }}
+                                {{ $docente->lastname2 }}
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark">
+                                    {{ $docente->Celular }}
+                                </span>
+                            </td>
+                            <td>
+                                <small class="text-muted">{{ $docente->email }}</small>
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="{{ route('perfil' , [encrypt($docente->id)]) }}"
+                                       class="btn btn-outline-info"
+                                       title="Ver perfil">
+                                        <i class="fas fa-eye"></i>
+                                        <span class="d-none d-lg-inline ms-1">Ver</span>
+                                    </a>
+                                    <a href="{{route('restaurarUsuario', [encrypt($docente->id)])}}"
+                                       onclick="mostrarAdvertencia(event)"
+                                       class="btn btn-outline-success"
+                                       title="Restaurar docente">
+                                        <i class="fas fa-undo"></i>
+                                        <span class="d-none d-lg-inline ms-1">Restaurar</span>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <div class="d-flex flex-column align-items-center text-muted">
+                                    <i class="fas fa-users-slash fa-3x mb-3 opacity-50"></i>
+                                    <h5 class="mb-1">No hay docentes eliminados</h5>
+                                    <p class="mb-0">No se encontraron registros de docentes eliminados.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-    <table class="table align-items-center table-flush">
-        <thead class="thead-light">
-            <tr>
-                <th scope="col">Nro</th>
-                <th scope="col">Nombre y Apellidos</th>
-                <th scope="col">Celular</th>
-                <th scope="col">Correo</th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($docente as $docente)
-            <tr>
-
-                <td scope="row">
-                    {{ $loop->iteration }}
-                </td>
-                <td scope="row">
-                    {{ $docente->name }}
-                    {{ $docente->lastname1 }}
-                    {{ $docente->lastname2 }}
-                </td>
-                <td>
-                    {{ $docente->Celular }}
-                </td>
-                <td>
-                    {{ $docente->email }}
-                </td>
-                <td>
-                    <a href="{{ route('perfil' , [encrypt($docente->id)]) }}">
-
-                        Ver Mas
-                        <img src="{{ asset('assets/icons/ojo.png') }}" alt="Ver Icon" style="width: 16px; height: 16px;">
-                    </a>
-                    /
-                    <a href="{{route('restaurarUsuario', [encrypt($docente->id)])}}" onclick="mostrarAdvertencia(event)">
-                        Restaurar Docente
-                        <img src="{{ asset('assets/icons/borrar.png') }}" alt="Borrar Icon" style="width: 16px; height: 16px;">
-                    </a>
-                </td>
-            </tr>
-            @empty
-            <td>
-                <h4>NO HAY DOCENTES ELIMINADOS</h4>
-            </td>
-            @endforelse
-
-        </tbody>
-    </table>
-
+    <!-- Alertas de éxito -->
     @if(session('success'))
-    <div class="alert alert-success">
+    <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
         {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     @endif
+</div>
 
-        <!-- Agrega esto en tu archivo Blade antes de </body> -->
-        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-        <script>
-            $(document).ready(function() {
-                // Manejo del evento de entrada en el campo de búsqueda
-                $('input[type="text"]').on('input', function() {
-                    var searchText = $(this).val().toLowerCase();
+<script>
+$(document).ready(function() {
+    // Manejo del evento de entrada en el campo de búsqueda
+    $('#searchInput').on('input', function() {
+        var searchText = $(this).val().toLowerCase();
 
-                    // Filtra las filas de la tabla basándote en el valor del campo de búsqueda
-                    $('tbody tr').filter(function() {
-                        $(this).toggle($(this).text().toLowerCase().indexOf(searchText) > -1);
-                    });
-                });
-            });
-        </script>
+        // Filtra las filas de la tabla basándote en el valor del campo de búsqueda
+        $('tbody tr').each(function() {
+            var rowText = $(this).text().toLowerCase();
+            if (rowText.indexOf(searchText) > -1) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
 
-
-        <script>
-            $(document).ready(function() {
-                // Manejo del evento de entrada en el campo de búsqueda
-                $('.search-input').on('input', function() {
-                    var searchText = $(this).val().toLowerCase();
-
-                    // Filtra las filas de la tabla basándote en el valor del campo de búsqueda
-                    $('tbody tr').filter(function() {
-                        $(this).toggle($(this).text().toLowerCase().indexOf(searchText) > -1);
-                    });
-                });
-            });
-        </script>
-
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
-    <script>
-        function mostrarAdvertencia(event) {
-            event.preventDefault();
-
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: 'Esta acción retornara a este Docente eliminado. ¿Estás seguro de que deseas continuar?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, continuar',
-                cancelButtonText: 'Cancelar',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Redirige al usuario al enlace original
-                    window.location.href = event.target.getAttribute('href');
-                }
-            });
+        // Mostrar mensaje si no hay resultados
+        var visibleRows = $('tbody tr:visible').length;
+        if (visibleRows === 0 && searchText !== '') {
+            if ($('.no-results').length === 0) {
+                $('tbody').append(
+                    '<tr class="no-results">' +
+                    '<td colspan="5" class="text-center py-4 text-muted">' +
+                    '<i class="fas fa-search-minus fa-2x mb-2 opacity-50"></i><br>' +
+                    'No se encontraron resultados para "<strong>' + searchText + '</strong>"' +
+                    '</td>' +
+                    '</tr>'
+                );
+            }
+        } else {
+            $('.no-results').remove();
         }
-    </script>
+    });
+});
+</script>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+function mostrarAdvertencia(event) {
+    event.preventDefault();
+
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esta acción retornará a este Docente eliminado. ¿Estás seguro de que deseas continuar?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, restaurar',
+        cancelButtonText: 'Cancelar',
+        buttonsStyling: false,
+        customClass: {
+            confirmButton: 'btn btn-success me-2',
+            cancelButton: 'btn btn-secondary'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Redirige al usuario al enlace original
+            window.location.href = event.target.closest('a').getAttribute('href');
+        }
+    });
+}
+</script>
 
 @endsection
+
 
 @include('layout')

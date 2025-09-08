@@ -450,6 +450,8 @@ body {
         width: var(--sidebar-width);
         transform: translateX(-100%);
         z-index: 1050;
+        height: 100%;
+        position: fixed;
     }
 
     .sidebar.show {
@@ -463,6 +465,7 @@ body {
 
     .sidebar.collapsed.show {
         transform: translateX(0);
+        width: var(--sidebar-width);
     }
 
     .content {
@@ -472,6 +475,7 @@ body {
 
     .mobile-toggle {
         display: block;
+        z-index: 1060;
     }
 
     .navbar-main {
@@ -504,6 +508,13 @@ body {
     .sidebar.collapsed .user-profile .dropdown-menu {
         left: 20px !important;
         right: 20px !important;
+    }
+
+    /* Asegurar que el overlay cubra toda la pantalla */
+    .sidebar-overlay.show {
+        opacity: 1;
+        visibility: visible;
+        z-index: 1049;
     }
 }
 
@@ -626,6 +637,12 @@ body {
     ];
 @endphp
 
+<button class="mobile-toggle" id="mobileToggle">
+    <i class="bi bi-list"></i>
+</button>
+
+<!-- Overlay oscuro en móvil -->
+<div class="sidebar-overlay"></div>
 <!-- Sidebar -->
 <div class="sidebar" id="sidebar">
     <!-- Toggle Button -->
@@ -729,3 +746,55 @@ body {
         @yield('nav')
     </div>
 </div>
+
+
+<script>
+    // Asegúrate de que este código se ejecute después de que el DOM esté completamente cargado
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.getElementById('sidebar');
+    const toggleSidebar = document.getElementById('toggleSidebar');
+    const mobileToggle = document.querySelector('.mobile-toggle');
+    const sidebarOverlay = document.querySelector('.sidebar-overlay');
+
+    // Función para verificar el tamaño de la pantalla
+    function checkScreenSize() {
+        if (window.innerWidth < 992) {
+            sidebar.classList.remove('collapsed');
+        }
+    }
+
+    // Verificar al cargar la página
+    checkScreenSize();
+
+    // Verificar cuando se redimensiona la ventana
+    window.addEventListener('resize', checkScreenSize);
+
+    // Toggle para escritorio
+    if (toggleSidebar) {
+        toggleSidebar.addEventListener('click', function() {
+            if (window.innerWidth >= 992) {
+                sidebar.classList.toggle('collapsed');
+            } else {
+                sidebar.classList.toggle('show');
+                document.querySelector('.sidebar-overlay').classList.toggle('show');
+            }
+        });
+    }
+
+    // Toggle para móvil
+    if (mobileToggle) {
+        mobileToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('show');
+            document.querySelector('.sidebar-overlay').classList.toggle('show');
+        });
+    }
+
+    // Cerrar al hacer clic en el overlay
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', function() {
+            sidebar.classList.remove('show');
+            this.classList.remove('show');
+        });
+    }
+});
+</script>
