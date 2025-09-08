@@ -74,7 +74,7 @@ class UsersImport implements ToCollection, WithHeadingRow
                     ]);
 
                     // Generar certificado
-                    $this->generarCertificado($inscrito);
+                    // $this->generarCertificado($inscrito);
 
                     $this->results['registered']++;
                 }
@@ -98,7 +98,7 @@ class UsersImport implements ToCollection, WithHeadingRow
             $certificado = new Certificado();
             $certificado->inscrito_id = $inscrito->id;
             $certificado->uuid = (string) Str::uuid();
-            $certificado->url_verificacion = route('verificarCertificado', ['uuid' => $certificado->uuid]);
+            $certificado->url_verificacion = route('verificar.certificado',  $certificado->uuid);
             $certificado->save();
         }
     }
