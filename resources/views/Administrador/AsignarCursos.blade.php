@@ -11,7 +11,13 @@
         <div class="card-header bg-primary text-white">
             <h2 class="mb-0"><i class="fas fa-user-graduate me-2"></i>Asignar Cursos a Estudiantes</h2>
         </div>
+
+
+
         <div class="card-body">
+
+            <a href="{{ route('import.users.form') }}" class="btn btn-primary mb-3">Importar Usuarios desde Excel</a>
+
             <form action="{{ route('inscribir') }}" method="POST" id="formulario-inscripcion">
                 @csrf
                 <div class="row">

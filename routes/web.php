@@ -179,7 +179,8 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::post('/reenviar-recibo/{id}', [AportesController::class, 'reenviarRecibo'])->name('recibo.reenviar')->middleware('auth');
         Route::post('/Curso/{id}', [CursosController::class, 'update'])->name('cursos.update');
-
+        Route::get('/import/users', [App\Http\Controllers\ImportController::class, 'showImportForm'])->name('import.users.form');
+        Route::post('/import/users', [App\Http\Controllers\ImportController::class, 'importUsers'])->name('import.users');
 
         Route::get('/categorias', [CategoriaController::class, 'index'])->name('categorias.index');
         Route::post('/categorias', [CategoriaController::class, 'store'])->name('categorias.store');
