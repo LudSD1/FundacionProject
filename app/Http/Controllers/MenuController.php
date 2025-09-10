@@ -109,7 +109,7 @@ class MenuController extends Controller
 
     public function home()
     {
-        $currentDate = Carbon::now(); 
+        $currentDate = Carbon::now();
 
         $congresos = Cursos::where('tipo', 'congreso')
             ->where('fecha_fin', '>=', $currentDate)
@@ -183,7 +183,7 @@ class MenuController extends Controller
         return view('Administrador.ListadeCursosEliminados')->with('cursos', $cursos);
     }
 
-    public function lista(Request $request)
+     public function lista(Request $request)
     {
         // 1. Validación básica de los parámetros de entrada
         $validated = $request->validate([
@@ -208,6 +208,10 @@ class MenuController extends Controller
             ->withAvg('calificaciones', 'puntuacion') // Promedio de calificaciones
             ->withCount('calificaciones') // Cantidad de calificaciones
             ->withCount('inscritos'); // Cantidad de inscritos
+
+        // NUEVO: Filtrar cursos que ya terminaron su fecha
+        $currentDate = now();
+        $query->where('fecha_fin', '>=', $currentDate);
 
         // 3. Filtro de visibilidad basado en rol
         $isAdmin = auth()->user() && auth()->user()->hasRole('Administrador');
@@ -273,6 +277,16 @@ class MenuController extends Controller
 
         // 8. Paginación
         $cursos = $query->paginate(9)->withQueryString();
+
+        // NUEVO: Marcar cursos que están por comenzar
+        $cursos->getCollection()->transform(function ($curso) use ($currentDate) {
+            if ($curso->fecha_ini > $currentDate) {
+                $curso->proximamente = true;
+            } else {
+                $curso->proximamente = false;
+            }
+            return $curso;
+        });
 
         // 9. Obtener categorías para el filtro (solo las que tienen cursos públicos)
         $categorias = Categoria::whereHas('cursos', function ($q) use ($isAdmin) {

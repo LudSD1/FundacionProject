@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Cursos extends BaseModel
 {
@@ -27,8 +28,8 @@ class Cursos extends BaseModel
         'estado',
         'tipo',
         'docente_id',
-        'edadDir_id',
-        'niveles_id',
+        'nivel',
+        'edad_dirigida',
         'precio',
         'imagen',
         'certificados_activados',
@@ -253,5 +254,19 @@ class Cursos extends BaseModel
             'estudiantes_en_progreso' => $estudiantesEnProgreso,
             'estudiantes_sin_iniciar' => $estudiantesSinIniciar
         ];
+    }
+
+        protected function proximamente(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->fecha_ini > now();
+        });
+    }
+
+    protected function muyPronto(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->fecha_ini > now() && $this->fecha_ini->diffInDays(now()) <= 7;
+        });
     }
 }

@@ -27,7 +27,7 @@
 
 
 
-
+             
 
 
                         @if ($estadoInscripcion == 'retirado')

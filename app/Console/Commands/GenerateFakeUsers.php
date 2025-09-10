@@ -30,7 +30,7 @@ class GenerateFakeUsers extends Command
                 'PaisReside' => $faker->country,
                 'CiudadReside' => '', // ciudad vacía
                 'email' => $faker->unique()->safeEmail,
-                'password' => bcrypt(contraseña123),
+                'password' => bcrypt('contraseña123'),
                 'email_verified_at' => now(),
             ]);
 
