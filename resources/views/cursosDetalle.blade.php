@@ -382,7 +382,7 @@
 
                                                 <div class="d-flex justify-content-center align-items-center gap-2 mb-2">
                                                     <i class="bi bi-check-circle-fill text-primary"></i>
-                                                    <span>Material del Congreso</span>
+                                                    <span>Material del Evento</span>
                                                 </div>
                                                 <div class="d-flex justify-content-center align-items-center gap-2">
                                                     <i class="bi bi-check-circle-fill text-primary"></i>
