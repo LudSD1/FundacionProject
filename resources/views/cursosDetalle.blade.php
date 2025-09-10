@@ -27,7 +27,7 @@
 
 
 
-             
+
 
 
                         @if ($estadoInscripcion == 'retirado')
@@ -415,7 +415,7 @@
                                                     </form>
                                                 @else
                                                     <div class="text-center mb-3">
-                                                        <h3>Tiempo Disponinble</h4>
+                                                        <h3>Tiempo Disponible</h4>
                                                             <div id="countdown-timer"
                                                                 class="badge bg-primary-subtle text-primary px-3 py-2">
                                                             </div>
