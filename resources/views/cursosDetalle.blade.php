@@ -93,7 +93,7 @@
                                             @if ($cursos->tipo == 'curso')
                                                 <i class="bi bi-mortarboard-fill me-2 text-success"></i>Acceso al Curso
                                             @else
-                                                <i class="bi bi-calendar-event me-2 text-primary"></i>Registro al Congreso
+                                                <i class="bi bi-calendar-event me-2 text-primary"></i>Registro al Evento
                                             @endif
                                         </h4>
                                     </div>
