@@ -390,7 +390,7 @@
                                                 </div>
                                             </div>
 
-                                            @if ($cursos->certificados_disponibles = true)
+                                            @if ($cursos->certificados_disponibles == true)
                                                 @if (auth()->user())
                                                     <div class="text-center mb-3">
                                                         <h3>Tiempo Disponible</h3>
@@ -415,10 +415,10 @@
                                                     </form>
                                                 @else
                                                     <div class="text-center mb-3">
-                                                        <h3>Tiempo Disponible</h4>
-                                                            <div id="countdown-timer"
-                                                                class="badge bg-primary-subtle text-primary px-3 py-2">
-                                                            </div>
+                                                        <h3>Tiempo Disponible</h3>
+                                                        <div id="countdown-timer"
+                                                            class="badge bg-primary-subtle text-primary px-3 py-2">
+                                                        </div>
                                                     </div>
                                                     <button
                                                         class="btn btn-primary w-100 py-3 fw-bold fs-5 d-flex align-items-center justify-content-center gap-2"
@@ -451,226 +451,9 @@
                         @if ($cursos->certificados_disponibles)
 
                             @if (auth()->user())
+                                <!-- Usuario autenticado - mostrar botón de certificado -->
                             @else
-                                <div class="modal fade" id="opcionesRegistroModal" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content border-0 shadow">
-                                            <div class="modal-header bg-primary text-white">
-                                                <h5 class="modal-title">Opciones de Registro</h5>
-                                                <button type="button" class="btn-close btn-close-white"
-                                                    data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body text-center p-4">
-                                                <p class="mb-4">¿Cómo deseas continuar?</p>
-
-                                                <button class="btn btn-primary w-100 py-3 mb-3" data-bs-dismiss="modal"
-                                                    data-bs-toggle="modal" data-bs-target="#registroCongresoModal">
-                                                    <i class="bi bi-person-plus me-2"></i>Nuevo Registro
-                                                </button>
-
-                                                <button class="btn btn-outline-primary w-100 py-3" data-bs-dismiss="modal"
-                                                    data-bs-toggle="modal" data-bs-target="#loginModal">
-                                                    <i class="bi bi-person-check me-2"></i>Ya tengo cuenta
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content border-0 shadow">
-                                            <div class="modal-header bg-primary text-white py-3">
-                                                <h5 class="modal-title">
-                                                    <i class="bi bi-person-check me-2"></i>Coloca tu correo electronico si
-                                                    ya
-                                                    estas registrado
-                                                </h5>
-                                                <button type="button" class="btn-close btn-close-white"
-                                                    data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body p-4">
-                                                <form action="{{ route('congreso.inscribir') }}" method="POST">
-                                                    @csrf
-                                                    <input type="hidden" name="congreso_id"
-                                                        value="{{ $cursos->id }}">
-
-                                                    <div class="mb-3">
-                                                        <label for="loginEmail" class="form-label">Correo
-                                                            Electrónico</label>
-                                                        <div class="input-group">
-                                                            <span class="input-group-text bg-light">
-                                                                <i class="bi bi-envelope"></i>
-                                                            </span>
-                                                            <input type="email" class="form-control" id="loginEmail"
-                                                                name="email" required placeholder="tu@email.com">
-                                                        </div>
-                                                        <small class="text-muted">Ingresa el email con el que estás
-                                                            registrado</small>
-                                                    </div>
-
-                                                    <div class="d-grid gap-2">
-                                                        <button type="submit" class="btn btn-primary py-3">
-                                                            <i class="bi bi-award me-2"></i> Obtener Certificado
-                                                        </button>
-
-
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <div class="modal-footer justify-content-center bg-light py-3">
-                                                <small class="text-muted">
-                                                    ¿No tienes cuenta?
-                                                    <a href="#" data-bs-toggle="modal"
-                                                        data-bs-target="#registroCongresoModal" data-bs-dismiss="modal">
-                                                        Regístrate aquí
-                                                    </a>
-                                                </small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal fade" id="registroCongresoModal" tabindex="-1"
-                                    aria-labelledby="registroCongresoModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered modal-lg">
-                                        <div class="modal-content border-0 shadow">
-                                            <div class="modal-header bg-primary text-white py-3">
-                                                <h5 class="modal-title" id="registroCongresoModalLabel">
-                                                    <i class="bi bi-person-badge me-2"></i>Registro al Congreso
-                                                </h5>
-                                                <button type="button" class="btn-close btn-close-white"
-                                                    data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body p-4">
-                                                <!-- Mensajes de error -->
-                                                @if ($errors->any())
-                                                    <div class="alert alert-danger">
-                                                        <ul class="mb-0">
-                                                            @foreach ($errors->all() as $error)
-                                                                <li>{{ $error }}</li>
-                                                            @endforeach
-                                                        </ul>
-                                                    </div>
-                                                @endif
-
-                                                <form action="{{ route('registrarseCongreso', encrypt($cursos->id)) }}"
-                                                    method="POST" id="formRegistroCongreso">
-                                                    @csrf
-
-                                                    <!-- Campos de nombre y apellidos -->
-                                                    <div class="row mb-3">
-                                                        <div class="col-md-4 mb-3">
-                                                            <label for="name" class="form-label">Nombre</label>
-                                                            <div class="input-group">
-                                                                <span class="input-group-text bg-light"><i
-                                                                        class="bi bi-person"></i></span>
-                                                                <input type="text" class="form-control" id="name"
-                                                                    name="name" placeholder="Nombre"
-                                                                    value="{{ old('name') }}" required>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4 mb-3">
-                                                            <label for="lastname1" class="form-label">Apellido
-                                                                Paterno</label>
-                                                            <div class="input-group">
-                                                                <span class="input-group-text bg-light"><i
-                                                                        class="bi bi-person"></i></span>
-                                                                <input type="text" class="form-control" id="lastname1"
-                                                                    name="lastname1" placeholder="Apellido Paterno"
-                                                                    value="{{ old('lastname1') }}" required>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4 mb-3">
-                                                            <label for="lastname2" class="form-label">Apellido
-                                                                Materno</label>
-                                                            <div class="input-group">
-                                                                <span class="input-group-text bg-light"><i
-                                                                        class="bi bi-person"></i></span>
-                                                                <input type="text" class="form-control" id="lastname2"
-                                                                    name="lastname2" placeholder="Apellido Materno"
-                                                                    value="{{ old('lastname2') }}">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Campo de correo electrónico -->
-                                                    <div class="mb-3">
-                                                        <label for="email" class="form-label">Correo
-                                                            Electrónico</label>
-                                                        <div class="input-group">
-                                                            <span class="input-group-text bg-light"><i
-                                                                    class="bi bi-envelope"></i></span>
-                                                            <input type="email" class="form-control" id="email"
-                                                                name="email" placeholder="ejemplo@correo.com"
-                                                                value="{{ old('email') }}" required>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Campos de contraseña y confirmación -->
-                                                    <div class="row mb-3">
-                                                        <div class="col-md-6 mb-3">
-                                                            <label for="password" class="form-label">Contraseña</label>
-                                                            <div class="input-group">
-                                                                <span class="input-group-text bg-light"><i
-                                                                        class="bi bi-lock"></i></span>
-                                                                <input type="password" class="form-control"
-                                                                    id="password" name="password"
-                                                                    placeholder="Contraseña" required>
-                                                                <button class="btn btn-outline-secondary toggle-password"
-                                                                    type="button" data-target="password">
-                                                                    <i class="bi bi-eye"></i>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6 mb-3">
-                                                            <label for="password_confirmation"
-                                                                class="form-label">Confirmar
-                                                                Contraseña</label>
-                                                            <div class="input-group">
-                                                                <span class="input-group-text bg-light"><i
-                                                                        class="bi bi-lock"></i></span>
-                                                                <input type="password" class="form-control"
-                                                                    id="password_confirmation"
-                                                                    name="password_confirmation"
-                                                                    placeholder="Confirmar Contraseña" required>
-                                                                <button class="btn btn-outline-secondary toggle-password"
-                                                                    type="button" data-target="password_confirmation">
-                                                                    <i class="bi bi-eye"></i>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-
-                                                    <!-- Campo de país -->
-                                                    <div class="mb-3">
-                                                        <label for="country" class="form-label">País</label>
-                                                        <div class="input-group">
-                                                            <span class="input-group-text bg-light"><i
-                                                                    class="bi bi-globe"></i></span>
-                                                            <select class="form-control" id="country" name="country"
-                                                                required>
-                                                                <option value="">Selecciona tu país</option>
-                                                                <!-- Opciones de países se llenarán con JavaScript -->
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <button type="submit" class="btn btn-primary w-100 py-3 fw-bold">
-                                                        <i class="bi bi-check2-circle me-2"></i>Confirmar Registro
-                                                    </button>
-                                                </form>
-                                            </div>
-                                            <div class="modal-footer justify-content-center bg-light py-3">
-                                                <small class="text-muted">
-                                                    <i class="bi bi-info-circle me-1"></i>
-                                                    ¿Ya tienes una cuenta? <a href="{{ route('login.signin') }}">Inicia
-                                                        sesión
-                                                        aquí</a>
-                                                </small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <!-- Usuario no autenticado - mostrar botón de registro -->
                             @endif
                         @else
                         @endif
@@ -1327,6 +1110,220 @@
                 });
         });
     </script>
+
+    <!-- Modales de Registro para Congresos (disponibles globalmente) -->
+    @if ($cursos->tipo == 'congreso' && $cursos->certificados_disponibles)
+        <!-- Modal de Opciones de Registro -->
+        <div class="modal fade" id="opcionesRegistroModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">Opciones de Registro</h5>
+                        <button type="button" class="btn-close btn-close-white"
+                            data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center p-4">
+                        <p class="mb-4">¿Cómo deseas continuar?</p>
+
+                        <button class="btn btn-primary w-100 py-3 mb-3" data-bs-dismiss="modal"
+                            data-bs-toggle="modal" data-bs-target="#registroCongresoModal">
+                            <i class="bi bi-person-plus me-2"></i>Nuevo Registro
+                        </button>
+
+                        <button class="btn btn-outline-primary w-100 py-3" data-bs-dismiss="modal"
+                            data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i class="bi bi-person-check me-2"></i>Ya tengo cuenta
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Login para Congresos -->
+        <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow">
+                    <div class="modal-header bg-primary text-white py-3">
+                        <h5 class="modal-title">
+                            <i class="bi bi-person-check me-2"></i>Coloca tu correo electrónico si ya estás registrado
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white"
+                            data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <form action="{{ route('congreso.inscribir') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="congreso_id" value="{{ $cursos->id }}">
+
+                            <div class="mb-3">
+                                <label for="loginEmail" class="form-label">Correo Electrónico</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-envelope"></i>
+                                    </span>
+                                    <input type="email" class="form-control" id="loginEmail"
+                                        name="email" required placeholder="tu@email.com">
+                                </div>
+                                <small class="text-muted">Ingresa el email con el que estás registrado</small>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary py-3">
+                                    <i class="bi bi-award me-2"></i> Obtener Certificado
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer justify-content-center bg-light py-3">
+                        <small class="text-muted">
+                            ¿No tienes cuenta?
+                            <a href="#" data-bs-toggle="modal"
+                                data-bs-target="#registroCongresoModal" data-bs-dismiss="modal">
+                                Regístrate aquí
+                            </a>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Registro para Congresos -->
+        <div class="modal fade" id="registroCongresoModal" tabindex="-1"
+            aria-labelledby="registroCongresoModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content border-0 shadow">
+                    <div class="modal-header bg-primary text-white py-3">
+                        <h5 class="modal-title" id="registroCongresoModalLabel">
+                            <i class="bi bi-person-badge me-2"></i>Registro al Congreso
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white"
+                            data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <!-- Mensajes de error -->
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
+                        <form action="{{ route('registrarseCongreso', encrypt($cursos->id)) }}"
+                            method="POST" id="formRegistroCongreso">
+                            @csrf
+
+                            <!-- Campos de nombre y apellidos -->
+                            <div class="row mb-3">
+                                <div class="col-md-4 mb-3">
+                                    <label for="name" class="form-label">Nombre</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i
+                                                class="bi bi-person"></i></span>
+                                        <input type="text" class="form-control" id="name"
+                                            name="name" placeholder="Nombre"
+                                            value="{{ old('name') }}" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="lastname1" class="form-label">Apellido Paterno</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i
+                                                class="bi bi-person"></i></span>
+                                        <input type="text" class="form-control" id="lastname1"
+                                            name="lastname1" placeholder="Apellido Paterno"
+                                            value="{{ old('lastname1') }}" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="lastname2" class="form-label">Apellido Materno</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i
+                                                class="bi bi-person"></i></span>
+                                        <input type="text" class="form-control" id="lastname2"
+                                            name="lastname2" placeholder="Apellido Materno"
+                                            value="{{ old('lastname2') }}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Campo de correo electrónico -->
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Correo Electrónico</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i
+                                            class="bi bi-envelope"></i></span>
+                                    <input type="email" class="form-control" id="email"
+                                        name="email" placeholder="ejemplo@correo.com"
+                                        value="{{ old('email') }}" required>
+                                </div>
+                            </div>
+
+                            <!-- Campos de contraseña y confirmación -->
+                            <div class="row mb-3">
+                                <div class="col-md-6 mb-3">
+                                    <label for="password" class="form-label">Contraseña</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i
+                                                class="bi bi-lock"></i></span>
+                                        <input type="password" class="form-control"
+                                            id="password" name="password"
+                                            placeholder="Contraseña" required>
+                                        <button class="btn btn-outline-secondary toggle-password"
+                                            type="button" data-target="password">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="password_confirmation"
+                                        class="form-label">Confirmar Contraseña</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i
+                                                class="bi bi-lock"></i></span>
+                                        <input type="password" class="form-control"
+                                            id="password_confirmation"
+                                            name="password_confirmation"
+                                            placeholder="Confirmar Contraseña" required>
+                                        <button class="btn btn-outline-secondary toggle-password"
+                                            type="button" data-target="password_confirmation">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Campo de país -->
+                            <div class="mb-3">
+                                <label for="country" class="form-label">País</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i
+                                            class="bi bi-globe"></i></span>
+                                    <select class="form-control" id="country" name="country"
+                                        required>
+                                        <option value="">Selecciona tu país</option>
+                                        <!-- Opciones de países se llenarán con JavaScript -->
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 py-3 fw-bold">
+                                <i class="bi bi-check2-circle me-2"></i>Confirmar Registro
+                            </button>
+                        </form>
+                    </div>
+                    <div class="modal-footer justify-content-center bg-light py-3">
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            ¿Ya tienes una cuenta? <a href="{{ route('login.signin') }}">Inicia sesión aquí</a>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 @endsection
 
 
