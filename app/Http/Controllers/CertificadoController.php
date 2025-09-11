@@ -225,17 +225,33 @@ class CertificadoController extends Controller
             // Guardar el código QR en el almacenamiento
             $qrPath = "certificados/{$inscrito->cursos_id}/qrcode_{$inscrito->id}.svg";
             Storage::put("public/$qrPath", $qrCode);
+
+            // Actualizar la ruta del certificado en la base de datos
+            $certificadoExistente->update([
+                'ruta_certificado' => route('verificar.certificado', ['codigo' => $codigo_certificado])
+            ]);
         } else {
             // Si no existe, generamos un nuevo código
             $codigo_certificado = Str::uuid();
             $regenerando = false;
+
+            // Generar la ruta del certificado (URL de verificación)
+            $ruta_certificado = route('verificar.certificado', ['codigo' => $codigo_certificado]);
 
             // Crear registro de certificado
             $certificado = Certificado::create([
                 'curso_id' => $curso->id,
                 'inscrito_id' => $inscrito->id,
                 'codigo_certificado' => $codigo_certificado,
+                'ruta_certificado' => $ruta_certificado,
             ]);
+
+            // Generar y guardar el código QR
+            $qrCode = QrCode::format('svg')
+                ->size(200)
+                ->generate($ruta_certificado);
+            $qrPath = "certificados/{$inscrito->cursos_id}/qrcode_{$inscrito->id}.svg";
+            Storage::put("public/$qrPath", $qrCode);
 
             // Otorgar XP por obtener certificado de congreso
             $this->xpService->addXP($inscrito, 300, "Certificado de congreso - {$curso->nombreCurso}");
@@ -274,7 +290,11 @@ class CertificadoController extends Controller
             'cursos_id' => $curso->id,
         ];
 
-        $qr_url = route('verificar.certificado', ['codigo' => 'PREVIEW-123456']);
+        // Generar QR para vista previa
+        $qrCodeSvg = QrCode::format('svg')
+            ->size(200)
+            ->generate(route('verificar.certificado', ['codigo' => 'PREVIEW-123456']));
+        $qrCodeBase64 = 'data:image/svg+xml;base64,' . base64_encode($qrCodeSvg);
 
         $data = [
             'inscrito' => $inscrito,
@@ -285,7 +305,7 @@ class CertificadoController extends Controller
             'plantillab' => $plantilla->template_back_path,
             'dni' => '00000000', // Dato simulado
             'codigo_certificado' => 'PREVIEW-CERT-1234', // Dato de prueba
-            'qr_url' => $qr_url,
+            'qr_code' => $qrCodeBase64, // Usar QR en base64
             'primary_color' => $plantilla->primary_color,
             'font_family' => $plantilla->font_family,
             'font_size' => $plantilla->font_size
@@ -312,17 +332,34 @@ class CertificadoController extends Controller
             ->where('curso_id', $certificado->curso_id)
             ->first();
 
-        // Obtener la URL del código QR desde el almacenamiento
+        // Verificar si ya existe un QR guardado en el servidor
+        $qrPath = "certificados/{$curso->id}/qrcode_{$inscrito->id}.svg";
+        $qrExists = Storage::disk('public')->exists($qrPath);
+
+        if (!$qrExists) {
+            // Si no existe, generar nuevo QR como SVG y guardarlo
+            $qrCodeSvg = QrCode::format('svg')
+                ->size(200)
+                ->generate(route('verificar.certificado', ['codigo' => $codigo]));
+
+            // Guardar el QR en el servidor
+            Storage::disk('public')->put($qrPath, $qrCodeSvg);
+        }
+
+        // Usar la ruta absoluta del archivo para el PDF
+        $qrFilePath = storage_path('app/public/' . $qrPath);
+
         set_time_limit(300);
         ini_set('memory_limit', '256M'); // Aumenta la memoria disponible
+
         // Crear PDF con DomPDF
         $pdf = Pdf::loadView('certificados.plantilla', [
             'curso' => $curso->nombreCurso,
             'inscrito' => $inscrito,
             'codigo_certificado' => $codigo,
             'fecha_emision' => $certificado->created_at->format('d/m/Y'),
-            'fecha_finalizacion' => Carbon::parse($curso->fecha_finalizacion)->format('d/m/Y'),
-            'qr_url' => $certificado->ruta_certificado, // Usar la URL del código QR
+            'fecha_finalizacion' => Carbon::parse($curso->fecha_fin)->format('d/m/Y'),
+            'qr_file_path' => $qrFilePath, // Usar la ruta del archivo
             'tipo' => 'Congreso',
             'plantillaf' => $plantilla->template_front_path,
             'plantillab' => $plantilla->template_back_path,

@@ -102,8 +102,16 @@
 
         <div class="qr-container">
             <div class="qr-code">
-                <img src="{{ storage_path('app/public/' . $qr_url) }}" alt="Código QR de verificación"
-                    style="width: 200px; height: 200px;">
+                @if(isset($qr_file_path))
+                    <img src="file://{{ $qr_file_path }}" alt="Código QR de verificación"
+                        style="width: 200px; height: 200px;">
+                @elseif(isset($qr_code))
+                    <img src="{{ $qr_code }}" alt="Código QR de verificación"
+                        style="width: 200px; height: 200px;">
+                @elseif(isset($qr_url))
+                    <img src="{{ asset('storage/' . $qr_url) }}" alt="Código QR de verificación"
+                        style="width: 200px; height: 200px;">
+                @endif
             </div>
         </div>
     </div>
