@@ -64,6 +64,14 @@
             height: auto;
         }
 
+        .qr-code svg {
+            width: 200px !important;
+            height: 200px !important;
+            max-width: 100%;
+            display: block;
+            margin: 0 auto;
+        }
+
         .codigo {
             position: fixed;
             /* o absolute, dependiendo de tu necesidad */
@@ -102,8 +110,27 @@
 
         <div class="qr-container">
             <div class="qr-code">
-                <img src="{{ storage_path('app/public/' . $qr_url) }}" alt="Código QR de verificación"
-                    style="width: 200px; height: 200px;">
+                @if(isset($qrCode))
+                    <!-- Usar QR generado con el código del certificado -->
+                    <img src="{{ $qrCode }}" alt="Código QR de verificación"
+                        style="width: 200px; height: 200px; display: block; margin: 0 auto;">
+                @elseif(isset($qr_url))
+                    <!-- Fallback a URL del QR -->
+                    <img src="{{ $qr_url }}" alt="Código QR de verificación"
+                        style="width: 200px; height: 200px; display: block; margin: 0 auto;">
+                @elseif(isset($qr_base64))
+                    <!-- Fallback a SVG base64 -->
+                    <img src="{{ $qr_base64 }}" alt="Código QR de verificación"
+                        style="width: 200px; height: 200px; display: block; margin: 0 auto;">
+                @elseif(isset($qr_svg))
+                    <!-- Fallback a SVG directo -->
+                    {!! $qr_svg !!}
+                @else
+                    <!-- Fallback si no hay QR disponible -->
+                    <div style="width: 200px; height: 200px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; border: 1px solid #ccc;">
+                        <span style="color: #666; font-size: 12px;">QR no disponible</span>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

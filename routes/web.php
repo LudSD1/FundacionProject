@@ -541,6 +541,7 @@ Route::group(['middleware' => ['auth']], function () {
 
 
     Route::get('certificado/qr/{codigo}', [CertificadoController::class, 'descargarQR'])->name('descargar.qr');
+    Route::get('qr/{codigo}', [CertificadoController::class, 'generarQR'])->name('certificado.qr');
     //QR
     // Ruta para inscribirse utilizando el QR
     Route::get('/inscribirse/{id}/{token}', [InscritosController::class, 'inscribirse'])->name('inscribirse.qr');
