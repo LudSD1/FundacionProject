@@ -128,10 +128,6 @@ class CertificadoController extends Controller
 
         $codigo = strtoupper(Str::random(10));
         $qrCodeSvg = QrCode::format('svg')->size(300)->generate($codigo);
-
-        // Simplificar el SVG para DomPDF
-        $qrCodeSvg = $this->simplifySvgForDomPDF($qrCodeSvg);
-
         $qrCode = 'data:image/svg+xml;base64,' . base64_encode($qrCodeSvg);
 
         return view('certificados.plantilla', [
@@ -229,17 +225,33 @@ class CertificadoController extends Controller
             // Guardar el código QR en el almacenamiento
             $qrPath = "certificados/{$inscrito->cursos_id}/qrcode_{$inscrito->id}.svg";
             Storage::put("public/$qrPath", $qrCode);
+
+            // Actualizar la ruta del certificado en la base de datos
+            $certificadoExistente->update([
+                'ruta_certificado' => route('verificar.certificado', ['codigo' => $codigo_certificado])
+            ]);
         } else {
             // Si no existe, generamos un nuevo código
             $codigo_certificado = Str::uuid();
             $regenerando = false;
+
+            // Generar la ruta del certificado (URL de verificación)
+            $ruta_certificado = route('verificar.certificado', ['codigo' => $codigo_certificado]);
 
             // Crear registro de certificado
             $certificado = Certificado::create([
                 'curso_id' => $curso->id,
                 'inscrito_id' => $inscrito->id,
                 'codigo_certificado' => $codigo_certificado,
+                'ruta_certificado' => $ruta_certificado,
             ]);
+
+            // Generar y guardar el código QR
+            $qrCode = QrCode::format('svg')
+                ->size(200)
+                ->generate($ruta_certificado);
+            $qrPath = "certificados/{$inscrito->cursos_id}/qrcode_{$inscrito->id}.svg";
+            Storage::put("public/$qrPath", $qrCode);
 
             // Otorgar XP por obtener certificado de congreso
             $this->xpService->addXP($inscrito, 300, "Certificado de congreso - {$curso->nombreCurso}");
@@ -281,14 +293,8 @@ class CertificadoController extends Controller
         // Generar QR para vista previa
         $qrCodeSvg = QrCode::format('svg')
             ->size(200)
-            ->margin(1)
-            ->errorCorrection('M')
-            ->generate('PREVIEW-123456');
-
-        // Simplificar el SVG para DomPDF
-        $qrCodeSvg = $this->simplifySvgForDomPDF($qrCodeSvg);
-
-        $qrCode = 'data:image/svg+xml;base64,' . base64_encode($qrCodeSvg);
+            ->generate(route('verificar.certificado', ['codigo' => 'PREVIEW-123456']));
+        $qrCodeBase64 = 'data:image/svg+xml;base64,' . base64_encode($qrCodeSvg);
 
         $data = [
             'inscrito' => $inscrito,
@@ -299,7 +305,7 @@ class CertificadoController extends Controller
             'plantillab' => $plantilla->template_back_path,
             'dni' => '00000000', // Dato simulado
             'codigo_certificado' => 'PREVIEW-CERT-1234', // Dato de prueba
-            'qrCode' => $qrCode,
+            'qr_code' => $qrCodeBase64, // Usar QR en base64
             'primary_color' => $plantilla->primary_color,
             'font_family' => $plantilla->font_family,
             'font_size' => $plantilla->font_size
@@ -308,9 +314,6 @@ class CertificadoController extends Controller
 
         $pdf = Pdf::loadView('certificados.plantilla', $data)->setPaper('A4', 'landscape');
         $pdf->setOption('dpi', 250);
-        $pdf->setOption('isHtml5ParserEnabled', true);
-        $pdf->setOption('isRemoteEnabled', true);
-        $pdf->setOption('isPhpEnabled', true);
 
         return $pdf->stream('vista-previa-certificado.pdf');
     }
@@ -329,17 +332,22 @@ class CertificadoController extends Controller
             ->where('curso_id', $certificado->curso_id)
             ->first();
 
-        // Generar QR como SVG simple para DomPDF
-        $qrCodeSvg = QrCode::format('svg')
-            ->size(200)
-            ->margin(1)
-            ->errorCorrection('M')
-            ->generate($codigo);
+        // Verificar si ya existe un QR guardado en el servidor
+        $qrPath = "certificados/{$curso->id}/qrcode_{$inscrito->id}.svg";
+        $qrExists = Storage::disk('public')->exists($qrPath);
 
-        // Simplificar el SVG para DomPDF
-        $qrCodeSvg = $this->simplifySvgForDomPDF($qrCodeSvg);
+        if (!$qrExists) {
+            // Si no existe, generar nuevo QR como SVG y guardarlo
+            $qrCodeSvg = QrCode::format('svg')
+                ->size(200)
+                ->generate(route('verificar.certificado', ['codigo' => $codigo]));
 
-        $qrCode = 'data:image/svg+xml;base64,' . base64_encode($qrCodeSvg);
+            // Guardar el QR en el servidor
+            Storage::disk('public')->put($qrPath, $qrCodeSvg);
+        }
+
+        // Usar la ruta absoluta del archivo para el PDF
+        $qrFilePath = storage_path('app/public/' . $qrPath);
 
         set_time_limit(300);
         ini_set('memory_limit', '256M'); // Aumenta la memoria disponible
@@ -351,7 +359,7 @@ class CertificadoController extends Controller
             'codigo_certificado' => $codigo,
             'fecha_emision' => $certificado->created_at->format('d/m/Y'),
             'fecha_finalizacion' => Carbon::parse($curso->fecha_fin)->format('d/m/Y'),
-            'qrCode' => $qrCode, // QR generado con el código
+            'qr_file_path' => $qrFilePath, // Usar la ruta del archivo
             'tipo' => 'Congreso',
             'plantillaf' => $plantilla->template_front_path,
             'plantillab' => $plantilla->template_back_path,
@@ -362,9 +370,6 @@ class CertificadoController extends Controller
 
         $pdf->setPaper('A4', 'portrait');
         $pdf->setOption('dpi', 250);
-        $pdf->setOption('isHtml5ParserEnabled', true);
-        $pdf->setOption('isRemoteEnabled', true);
-        $pdf->setOption('isPhpEnabled', true);
 
         return $pdf->stream('certificado.pdf', ['Attachment' => false]);
     }
@@ -596,34 +601,5 @@ class CertificadoController extends Controller
             Log::error('Error al reenviar certificado por email usando inscrito ID: ' . $e->getMessage());
             return back()->with('error', 'Ocurrió un error al reenviar el correo del certificado.');
         }
-    }
-
-    /**
-     * Simplifica el SVG para mejor compatibilidad con DomPDF
-     */
-    private function simplifySvgForDomPDF($svg)
-    {
-        // Limpiar y simplificar el SVG
-        $svg = str_replace('<?xml version="1.0" encoding="UTF-8"?>', '', $svg);
-        $svg = trim($svg);
-
-        // Asegurar que tenga los atributos necesarios
-        $svg = str_replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"', $svg);
-
-        // Asegurar viewBox
-        if (strpos($svg, 'viewBox') === false) {
-            $svg = str_replace('<svg xmlns="http://www.w3.org/2000/svg"', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"', $svg);
-        }
-
-        // Asegurar width y height
-        if (strpos($svg, 'width=') === false) {
-            $svg = str_replace('<svg xmlns="http://www.w3.org/2000/svg"', '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"', $svg);
-        }
-
-        // Simplificar el contenido del SVG
-        $svg = preg_replace('/\s+/', ' ', $svg); // Reducir espacios múltiples
-        $svg = str_replace('> <', '><', $svg); // Remover espacios entre tags
-
-        return $svg;
     }
 }
