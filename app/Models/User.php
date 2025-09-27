@@ -23,6 +23,8 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     use HasRoles,HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasEncryptedRoutes;
 
+     protected $dates = ['deleted_at'];
+
     public function routeNotificationForMail()
     {
         return $this->email; // Devuelve el correo electrónico del estudiante

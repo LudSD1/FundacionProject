@@ -367,26 +367,26 @@
                 document.getElementById('activityPoints').textContent = event.extendedProps.puntos;
                 document.getElementById('activityDescription').textContent = event.extendedProps.descripcion;
                 document.getElementById('viewActivityBtn').href = event.extendedProps.url;
-                
+
                 // Añadir horarios del curso si están disponibles
                 const horariosContainer = document.getElementById('activitySchedule');
                 horariosContainer.innerHTML = '';
-                
+
                 if (event.extendedProps.horarios && event.extendedProps.horarios.length > 0) {
                     const horariosList = document.createElement('ul');
                     horariosList.className = 'list-unstyled';
-                    
+
                     event.extendedProps.horarios.forEach(horario => {
                         const item = document.createElement('li');
                         item.innerHTML = `<i class="bi bi-calendar-day me-1"></i> ${horario.dia}: ${horario.hora_inicio} - ${horario.hora_fin}`;
                         horariosList.appendChild(item);
                     });
-                    
+
                     horariosContainer.appendChild(horariosList);
                 } else {
                     horariosContainer.textContent = 'No hay horarios disponibles';
                 }
-                
+
                 // Mostrar el modal
                 const modal = new bootstrap.Modal(document.getElementById('activityDetailModal'));
                 modal.show();

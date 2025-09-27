@@ -7,7 +7,8 @@
         <!-- Header con botones de acción -->
         <div class="row mb-4">
             <div class="col-md-6">
-                <a href="{{ route('Curso', ['id' => encrypt($cursos->id)]) }}" class="btn btn-outline-primary btn-lg shadow-sm">
+                <a href="{{ route('Curso', ['id' => encrypt($cursos->id)]) }}"
+                    class="btn btn-outline-primary btn-lg shadow-sm">
                     <i class="bi bi-arrow-left-circle me-2"></i>Volver al Curso
                 </a>
             </div>
@@ -64,12 +65,20 @@
                         <i class="bi bi-x-lg"></i>
                     </button>
                     @role('Administrador')
-                        <select class="form-select" id="statusFilter" style="max-width: 200px;">
-                            <option value="">Todos los estados</option>
-                            <option value="pago-completado">Pago Completado</option>
-                            <option value="pago-revision">Pago en Revisión</option>
-                            <option value="sin-pago">Sin información de pago</option>
-                        </select>
+                        @if ($cursos->tipo == 'curso')
+                            <select class="form-select" id="statusFilter" style="max-width: 200px;">
+                                <option value="">Todos los estados</option>
+                                <option value="pago-completado">Pago Completado</option>
+                                <option value="pago-revision">Pago en Revisión</option>
+                                <option value="sin-pago">Sin información de pago</option>
+                            </select>
+                        @elseif($cursos->tipo == 'congreso')
+                            <select class="form-select" id="statusFilter" style="max-width: 200px;">
+                                <option value="">Todos los estados</option>
+                                <option value="certificado">Certificado</option>
+                                <option value="sin-certificado">Sin certificado</option>
+                            </select>
+                        @endif
                     @endrole
                 </div>
                 <div class="text-center mt-2">
@@ -78,8 +87,13 @@
                         participantes |
                         Mostrando: <span id="visibleCount">{{ $inscritos->where('cursos_id', $cursos->id)->count() }}</span>
                         @role('Administrador')
-                            | Pagos pendientes: <span id="pendingPayments"
-                                class="text-warning fw-bold">{{ $inscritos->where('cursos_id', $cursos->id)->where('pago_completado', false)->count() }}</span>
+                            @if ($cursos->tipo == 'curso')
+                                | Pagos pendientes: <span id="pendingPayments"
+                                    class="text-warning fw-bold">{{ $inscritos->where('cursos_id', $cursos->id)->where('pago_completado', false)->count() }}</span>
+                            @elseif ($cursos->tipo == 'congreso')
+                                | Certificados pendientes: <span id="pendingCertificates"
+                                    class="text-warning fw-bold">{{ $inscritos->where('cursos_id', $cursos->id)->where('certificado', false)->count() }}</span>
+                            @endif
                         @endrole
                     </small>
                 </div>
@@ -102,7 +116,13 @@
                                 <th scope="col" width="35%">Nombre y Apellidos</th>
                                 <th scope="col" width="20%">Celular</th>
                                 @role('Administrador')
-                                    <th scope="col" width="15%">Estado Pago</th>
+                                    <th scope="col" width="15%">
+                                        @if ($cursos->tipo == 'congreso')
+                                            Estado Certificado
+                                        @else
+                                            Estado Pago
+                                        @endif
+                                    </th>
                                 @endrole
                                 <th scope="col" width="17%" class="text-center">Acciones</th>
                             </tr>
@@ -139,7 +159,8 @@
                                                     @role('Administrador')
                                                         @if ($cursos->tipo == 'curso' && !$inscrito->pago_completado)
                                                             <div class="mt-1">
-                                                                <span class="badge bg-warning text-dark">Pago en Revisión</span>
+                                                                <span class="badge bg-warning text-dark">Pago en
+                                                                    Revisión</span>
                                                             </div>
                                                         @elseif ($cursos->tipo == 'curso' && $inscrito->pago_completado)
                                                             <div class="mt-1">
@@ -174,163 +195,175 @@
                                                         </span>
                                                     @endif
                                                 @else
-                                                    <span class="text-muted">N/A</span>
                                                 @endif
-                                            </td>
-                                        @endrole
-                                        <td>
-                                            <div class="d-flex justify-content-center gap-2">
-                                                <a class="btn btn-sm btn-outline-info"
-                                                    href="{{ route('perfil', [encrypt($inscrito->estudiantes->id)]) }}"
-                                                    data-bs-toggle="tooltip" title="Ver Perfil">
-                                                    <i class="bi bi-person-badge"></i>
-                                                </a>
+                                                @if ($cursos->tipo == 'congreso' && $inscrito->certificado)
+                                                    <div class="mt-1">
+                                                        <span class="badge bg-success">Certificado Generado</span>
+                                                    </div>
+                                                @elseif ($cursos->tipo == 'congreso' && !$inscrito->certificado)
+                                                    <div class="mt-1"></div>
+                                                    <span class="badge bg-warning text-dark">Certificado Pendiente</span>
+                    </div>
+                    @endif
 
-                                                @if (auth()->user()->hasRole('Docente') || auth()->user()->hasRole('Administrador'))
-                                                    <form action="{{ route('quitarInscripcion', $inscrito->id) }}"
-                                                        method="POST" style="display:inline;" class="retire-form">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                            onclick="mostrarAdvertencia(event)" data-bs-toggle="tooltip"
-                                                            title="Retirar Estudiante">
-                                                            <i class="bi bi-person-x"></i>
-                                                        </button>
-                                                    </form>
+                    </td>
+                @endrole
+                <td>
+                    <div class="d-flex justify-content-center gap-2">
+                        <a class="btn btn-sm btn-outline-info"
+                            href="{{ route('perfil', [encrypt($inscrito->estudiantes->id)]) }}" data-bs-toggle="tooltip"
+                            title="Ver Perfil">
+                            <i class="bi bi-person-badge"></i>
+                        </a>
 
-                                                    @if ($cursos->tipo == 'congreso')
-                                                        <a class="btn btn-sm btn-outline-success"
-                                                            href="{{ route('certificados.reenviar.email', encrypt($inscrito->id)) }}"
-                                                            data-bs-toggle="tooltip"
-                                                            title="{{ !isset($inscrito->certificado) ? 'Generar Certificado' : 'Reenviar Certificado' }}">
-                                                            <i class="bi bi-award"></i>
-                                                        </a>
-                                                    @endif
-
-                                                    @if ($cursos->tipo == 'curso')
-                                                        <div class="btn-group">
-                                                            <a class="btn btn-sm btn-outline-primary"
-                                                                href="{{ route('boletin', [encrypt($inscrito->id)]) }}"
-                                                                data-bs-toggle="tooltip" title="Ver Boletín">
-                                                                <i class="bi bi-journal-text"></i>
-                                                            </a>
-                                                            <a class="btn btn-sm btn-outline-primary"
-                                                                href="{{ route('verBoletin2', [encrypt($inscrito->id)]) }}"
-                                                                data-bs-toggle="tooltip" title="Calificaciones Finales">
-                                                                <i class="bi bi-journal-check"></i>
-                                                            </a>
-                                                            
-                                                        </div>
-                                                    @endif
-                                                @endif
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endif
-                            @empty
-                                <tr id="noResultsRow">
-                                    <td colspan="{{ auth()->user()->hasRole('Administrador') ? '6' : '5' }}"
-                                        class="text-center py-5">
-                                        <div class="d-flex flex-column align-items-center">
-                                            <i class="bi bi-emoji-frown display-1 text-muted mb-3"></i>
-                                            <h4 class="text-muted">No hay participantes inscritos</h4>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Mensaje cuando no hay resultados de búsqueda -->
-        <div class="card shadow-sm mt-3" id="noSearchResults" style="display: none;">
-            <div class="card-body text-center py-5">
-                <i class="bi bi-search display-1 text-muted mb-3"></i>
-                <h4 class="text-muted">Sin resultados</h4>
-                <p class="text-muted">No se encontraron participantes que coincidan con los filtros</p>
-                <button class="btn btn-outline-primary" id="clearSearchBtn">
-                    <i class="bi bi-x-lg me-1"></i>Limpiar filtros
-                </button>
-            </div>
-        </div>
-
-        <!-- Acciones masivas -->
-        @if (auth()->user()->hasRole('Docente') || auth()->user()->hasRole('Administrador'))
-            <div class="card shadow-sm mt-3" id="massActionsCard" style="display: none;">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="text-muted">
-                            <i class="bi bi-check-square me-2"></i>
-                            <strong id="selectedCount">0</strong> participante(s) seleccionado(s)
-                        </span>
-                        <div class="btn-group">
-                            <button class="btn btn-outline-danger" id="retirarSeleccionados">
-                                <i class="bi bi-person-x me-1"></i>Retirar Seleccionados
-                            </button>
-                            @if ($cursos->tipo == 'congreso')
-                                <button class="btn btn-outline-success" id="generarCertificados">
-                                    <i class="bi bi-award me-1"></i>Generar Certificados
+                        @if (auth()->user()->hasRole('Docente') || auth()->user()->hasRole('Administrador'))
+                            <form action="{{ route('quitarInscripcion', $inscrito->id) }}" method="POST"
+                                style="display:inline;" class="retire-form">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                    onclick="mostrarAdvertencia(event)" data-bs-toggle="tooltip"
+                                    title="Retirar Estudiante">
+                                    <i class="bi bi-person-x"></i>
                                 </button>
-                            @endif
-                            <button class="btn btn-outline-secondary" id="deselectAll">
-                                <i class="bi bi-square me-1"></i>Deseleccionar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @endif
+                            </form>
 
-        <!-- Estadísticas rápidas -->
-        <div class="row mt-4">
-            <div class="col-md-3">
-                <div class="card text-center shadow-sm">
-                    <div class="card-body">
-                        <i class="bi bi-people display-4 text-primary mb-2"></i>
-                        <h5 class="card-title">Total</h5>
-                        <p class="card-text display-6" id="statsTotal">
-                            {{ $inscritos->where('cursos_id', $cursos->id)->count() }}</p>
+                            @if ($cursos->tipo == 'congreso')
+                                @if ($cursos->tipo == 'congreso')
+                                    <a class="btn btn-sm btn-outline-success"
+                                        href="{{ !isset($inscrito->certificado)
+                                            ? route('certificadosCongreso.generar.admin', encrypt($inscrito->id))
+                                            : route('certificados.reenviar.email', encrypt($inscrito->id)) }}"
+                                        data-bs-toggle="tooltip"
+                                        title="{{ !isset($inscrito->certificado) ? 'Generar Certificado' : 'Reenviar Certificado' }}">
+                                        <i class="bi bi-award"></i>
+                                    </a>
+                                @endif
+                            @endif
+
+                            @if ($cursos->tipo == 'curso')
+                                <div class="btn-group">
+                                    <a class="btn btn-sm btn-outline-primary"
+                                        href="{{ route('boletin', [encrypt($inscrito->id)]) }}" data-bs-toggle="tooltip"
+                                        title="Ver Boletín">
+                                        <i class="bi bi-journal-text"></i>
+                                    </a>
+                                    <a class="btn btn-sm btn-outline-primary"
+                                        href="{{ route('verBoletin2', [encrypt($inscrito->id)]) }}"
+                                        data-bs-toggle="tooltip" title="Calificaciones Finales">
+                                        <i class="bi bi-journal-check"></i>
+                                    </a>
+
+                                </div>
+                            @endif
+                        @endif
                     </div>
-                </div>
-            </div>
-            @role('Administrador')
-                @if ($cursos->tipo == 'curso')
-                    <div class="col-md-3">
-                        <div class="card text-center shadow-sm">
-                            <div class="card-body">
-                                <i class="bi bi-check-circle display-4 text-success mb-2"></i>
-                                <h5 class="card-title">Pagos OK</h5>
-                                <p class="card-text display-6 text-success" id="statsPaid">
-                                    {{ $inscritos->where('cursos_id', $cursos->id)->where('pago_completado', true)->count() }}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card text-center shadow-sm">
-                            <div class="card-body">
-                                <i class="bi bi-clock display-4 text-warning mb-2"></i>
-                                <h5 class="card-title">Pendientes</h5>
-                                <p class="card-text display-6 text-warning" id="statsPending">
-                                    {{ $inscritos->where('cursos_id', $cursos->id)->where('pago_completado', false)->count() }}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                </td>
+                </tr>
                 @endif
-            @endrole
-            <div class="col-md-3">
-                <div class="card text-center shadow-sm">
-                    <div class="card-body">
-                        <i class="bi bi-eye display-4 text-info mb-2"></i>
-                        <h5 class="card-title">Mostrando</h5>
-                        <p class="card-text display-6 text-info" id="statsVisible">
-                            {{ $inscritos->where('cursos_id', $cursos->id)->count() }}</p>
+            @empty
+                <tr id="noResultsRow">
+                    <td colspan="{{ auth()->user()->hasRole('Administrador') ? '6' : '5' }}" class="text-center py-5">
+                        <div class="d-flex flex-column align-items-center">
+                            <i class="bi bi-emoji-frown display-1 text-muted mb-3"></i>
+                            <h4 class="text-muted">No hay participantes inscritos</h4>
+                        </div>
+                    </td>
+                </tr>
+                @endforelse
+                </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensaje cuando no hay resultados de búsqueda -->
+    <div class="card shadow-sm mt-3" id="noSearchResults" style="display: none;">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-search display-1 text-muted mb-3"></i>
+            <h4 class="text-muted">Sin resultados</h4>
+            <p class="text-muted">No se encontraron participantes que coincidan con los filtros</p>
+            <button class="btn btn-outline-primary" id="clearSearchBtn">
+                <i class="bi bi-x-lg me-1"></i>Limpiar filtros
+            </button>
+        </div>
+    </div>
+
+    <!-- Acciones masivas -->
+    @if (auth()->user()->hasRole('Docente') || auth()->user()->hasRole('Administrador'))
+        <div class="card shadow-sm mt-3" id="massActionsCard" style="display: none;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted">
+                        <i class="bi bi-check-square me-2"></i>
+                        <strong id="selectedCount">0</strong> participante(s) seleccionado(s)
+                    </span>
+                    <div class="btn-group">
+                        <button class="btn btn-outline-danger" id="retirarSeleccionados">
+                            <i class="bi bi-person-x me-1"></i>Retirar Seleccionados
+                        </button>
+                        @if ($cursos->tipo == 'congreso')
+                            <button class="btn btn-outline-success" id="generarCertificados">
+                                <i class="bi bi-award me-1"></i>Generar Certificados
+                            </button>
+                        @endif
+                        <button class="btn btn-outline-secondary" id="deselectAll">
+                            <i class="bi bi-square me-1"></i>Deseleccionar
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+    @endif
+
+    <!-- Estadísticas rápidas -->
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-people display-4 text-primary mb-2"></i>
+                    <h5 class="card-title">Total</h5>
+                    <p class="card-text display-6" id="statsTotal">
+                        {{ $inscritos->where('cursos_id', $cursos->id)->count() }}</p>
+                </div>
+            </div>
+        </div>
+        @role('Administrador')
+            @if ($cursos->tipo == 'curso')
+                <div class="col-md-3">
+                    <div class="card text-center shadow-sm">
+                        <div class="card-body">
+                            <i class="bi bi-check-circle display-4 text-success mb-2"></i>
+                            <h5 class="card-title">Pagos OK</h5>
+                            <p class="card-text display-6 text-success" id="statsPaid">
+                                {{ $inscritos->where('cursos_id', $cursos->id)->where('pago_completado', true)->count() }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center shadow-sm">
+                        <div class="card-body">
+                            <i class="bi bi-clock display-4 text-warning mb-2"></i>
+                            <h5 class="card-title">Pendientes</h5>
+                            <p class="card-text display-6 text-warning" id="statsPending">
+                                {{ $inscritos->where('cursos_id', $cursos->id)->where('pago_completado', false)->count() }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        @endrole
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-eye display-4 text-info mb-2"></i>
+                    <h5 class="card-title">Mostrando</h5>
+                    <p class="card-text display-6 text-info" id="statsVisible">
+                        {{ $inscritos->where('cursos_id', $cursos->id)->count() }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
     </div>
 
     <!-- Estilos adicionales -->

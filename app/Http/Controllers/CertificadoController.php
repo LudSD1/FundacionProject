@@ -62,6 +62,46 @@ class CertificadoController extends Controller
         return back()->with('success', 'Plantilla subida correctamente');
     }
 
+    public function generarCertificadoCongreso($id)
+    {
+        // Buscar el curso
+        $curso = Cursos::findOrFail($id);
+
+        if ($curso->tipo != 'congreso') {
+            return back()->with('error', 'No se puede generar certificados.');
+        }
+
+        $plantilla = CertificateTemplate::where('curso_id', $id)->first();
+        if (!$plantilla) {
+            return back()->with('error', 'No se encontró la plantilla del certificado para este curso.');
+        }
+
+        // Obtener los inscritos que aún no tienen certificado
+        $inscritos = Inscritos::where('cursos_id', $id)
+            ->whereDoesntHave('certificado')
+            ->with('estudiantes')
+            ->get();
+
+        if ($inscritos->isEmpty()) {
+            return back()->with('info', 'Todos los inscritos ya tienen su certificado.');
+        }
+
+        foreach ($inscritos as $inscrito) {
+            $certificado = $this->generarCertificadoIndividual(
+                $id,
+                $inscrito->id,
+                $inscrito->estudiantes
+            );
+
+            // Otorgar XP adicional por certificado de congreso
+            if ($certificado->wasRecentlyCreated) {
+                $this->xpService->addXP($inscrito, 300, "Certificado de congreso - {$curso->nombreCurso}");
+            }
+        }
+
+        return back()->with('success', 'Certificados generados correctamente.');
+    }
+
 
     public function update(Request $request, $id)
     {
@@ -140,51 +180,10 @@ class CertificadoController extends Controller
     }
 
 
-
-    public function generarCertificadoCongreso($id)
-    {
-        // Buscar el curso
-        $curso = Cursos::findOrFail($id);
-
-        if ($curso->tipo != 'congreso') {
-            return back()->with('error', 'No se puede generar certificados.');
-        }
-
-        $plantilla = CertificateTemplate::where('curso_id', $id)->first();
-        if (!$plantilla) {
-            return back()->with('error', 'No se encontró la plantilla del certificado para este curso.');
-        }
-
-        // Obtener los inscritos que aún no tienen certificado
-        $inscritos = Inscritos::where('cursos_id', $id)
-            ->whereDoesntHave('certificado')
-            ->with('estudiantes')
-            ->get();
-
-        if ($inscritos->isEmpty()) {
-            return back()->with('info', 'Todos los inscritos ya tienen su certificado.');
-        }
-
-        foreach ($inscritos as $inscrito) {
-            $certificado = $this->generarCertificadoIndividual(
-                $id,
-                $inscrito->id,
-                $inscrito->estudiantes
-            );
-
-            // Otorgar XP adicional por certificado de congreso
-            if ($certificado->wasRecentlyCreated) {
-                $this->xpService->addXP($inscrito, 300, "Certificado de congreso - {$curso->nombreCurso}");
-            }
-        }
-
-        return back()->with('success', 'Certificados generados correctamente.');
-    }
-
-
     public function generarCertificadoAdmin($inscrito_id)
     {
-        $inscrito = Inscritos::findOrFail(decrypt($inscrito_id));
+
+        $inscrito = Inscritos::findOrFail($inscrito_id);
 
         // Buscar el curso
         $curso = Cursos::findOrFail($inscrito->cursos_id);
@@ -263,8 +262,7 @@ class CertificadoController extends Controller
 
         // Enviar notificación con el link de verificación solo si no se está regenerando
         if (!$regenerando && $inscrito->estudiantes && $inscrito->estudiantes->email) {
-            $link_verificacion = route('verificar.certificado', ['codigo' => $codigo_certificado]);
-            $inscrito->estudiantes->notify(new CertificadoGeneradoNotification($inscrito, $link_verificacion));
+            $inscrito->estudiantes->notify(new CertificadoGeneradoNotification($inscrito, $codigo_certificado));
         }
 
         return back()->with('success', 'Certificado generado. Se ha enviado un enlace de verificación.');
@@ -317,7 +315,6 @@ class CertificadoController extends Controller
 
         return $pdf->stream('vista-previa-certificado.pdf');
     }
-
 
 
     public function verificarCertificado($codigo)
@@ -590,11 +587,9 @@ class CertificadoController extends Controller
                 return back()->with('error', 'Este inscrito no tiene un certificado generado.');
             }
 
-            // Generar enlace de verificación
-            $link_verificacion = route('verificar.certificado', ['codigo' => $certificado->codigo_certificado]);
 
             // Reenviar notificación usando el email del estudiante
-            $inscripcion->estudiantes->notify(new CertificadoGeneradoNotification($inscripcion, $link_verificacion));
+            $inscripcion->estudiantes->notify(new CertificadoGeneradoNotification($inscripcion, $certificado->codigo_certificado));
 
             return back()->with('success', "Correo de certificado reenviado exitosamente a {$inscripcion->estudiantes->email}.");
         } catch (\Exception $e) {
