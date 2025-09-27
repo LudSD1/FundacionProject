@@ -76,31 +76,28 @@ class CertificadoController extends Controller
             return back()->with('error', 'No se encontró la plantilla del certificado para este curso.');
         }
 
-        // Obtener los inscritos que aún no tienen certificado
-        $inscritos = Inscritos::where('cursos_id', $id)
+        // Obtener los inscritos que aún no tienen certificado, en lotes de 20
+        Inscritos::where('cursos_id', $id)
             ->whereDoesntHave('certificado')
             ->with('estudiantes')
-            ->get();
+            ->chunk(20, function ($inscritos) use ($id, $curso) {
+                foreach ($inscritos as $inscrito) {
+                    $certificado = $this->generarCertificadoIndividual(
+                        $id,
+                        $inscrito->id,
+                        $inscrito->estudiantes
+                    );
 
-        if ($inscritos->isEmpty()) {
-            return back()->with('info', 'Todos los inscritos ya tienen su certificado.');
-        }
-
-        foreach ($inscritos as $inscrito) {
-            $certificado = $this->generarCertificadoIndividual(
-                $id,
-                $inscrito->id,
-                $inscrito->estudiantes
-            );
-
-            // Otorgar XP adicional por certificado de congreso
-            if ($certificado->wasRecentlyCreated) {
-                $this->xpService->addXP($inscrito, 300, "Certificado de congreso - {$curso->nombreCurso}");
-            }
-        }
+                    // Otorgar XP adicional por certificado de congreso
+                    if ($certificado->wasRecentlyCreated) {
+                        $this->xpService->addXP($inscrito, 300, "Certificado de congreso - {$curso->nombreCurso}");
+                    }
+                }
+            });
 
         return back()->with('success', 'Certificados generados correctamente.');
     }
+
 
 
     public function update(Request $request, $id)
