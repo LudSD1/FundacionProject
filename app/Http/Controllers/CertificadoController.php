@@ -64,7 +64,7 @@ class CertificadoController extends Controller
 
     public function generarCertificadoCongreso($id)
     {
-        // Buscar el curso
+        // Buscar el curso 
         $curso = Cursos::findOrFail($id);
 
         if ($curso->tipo != 'congreso') {

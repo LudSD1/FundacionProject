@@ -24,6 +24,8 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\NoCacheMiddleware::class,
         \Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance::class,
         \App\Http\Middleware\DisableCache::class,
+        
+
 
     ];
 
@@ -72,5 +74,6 @@ class Kernel extends HttpKernel
         'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
         'noCache' => \App\Http\Middleware\NoCacheMiddleware::class,
+        'block.numeric' => \App\Http\Middleware\BlockNumericIds::class,
     ];
 }

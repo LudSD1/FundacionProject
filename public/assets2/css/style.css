@@ -126,13 +126,35 @@ h6 {
   }
 
 #header.header-transparent {
-    background: transparent;
-  }
+  background: transparent;
+  transition: all 0.4s;
+}
 
-  #header.header-scrolled {
-    background: linear-gradient(145deg, rgb(255, 255, 255) 58%, rgb(255, 255, 255) 65%, #145DA0 53%);
-    box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
-  }
+#header.header-scrolled {
+  background: linear-gradient(145deg, rgb(255, 255, 255) 58%, rgb(255, 255, 255) 65%, #145DA0 53%);
+  box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Carrusel de categorías */
+.header-bottom {
+  background-color: #fff;
+}
+
+#categoriasCarousel .btn {
+  white-space: nowrap;
+  transition: 0.3s ease;
+}
+
+#categoriasCarousel .btn:hover {
+  background-color: #145DA0;
+  color: #fff;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  filter: invert(30%) sepia(90%) saturate(500%) hue-rotate(190deg);
+}
+
 
 #header .logo h1 {
   font-size: 30px;
@@ -152,6 +174,33 @@ h6 {
   margin: 0;
   max-height: 40px;
 }
+
+/* Mostrar el dropdown al pasar el mouse */
+.dropdown:hover .dropdown-menu {
+  display: block;
+  margin-top: 0; /* sin salto */
+}
+
+/* Ajustes visuales */
+.dropdown-menu {
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+}
+
+.dropdown-item:hover {
+  background-color: #145DA0;
+  color: white;
+}
+
+#categoriasCarousel .btn {
+  transition: 0.3s ease;
+}
+
+#categoriasCarousel .btn:hover {
+  background-color: #145DA0;
+  color: #fff;
+}
+
 
 /*--------------------------------------------------------------
 # Navigation Menu

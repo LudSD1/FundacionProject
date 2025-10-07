@@ -42,6 +42,7 @@ use App\Models\Actividad;
 use App\Exports\CursoReporteExport;
 use App\Models\Subtema;
 use App\Services\AdminLogger;
+use App\Services\YouTubeEmbedService;
 use Maatwebsite\Excel\Facades\Excel;
 
 class CursosController extends Controller
@@ -51,10 +52,12 @@ class CursosController extends Controller
      *
      * @return \Illuminate\Http\Response
      */ protected $qrTokenService;
+    protected $youTubeEmbedService;
 
-    public function __construct(QrTokenService $qrTokenService)
+    public function __construct(QrTokenService $qrTokenService, YouTubeEmbedService $youTubeEmbedService)
     {
         $this->qrTokenService = $qrTokenService;
+        $this->youTubeEmbedService = $youTubeEmbedService;
     }
 
     public function index($id)
@@ -558,9 +561,13 @@ class CursosController extends Controller
             'youtube_url' => 'nullable|url|max:255',
         ]);
 
+        $embedUrl = $this->youTubeEmbedService->obtenerUrlEmbed($request->youtube_url);
+
         $curso->update([
-            'youtube_url' => $request->youtube_url,
+            'youtube_url' => $embedUrl ?? null,
         ]);
+
+
 
         return back()->with('success', 'Enlace de YouTube actualizado correctamente.');
     }

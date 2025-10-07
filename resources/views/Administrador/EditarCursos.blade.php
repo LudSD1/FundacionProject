@@ -82,6 +82,7 @@
                                     <!-- Nombre del curso -->
                                     <div class="col-md-6">
                                         <label for="nombre" class="form-label">Nombre del Curso</label>
+
                                         @if (auth()->user()->hasRole('Administrador'))
                                             <input type="text" class="form-control" id="nombre" name="nombre"
                                                 value="{{ $cursos->nombreCurso }}" required>
@@ -99,7 +100,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Fechas, Formato, Tipo -->
 
                                 <div class="row mb-4">
                                     <div class="col-md-3">
@@ -320,6 +320,7 @@
 
                         </div>
                     </div>
+
 
                     <div class="card-body">
                         <form id="categoriasForm" action="{{ route('cursos.updateCategories', $cursos->id) }}"

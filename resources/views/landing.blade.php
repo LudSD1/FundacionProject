@@ -22,7 +22,7 @@
                 </div>
             </div>
         </div>
-    </section><!-- End Hero -->
+    </section>
 @endsection
 
 
@@ -30,7 +30,7 @@
 @section('main')
 
     <main id="main">
-
+            {{-- Buscador --}}
         <section id="congress-list" class="py-5 bg-light">
             <div class="container">
                 <div class="text-center mb-4">
@@ -102,6 +102,8 @@
 
 
         <!-- Cursos Section -->
+            {{-- Buscador --}}
+
         <section id="cursos" class="py-5 bg-white">
             <div class="container">
                 <div class="text-center mb-4">
@@ -211,9 +213,6 @@
                 });
             });
         </script>
-
-
-
 
         <!-- App Features Section -->
         <section id="features" class="features">

@@ -8,99 +8,17 @@
     <title>Aprendo Hoy</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
-
-
-    <!-- Favicons -->
     <link href="{{ asset('assets/img/Acceder.png') }}" rel="icon">
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <link href="{{ asset('assets2/vendor/aos/aos.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ asset('assets2/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
     <link href="{{ asset('assets2/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets2/vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets2/vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets2/css/style.css') }}" rel="stylesheet">
-     <script src="https://cdn.jsdelivr.net/npm/driver.js@latest/dist/driver.js.iife.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/driver.js@latest/dist/driver.js.iife.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@latest/dist/driver.css" />
-
-    <style>
-        /* Estilos personalizados para Driver.js */
-        .driver-popover {
-            border-radius: 12px !important;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
-            border: none !important;
-        }
-
-        .driver-popover-title {
-            font-weight: 600 !important;
-            color: #0d6efd !important;
-            font-size: 1.1em !important;
-        }
-
-        .driver-popover-description {
-            color: #495057 !important;
-            line-height: 1.5 !important;
-        }
-
-        .driver-popover-footer {
-            border-top: 1px solid #e9ecef !important;
-            padding-top: 12px !important;
-        }
-
-        .driver-popover-next-btn,
-        .driver-popover-prev-btn,
-        .driver-popover-close-btn {
-            border-radius: 8px !important;
-            transition: all 0.2s ease !important;
-        }
-
-        .driver-popover-next-btn {
-            background: linear-gradient(135deg, #0d6efd, #0056b3) !important;
-        }
-
-        .driver-popover-next-btn:hover {
-            transform: translateY(-1px) !important;
-            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3) !important;
-        }
-
-        .guide-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 1000;
-            padding: 10px 15px;
-            border-radius: 50px;
-            background: linear-gradient(135deg, #17a2b8, #138496);
-            color: white;
-            border: none;
-            box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .guide-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(23, 162, 184, 0.4);
-        }
-
-        .guide-btn i {
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-5px); }
-            60% { transform: translateY(-3px); }
-        }
-    </style>
-
-
-
 </head>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -122,46 +40,98 @@
 
 <body>
 
-    <!-- ======= Header ======= -->
-    <header id="header" class="fixed-top header-transparent">
-        <div class="container d-flex align-items-center justify-content-between">
+        <header id="header" class="fixed-top header-transparent">
+            <div class="header-top py-2">
+                <div class="container d-flex align-items-center justify-content-between">
+                    <div class="logo-container d-flex align-items-center gap-2">
+                        <a href="{{ route('home') }}">
+                            <img src="{{ asset('assets/img/Acceder.png') }}" alt="Acceder" style="height: 35px;">
+                        </a>
+                        <form action="" method="GET" class="d-flex">
+                            <input type="text" name="q" placeholder="Buscar..." class="form-control rounded">
+                            <button type="submit" class="btn btn-primary rounded ms-2">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </form>
+                    </div>
 
-            <!-- Contenedor del logo con margen izquierdo -->
-            <div class="logo-container">
-                <a href="{{ route('home') }}"><img src="{{ asset('assets/img/Acceder.png') }}" alt=""
-                        style="height: 35px;"></a>
+                    <nav id="navbar" class="navbar">
+                        <ul class="d-flex align-items-center mb-0">
+                            @auth
+                                <li><a class="getstarted scrollto" href="{{ route('Inicio') }}">Mi aprendizaje</a></li>
+                            @else
+                                <li><a class="getstarted scrollto" href="{{ route('login.signin') }}">Iniciar Sesión</a>
+                                </li>
+                                <li><a class="getstarted scrollto" href="{{ route('signin') }}">Registrarse</a></li>
+                            @endauth
+                        </ul>
+
+                        <div class="right d-none d-md-block ms-4">
+                            <img src="{{ asset('assets/img/logof.png') }}" alt="Logo" class="img-fluid"
+                                style="height: 55px;">
+                        </div>
+                        <i class="bi bi-list mobile-nav-toggle"></i>
+                    </nav>
+                </div>
             </div>
 
-            <nav id="navbar" class="navbar">
-                <ul>
+            <hr class="my-0">
 
-                    @if (auth()->user())
-                        <li><a class="getstarted scrollto" href="{{ route('Inicio') }}">Ir a Inicio</a></li>
-                    @else
-                        <li><a class="getstarted scrollto" href="{{ route('login.signin') }}">Iniciar Sesión</a></li>
-                        <li><a class="getstarted scrollto" href="{{ route('signin') }}">Registrarse</a></li>
-                    @endif
-                </ul>
-                <div class="ml-5 right d-none d-md-block" style="text-align: right;">
-                    <img src="{{ asset('assets/img/logof.png') }}" alt="" class="img-fluid"
-                        style="height: 55px;">
+            <!-- 🔽 CATEGORÍAS PRINCIPALES (CARRUSEL) -->
+            {{-- <div class="header-bottom bg-white py-2 shadow-sm position-relative">
+                <div id="categoriasCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        @foreach ($categorias->where('parent_id', null)->chunk(5) as $index => $chunk)
+                            <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                                <div class="d-flex justify-content-center flex-wrap gap-2 py-2">
+                                    @foreach ($chunk as $categoria)
+                                        @if ($categoria->children->count() > 0)
+                                            <!-- Botón con dropdown -->
+                                            <div class="categoria-dropdown position-relative">
+                                                <button class="btn btn-outline-primary rounded categoria-btn"
+                                                    data-id="{{ $categoria->id }}">
+                                                    {{ $categoria->name }}
+                                                </button>
+
+                                                <!-- Menú dropdown oculto por defecto -->
+                                                <div class="categoria-menu shadow" id="menu-{{ $categoria->id }}">
+                                                    @foreach ($categoria->children as $child)
+                                                        <a href=""
+                                                            class="dropdown-item">
+                                                            {{ $child->name }}
+                                                        </a>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @else
+                                             <a href=""
+                                                class="btn btn-outline-primary rounded">
+                                                {{ $categoria->name }}
+                                            </a>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <!-- Controles -->
+                    <button class="carousel-control-prev" type="button" data-bs-target="#categoriasCarousel"
+                        data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Anterior</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#categoriasCarousel"
+                        data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Siguiente</span>
+                    </button>
                 </div>
-                <i class="bi bi-list mobile-nav-toggle"></i>
-            </nav><!-- .navbar -->
+            </div> --}}
+        </header>
 
-        </div>
-    </header><!-- End Header -->
-
-
-
-    <!-- ======= Hero Section ======= -->
     @yield('hero')
-
-
     @yield('main')
-
-
-    <!-- ======= Footer ======= -->
     <footer id="footer">
         <div class="footer-top">
             <div class="container">
@@ -233,11 +203,6 @@
                 </script>
             </div>
             <div class="credits">
-                <!-- All the links in the footer should remain intact. -->
-                <!-- You can delete the links only if you purchased the pro version. -->
-                <!-- Licensing information: https://bootstrapmade.com/license/ -->
-                <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/free-bootstrap-app-landing-page-template/ -->
-                {{-- Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a> --}}
             </div>
         </div>
     </footer><!-- End Footer -->

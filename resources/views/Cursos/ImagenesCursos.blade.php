@@ -13,29 +13,49 @@
             Editar Enlace de YouTube
         </button>
 
+
         <!-- Modal Editar YouTube URL -->
         <div class="modal fade" id="editarYoutubeModal" tabindex="-1" aria-labelledby="editarYoutubeModalLabel"
             aria-hidden="true">
             <div class="modal-dialog">
                 <form method="POST" action="{{ route('cursos.updateYoutube', encrypt($curso->id)) }}">
                     @csrf
-                    @method('PUT')
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">Editar enlace de YouTube del curso</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
-                        <div class="modal-body">
-                            <label for="youtube_url" class="form-label">URL de YouTube</label>
-                            <input type="url" name="youtube_url" id="youtube_url" class="form-control"
-                                value="{{ old('youtube_url', $curso->youtube_url) }}"
-                                placeholder="https://www.youtube.com/watch?v=...">
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary">Guardar enlace</button>
-                        </div>
+
+                        <form action="{{ route('cursos.updateYoutube', $curso->id) }}" method="POST">
+                            @csrf
+                            <div class="modal-body">
+                                <label for="youtube_url" class="form-label">URL de YouTube</label>
+                                <input type="url" name="youtube_url" id="youtube_url" class="form-control"
+                                    value="{{ old('youtube_url', $curso->youtube_url) }}"
+                                    placeholder="https://www.youtube.com/watch?v=...">
+                                <div class="mt-3">
+                                    @if ($curso->youtube_url)
+                                        <p>Video actual:</p>
+                                        <div class="ratio ratio-16x9">
+                                            <iframe width="560" height="315" src="{{ $curso->youtube_url }}"
+                                                frameborder="0"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowfullscreen>
+                                            </iframe>
+                                        </div>
+                                    @else
+                                        <p><em>No hay video subido</em></p>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">Guardar enlace</button>
+                            </div>
+                        </form>
                     </div>
+
                 </form>
             </div>
         </div>
@@ -129,8 +149,8 @@
                                             <input type="file" name="imagen" class="form-control">
                                         </div>
                                         <div class="form-check mt-2">
-                                            <input type="checkbox" name="activo" value="1" class="form-check-input"
-                                                {{ $imagen->activo ? 'checked' : '' }}>
+                                            <input type="checkbox" name="activo" value="1"
+                                                class="form-check-input" {{ $imagen->activo ? 'checked' : '' }}>
                                             <label class="form-check-label">Activo</label>
                                         </div>
                                     </div>

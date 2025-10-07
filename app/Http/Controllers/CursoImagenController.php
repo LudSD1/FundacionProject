@@ -11,10 +11,13 @@ class CursoImagenController extends Controller
 {
     public function index(Cursos $curso)
     {
+
         return view('Cursos.ImagenesCursos', [
             'curso' => $curso,
             'imagenes' => $curso->imagenes()->orderBy('orden')->get()
         ]);
+
+
     }
     public function store(Request $request, Cursos $curso)
     {

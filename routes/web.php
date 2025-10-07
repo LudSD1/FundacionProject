@@ -47,7 +47,7 @@ Route::get('/email/verify', function () {
 })->middleware('auth')->name('verification.notice');
 
 Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
-    ->middleware(['signed'])
+    ->middleware(['signed' ])
     ->name('verification.verify');
 
 Route::post('/email/verification-notification', [EmailVerificationController::class, 'sendVerificationEmail'])
@@ -295,7 +295,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('curso-imagenes/{imagen}', [CursoImagenController::class, 'update'])->name('curso-imagenes.update');
         Route::delete('curso-imagenes/{imagen}', [CursoImagenController::class, 'destroy'])->name('curso-imagenes.destroy');
         Route::put('curso-imagenes/{imagen}/restaurar', [CursoImagenController::class, 'restore'])->name('curso-imagenes.restore');
-        Route::put('/cursos/{curso}/editar-youtube', [CursosController::class, 'updateYoutube'])->name('cursos.updateYoutube');
+        Route::post('/cursos/{curso}/editar-youtube', [CursosController::class, 'updateYoutube'])->name('cursos.updateYoutube');
 
         //HORARIO
         Route::post('/store', [HorarioController::class, 'store'])->name('horarios.store');

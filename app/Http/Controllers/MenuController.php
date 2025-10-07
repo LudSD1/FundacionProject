@@ -116,6 +116,10 @@ class MenuController extends Controller
             ->where('estado', 'Activo')
             ->where('visibilidad', 'Público')
             ->get();
+        
+        $categorias = Categoria::whereNull('deleted_at')->get();
+
+
 
         $cursos = Cursos::where('tipo', 'curso')
             ->where('fecha_fin', '>=', $currentDate)
@@ -123,7 +127,9 @@ class MenuController extends Controller
             ->where('visibilidad', 'Público')
             ->get();
 
-        return view('landing')->with('congresos', $congresos)->with('cursos', $cursos);
+        return view('landing')->with('congresos', $congresos)
+                                    ->with('cursos', $cursos)
+                                    ->with('categorias', $categorias);
     }
 
 
