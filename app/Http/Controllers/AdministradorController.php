@@ -245,8 +245,6 @@ class AdministradorController extends Controller
         return redirect()->route('ListaDocentes')->with('success', 'Docente registrado exitosamente!');
     }
 
-
-
     public function storeEstudianteMenor(Request $request)
     {
 
@@ -343,14 +341,6 @@ class AdministradorController extends Controller
 
         return redirect()->route('ListaEstudiantes')->with('success', 'Estudiante registrado exitosamente!');
     }
-
-
-
-
-
-
-
-
 
     public function storeCurso(Request $request)
     {
@@ -453,25 +443,25 @@ class AdministradorController extends Controller
         return $curso;
     }
 
-    public function EditUserIndex($id)
+    public function EditUserIndex(User $user)
     {
-
-        $usuario = User::findOrFail($id);
+        $usuario = $user;
 
         $atributosD = DB::table('atributos_docentes')
-            ->where('docente_id', '=', $id) // joining the contacts table , where user_id and contact_user_id are same
-            ->select('atributos_docentes.*')
+            ->where('docente_id', $usuario->id)
             ->get();
 
         $atributosTutor = DB::table('tutor_representante_legals')
-            ->where('estudiante_id', '=', $id) // joining the contacts table , where user_id and contact_user_id are same
-            ->select('tutor_representante_legals.*')
+            ->where('estudiante_id', $usuario->id)
             ->get();
 
-
-
-        return view('EditarUsuario', ['atributosD' => $atributosD], ['atributosTutor' => $atributosTutor])->with('usuario', $usuario)->with('success', 'Editado exitosamente!');
+        return view('EditarUsuario', [
+            'usuario' => $usuario,
+            'atributosD' => $atributosD,
+            'atributosTutor' => $atributosTutor,
+        ]);
     }
+
 
     public function EditUser($id, Request $request)
     {

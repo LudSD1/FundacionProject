@@ -60,92 +60,89 @@ class CursosController extends Controller
         $this->youTubeEmbedService = $youTubeEmbedService;
     }
 
-    public function index($id)
+    public function index(Cursos $curso)
     {
-        // Obtener el curso
-        $cursos = Cursos::findOrFail($id);
+        $user = Auth::user();
 
         // Obtener el template del certificado
-        $certificado_template = CertificateTemplate::where('curso_id', $id)->first();
+        $certificado_template = CertificateTemplate::where('curso_id', $curso->id)->first();
 
         // Verificar si el usuario está inscrito en el curso
-        $inscritos = Inscritos::where('cursos_id', $id)
-            ->where('estudiante_id', auth()->user()->id)
-            ->exists();  // Esto devuelve un booleano
+        $inscrito = Inscritos::where('cursos_id', $curso->id)
+            ->where('estudiante_id', $user->id)
+            ->first(); // Lo usamos para varios datos
 
-        // Verificar si el pago está completado
-        $pago_completado = Inscritos::where('cursos_id', $id)
-            ->where('estudiante_id', auth()->user()->id)
-            ->pluck('pago_completado')->first(); // Esto devuelve un solo valor
+        $inscritoExiste = (bool) $inscrito;
+        $pago_completado = $inscrito ? $inscrito->pago_completado : 0;
 
-        $user = Auth::user();
         $esEstudiante = $user->hasRole('Estudiante');
-        $esDocente = $user->id == $cursos->docente_id;
-        $pagoIncompleto = $pago_completado == 0; // Aquí comparamos con 0 si no ha completado el pago
-        $esCursoNormal = $cursos->tipo == 'curso';
+        $esDocente = $user->id === $curso->docente_id;
+        $esCursoNormal = $curso->tipo === 'curso';
+        $pagoIncompleto = $pago_completado == 0;
 
         $expositores = Expositores::all();
 
         // Si es estudiante y no está inscrito
-        if (!$inscritos && $esEstudiante) {
+        if ($esEstudiante && !$inscritoExiste) {
             return redirect()->back()->with('error', 'No estás inscrito en este curso.');
         }
 
         // Si es estudiante y no ha completado el pago de un curso normal
-        elseif ($esEstudiante && $esCursoNormal && $pagoIncompleto) {
+        if ($esEstudiante && $esCursoNormal && $pagoIncompleto) {
             return view('LoadingPage.Loading');
         }
 
+        // Obtener recursos, temas, foros y horarios
+        $recursos = Recursos::where('cursos_id', $curso->id)->get();
+        $temas = Tema::where('curso_id', $curso->id)->get();
+        $foros = Foro::where('cursos_id', $curso->id)->get();
 
+        $horariosQuery = Cursos_Horario::where('curso_id', $curso->id);
+        $horarios = $user->hasRole(['Administrador', 'Docente'])
+            ? $horariosQuery->withTrashed()->get()
+            : $horariosQuery->get();
 
-        // Obtener recursos, temas, evaluaciones, foros y horarios
-        $recursos = Recursos::where('cursos_id', $id)->get();
-        $temas = Tema::where('curso_id', $id)->get();
-        $foros = Foro::where('cursos_id', $id)->get();
+        // Obtener boletín (si existe inscripción)
+        $boletin = $inscrito
+            ? Boletin::where('inscripcion_id', $inscrito->id)->first()
+            : null;
 
-        $horarios = Auth::user()->hasRole(['Administrador', 'Docente'])
-            ? Cursos_Horario::where('curso_id', $id)->withTrashed()->get()
-            : Cursos_Horario::where('curso_id', $id)->get();
-
-        // Obtener el boletín del usuario
-        $inscritos2 = Inscritos::where('cursos_id', $id)
-            ->where('estudiante_id', auth()->user()->id)
-            ->first();
-
-
-        $boletin = $inscritos2 ? Boletin::where('inscripcion_id', $inscritos2->id)->first() : null;
-
-        // Generar el token y el código QR
-        $token = $this->qrTokenService->generarToken($id);
-        $urlInscripcion = route('inscribirse.qr', ['id' => $id, 'token' => $token->token]);
+        // Generar token y QR
+        $token = $this->qrTokenService->generarToken($curso->id);
+        $urlInscripcion = route('inscribirse.qr', [
+            'id' => $curso->id,
+            'token' => $token->token,
+        ]);
         $qrCode = $this->qrTokenService->generarQrCode($urlInscripcion);
 
         // Procesar descripciones de recursos
         foreach ($recursos as $recurso) {
-            $recurso->descripcionRecursos = TextHelper::createClickableLinksAndPreviews($recurso->descripcionRecursos);
+            $recurso->descripcionRecursos = TextHelper::createClickableLinksAndPreviews(
+                $recurso->descripcionRecursos
+            );
         }
 
         $tiposActividades = TipoActividad::all();
         $tiposEvaluaciones = TipoEvaluacion::all();
 
-
         return view('Cursos', [
             'foros' => $foros,
             'recursos' => $recursos,
             'temas' => $temas,
-            'cursos' => $cursos,
+            'cursos' => $curso,
             'tiposEvaluaciones' => $tiposEvaluaciones,
             'tiposActividades' => $tiposActividades,
-            'inscritos' => $inscritos,
-            'inscritos2' => $inscritos2,
+            'inscritos' => $inscritoExiste,
+            'inscritos2' => $inscrito,
             'boletin' => $boletin,
             'horarios' => $horarios,
             'qrCode' => $qrCode,
             'template' => $certificado_template,
             'expositores' => $expositores,
-            'esDocente' =>  $esDocente,
+            'esDocente' => $esDocente,
         ]);
     }
+
 
 
 

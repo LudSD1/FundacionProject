@@ -72,20 +72,20 @@ class UserController extends Controller
         return redirect()->route('login.signin');
     }
 
-    public function Profile($id)
+    public function Profile(User $usuario)
     {
-        $usuario = User::findOrFail($id);
+        $trabajos = DocentesTrabajos::where('docente_id', $usuario->id)->get();
+        $tutor = TutorRepresentanteLegal::where('estudiante_id', $usuario->id)->get();
+        $atributosD = atributosDocente::where('docente_id', $usuario->id)->get();
 
-        // ->with('atributosD', $atributosD)->with('atributosE', $atributosE)
-
-        $trabajos = DocentesTrabajos::where('docente_id', $id)->get();
-        $tutor = TutorRepresentanteLegal::where('estudiante_id', $id)->get();
-
-        $atributosD = atributosDocente::where('docente_id', $id)->get();
-
-
-        return view('PerfilUsuario')->with('usuario', $usuario)->with('atributosD', $atributosD)->with('trabajos', $trabajos)->with('tutor', $tutor);
+        return view('PerfilUsuario', [
+            'usuario' => $usuario,
+            'atributosD' => $atributosD,
+            'trabajos' => $trabajos,
+            'tutor' => $tutor,
+        ]);
     }
+
 
     public function UserProfile()
     {
@@ -319,7 +319,7 @@ class UserController extends Controller
 
         $usuario = User::findOrFail($id);
 
-        if (auth()->user()->id == $id) {
+        if (auth()->user()->id == $id  || auth()->user()->hasRole('Administrador')) {
             return view('EditarContrasena')->with('usuario', $usuario);
         } else {
 

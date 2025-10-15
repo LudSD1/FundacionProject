@@ -46,7 +46,7 @@ Route::get('/email/verify', function () {
     return view('auth.verify-email');
 })->middleware('auth')->name('verification.notice');
 
-Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
+Route::get('/email/verify/{user}/{hash}', [EmailVerificationController::class, 'verify'])
     ->middleware(['signed' ])
     ->name('verification.verify');
 
@@ -90,7 +90,7 @@ Route::post('/resgistrarse/Congreso/{id}', [CertificadoController::class, 'regis
 Route::post('/congreso/inscribir', [CertificadoController::class, 'inscribir'])
     ->name('congreso.inscribir');
 
-Route::get('/Detalle/{id}', [MenuController::class, 'detalle'])->name('evento.detalle');
+Route::get('/Detalle/{curso}', [MenuController::class, 'detalle'])->name('evento.detalle');
 Route::get('/Lista-General', [MenuController::class, 'lista'])->name('lista.cursos.congresos');
 Route::get('/', [MenuController::class, 'home'])->middleware('noCache')->name('home');
 
@@ -123,7 +123,6 @@ Route::fallback(function () {
 });
 
 Route::get('/cuestionario', [CuestionarioController::class, 'responder']);
-Route::get('/quizzprueba', [MenuController::class, 'quizz']);
 
 
 Route::post('/login', [UserController::class, 'authenticate'])->name('login.signin');
@@ -204,7 +203,7 @@ Route::group(['middleware' => ['auth']], function () {
 
 
         //EditarUsuarios
-        Route::get('/EditarUsuario/{id}', [AdministradorController::class, 'EditUserIndex']);
+        Route::get('/EditarUsuario/{user}', [AdministradorController::class, 'EditUserIndex']);
         Route::post('/EditarUsuario/{id}', [AdministradorController::class, 'EditUser'])->name('EditarperfilUser');
         Route::get('/RestaurarUsuario/{id}', [UserController::class, 'restaurarUsuario'])->name('restaurarUsuario');
         Route::get('/admin/logs', [AdministradorController::class, 'viewLogs'])->name('admin.logs');
@@ -469,14 +468,14 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/certificados/obtener/{id}', [CertificadoController::class, 'obtenerCertificado'])
             ->name('certificados.obtener');
         Route::get('/Notificaciones', [UserController::class, 'notificaciones'])->name('notificaciones');
-        Route::get('/user/{id}', [UserController::class, 'Profile'])->name('perfil');
+        Route::get('/user/{user}', [UserController::class, 'Profile'])->name('perfil');
 
         Route::get('/Calendario', [MenuController::class, 'calendario'])->middleware('noCache')->name('calendario');
         //PAGOS (solo visualización, el proceso de pago está fuera del middleware verified)
         Route::get('/ListadePagos', [AportesController::class, 'index'])->name('pagos');
 
         //CURSO
-        Route::get('/Cursos/id/{id}', [CursosController::class, 'index'])->name('Curso');
+        Route::get('/Cursos/{curso}', [CursosController::class, 'index'])->name('Curso');
         //FORO
         Route::get('/foro/id={id}', [ForoController::class, 'index'])->name('foro');
         Route::post('/foro/id={id}', [ForoController::class, 'storeMensaje'])->name('foro.mensaje.store');

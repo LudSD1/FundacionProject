@@ -36,7 +36,7 @@
   }
 
   /**
-   * Easy on scroll event listener 
+   * Easy on scroll event listener
    */
   const onscroll = (el, listener) => {
     el.addEventListener('scroll', listener)
@@ -193,7 +193,7 @@
   });
 
   /**
-   * Initiate gallery lightbox 
+   * Initiate gallery lightbox
    */
   const galleryLightbox = GLightbox({
     selector: '.gallery-lightbox'
@@ -241,3 +241,17 @@
   });
 
 })()
+
+// Asegúrate de que este código esté presente en tu archivo main.js
+document.addEventListener('DOMContentLoaded', function() {
+    // Selector para el botón de menú móvil
+    const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
+
+    if (mobileNavToggle) {
+        mobileNavToggle.addEventListener('click', function() {
+            document.querySelector('body').classList.toggle('navbar-mobile');
+            this.classList.toggle('bi-list');
+            this.classList.toggle('bi-x');
+        });
+    }
+});

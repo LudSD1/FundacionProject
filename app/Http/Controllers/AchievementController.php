@@ -66,44 +66,42 @@ class AchievementController extends Controller
         switch ($achievement->type) {
             case 'QUIZ_MASTER':
                 return $inscrito->perfectQuizzes()->count();
-            
+
             case 'FORUM_CONTRIBUTOR':
                 return $inscrito->forumPosts()->count();
-            
+
             case 'RESOURCE_EXPLORER':
                 return $inscrito->resourceViews()->count();
-            
+
             case 'EARLY_BIRD':
                 return $inscrito->earlySubmissions()->count();
-            
+
             case 'STREAK_MASTER':
                 return $inscrito->currentStreak;
-            
+
             case 'NIGHT_OWL':
                 return $inscrito->nightActivities()->count();
-            
+
             case 'SPEED_RUNNER':
                 return $inscrito->speedyQuizzes()->count();
-            
+
             case 'FORUM_LIKES':
                 return $inscrito->forumLikes()->count();
-            
+
             case 'DAILY_ACTIVITIES':
                 return $inscrito->todayActivities()->count();
-            
+
             default:
                 return 0;
         }
     }
 
-    /**
-     * Desbloquear un logro para el usuario
-     */
+
     public function unlockAchievement(Request $request)
     {
         $user = auth()->user();
         $achievement = Achievement::findOrFail($request->achievement_id);
-        
+
         // Verificar si el usuario ya tiene el logro
         if ($user->hasAchievement($achievement->id)) {
             return response()->json([
@@ -145,16 +143,14 @@ class AchievementController extends Controller
         ]);
     }
 
-    /**
-     * Obtener el progreso actual del usuario
-     */
+
     public function getProgress()
     {
         $user = auth()->user();
         $totalXP = XPEvent::where('users_id', $user->id)->sum('xp');
         $currentLevel = Level::getCurrentLevel($totalXP);
         $nextLevel = Level::getNextLevel($currentLevel->level_number);
-        
+
         // Calcular progreso al siguiente nivel
         $xpForCurrentLevel = $currentLevel->xp_required;
         $xpForNextLevel = $nextLevel ? $nextLevel->xp_required : $xpForCurrentLevel;
@@ -176,4 +172,4 @@ class AchievementController extends Controller
             'recent_achievements' => $recentAchievements
         ]);
     }
-} 
+}

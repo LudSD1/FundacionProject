@@ -143,7 +143,7 @@
                                                         </p>
                                                         <p class="small text-muted mb-3">
                                                             {{ Str::limit($curso->descripcionC, 100) }}</p>
-                                                        <a href="{{ route('evento.detalle', encrypt($curso->id)) }}"
+                                                        <a href="{{ route('evento.detalle', $curso) }}"
                                                             class="btn btn-primary btn-sm mt-auto">Inscribirse</a>
                                                     </div>
                                                 </div>
@@ -174,45 +174,6 @@
 
 
 
-        <!-- Swiper.js (CDN) -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
-        <!-- Script para inicializar Swiper -->
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                new Swiper(".congresosSwiper", {
-                    loop: true,
-                    spaceBetween: 20,
-                    grabCursor: true,
-                    centeredSlides: true,
-                    slidesPerView: "auto",
-                    autoplay: {
-                        delay: 3000,
-                        disableOnInteraction: false
-                    },
-                    navigation: {
-                        nextEl: ".swiper-button-next",
-                        prevEl: ".swiper-button-prev"
-                    },
-                    pagination: {
-                        el: ".swiper-pagination",
-                        clickable: true
-                    },
-                    breakpoints: {
-                        320: {
-                            slidesPerView: 1
-                        },
-                        768: {
-                            slidesPerView: 2
-                        },
-                        1024: {
-                            slidesPerView: 3
-                        }
-                    }
-                });
-            });
-        </script>
 
         <!-- App Features Section -->
         <section id="features" class="features">

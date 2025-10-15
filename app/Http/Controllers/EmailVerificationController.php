@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\Events\Registered;
@@ -35,7 +36,6 @@ class EmailVerificationController extends Controller
             Log::info('Email de verificación enviado exitosamente');
 
             return back()->with('success', 'Se ha enviado un email de verificación a tu dirección de correo electrónico.');
-
         } catch (\Exception $e) {
             Log::error('Error al enviar email de verificación: ' . $e->getMessage());
             Log::error('Stack trace: ' . $e->getTraceAsString());
@@ -44,26 +44,16 @@ class EmailVerificationController extends Controller
         }
     }
 
-    /**
-     * Verificar el email usando validación segura de Laravel
-     */
-    public function verify(Request $request, $id, $hash)
+
+    public function verify(Request $request, User $user, $hash)
     {
+        Log::info('Iniciando verificación de email para usuario: ' . $user->id);
 
-
-        Log::info('Iniciando verificación de email para usuario ID: ' . $id);
-
-        // Desencriptar el ID del usuario
-        try {
-            $decryptedId = $id;
-            Log::info('ID desencriptado: ' . $decryptedId);
-        } catch (\Exception $e) {
-            Log::error('Error al desencriptar ID: ' . $e->getMessage());
-            return redirect()->route('Inicio')->with('error', 'El enlace de verificación no es válido.');
+        // Verificar que la URL tenga una firma válida (previene expiraciones o manipulaciones)
+        if (! $request->hasValidSignature()) {
+            Log::warning('Firma de URL inválida o expirada para usuario: ' . $user->email);
+            return redirect()->route('Inicio')->with('error', 'El enlace de verificación ha expirado o no es válido.');
         }
-
-        // Buscar el usuario
-        $user = \App\Models\User::findOrFail($decryptedId);
 
         // Verificar si ya está verificado
         if ($user->hasVerifiedEmail()) {
@@ -71,25 +61,18 @@ class EmailVerificationController extends Controller
             return redirect()->route('Inicio')->with('info', 'Tu cuenta ya está verificada.');
         }
 
-        // Verificar que el hash coincida con el email del usuario
-        if (!hash_equals(sha1($user->getEmailForVerification()), $hash)) {
+        // Validar el hash del correo electrónico
+        if (! hash_equals(sha1($user->getEmailForVerification()), $hash)) {
             Log::warning('Hash de verificación inválido para usuario: ' . $user->email);
             return redirect()->route('Inicio')->with('error', 'El enlace de verificación no es válido.');
-        }
-
-        // Verificar que la URL esté firmada correctamente (validación de expiración incluida)
-        if (!$request->hasValidSignature()) {
-            Log::warning('Firma de URL inválida o expirada para usuario: ' . $user->email);
-            return redirect()->route('Inicio')->with('error', 'El enlace de verificación ha expirado o no es válido.');
         }
 
         // Marcar como verificado
         try {
             $user->markEmailAsVerified();
-            Log::info('Email verificado exitosamente para usuario: ' . $user->email);
-
-            // Disparar evento de verificación
             event(new Verified($user));
+
+            Log::info('Email verificado exitosamente para usuario: ' . $user->email);
 
             return redirect()->route('Inicio')->with('success', '¡Tu cuenta ha sido verificada correctamente!');
         } catch (\Exception $e) {
@@ -98,17 +81,10 @@ class EmailVerificationController extends Controller
         }
     }
 
-    /**
-     * Mostrar página de verificación
-     */
     public function show()
     {
         return view('auth.verify-email');
     }
-
-    /**
-     * Reenviar email de verificación
-     */
     public function resend(Request $request)
     {
         $user = Auth::user();

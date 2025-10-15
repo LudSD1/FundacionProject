@@ -13,12 +13,15 @@ class BlockNumericIds
      */
     public function handle(Request $request, Closure $next)
     {
-        $parameters = $request->route()->parameters();
+        $parameters = $request->route()?->parameters() ?? [];
 
         foreach ($parameters as $key => $value) {
-            // Bloquear parámetros que sean numéricos (IDs numerales)
-            if (is_numeric($value)) {
-                throw new NotFoundHttpException('Acceso no permitido con parámetros numerales.');
+            // Asegurarse de que sea una cadena o número simple
+            if (is_scalar($value)) {
+                // Solo bloquear si es un número entero puro (ej: "123", 456)
+                if (preg_match('/^\d+$/', (string) $value)) {
+                    throw new NotFoundHttpException('Acceso no permitido con IDs numéricos.');
+                }
             }
         }
 

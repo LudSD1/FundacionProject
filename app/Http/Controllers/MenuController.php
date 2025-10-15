@@ -21,43 +21,42 @@ use Illuminate\Support\Facades\Auth;
 
 class MenuController extends Controller
 {
-
-
-    public function detalle($id)
+    public function detalle(Cursos $curso)
     {
-        $curso = Cursos::with([
+        // Cargar relaciones necesarias sobre la instancia del curso ya vinculada
+        $curso->load([
             'calificaciones.user',
             'inscritos' => function ($query) {
                 $query->whereNull('deleted_at');
-            }
-        ])
-            ->withAvg('calificaciones', 'puntuacion')
-            ->withCount('calificaciones')
-            ->findOrFail($id);
+            },
+        ])->loadAvg('calificaciones', 'puntuacion')
+            ->loadCount('calificaciones');
 
         $metodosPago = PaymentMethod::all();
 
-        // Inicializar variables por defecto
+        // Inicializar variables
         $usuarioInscrito = null;
         $usuarioRetirado = null;
         $yaHaPagado = false;
         $pagoAnterior = null;
-        $estadoInscripcion = 'no_inscrito'; // no_inscrito, activo, retirado
+        $estadoInscripcion = 'no_inscrito';
         $usuarioCalifico = false;
         $calificacionUsuario = null;
 
-        // Solo verificar inscripciones y pagos si el usuario está autenticado
+        // Solo verificar si el usuario está autenticado
         if (Auth::check()) {
+            $userId = Auth::id();
+
             // Verificar inscripción activa
-            $usuarioInscrito = Inscritos::where('estudiante_id', auth()->user()->id)
-                ->where('cursos_id', $id)
+            $usuarioInscrito = Inscritos::where('estudiante_id', $userId)
+                ->where('cursos_id', $curso->id)
                 ->whereNull('deleted_at')
                 ->first();
 
-            // Verificar si fue retirado anteriormente (eliminado)
+            // Verificar si fue retirado anteriormente
             $usuarioRetirado = Inscritos::withTrashed()
-                ->where('estudiante_id', auth()->user()->id)
-                ->where('cursos_id', $id)
+                ->where('estudiante_id', $userId)
+                ->where('cursos_id', $curso->id)
                 ->whereNotNull('deleted_at')
                 ->orderBy('deleted_at', 'desc')
                 ->first();
@@ -69,10 +68,10 @@ class MenuController extends Controller
                 $estadoInscripcion = 'retirado';
             }
 
-            // Verificar si ya pagó este curso anteriormente (incluso si fue desinscrito)
+            // Verificar si ya pagó
             if ($curso->precio > 0) {
-                $pagoAnterior = Aportes::where('estudiante_id', Auth::id())
-                    ->where('cursos_id', $id)
+                $pagoAnterior = Aportes::where('estudiante_id', $userId)
+                    ->where('cursos_id', $curso->id)
                     ->where('monto_pagado', '>=', $curso->precio)
                     ->first();
 
@@ -80,7 +79,10 @@ class MenuController extends Controller
             }
 
             // Verificar calificación del usuario
-            $calificacionUsuario = $curso->calificaciones->where('user_id', Auth::id())->first();
+            $calificacionUsuario = $curso->calificaciones
+                ->where('user_id', $userId)
+                ->first();
+
             $usuarioCalifico = $calificacionUsuario !== null;
         }
 
@@ -101,12 +103,6 @@ class MenuController extends Controller
             'metodosPago' => $metodosPago,
         ]);
     }
-
-
-
-
-
-
     public function home()
     {
         $currentDate = Carbon::now();
@@ -116,7 +112,7 @@ class MenuController extends Controller
             ->where('estado', 'Activo')
             ->where('visibilidad', 'Público')
             ->get();
-        
+
         $categorias = Categoria::whereNull('deleted_at')->get();
 
 
@@ -128,12 +124,9 @@ class MenuController extends Controller
             ->get();
 
         return view('landing')->with('congresos', $congresos)
-                                    ->with('cursos', $cursos)
-                                    ->with('categorias', $categorias);
+            ->with('cursos', $cursos)
+            ->with('categorias', $categorias);
     }
-
-
-
     public function index()
     {
         $totalCursos = Cursos::whereNull('deleted_at')->count();
@@ -171,8 +164,6 @@ class MenuController extends Controller
             'totalInscritos',
         ))->with('metodosPago', $metodosPago);
     }
-
-
     public function ListaDeCursos()
     {
 
@@ -189,7 +180,7 @@ class MenuController extends Controller
         return view('Administrador.ListadeCursosEliminados')->with('cursos', $cursos);
     }
 
-     public function lista(Request $request)
+    public function lista(Request $request)
     {
         // 1. Validación básica de los parámetros de entrada
         $validated = $request->validate([
@@ -324,9 +315,6 @@ class MenuController extends Controller
         ]);
     }
 
-
-
-
     public function ListaDocentes(Request $request)
     {
         $search = $request->input('search');
@@ -354,7 +342,6 @@ class MenuController extends Controller
         return view('Administrador.ListadeAportes')->with('aportes', $aportes);
     }
 
-
     public function ListaEstudiantes(Request $request)
     {
         $search = $request->input('search');
@@ -379,8 +366,6 @@ class MenuController extends Controller
         return view('Administrador.ListadeEstudiantesEliminados')->with('estudiantes', $estudiantes);
     }
 
-
-
     public function storeDIndex()
     {
         return view('Administrador.CrearDocente');
@@ -393,8 +378,6 @@ class MenuController extends Controller
     {
         return view('Administrador.CrearEstudiante');
     }
-
-
     public function ListaCursos()
     {
 
@@ -561,7 +544,6 @@ class MenuController extends Controller
         })->filter()->values()->toArray(); // Filtrar valores nulos
     }
 
-    // Método para obtener los horarios formateados del curso
     private function obtenerHorariosCurso($curso)
     {
         if (!$curso || !$curso->horarios) {
@@ -604,7 +586,6 @@ class MenuController extends Controller
         return compact('total', 'entregadas', 'pendientes', 'proximasVencer');
     }
 
-    // API para obtener eventos vía AJAX
     public function obtenerEventos(Request $request)
     {
         $fechaInicio = $request->get('start');
@@ -623,9 +604,6 @@ class MenuController extends Controller
         return view('Docente.analitics')->with('cursos2', $cursos2);
     }
 
-    public function quizz()
-    {
 
-        return view('quizzprueba');
-    }
+
 }

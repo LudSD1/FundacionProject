@@ -1,146 +1,102 @@
-@extends('layoutlogin')
+@section('titulo')
+    Restablecer Contraseña
+@endsection
 
-@section('titulo', 'Restablecer Contraseña')
+@section('hero')
+    <section id="hero" class="d-flex align-items-center justify-content-center" style="background-image: url('{{ asset('assets/img/bg2.png') }}'); background-size: cover;">
+        <div class="login-container">
+            <div class="login-card">
+                <h3 class="text-center mb-4">Cambiar Contraseña</h3>
 
-@section('content')
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-lg bg-white bg-opacity-10 backdrop-blur-sm">
-                <div class="card-body p-4 p-md-5">
-                    <!-- Logo y Título -->
-                    <div class="text-center mb-4">
-                        <img src="{{ asset('assets/img/Acceder.png') }}" alt="Logo" class="mb-3" height="60">
-                        <h4 class="text-white fw-bold">Cambiar Contraseña</h4>
-                        <p class="text-white">Ingresa tu nueva contraseña para continuar</p>
+                <form method="POST" action="{{ route('password.update') }}">
+                    @csrf
+                    <input type="hidden" name="token" value="{{ $token }}">
+
+                    <!-- Email (oculto) -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Correo electrónico</label>
+                        <input type="email" class="form-control" id="email" name="email"
+                            value="{{ $email ?? old('email') }}" readonly>
                     </div>
 
-                    <!-- Formulario -->
-                    <form method="POST" action="{{ route('password.update') }}" class="needs-validation" novalidate>
-                        @csrf
-                        <input type="hidden" name="token" value="{{ $token }}">
-
-                        <!-- Email (oculto) -->
-                        <div class="form-floating mb-4">
-                            <div class="input-group">
-                                <span class="input-group-text rounded-start-4 bg-white border-end-0">
-                                    <i class="fa fa-envelope text-primary"></i>
-                                </span>
-                                <input type="email"
-                                    class="form-control border-start-0 rounded-end-4 ps-0 bg-light @error('email') is-invalid @enderror"
-                                    id="email"
-                                    name="email"
-                                    value="{{ $email ?? old('email') }}"
-                                    readonly>
-                                @error('email')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <!-- Nueva Contraseña -->
-                        <div class="form-floating mb-4">
-                            <div class="input-group">
-                                <span class="input-group-text rounded-start-4 bg-white border-end-0">
-                                    <i class="fa fa-lock text-primary"></i>
-                                </span>
-                                <input type="password"
-                                    class="form-control border-start-0 @error('password') is-invalid @enderror"
-                                    id="password"
-                                    name="password"
-                                    placeholder="Nueva Contraseña"
-                                    required
-                                    minlength="8">
-                                <button class="btn btn-light border rounded-end-4 toggle-password"
-                                    type="button"
-                                    data-target="password">
-                                    <i class="fa fa-eye"></i>
-                                </button>
-                                @error('password')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="form-text text-white">
-                                <i class="fa fa-info-circle me-1"></i>Mínimo 8 caracteres
-                            </div>
-                        </div>
-
-                        <!-- Confirmar Contraseña -->
-                        <div class="form-floating mb-4">
-                            <div class="input-group">
-                                <span class="input-group-text rounded-start-4 bg-white border-end-0">
-                                    <i class="fa fa-lock text-primary"></i>
-                                </span>
-                                <input type="password"
-                                    class="form-control border-start-0"
-                                    id="password_confirmation"
-                                    name="password_confirmation"
-                                    placeholder="Confirmar Contraseña"
-                                    required>
-                                <button class="btn btn-light border rounded-end-4 toggle-password"
-                                    type="button"
-                                    data-target="password_confirmation">
-                                    <i class="fa fa-eye"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Botón -->
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg rounded-4 py-3">
-                                <i class="fa fa-key me-2"></i>Cambiar Contraseña
+                    <!-- Nueva Contraseña -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Nueva Contraseña</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="password" name="password"
+                                required minlength="8">
+                            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                <i class="bi bi-eye"></i>
                             </button>
-                            <a href="{{ route('login') }}" class="btn btn-link text-white text-decoration-none">
-                                <i class="fa fa-arrow-left me-2"></i>Volver al inicio de sesión
-                            </a>
                         </div>
-                    </form>
+                        <div class="form-text">
+                            <i class="bi bi-info-circle me-1"></i>Mínimo 8 caracteres
+                        </div>
+                    </div>
+
+                    <!-- Confirmar Contraseña -->
+                    <div class="mb-3">
+                        <label for="password_confirmation" class="form-label">Confirmar Contraseña</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="password_confirmation"
+                                name="password_confirmation" required>
+                            <button class="btn btn-outline-secondary" type="button" id="togglePasswordConfirmation">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 btn-login">Cambiar Contraseña</button>
+                </form>
+
+                <div class="text-center mt-4">
+                    <a href="{{ route('login') }}" class="text-decoration-none">
+                        <i class="bi bi-arrow-left me-1"></i>Volver al inicio de sesión
+                    </a>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-@endsection
+    </section>
+@include('layoutlanding')
 
-@push('scripts')
+<!-- Script para cambiar la visibilidad de la contraseña -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Password visibility toggle
-    document.querySelectorAll('.toggle-password').forEach(button => {
-        button.addEventListener('click', function() {
-            const targetId = this.getAttribute('data-target');
-            const input = document.getElementById(targetId);
-            const icon = this.querySelector('i');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Obtener elementos
+        const togglePassword = document.getElementById('togglePassword');
+        const togglePasswordConfirmation = document.getElementById('togglePasswordConfirmation');
+        const passwordField = document.getElementById('password');
+        const passwordConfirmationField = document.getElementById('password_confirmation');
 
-            const type = input.type === 'password' ? 'text' : 'password';
-            input.type = type;
-
-            icon.classList.toggle('fa-eye');
-            icon.classList.toggle('fa-eye-slash');
-        });
-    });
-
-    // Form validation
-    const form = document.querySelector('form');
-    form.addEventListener('submit', function(event) {
-        if (!form.checkValidity()) {
-            event.preventDefault();
-            event.stopPropagation();
+        // Añadir evento de clic al botón de contraseña
+        if (togglePassword) {
+            togglePassword.addEventListener('click', function() {
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+                const icon = type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+                this.innerHTML = `<i class="${icon}"></i>`;
+            });
         }
-        form.classList.add('was-validated');
-    });
 
-    // Password match validation
-    const password = document.getElementById('password');
-    const confirmation = document.getElementById('password_confirmation');
+        // Añadir evento de clic al botón de confirmación de contraseña
+        if (togglePasswordConfirmation) {
+            togglePasswordConfirmation.addEventListener('click', function() {
+                const type = passwordConfirmationField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordConfirmationField.setAttribute('type', type);
+                const icon = type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+                this.innerHTML = `<i class="${icon}"></i>`;
+            });
+        }
 
-    confirmation.addEventListener('input', function() {
-        if (this.value !== password.value) {
-            this.setCustomValidity('Las contraseñas no coinciden');
-        } else {
-            this.setCustomValidity('');
+        // Password match validation
+        if (passwordConfirmationField) {
+            passwordConfirmationField.addEventListener('input', function() {
+                if (this.value !== passwordField.value) {
+                    this.setCustomValidity('Las contraseñas no coinciden');
+                } else {
+                    this.setCustomValidity('');
+                }
+            });
         }
     });
-});
 </script>
-@endpush

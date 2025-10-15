@@ -40,95 +40,7 @@
 
 <body>
 
-        <header id="header" class="fixed-top header-transparent">
-            <div class="header-top py-2">
-                <div class="container d-flex align-items-center justify-content-between">
-                    <div class="logo-container d-flex align-items-center gap-2">
-                        <a href="{{ route('home') }}">
-                            <img src="{{ asset('assets/img/Acceder.png') }}" alt="Acceder" style="height: 35px;">
-                        </a>
-                        <form action="" method="GET" class="d-flex">
-                            <input type="text" name="q" placeholder="Buscar..." class="form-control rounded">
-                            <button type="submit" class="btn btn-primary rounded ms-2">
-                                <i class="bi bi-search"></i>
-                            </button>
-                        </form>
-                    </div>
-
-                    <nav id="navbar" class="navbar">
-                        <ul class="d-flex align-items-center mb-0">
-                            @auth
-                                <li><a class="getstarted scrollto" href="{{ route('Inicio') }}">Mi aprendizaje</a></li>
-                            @else
-                                <li><a class="getstarted scrollto" href="{{ route('login.signin') }}">Iniciar Sesión</a>
-                                </li>
-                                <li><a class="getstarted scrollto" href="{{ route('signin') }}">Registrarse</a></li>
-                            @endauth
-                        </ul>
-
-                        <div class="right d-none d-md-block ms-4">
-                            <img src="{{ asset('assets/img/logof.png') }}" alt="Logo" class="img-fluid"
-                                style="height: 55px;">
-                        </div>
-                        <i class="bi bi-list mobile-nav-toggle"></i>
-                    </nav>
-                </div>
-            </div>
-
-            <hr class="my-0">
-
-            <!-- 🔽 CATEGORÍAS PRINCIPALES (CARRUSEL) -->
-            {{-- <div class="header-bottom bg-white py-2 shadow-sm position-relative">
-                <div id="categoriasCarousel" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        @foreach ($categorias->where('parent_id', null)->chunk(5) as $index => $chunk)
-                            <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-                                <div class="d-flex justify-content-center flex-wrap gap-2 py-2">
-                                    @foreach ($chunk as $categoria)
-                                        @if ($categoria->children->count() > 0)
-                                            <!-- Botón con dropdown -->
-                                            <div class="categoria-dropdown position-relative">
-                                                <button class="btn btn-outline-primary rounded categoria-btn"
-                                                    data-id="{{ $categoria->id }}">
-                                                    {{ $categoria->name }}
-                                                </button>
-
-                                                <!-- Menú dropdown oculto por defecto -->
-                                                <div class="categoria-menu shadow" id="menu-{{ $categoria->id }}">
-                                                    @foreach ($categoria->children as $child)
-                                                        <a href=""
-                                                            class="dropdown-item">
-                                                            {{ $child->name }}
-                                                        </a>
-                                                    @endforeach
-                                                </div>
-                                            </div>
-                                        @else
-                                             <a href=""
-                                                class="btn btn-outline-primary rounded">
-                                                {{ $categoria->name }}
-                                            </a>
-                                        @endif
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-
-                    <!-- Controles -->
-                    <button class="carousel-control-prev" type="button" data-bs-target="#categoriasCarousel"
-                        data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Anterior</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#categoriasCarousel"
-                        data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Siguiente</span>
-                    </button>
-                </div>
-            </div> --}}
-        </header>
+    @include('components.headerlanding')
 
     @yield('hero')
     @yield('main')
@@ -312,6 +224,42 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Mejorar la transición del header con el scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const header = document.getElementById('header');
+            let lastScrollTop = 0;
+            let ticking = false;
+
+            function updateHeader() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+                if (scrollTop > 100) {
+                    header.classList.add('header-scrolled');
+                    header.classList.remove('header-transparent');
+                } else {
+                    header.classList.add('header-transparent');
+                    header.classList.remove('header-scrolled');
+                }
+
+                lastScrollTop = scrollTop;
+                ticking = false;
+            }
+
+            function requestTick() {
+                if (!ticking) {
+                    requestAnimationFrame(updateHeader);
+                    ticking = true;
+                }
+            }
+
+            window.addEventListener('scroll', requestTick);
+
+            // Inicializar el estado del header
+            updateHeader();
+        });
+    </script>
 
     <script>
         // Este código muestra una alerta de error con SweetAlert
