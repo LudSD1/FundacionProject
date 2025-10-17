@@ -4,6 +4,7 @@
 /public/storage
 /storage/*.key
 /vendor
+WARP.md
 .env
 .env.backup
 .env.production
