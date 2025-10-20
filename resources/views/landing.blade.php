@@ -9,11 +9,14 @@
                 <div class="col-lg-6 d-lg-flex flex-lg-column justify-content-center align-items-stretch pt-5 pt-lg-0 order-2 order-lg-1"
                     data-aos="fade-up">
                     <div>
-                        <h1 class="fw-bold">"Aprende a tu ritmo, donde quieras y cuando quieras. ¡Tu futuro comienza
-                            aquí!"</h1>
-                        {{-- <h2>Lorem ipsum dolor sit amet, tota senserit percipitur ius ut, usu et fastidii forensibus voluptatibus. His ei nihil feugait</h2> --}}
-                        <a href="{{ route('lista.cursos.congresos') }}" class="download-btn"><i class="bi bi-collection"></i>
-                            Ir a la lista de Cursos</a>
+                        <h1 class="fw-bold">Transforma tu futuro con <span style="color: #FFA500;">APRENDO HOY</span></h1>
+                        <p class="lead mb-4" style="font-size: 1.3rem; color: rgba(255,255,255,0.9);">
+                            Descubre cursos especializados, eventos de desarrollo profesional y oportunidades de crecimiento personal.
+                            Aprende a tu ritmo, donde quieras y cuando quieras.
+                        </p>
+                        <a href="{{ route('lista.cursos.congresos') }}" class="download-btn">
+                            <i class="bi bi-book me-2"></i>Explorar Cursos y Eventos
+                        </a>
                     </div>
                 </div>
                 <div class="col-lg-6 d-lg-flex flex-lg-column align-items-stretch order-1 order-lg-2 hero-img"
@@ -33,10 +36,10 @@
             {{-- Buscador --}}
         <section id="congress-list" class="py-5 bg-light">
             <div class="container">
-                <div class="text-center mb-4">
-                    <h2 class="fw-bold">Últimos Eventos</h2>
-                    <p class="text-muted">Explora los eventos próximos y regístrate para participar con certificación
-                        gratuita.</p>
+                <div class="text-center mb-5">
+                    <h2 class="fw-bold">🎯 Últimos Eventos y Congresos</h2>
+                    <p class="text-muted">Explora nuestros eventos especializados y regístrate para participar con certificación gratuita.
+                        Conecta con expertos y amplía tu red profesional.</p>
                 </div>
 
                 @if ($congresos->count())
@@ -106,9 +109,10 @@
 
         <section id="cursos" class="py-5 bg-white">
             <div class="container">
-                <div class="text-center mb-4">
-                    <h2 class="fw-bold">Últimos Cursos</h2>
-                    <p class="text-muted">Descubre tu potencial, aprende online.</p>
+                <div class="text-center mb-5">
+                    <h2 class="fw-bold">📚 Últimos Cursos Online</h2>
+                    <p class="text-muted">Descubre tu potencial con nuestros cursos especializados. Aprende online,
+                        obtén certificaciones y desarrolla habilidades que marquen la diferencia en tu carrera.</p>
                 </div>
 
                 @if ($cursos->count())
@@ -179,7 +183,7 @@
         <section id="features" class="features">
             <div class="container">
                 <div class="section-title">
-                    <h2>Sistema de Cursos</h2>
+                    <h2>🚀 ¿Por qué elegir APRENDO HOY?</h2>
                     <p>Nuestro sistema de cursos está diseñado para satisfacer tus necesidades educativas, ofreciendo
                         una experiencia de aprendizaje única y accesible para todos. Con características avanzadas y un
                         enfoque en la interactividad y la seguridad, estamos aquí para ayudarte a alcanzar tus metas
@@ -192,37 +196,37 @@
                             <div class="row">
                                 <div class="col-md-6 icon-box" data-aos="fade-up">
                                     <i class="bx bx-receipt"></i>
-                                    <h4>Evaluativo</h4>
+                                    <h4>📊 Evaluación Personalizada</h4>
                                     <p>Proporciona una evaluación detallada y personalizada para cada estudiante,
                                         ayudándolos a comprender mejor sus fortalezas y áreas de mejora.</p>
                                 </div>
                                 <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="100">
                                     <i class="bx bx-cube-alt"></i>
-                                    <h4>Interfaz</h4>
+                                    <h4>🎨 Interfaz Intuitiva</h4>
                                     <p>Ofrece una interfaz intuitiva y fácil de usar que facilita la navegación y el
                                         acceso a todos los recursos educativos disponibles.</p>
                                 </div>
                                 <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="200">
                                     <i class="bx bx-images"></i>
-                                    <h4>Recursos Educativos</h4>
+                                    <h4>📚 Recursos Educativos</h4>
                                     <p>Accede a una amplia variedad de recursos educativos, incluyendo videos, lecturas,
                                         y ejercicios prácticos diseñados por expertos en la materia.</p>
                                 </div>
                                 <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="300">
                                     <i class="bx bx-shield"></i>
-                                    <h4>Seguridad</h4>
+                                    <h4>🔒 Máxima Seguridad</h4>
                                     <p>Garantizamos la máxima seguridad de tus datos personales y académicos, utilizando
                                         las últimas tecnologías en cifrado y protección de información.</p>
                                 </div>
                                 <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="400">
                                     <i class="bx bx-atom"></i>
-                                    <h4>Interactividad</h4>
+                                    <h4>🤝 Aprendizaje Interactivo</h4>
                                     <p>Fomenta la interactividad a través de foros de discusión, sesiones en vivo, y
                                         actividades colaborativas que enriquecen el proceso de aprendizaje.</p>
                                 </div>
                                 <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="500">
                                     <i class="bx bx-id-card"></i>
-                                    <h4>Acceso a cursos</h4>
+                                    <h4>🌐 Acceso Ilimitado</h4>
                                     <p>Disfruta de acceso ilimitado a una vasta selección de cursos, disponibles en
                                         cualquier momento y desde cualquier dispositivo.</p>
                                 </div>
