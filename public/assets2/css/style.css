@@ -22,6 +22,11 @@ body {
     --color-accent4: #2f89a8;
     --color-accent5: #145DA0;
     --color-accent6: #2A81C2;
+    --orange-accent: #FFA500;
+    --gradient-primary: linear-gradient(135deg, #1a4789 0%, #055C9D 100%);
+    --gradient-secondary: linear-gradient(135deg, #39a6cb 0%, #63becf 100%);
+    --gradient-accent: linear-gradient(135deg, #2197BD 0%, #2A81C2 100%);
+    --gradient-orange: linear-gradient(135deg, #FFA500 0%, #ff8c00 100%);
 }
 
 
@@ -89,18 +94,6 @@ h6 {
     }
 }
 
-/*--------------------------------------------------------------
-# Header
---------------------------------------------------------------*/
-#header {
-    transition: all 0.3s ease-in-out;
-    z-index: 997;
-    padding: 15px 0;
-    background: linear-gradient(145deg, #fff 58%, #fff 65%, #145DA0 53%);
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-}
-
-
 .btn-primary {
     --bs-btn-color: #fff;
     --bs-btn-bg: #145DA0;
@@ -118,26 +111,58 @@ h6 {
     --bs-btn-disabled-border-color: #0d6efd;
 }
 
-#header.header-transparent {
-    background: linear-gradient(145deg, #fff 58%, #fff 65%, #145DA0 53%);
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+/*/*--------------------------------------------------------------
+# Header
+--------------------------------------------------------------*/
+#header {
     transition: all 0.3s ease-in-out;
+    z-index: 997;
+    padding: 0;
+    background: #fff;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    min-height: 80px;
 }
 
-/* Logo con fondo blanco en hero */
-#header.header-transparent .right {
-    background: #145DA0;
-    border-radius: 8px;
-    padding: 5px 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+/* Diagonal principal */
+#header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(145deg, transparent 50%, #1a4789 50%);
+    z-index: 0;
+    transition: all 0.3s ease-in-out;
+    pointer-events: none;
+    opacity: 1;
+}
+
+/* Asegurar que el contenido esté encima */
+#header > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Header transparente */
+#header.header-transparent {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+#header.header-transparent .header-top {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
 }
 
 #header.header-transparent .right img {
     filter: none;
-    transition: all 0.3s ease-in-out;
 }
 
-/* Botones normales en hero */
+/* Botones en hero */
 #header.header-transparent .navbar .getstarted {
     background: var(--color-accent6);
     color: #fff;
@@ -149,17 +174,28 @@ h6 {
     color: #fff;
 }
 
+/* Header con scroll */
 #header.header-scrolled {
-    background: linear-gradient(145deg, #fff 58%, #fff 65%, #145DA0 53%);
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease-in-out;
+    background: #fff;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
 }
 
-/* Logo con fondo blanco en la diagonal */
+#header.header-scrolled .header-top {
+    background: #fff;
+}
+
+/* Diagonal más visible al hacer scroll */
+#header.header-scrolled::before {
+    opacity: 1;
+    filter: drop-shadow(0 2px 10px rgba(26, 71, 137, 0.3));
+}
+
+/* Logo con fondo al hacer scroll */
 #header.header-scrolled .right {
     position: relative;
     z-index: 2;
-    background: #145DA0;;
+    background: #145DA0;
     border-radius: 8px;
     padding: 5px 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -167,7 +203,6 @@ h6 {
 
 #header.header-scrolled .right img {
     filter: none;
-    transition: all 0.3s ease-in-out;
 }
 
 /* Carrusel de categorías */
@@ -190,13 +225,15 @@ h6 {
     filter: invert(30%) sepia(90%) saturate(500%) hue-rotate(190deg);
 }
 
-
+/* Logo */
 #header .logo h1 {
     font-size: 30px;
     margin: 0;
     line-height: 1;
     font-weight: 400;
     letter-spacing: 2px;
+    position: relative;
+    z-index: 2;
 }
 
 #header .logo h1 a,
@@ -246,6 +283,8 @@ h6 {
 */
 .navbar {
     padding: 0;
+    position: relative;
+    z-index: 2;
 }
 
 .navbar ul {
@@ -1815,15 +1854,10 @@ section {
 
 /* Asegurar que el header no se superponga con el contenido */
 body {
-    padding-top: 80px;
     scroll-behavior: smooth;
 }
 
-@media (max-width: 767.98px) {
-    body {
-        padding-top: 70px;
-    }
-}
+
 
 /* Transiciones suaves entre secciones */
 section {
@@ -1843,6 +1877,283 @@ html {
 /* Ajustar el padding del main para mejor transición */
 #main {
     transition: all 0.3s ease-in-out;
+}
+
+/* Asegurar que el contenedor del header esté por encima de la diagonal */
+#header .container {
+    position: relative;
+    z-index: 2;
+}
+
+/* ===== HEADER TOP ===== */
+.header-top {
+    padding: 15px 0;
+    position: relative;
+    z-index: 2;
+    background: transparent;
+}
+
+/*--------------------------------------------------------------
+# Header Landing Component Styles - APRENDO HOY
+--------------------------------------------------------------*/
+
+/* ===== LOGO APRENDO HOY ===== */
+.logo-aprendo {
+    font-family: 'Inter', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #FFA500;
+    text-decoration: none;
+    letter-spacing: -1px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.logo-aprendo:hover {
+    transform: scale(1.05);
+    color: #FFA500;
+    text-decoration: none;
+}
+
+.logo-h-special {
+    color: white;
+    background: #FFA500;
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin: 0 3px;
+    display: inline-block;
+    font-weight: 900;
+}
+
+/* ===== SECCIONES DEL HEADER DESKTOP ===== */
+.logo-section {
+    flex: 0 0 auto;
+    min-width: 200px;
+}
+
+.search-section {
+    flex: 1;
+    max-width: 400px;
+    margin: 0 2rem;
+}
+
+.nav-section {
+    flex: 0 0 auto;
+    min-width: 300px;
+    justify-content: flex-end;
+}
+
+/* ===== BUSCADOR ===== */
+.search-form {
+    width: 100%;
+}
+
+.search-input {
+    border: 2px solid #e9ecef;
+    border-radius: 25px 0 0 25px;
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.search-input:focus {
+    border-color: #FFA500;
+    box-shadow: 0 0 0 0.2rem rgba(255, 165, 0, 0.25);
+    background: white;
+}
+
+.search-btn {
+    border-radius: 0 25px 25px 0;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #FFA500, #ff8c00);
+    border: 2px solid #FFA500;
+    transition: all 0.3s ease;
+}
+
+.search-btn:hover {
+    background: linear-gradient(135deg, #ff8c00, #FFA500);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 165, 0, 0.3);
+}
+
+/* ===== NAVEGACIÓN MEJORADA ===== */
+#navbar ul {
+    gap: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.getstarted {
+    background: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+    white-space: nowrap;
+}
+
+.getstarted:hover {
+    background: #0056b3;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+}
+
+.getstarted:first-child {
+    background: #6c757d;
+}
+
+.getstarted:first-child:hover {
+    background: #545b62;
+}
+
+/* ===== LOGO FUNDACIÓN ===== */
+.logo-fundacion img {
+    height: 50px;
+    transition: transform 0.3s ease;
+}
+
+.logo-fundacion img:hover {
+    transform: scale(1.05);
+}
+
+/* ===== MÓVIL ===== */
+.logo-aprendo-mobile {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #FFA500;
+    text-decoration: none;
+    letter-spacing: -1px;
+    transition: all 0.3s ease;
+}
+
+.logo-h-special-mobile {
+    color: white;
+    background: #FFA500;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin: 0 2px;
+    display: inline-block;
+    font-weight: 900;
+    font-size: 0.9em;
+}
+
+.logo-fundacion-mobile img {
+    height: 40px;
+}
+
+/* ===== MENÚ MÓVIL ===== */
+.mobile-menu-content {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-search-input {
+    border: 2px solid #e9ecef;
+    border-radius: 20px 0 0 20px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    background: #f8f9fa;
+}
+
+.mobile-search-input:focus {
+    border-color: #FFA500;
+    box-shadow: 0 0 0 0.2rem rgba(255, 165, 0, 0.25);
+    background: white;
+}
+
+.mobile-search-btn {
+    border-radius: 0 20px 20px 0;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #FFA500, #ff8c00);
+    border: 2px solid #FFA500;
+}
+
+.mobile-nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mobile-nav-item {
+    margin-bottom: 0.5rem;
+}
+
+.mobile-nav-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: #f8f9fa;
+    color: #333;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.mobile-nav-link:hover {
+    background: #FFA500;
+    color: white;
+    transform: translateX(5px);
+}
+
+/* ===== RESPONSIVE PARA HEADER LANDING ===== */
+@media (max-width: 1200px) {
+    .search-section {
+        max-width: 300px;
+        margin: 0 1rem;
+    }
+    .nav-section {
+        min-width: 250px;
+    }
+}
+
+@media (max-width: 992px) {
+    .logo-aprendo {
+        font-size: 1.8rem;
+    }
+    .search-section {
+        max-width: 250px;
+        margin: 0 0.5rem;
+    }
+    .nav-section {
+        min-width: 200px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .header-top {
+        padding: 0.75rem 0;
+    }
+    .logo-aprendo-mobile {
+        font-size: 1.3rem;
+    }
+    .logo-fundacion-mobile img {
+        height: 35px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-aprendo-mobile {
+        font-size: 1.1rem;
+    }
+    .logo-h-special-mobile {
+        padding: 3px 6px;
+        font-size: 0.8em;
+    }
+    .mobile-menu-content {
+        padding: 1rem;
+    }
 }
 
 /* Mejorar la transición de las secciones */
@@ -1889,5 +2200,400 @@ html {
 
 #hero .download-btn {
     transition: all 0.3s ease-in-out;
+}
+
+/*--------------------------------------------------------------
+# Landing Page Styles - APRENDO HOY
+--------------------------------------------------------------*/
+
+/* ===== HERO SECTION MEJORADO ===== */
+#hero {
+    background: var(--gradient-primary);
+    color: white;
+    min-height: 80vh;
+    position: relative;
+    overflow: hidden;
+}
+
+#hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="rgba(255,255,255,0.05)" points="0,1000 1000,0 1000,1000"/></svg>');
+    background-size: cover;
+}
+
+#hero .container {
+    position: relative;
+    z-index: 2;
+}
+
+#hero h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 2rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    color: white !important;
+}
+
+#hero .download-btn {
+    background: var(--gradient-orange);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 165, 0, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#hero .download-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 165, 0, 0.4);
+    color: white;
+}
+
+#hero .hero-img img {
+    filter: drop-shadow(0 10px 30px rgba(0,0,0,0.3));
+    transition: transform 0.3s ease;
+}
+
+#hero .hero-img img:hover {
+    transform: scale(1.05);
+}
+
+/* ===== SECCIONES CON FONDO ===== */
+#congress-list {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    position: relative;
+}
+
+#congress-list::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+}
+
+#cursos {
+    background: white;
+    position: relative;
+}
+
+#cursos::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-secondary);
+}
+
+/* ===== TÍTULOS DE SECCIONES ===== */
+#congress-list h2,
+#cursos h2 {
+    color: var(--color-primary);
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+#congress-list h2::after,
+#cursos h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: var(--gradient-orange);
+    border-radius: 2px;
+}
+
+#congress-list .text-muted,
+#cursos .text-muted {
+    color: var(--color-accent4) !important;
+    font-size: 1.1rem;
+}
+
+/* ===== TARJETAS DE EVENTOS Y CURSOS ===== */
+.card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+.card-img-top {
+    transition: transform 0.3s ease;
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.card-title {
+    color: var(--color-primary);
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.card .btn-primary {
+    background: var(--gradient-primary);
+    border: none;
+    border-radius: 20px;
+    padding: 8px 20px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.card .btn-primary:hover {
+    background: var(--gradient-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(26, 71, 137, 0.3);
+}
+
+/* ===== CAROUSEL CONTROLS ===== */
+.carousel-control-prev,
+.carousel-control-next {
+    width: 50px;
+    height: 50px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-control-prev {
+    left: -25px;
+}
+
+.carousel-control-next {
+    right: -25px;
+}
+
+/* ===== SECCIÓN DE CARACTERÍSTICAS ===== */
+#features {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    position: relative;
+}
+
+#features::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-accent);
+}
+
+#features .section-title h2 {
+    color: var(--color-primary);
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+}
+
+#features .section-title p {
+    color: var(--color-accent4);
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.icon-box {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.icon-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+.icon-box i {
+    font-size: 3rem;
+    color: var(--color-accent3);
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.icon-box h4 {
+    color: var(--color-primary);
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.icon-box p {
+    color: var(--color-accent4);
+    line-height: 1.6;
+}
+
+/* ===== SECCIÓN DE DETALLES ===== */
+#details {
+    background: white;
+}
+
+#details h3 {
+    color: var(--color-primary);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+#details .fst-italic {
+    color: var(--color-accent4);
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+#details ul li {
+    color: var(--color-accent4);
+    margin-bottom: 0.5rem;
+}
+
+#details ul li i {
+    color: var(--color-accent3);
+    margin-right: 0.5rem;
+}
+
+/* ===== SECCIÓN DE CONTACTO ===== */
+#contact {
+    background: var(--gradient-primary);
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+#contact::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="rgba(255,255,255,0.05)" points="0,0 1000,1000 0,1000"/></svg>');
+    background-size: cover;
+}
+
+#contact .container {
+    position: relative;
+    z-index: 2;
+}
+
+#contact .section-title h2 {
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 2rem;
+}
+
+#contact .info {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+}
+
+#contact .info:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-5px);
+}
+
+#contact .info i {
+    font-size: 2.5rem;
+    color: var(--orange-accent);
+    margin-bottom: 1rem;
+    display: block;
+}
+
+#contact .info h4 {
+    color: white;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+#contact .info p {
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ===== RESPONSIVE PARA LANDING ===== */
+@media (max-width: 768px) {
+    #hero h1 {
+        font-size: 2.2rem;
+    }
+
+    #congress-list h2,
+    #cursos h2,
+    #features .section-title h2,
+    #contact .section-title h2 {
+        font-size: 2rem;
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+        display: none;
+    }
+
+    .icon-box {
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    #contact .info {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #hero h1 {
+        font-size: 1.8rem;
+    }
+
+    #hero .download-btn {
+        padding: 12px 24px;
+        font-size: 1rem;
+    }
+
+    .card {
+        margin-bottom: 1rem;
+    }
 }
 
