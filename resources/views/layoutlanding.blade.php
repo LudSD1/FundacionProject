@@ -73,25 +73,12 @@
                             <li><i class="bx bx-chevron-right"></i> <a
                                     href="https://educarparalavida.org.bo/web/Proyectos-y-servicios.html">Servicios</a>
                             </li>
-                            {{-- <li><i class="bx bx-chevron-right"></i> <a href="#">Terms of service</a></li>
-                            <li><i class="bx bx-chevron-right"></i> <a href="#">Privacy policy</a></li> --}}
                         </ul>
                     </div>
 
-                    {{-- <div class="col-lg-3 col-md-6 footer-links">
-                        <h4>Our Services</h4>
-                        <ul>
-                            <li><i class="bx bx-chevron-right"></i> <a href="#">Web Design</a></li>
-                            <li><i class="bx bx-chevron-right"></i> <a href="#">Web Development</a></li>
-                            <li><i class="bx bx-chevron-right"></i> <a href="#">Product Management</a></li>
-                            <li><i class="bx bx-chevron-right"></i> <a href="#">Marketing</a></li>
-                            <li><i class="bx bx-chevron-right"></i> <a href="#">Graphic Design</a></li>
-                        </ul>
-                    </div> --}}
 
                     <div class="col-lg-3 col-md-6 footer-links">
                         <h4>Nuestras Redes Sociales</h4>
-                        {{-- <p>Cras fermentum odio eu feugiat lide par naso tierra videa magna derita valies</p> --}}
                         <div class="social-links mt-3">
                             <a href="https://x.com/FUNDVIDA2" class="twitter"><i class="bx bxl-twitter"></i></a>
                             <a href="https://www.facebook.com/profile.php?id=100063510101095" class="facebook"><i

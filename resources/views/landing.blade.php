@@ -27,7 +27,7 @@
 
 
 
-@section('main')
+@section('main')  
 
     <main id="main">
             {{-- Buscador --}}
