@@ -19,6 +19,7 @@
     <link href="{{ asset('assets2/css/style.css') }}" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/driver.js@latest/dist/driver.js.iife.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@latest/dist/driver.css" />
+    
 </head>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -73,6 +74,7 @@
                             <li><i class="bx bx-chevron-right"></i> <a
                                     href="https://educarparalavida.org.bo/web/Proyectos-y-servicios.html">Servicios</a>
                             </li>
+
                             {{-- <li><i class="bx bx-chevron-right"></i> <a href="#">Terms of service</a></li>
                             <li><i class="bx bx-chevron-right"></i> <a href="#">Privacy policy</a></li> --}}
                         </ul>
