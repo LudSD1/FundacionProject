@@ -16,7 +16,7 @@
                             Aprende a tu ritmo, donde quieras y cuando quieras.
                         </p>
                         <a href="{{ route('lista.cursos.congresos') }}" class="download-btn">
-                            <i class="bi bi-book me-2"></i>Explorar Cursos y Eventos
+                           Explorar Cursos y Eventos
                         </a>
                     </div>
                 </div>

@@ -627,13 +627,13 @@ h6 {
     font-family: "Montserrat", sans-serif;
     font-weight: 500;
     font-size: 15px;
-    display: inline-block;
-    padding: 8px 24px 10px 46px;
+    display: inline-flex;
+    align-items: center;
+    padding: 9px 24px;
     border-radius: 3px;
     transition: 0.5s;
     color: #fff;
     background: #145DA0;
-    position: relative;
 }
 
 #hero .download-btn:hover {
@@ -1572,265 +1572,6 @@ section {
 }
 
 
-.login-container {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 500px;
-    padding: 15px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Contenedor más ancho para formulario de registro */
-.register-container {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 700px;
-    padding: 15px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.login-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: 12px; /* Reducido de 15px */
-    padding: 30px; /* Reducido de 40px */
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2),
-        0 0 30px rgba(20, 93, 160, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    animation: slideUp 0.6s ease-out;
-
-}
-
-.login-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25),
-        0 0 40px rgba(20, 93, 160, 0.15);
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.login-card h3 {
-    color: var(--color-primary);
-    font-weight: 700;
-    margin-bottom: 25px; /* Reducido de 30px */
-    font-size: 24px; /* Reducido de 28px */
-    position: relative;
-    padding-bottom: 12px; /* Reducido de 15px */
-}
-
-.login-card h3::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 3px; /* Reducido de 4px */
-    background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-    border-radius: 2px;
-}
-
-.form-label {
-    color: #555;
-    font-weight: 600;
-    margin-bottom: 8px;
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.form-control {
-    background: rgba(0, 0, 0, 0.03);
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 12px 15px;
-    font-size: 14px;
-    transition: all 0.3s ease;
-    color: #333;
-}
-
-.form-control:focus {
-    background: rgba(255, 255, 255, 0.8);
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 0.2rem rgba(20, 93, 160, 0.15);
-    color: #333;
-}
-
-.form-control::placeholder {
-    color: #999;
-}
-
-.input-group {
-    position: relative;
-}
-
-.input-group .btn {
-    border: 2px solid #e0e0e0;
-    border-left: none;
-    color: var(--color-primary);
-    background: rgba(0, 0, 0, 0.03);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    padding: 12px 15px;
-    border-radius: 0 8px 8px 0;
-}
-
-.input-group .btn:hover,
-.input-group .btn:focus {
-    background: var(--color-primary);
-    color: white;
-    border-color: var(--color-primary);
-}
-
-.forgot-password {
-    display: block;
-    text-align: right;
-    margin-bottom: 20px;
-}
-
-.forgot-password a {
-    color: var(--color-primary);
-    text-decoration: none;
-    font-size: 13px;
-    transition: all 0.3s ease;
-    font-weight: 500;
-}
-
-.forgot-password a:hover {
-    color: var(--color-secondary);
-    text-decoration: underline;
-}
-
-.btn-login {
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-    border: none;
-    padding: 10px 18px; /* Reducido de 12px 20px */
-    font-weight: 600; /* Reducido de 700 */
-    font-size: 14px; /* Reducido de 15px */
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(20, 93, 160, 0.3);
-    border-radius: 8px;
-    margin-top: 10px;
-}
-
-.btn-login:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(20, 93, 160, 0.4);
-    color: white;
-}
-
-.btn-login:active {
-    transform: translateY(0);
-}
-
-.alert {
-    border-radius: 8px;
-    border: none;
-    background: rgba(20, 93, 160, 0.1);
-    color: var(--color-primary);
-    margin-bottom: 20px;
-    padding: 15px;
-    font-size: 14px;
-}
-
-.alert strong {
-    color: var(--color-primary);
-}
-
-.alert .btn-primary {
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-    border: none;
-    margin-top: 10px;
-    font-size: 12px;
-    padding: 6px 16px;
-    border-radius: 6px;
-}
-
-.alert .btn-primary:hover {
-    background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary) 100%);
-}
-
-/* Responsivo */
-@media (max-width: 576px) {
-    .login-card {
-        padding: 25px 15px; /* Reducido de 30px 20px */
-    }
-
-    .login-card h3 {
-        font-size: 22px; /* Reducido de 24px */
-        margin-bottom: 20px; /* Reducido de 25px */
-    }
-
-    .login-container {
-        padding: 10px; /* Reducido de 15px */
-    }
-}
-
-/* Mejorar centrado en diferentes pantallas */
-@media (max-width: 768px) {
-    .login-container {
-        max-width: 90%;
-        padding: 20px;
-    }
-
-    .register-container {
-        max-width: 95%;
-        padding: 20px;
-    }
-}
-
-@media (max-width: 480px) {
-    .login-container {
-        max-width: 95%;
-        padding: 15px;
-    }
-
-    .register-container {
-        max-width: 98%;
-        padding: 15px;
-    }
-
-    .login-card {
-        padding: 20px 15px;
-    }
-}
-
-/* Estilos específicos para formulario de registro */
-@media (max-width: 768px) {
-    .register-container .row .col-md-6,
-    .register-container .row .col-md-4 {
-        margin-bottom: 1rem;
-    }
-}
-
-@media (max-width: 576px) {
-    .register-container .row .col-md-6,
-    .register-container .row .col-md-4 {
-        flex: 0 0 100%;
-        max-width: 100%;
-    }
-}
 
 /*--------------------------------------------------------------
 # Header Responsive Styles
@@ -2983,3 +2724,161 @@ html {
         max-height: 50px;
     }
 }
+
+/* Sección de autenticación */
+.auth-wrapper {
+    min-height: 100vh;
+    position: relative;
+    padding: 80px 20px;
+}
+
+.auth-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+}
+
+
+.auth-card {
+    background: #ffffff;
+    border-radius: 25px;
+    padding: 60px 50px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    position: relative;
+    z-index: 1;
+    max-width: 900px; /* Aumentado para más espacio */
+    width: 100%;
+    margin: 0 auto;
+}
+
+.auth-card-header h2 {
+    color: #1a1a1a;
+    font-size: 2.5rem;
+}
+
+.auth-card-header p {
+    font-size: 1.1rem;
+}
+
+/* Inputs mejorados */
+.auth-form .input-group-text {
+    border: 1px solid #dee2e6;
+    padding: 20px 22px; /* Aumentado */
+    min-width: 55px; /* Añadido */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-form .form-control-lg,
+.auth-form .form-select-lg {
+    border: 1px solid #dee2e6;
+    padding: 20px 25px; /* Aumentado significativamente */
+    font-size: 1.1rem;
+    height: auto; /* Añadido */
+    line-height: 1.5; /* Añadido */
+}
+
+
+.auth-form .form-control:focus,
+.auth-form .form-select:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    border-color: #86b7fe;
+}
+
+.auth-form .form-label {
+    margin-bottom: 12px;
+    color: #2c3e50;
+}
+
+/* Botón de login */
+.btn-auth {
+    font-size: 1.2rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+    padding: 20px 30px; /* Añadido para más altura */
+}
+
+.btn-auth:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(13, 110, 253, 0.4);
+}
+
+/* Toggle password button */
+#togglePassword,
+#togglePasswordConfirmation {
+    padding: 20px 22px; /* Aumentado */
+    min-width: 55px; /* Añadido */
+}
+
+.auth-form .mb-4 {
+    margin-bottom: 2rem !important; /* Más espacio entre campos */
+}
+
+.auth-form .row.g-4 {
+    --bs-gutter-x: 1.5rem; /* Más espacio horizontal entre columnas */
+    --bs-gutter-y: 1.5rem; /* Más espacio vertical */
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+    .auth-card {
+        padding: 45px 35px;
+        max-width: 100%;
+    }
+    
+    .auth-card-header h2 {
+        font-size: 2rem;
+    }
+    
+    .auth-form .form-control-lg,
+    .auth-form .form-select-lg {
+        padding: 18px 20px;
+    }
+    
+    .auth-form .input-group-text,
+    #togglePassword,
+    #togglePasswordConfirmation {
+        padding: 18px 20px;
+        min-width: 50px;
+    }
+}
+
+@media (max-width: 576px) {
+    .auth-card {
+        padding: 35px 25px;
+    }
+    
+    .auth-card-header h2 {
+        font-size: 1.8rem;
+    }
+    
+    .auth-form .form-control-lg,
+    .auth-form .form-select-lg {
+        font-size: 1rem;
+        padding: 16px 18px;
+    }
+    
+    .btn-auth {
+        font-size: 1.1rem;
+        padding: 18px 25px !important;
+    }
+    
+    .auth-form .input-group-text,
+    #togglePassword,
+    #togglePasswordConfirmation {
+        padding: 16px 18px;
+        min-width: 48px;
+    }
+}
+
+
+
+
+
