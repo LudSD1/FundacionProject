@@ -19,6 +19,7 @@
     <link href="{{ asset('assets2/css/style.css') }}" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/driver.js@latest/dist/driver.js.iife.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@latest/dist/driver.css" />
+    
 </head>
 <script>
     document.addEventListener('DOMContentLoaded', function() {

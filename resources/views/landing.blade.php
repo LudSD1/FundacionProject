@@ -11,7 +11,8 @@
                     <div>
                         <h1 class="fw-bold">Transforma tu futuro con <span style="color: #FFA500;">APRENDO HOY</span></h1>
                         <p class="lead mb-4" style="font-size: 1.3rem; color: rgba(255,255,255,0.9);">
-                            Descubre cursos especializados, eventos de desarrollo profesional y oportunidades de crecimiento personal.
+                            Descubre cursos especializados, eventos de desarrollo profesional y oportunidades de crecimiento
+                            personal.
                             Aprende a tu ritmo, donde quieras y cuando quieras.
                         </p>
                         <a href="{{ route('lista.cursos.congresos') }}" class="download-btn">
@@ -33,12 +34,13 @@
 @section('main')  
 
     <main id="main">
-            {{-- Buscador --}}
+        {{-- Buscador --}}
         <section id="congress-list" class="py-5 bg-light">
             <div class="container">
                 <div class="text-center mb-5">
                     <h2 class="fw-bold">🎯 Últimos Eventos y Congresos</h2>
-                    <p class="text-muted">Explora nuestros eventos especializados y regístrate para participar con certificación gratuita.
+                    <p class="text-muted">Explora nuestros eventos especializados y regístrate para participar con
+                        certificación gratuita.
                         Conecta con expertos y amplía tu red profesional.</p>
                 </div>
 
@@ -105,7 +107,7 @@
 
 
         <!-- Cursos Section -->
-            {{-- Buscador --}}
+        {{-- Buscador --}}
 
         <section id="cursos" class="py-5 bg-white">
             <div class="container">
@@ -178,116 +180,167 @@
 
 
 
-
-        <!-- App Features Section -->
         <section id="features" class="features">
             <div class="container">
                 <div class="section-title">
                     <h2>🚀 ¿Por qué elegir APRENDO HOY?</h2>
-                    <p>Nuestro sistema de cursos está diseñado para satisfacer tus necesidades educativas, ofreciendo
-                        una experiencia de aprendizaje única y accesible para todos. Con características avanzadas y un
-                        enfoque en la interactividad y la seguridad, estamos aquí para ayudarte a alcanzar tus metas
-                        académicas y profesionales.</p>
+                    <p>Descubre una plataforma educativa innovadora diseñada para tu éxito. Con tecnología avanzada,
+                        contenido de calidad y un enfoque centrado en el estudiante, transformamos tu experiencia de aprendizaje.</p>
                 </div>
 
-                <div class="row no-gutters">
-                    <div class="col-xl-7 d-flex align-items-stretch order-2 order-lg-1">
-                        <div class="content d-flex flex-column justify-content-center">
-                            <div class="row">
-                                <div class="col-md-6 icon-box" data-aos="fade-up">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 order-2 order-lg-1">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="icon-box" data-aos="fade-up">
                                     <i class="bx bx-receipt"></i>
                                     <h4>📊 Evaluación Personalizada</h4>
-                                    <p>Proporciona una evaluación detallada y personalizada para cada estudiante,
-                                        ayudándolos a comprender mejor sus fortalezas y áreas de mejora.</p>
+                                    <p>Análisis detallado de tu progreso con recomendaciones personalizadas para optimizar tu aprendizaje.</p>
                                 </div>
-                                <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="100">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="icon-box" data-aos="fade-up" data-aos-delay="100">
                                     <i class="bx bx-cube-alt"></i>
                                     <h4>🎨 Interfaz Intuitiva</h4>
-                                    <p>Ofrece una interfaz intuitiva y fácil de usar que facilita la navegación y el
-                                        acceso a todos los recursos educativos disponibles.</p>
+                                    <p>Diseño moderno y fácil navegación que te permite acceder a todos los recursos sin complicaciones.</p>
                                 </div>
-                                <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="200">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="icon-box" data-aos="fade-up" data-aos-delay="200">
                                     <i class="bx bx-images"></i>
                                     <h4>📚 Recursos Educativos</h4>
-                                    <p>Accede a una amplia variedad de recursos educativos, incluyendo videos, lecturas,
-                                        y ejercicios prácticos diseñados por expertos en la materia.</p>
+                                    <p>Contenido multimedia de alta calidad: videos, lecturas y ejercicios prácticos creados por expertos.</p>
                                 </div>
-                                <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="300">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="icon-box" data-aos="fade-up" data-aos-delay="300">
                                     <i class="bx bx-shield"></i>
                                     <h4>🔒 Máxima Seguridad</h4>
-                                    <p>Garantizamos la máxima seguridad de tus datos personales y académicos, utilizando
-                                        las últimas tecnologías en cifrado y protección de información.</p>
+                                    <p>Protección avanzada de tus datos con tecnología de cifrado de última generación.</p>
                                 </div>
-                                <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="400">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="icon-box" data-aos="fade-up" data-aos-delay="400">
                                     <i class="bx bx-atom"></i>
                                     <h4>🤝 Aprendizaje Interactivo</h4>
-                                    <p>Fomenta la interactividad a través de foros de discusión, sesiones en vivo, y
-                                        actividades colaborativas que enriquecen el proceso de aprendizaje.</p>
+                                    <p>Foros, sesiones en vivo y actividades colaborativas que hacen del aprendizaje una experiencia dinámica.</p>
                                 </div>
-                                <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="500">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="icon-box" data-aos="fade-up" data-aos-delay="500">
                                     <i class="bx bx-id-card"></i>
                                     <h4>🌐 Acceso Ilimitado</h4>
-                                    <p>Disfruta de acceso ilimitado a una vasta selección de cursos, disponibles en
-                                        cualquier momento y desde cualquier dispositivo.</p>
+                                    <p>Estudia cuando y donde quieras con acceso completo a todos nuestros cursos desde cualquier dispositivo.</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="image col-xl-5 d-flex align-items-stretch justify-content-center order-1 order-lg-2"
-                        data-aos="fade-left" data-aos-delay="100">
-                        <img src="assets2/img/details-5.png" class="img-fluid" alt="Características" width="600px"
-                            height="auto">
+                    <div class="col-lg-6 order-1 order-lg-2 text-center">
+                        <div class="features-image" data-aos="fade-left" data-aos-delay="100">
+                            <img src="assets2/img/details-5.png" class="img-fluid" alt="Características" style="max-width: 100%; height: auto;">
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- App Features Section -->
+
         <!-- Details Section -->
         <section id="details" class="details">
             <div class="container">
-                <div class="row content">
-                    <div class="col-md-4" data-aos="fade-right">
-                        <img src="assets2/img/details-1.png" class="img-fluid" alt="Beneficios de los cursos">
+                <div class="row align-items-center mb-5">
+                    <div class="col-lg-6 order-2 order-lg-1">
+                        <div class="details-content" data-aos="fade-up">
+                            <h3>Obtén resultados beneficiosos con los cursos y talleres que se ofrecen.</h3>
+                            <p class="fst-italic">
+                                Nuestros cursos y congresos te brindan las herramientas y el conocimiento práctico que
+                                necesitas para alcanzar tus metas profesionales. Aprende de expertos en la industria y
+                                desarrolla habilidades.
+                            </p>
+                            <ul class="benefits-list">
+                                <li><i class="bi bi-check"></i> Certificación Internacional.</li>
+                                <li><i class="bi bi-check"></i> Pago accesible a través de aplicaciones.</li>
+                                <li><i class="bi bi-check"></i> Aprendizaje adecuado a tus necesidades.</li>
+                                <li><i class="bi bi-check"></i> Temáticas de impacto.</li>
+                            </ul>
+                            <p class="highlight-text">
+                                "Amplía tus conocimientos y habilidades con nuestra oferta integral de cursos y congresos.
+                                Los cursos te brindan una formación profunda y práctica en áreas específicas, mientras que
+                                los congresos te exponen a las últimas tendencias y
+                                te conectan con profesionales de tu sector. ¡Combina ambas experiencias y maximiza tu
+                                potencial de crecimiento!"
+                            </p>
+                        </div>
                     </div>
-                    <div class="col-md-8 pt-4" data-aos="fade-up">
-                        <h3>Obtén resultados beneficiosos con los cursos y talleres que se ofrecen.</h3>
-                        <p class="fst-italic">
-                            Nuestros cursos y congresos te brindan las herramientas y el conocimiento práctico que
-                            necesitas para alcanzar tus metas profesionales. Aprende de expertos en la industria y
-                            desarrolla habilidades.
-                        </p>
-                        <ul>
-                            <li><i class="bi bi-check"></i> Certificación Internacional.</li>
-                            <li><i class="bi bi-check"></i> Pago accesible a través de aplicaciones.</li>
-                            <li><i class="bi bi-check"></i> Aprendizaje adecuado a tus necesidades.</li>
-                            <li><i class="bi bi-check"></i> Temáticas de impacto.</li>
-                        </ul>
-                        <p>
-                            "Amplía tus conocimientos y habilidades con nuestra oferta integral de cursos y congresos.
-                            Los cursos te brindan una formación profunda y práctica en áreas específicas, mientras que
-                            los congresos te exponen a las últimas tendencias y
-                            te conectan con profesionales de tu sector. ¡Combina ambas experiencias y maximiza tu
-                            potencial de crecimiento!"
-                        </p>
+                    <div class="col-lg-6 order-1 order-lg-2 text-center">
+                        <div class="details-image" data-aos="fade-right">
+                            <img src="assets2/img/details-1.png" class="img-fluid" alt="Beneficios de los cursos">
+                        </div>
                     </div>
                 </div>
 
-                <div class="row content">
-                    <div class="col-md-4 order-1 order-md-2" data-aos="fade-left">
-                        <img src="assets2/img/details-2.png" class="img-fluid" alt="Beneficios adicionales">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 text-center">
+                        <div class="details-image" data-aos="fade-left">
+                            <img src="assets2/img/details-2.png" class="img-fluid" alt="Beneficios adicionales">
+                        </div>
                     </div>
-                    <div class="col-md-8 pt-5 order-2 order-md-1" data-aos="fade-up">
-                        <h3>Beneficios adicionales</h3>
-                        <p class="fst-italic">
-                            Participa en actividades colaborativas y discusiones en foros que fomentan la interactividad
-                            y el aprendizaje activo. Con acceso ilimitado a nuestros cursos, puedes estudiar cuando y
-                            donde quieras, adaptando tu educación a tu estilo de vida.
-                        </p>
-                        <p>
-                            Nuestro compromiso es ofrecerte una educación de calidad, con un soporte constante y
-                            recursos actualizados que te ayudarán a alcanzar tus metas académicas y profesionales. Únete
-                            a nuestra comunidad de estudiantes y descubre una nueva forma de aprender.
-                        </p>
+                    <div class="col-lg-6">
+                        <div class="details-content" data-aos="fade-up">
+                            <h3>Beneficios adicionales</h3>
+                            <p class="fst-italic">
+                                Participa en actividades colaborativas y discusiones en foros que fomentan la interactividad
+                                y el aprendizaje activo. Con acceso ilimitado a nuestros cursos, puedes estudiar cuando y
+                                donde quieras, adaptando tu educación a tu estilo de vida.
+                            </p>
+                            <p>
+                                Nuestro compromiso es ofrecerte una educación de calidad, con un soporte constante y
+                                recursos actualizados que te ayudarán a alcanzar tus metas académicas y profesionales. Únete
+                                a nuestra comunidad de estudiantes y descubre una nueva forma de aprender.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Collaborators Section -->
+        <section id="collaborators" class="collaborators">
+            <div class="container">
+                <div class="section-title">
+                    <h2>🤝 Nuestros Colaboradores</h2>
+                    <p>Instituciones y organizaciones que confían en nosotros para brindar educación de calidad</p>
+                </div>
+
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <div class="collaborators-grid">
+                            <div class="collaborator-item" data-aos="fade-up" data-aos-delay="100">
+                                <img src="https://cdn.jsdelivr.net/gh/LudSD1/aphcolaboradores@main/logos/logo1.png"
+                                     alt="Colaborador 1" class="img-fluid">
+                            </div>
+                            {{-- <div class="collaborator-item" data-aos="fade-up" data-aos-delay="200">
+                                <img src="https://cdn.jsdelivr.net/gh/LudSD1/aphcolaboradores@main/logos/logo2.png"
+                                     alt="Colaborador 2" class="img-fluid">
+                            </div>
+                            <div class="collaborator-item" data-aos="fade-up" data-aos-delay="300">
+                                <img src="https://cdn.jsdelivr.net/gh/LudSD1/aphcolaboradores@main/logos/logo3.png"
+                                     alt="Colaborador 3" class="img-fluid">
+                            </div>
+                            <div class="collaborator-item" data-aos="fade-up" data-aos-delay="400">
+                                <img src="https://cdn.jsdelivr.net/gh/LudSD1/aphcolaboradores@main/logos/logo4.png"
+                                     alt="Colaborador 4" class="img-fluid">
+                            </div>
+                            <div class="collaborator-item" data-aos="fade-up" data-aos-delay="500">
+                                <img src="https://cdn.jsdelivr.net/gh/LudSD1/aphcolaboradores@main/logos/logo5.png"
+                                     alt="Colaborador 5" class="img-fluid">
+                            </div>
+                            <div class="collaborator-item" data-aos="fade-up" data-aos-delay="600">
+                                <img src="https://cdn.jsdelivr.net/gh/LudSD1/aphcolaboradores@main/logos/logo6.png"
+                                     alt="Colaborador 6" class="img-fluid">
+                            </div> --}}
+                        </div>
                     </div>
                 </div>
             </div>
