@@ -9,7 +9,7 @@
     <div class="auth-overlay"></div>
     <div class="container position-relative">
         <div class="row justify-content-center">
-            <div class="col-12 col-lg-9 col-xl-8">
+            <div class="col-12 col-lg-10 col-xl-9">
                 <div class="auth-card">
                     @guest
                         <div class="auth-card-header text-center mb-5">
@@ -38,8 +38,8 @@
                                     <span class="input-group-text bg-light border-end-0">
                                         <i class="bi bi-envelope fs-5"></i>
                                     </span>
-                                    <input type="email" class="form-control form-control-lg border-start-0 ps-0" 
-                                           id="email" name="email" value="{{ old('email') }}" 
+                                    <input type="email" class="form-control form-control-lg border-start-0 ps-0"
+                                           id="email" name="email" value="{{ old('email') }}"
                                            placeholder="tu@correo.com" required>
                                 </div>
                             </div>
@@ -52,7 +52,7 @@
                                         <span class="input-group-text bg-light border-end-0">
                                             <i class="bi bi-lock fs-5"></i>
                                         </span>
-                                        <input type="password" class="form-control form-control-lg border-start-0 border-end-0 ps-0" 
+                                        <input type="password" class="form-control form-control-lg border-start-0 border-end-0 ps-0"
                                                id="password" name="password" placeholder="••••••••" required>
                                         <button class="btn btn-outline-secondary border-start-0" type="button" id="togglePassword">
                                             <i class="bi bi-eye fs-5"></i>
@@ -65,8 +65,8 @@
                                         <span class="input-group-text bg-light border-end-0">
                                             <i class="bi bi-lock-fill fs-5"></i>
                                         </span>
-                                        <input type="password" class="form-control form-control-lg border-start-0 border-end-0 ps-0" 
-                                               id="password_confirmation" name="password_confirmation" 
+                                        <input type="password" class="form-control form-control-lg border-start-0 border-end-0 ps-0"
+                                               id="password_confirmation" name="password_confirmation"
                                                placeholder="••••••••" required>
                                         <button class="btn btn-outline-secondary border-start-0" type="button" id="togglePasswordConfirmation">
                                             <i class="bi bi-eye fs-5"></i>
@@ -96,8 +96,8 @@
                                         <span class="input-group-text bg-light border-end-0">
                                             <i class="bi bi-person fs-5"></i>
                                         </span>
-                                        <input type="text" class="form-control form-control-lg border-start-0 ps-0" 
-                                               id="name" name="name" value="{{ old('name') }}" 
+                                        <input type="text" class="form-control form-control-lg border-start-0 ps-0"
+                                               id="name" name="name" value="{{ old('name') }}"
                                                placeholder="Tu nombre" required>
                                     </div>
                                 </div>
@@ -107,8 +107,8 @@
                                         <span class="input-group-text bg-light border-end-0">
                                             <i class="bi bi-person-badge fs-5"></i>
                                         </span>
-                                        <input type="text" class="form-control form-control-lg border-start-0 ps-0" 
-                                               id="lastname1" name="lastname1" value="{{ old('lastname1') }}" 
+                                        <input type="text" class="form-control form-control-lg border-start-0 ps-0"
+                                               id="lastname1" name="lastname1" value="{{ old('lastname1') }}"
                                                placeholder="Apellido" required>
                                     </div>
                                 </div>
@@ -118,8 +118,8 @@
                                         <span class="input-group-text bg-light border-end-0">
                                             <i class="bi bi-person-badge-fill fs-5"></i>
                                         </span>
-                                        <input type="text" class="form-control form-control-lg border-start-0 ps-0" 
-                                               id="lastname2" name="lastname2" value="{{ old('lastname2') }}" 
+                                        <input type="text" class="form-control form-control-lg border-start-0 ps-0"
+                                               id="lastname2" name="lastname2" value="{{ old('lastname2') }}"
                                                placeholder="Apellido" required>
                                     </div>
                                 </div>
