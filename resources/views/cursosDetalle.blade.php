@@ -2,7 +2,8 @@
 
 
 
-    <section id="hero">
+    <div class="page-cursos">
+    <section id="hero" class="course-hero">
         <div class="container">
             <div class="row">
                 <div class="col-lg-6 d-lg-flex flex-lg-column justify-content-center align-items-stretch pt-5 pt-lg-0 order-2 order-lg-1"
@@ -53,7 +54,7 @@
                                 </div>
                             </div>
                         @else
-                            <div class="card shadow-lg rounded-3 border-0 overflow-hidden">
+                            <div class="card shadow-lg rounded-3 border-0 overflow-hidden course-purchase-card">
                                 @if ($usuarioInscrito)
                                     <div class="card-header bg-light py-3 px-4 border-bottom">
                                         <h4 class="mb-0 fw-bold">
@@ -66,7 +67,7 @@
 
                                         </h4>
                                     </div>
-                                    <div class="card-body p-4">
+                                    <div class="card-body p-4 course-price-panel">
 
                                         @if ($cursos->tipo == 'curso')
                                             <a class="btn btn-sm btn-success"
@@ -99,18 +100,18 @@
                                     </div>
                                     <div class="card-body p-4">
                                         @if ($cursos->tipo == 'curso')
-                                            <div class="text-center mb-4">
+                                            <div class="text-center mb-4 course-price-panel">
                                                 <span class="badge bg-success-subtle text-success px-3 py-2 mb-2">Oferta
                                                     Especial</span>
                                                 <h3 class="fw-bold text-success mb-1">Bs.
                                                     {{ number_format($cursos->precio, 2) }}
                                                 </h3>
                                                 <p class="text-muted">Pago único, acceso de por vida</p>
-                                                <div class="d-flex justify-content-center align-items-center gap-2 mb-2">
+                                                <div class="d-flex justify-content-center align-items-center gap-2 mb-2 course-benefit">
                                                     <i class="bi bi-check-circle-fill text-success"></i>
                                                     <span>Certificado Digital Incluido</span>
                                                 </div>
-                                                <div class="d-flex justify-content-center align-items-center gap-2">
+                                                <div class="d-flex justify-content-center align-items-center gap-2 course-benefit">
                                                     <i class="bi bi-check-circle-fill text-success"></i>
                                                     <span>Soporte 24/7</span>
                                                 </div>
@@ -574,7 +575,7 @@
                     </div>
                 </div>
                 <div class="col-lg-6 order-1 order-lg-2" data-aos="fade-up" data-aos-delay="200">
-                    <div id="courseCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div id="courseCarousel" class="carousel slide course-carousel" data-bs-ride="carousel">
                         <div class="carousel-inner rounded-3 shadow">
 
                             {{-- Si el curso tiene un video de YouTube --}}
@@ -1324,6 +1325,7 @@
             </div>
         </div>
     @endif
+    </div>
 @endsection
 
 

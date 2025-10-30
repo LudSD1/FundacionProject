@@ -116,11 +116,14 @@ h6 {
 --------------------------------------------------------------*/
 #header {
     transition: all 0.3s ease-in-out;
-    z-index: 997;
+    z-index: 1030;
     padding: 0;
     background: transparent; /* Cambiado para que la diagonal sea visible */
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     overflow: hidden;
     overflow: hidden; /* Mantiene el contenido dentro del header */
     min-height: 80px;
@@ -136,7 +139,7 @@ h6 {
     width: 100%;
     height: 100%;
     background: linear-gradient(145deg, transparent 70%, #1a4789 30%);
-    z-index: -1; /* Ajustado para que se posicione detrás del contenido */
+    z-index: 1; /* Diagonal por encima del fondo blanco pero debajo del contenido */
     transition: all 0.3s ease-in-out;
     transition: all 0.3s ease-in-out; /* Transición suave */
     pointer-events: none;
@@ -146,7 +149,19 @@ h6 {
 /* Asegurar que el contenido esté encima */
 #header > * {
     position: relative;
-    z-index: 1;
+    z-index: 2; /* Contenido por encima de la diagonal */
+}
+
+/* Capa de fondo blanca sólida para el header */
+#header::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #fff; /* fondo blanco sólido */
+    z-index: 0; /* debajo de la diagonal */
 }
 
 /* Header transparente */
@@ -178,7 +193,7 @@ h6 {
 }
 
 #header.header-scrolled .header-top {
-    background: #fff;
+    background: #ffffff00;
 }
 
 /* Diagonal más visible al hacer scroll */
@@ -1395,11 +1410,22 @@ section {
 # Footer
 --------------------------------------------------------------*/
 #footer {
-    background: #fff;
+    position: relative;
     padding: 0 0 30px 0;
     color: #47536e;
     font-size: 14px;
-    background: #eff2f8;
+    background: linear-gradient(180deg, #f6f9ff 0%, #eff2f8 100%);
+}
+
+/* Separador superior decorativo */
+#footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: var(--gradient-primary);
 }
 
 #footer .footer-newsletter {
@@ -1456,20 +1482,36 @@ section {
 
 #footer .footer-top {
     padding: 60px 0 30px 0;
-    background: #fff;
+    background: #ffffff;
 }
 
 #footer .footer-top .footer-contact {
     margin-bottom: 30px;
 }
 
+#footer .footer-top .footer-contact address {
+    margin: 0 0 10px 0;
+    font-style: normal;
+    color: #6b7280;
+}
+
+#footer .footer-top .footer-contact a {
+    color: #47536e;
+}
+
+#footer .footer-top .footer-contact a:hover,
+#footer .footer-top .footer-contact a:focus {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
 #footer .footer-top .footer-contact h4 {
     font-size: 22px;
-    margin: 0 0 30px 0;
-    padding: 2px 0 2px 0;
+    margin: 0 0 20px 0;
+    padding: 2px 0;
     line-height: 1;
-    font-weight: 700;
-    color: #145DA0;
+    font-weight: 800;
+    color: var(--color-primary);
 }
 
 #footer .footer-top .footer-contact p {
@@ -1482,10 +1524,21 @@ section {
 
 #footer .footer-top h4 {
     font-size: 16px;
-    font-weight: bold;
-    color: #47536e;
+    font-weight: 800;
+    color: var(--color-primary);
     position: relative;
     padding-bottom: 12px;
+}
+
+#footer .footer-top h4::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: var(--gradient-accent);
+    border-radius: 2px;
 }
 
 #footer .footer-top .footer-links {
@@ -1516,58 +1569,70 @@ section {
 }
 
 #footer .footer-top .footer-links ul a {
-    color: #8a8c95;
-    transition: 0.3s;
+    color: #6b7280;
+    transition: color 0.2s ease, transform 0.2s ease;
     display: inline-block;
-    line-height: 1;
+    line-height: 1.5;
 }
 
 #footer .footer-top .footer-links ul a:hover {
     text-decoration: none;
-    color: #145DA0;
+    color: var(--color-primary);
+    transform: translateX(2px);
 }
 
 #footer .footer-top .social-links a {
     font-size: 18px;
     display: inline-block;
-    background: #145DA0;
+    background: var(--gradient-accent);
     color: #fff;
     line-height: 1;
     padding: 8px 0;
-    margin-right: 4px;
-    border-radius: 50%;
+    margin-right: 6px;
+    border-radius: 12px;
     text-align: center;
-    width: 36px;
-    height: 36px;
-    transition: 0.3s;
+    width: 40px;
+    height: 40px;
+    box-shadow: 0 6px 16px rgba(33, 151, 189, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 #footer .footer-top .social-links a:hover {
-    background: #27282c;
-    color: #fff;
-    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(33, 151, 189, 0.35);
 }
 
-#footer .copyright {
-    text-align: center;
-    float: left;
-    color: #47536e;
+/* Barra inferior del footer (estructura nueva con flex) */
+#footer .container > .d-flex {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 12px;
+    flex-wrap: wrap;
 }
 
-#footer .credits {
-    float: right;
-    text-align: center;
-    font-size: 13px;
-    color: #47536e;
+#footer .container > .d-flex .copyright {
+    color: #4b5563;
+}
+
+#footer .container > .d-flex .list-inline {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+}
+
+#footer .container > .d-flex .list-inline-item a {
+    color: #6b7280;
+}
+
+#footer .container > .d-flex .list-inline-item a:hover,
+#footer .container > .d-flex .list-inline-item a:focus {
+    color: var(--color-primary);
 }
 
 @media (max-width: 768px) {
-
-    #footer .copyright,
-    #footer .credits {
-        float: none;
+    #footer .container > .d-flex {
+        justify-content: center;
         text-align: center;
-        padding: 5px 0;
+        gap: 10px;
     }
 }
 
@@ -2675,6 +2740,73 @@ html {
     }
 }
 
+/*--------------------------------------------------------------
+# Course Details Page
+--------------------------------------------------------------*/
+.page-cursos section {
+    scroll-margin-top: 80px;
+}
+
+.course-hero h3 {
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.course-hero h2 {
+    color: #e8eefc;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+    .course-hero h3 { font-size: 1.6rem; }
+    .course-hero h2 { font-size: 1rem; }
+}
+
+.course-purchase-card .card-header {
+    background: #f8fafc !important;
+}
+
+.course-purchase-card .card-header h4 {
+    color: var(--color-primary);
+}
+
+.course-price-panel .badge {
+    border-radius: 10px;
+}
+
+.course-price-panel .fw-bold.text-success,
+.course-price-panel .fw-bold.text-primary {
+    font-size: 1.8rem;
+}
+
+.course-benefit {
+    color: #4b5563;
+    font-weight: 500;
+}
+
+#countdown-timer {
+    font-weight: 700;
+    border-radius: 12px;
+}
+
+.modal-content.border-0.shadow .modal-header {
+    border-bottom: 0;
+}
+
+.modal-content.border-0.shadow .modal-footer {
+    border-top: 0;
+}
+
+.course-carousel .carousel-inner {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.course-carousel .carousel-item img { object-fit: cover; }
+
 @media (max-width: 480px) {
     #hero h1 {
         font-size: 1.8rem;
@@ -2746,18 +2878,18 @@ html {
 .auth-card {
     background: #ffffff;
     border-radius: 25px;
-    padding: 60px 50px;
+    padding: 40px 35px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
     position: relative;
     z-index: 1;
-    max-width: 1000px; /* Aumentado para más espacio para los inputs */
+    max-width: 860px; /* Más compacto para registro */
     width: 100%;
     margin: 0 auto;
 }
 
 .auth-card-header h2 {
     color: #1a1a1a;
-    font-size: 2.5rem;
+    font-size: 2rem;
 }
 
 .auth-card-header p {
@@ -2770,9 +2902,9 @@ html {
 .auth-form .form-select,
 .auth-form .form-control-lg,
 .auth-form .form-select-lg {
-    padding: 0.875rem 1rem;
-    font-size: 1.05rem;
-    min-height: 58px;
+    padding: 1rem 1.1rem; /* Más aire dentro del input */
+    font-size: 1.02rem;
+    min-height: 56px;
     border: 1px solid #dee2e6;
     border-radius: 0.5rem;
 }
@@ -2820,8 +2952,8 @@ html {
 
 /* Botón de toggle password */
 .auth-form .input-group .btn {
-    min-height: 58px;
-    padding: 0.875rem 1rem;
+    min-height: 56px;
+    padding: 1rem 1.1rem;
     border: 1px solid #dee2e6;
     background-color: #f8f9fa !important;
     color: #495057 !important;
@@ -2992,7 +3124,7 @@ html {
 /* Responsive */
 @media (max-width: 768px) {
     .auth-card {
-        padding: 45px 35px;
+        padding: 30px 24px;
         max-width: 100%;
     }
 
@@ -3008,14 +3140,14 @@ html {
 }
 
     .auth-card-header h2 {
-        font-size: 2rem;
+        font-size: 1.6rem;
     }
 
     .auth-form .form-control,
     .auth-form .form-select,
     .auth-form .form-control-lg,
     .auth-form .form-select-lg {
-        padding: 0.75rem 0.875rem;
+        padding: 0.9rem 1rem;
         font-size: 1rem;
         min-height: 52px;
     }
@@ -3026,23 +3158,22 @@ html {
         padding: 0.75rem 0.875rem;
         min-width: 48px;
     }
-}
 
 @media (max-width: 576px) {
     .auth-card {
-        padding: 35px 25px;
+        padding: 24px 18px;
     }
 
     .auth-card-header h2 {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
     }
 
     .auth-form .form-control,
     .auth-form .form-select,
     .auth-form .form-control-lg,
     .auth-form .form-select-lg {
-        font-size: 0.95rem;
-        padding: 0.7rem 0.8rem;
+        font-size: 0.98rem;
+        padding: 0.85rem 0.95rem;
         min-height: 48px;
     }
 

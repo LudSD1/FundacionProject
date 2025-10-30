@@ -69,6 +69,7 @@
         </div>
     </div>
 </section>
+@include('layoutlanding')
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -102,6 +103,5 @@ document.addEventListener('DOMContentLoaded', function() {
     @endif
 });
 </script>
-@include('layoutlanding')
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

@@ -1,7 +1,6 @@
 @section('titulo')
     Iniciar Sesión
 @endsection
-
 @section('hero')
 
 <section id="auth-section" class="auth-wrapper d-flex align-items-center justify-content-center" style="background-image: url('{{ asset('assets/img/bg2.png') }}'); background-size: cover; background-position: center; background-repeat: no-repeat;">
@@ -98,5 +97,6 @@
         });
     </script>
 @endsection
+
 
 @include('layoutlanding')

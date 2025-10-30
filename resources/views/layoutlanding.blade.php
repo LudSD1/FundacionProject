@@ -19,7 +19,7 @@
     <link href="{{ asset('assets2/css/style.css') }}" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/driver.js@latest/dist/driver.js.iife.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@latest/dist/driver.css" />
-    
+
 </head>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -45,67 +45,93 @@
 
     @yield('hero')
     @yield('main')
-    <footer id="footer">
+    <footer id="footer" role="contentinfo" aria-labelledby="footer-heading">
         <div class="footer-top">
-            <div class="container">
-                <div class="row">
+          <div class="container">
+            <div class="row">
 
-                    <div class="col-lg-3 col-md-6 footer-contact">
-                        <h3>Aprendo Hoy</h3>
-                        <p>
-
-                            Bolivia <br><br>
-                            <strong>Celular:</strong><br>
-                            (+591) 72087186 <br>
-                            (+591) 4 4284295 <br>
-                            (+591) 2 2433208 <br>
-                            <strong>Correo Electrónico:</strong> contacto@educarparalavida.org.bo<br>
-                        </p>
-                    </div>
-
-                    <div class="col-lg-3 col-md-6 footer-links">
-                        <h4>Links Asociados</h4>
-                        <ul>
-                            <li><i class="bx bx-chevron-right"></i> <a
-                                    href="https://educarparalavida.org.bo/web/Inicio.html">Inicio</a></li>
-                            <li><i class="bx bx-chevron-right"></i> <a
-                                    href="https://educarparalavida.org.bo/web/Quienes-somos.html">Quienes Somos</a>
-                            </li>
-                            <li><i class="bx bx-chevron-right"></i> <a
-                                    href="https://educarparalavida.org.bo/web/Proyectos-y-servicios.html">Servicios</a>
-                            </li>
-                        </ul>
-                    </div>
+              <!-- Contacto -->
+              <section class="col-lg-4 col-md-6 footer-contact" aria-labelledby="footer-heading">
+                <h3 id="footer-heading">Aprendo Hoy</h3>
 
 
-                    <div class="col-lg-3 col-md-6 footer-links">
-                        <h4>Nuestras Redes Sociales</h4>
-                        <div class="social-links mt-3">
-                            <a href="https://x.com/FUNDVIDA2" class="twitter"><i class="bx bxl-twitter"></i></a>
-                            <a href="https://www.facebook.com/profile.php?id=100063510101095" class="facebook"><i
-                                    class="bx bxl-facebook"></i></a>
-                            <a href="https://www.instagram.com/fundeducarparalavida/" class="instagram"><i
-                                    class="bx bxl-instagram"></i></a>
-                            <a href="https://api.whatsapp.com/send?phone=%3C+59172087186%3E" class="whatsapp"><i
-                                    class="bx bxl-whatsapp"></i></a>
-                        </div>
-                    </div>
+        
 
+                <p class="mb-0">
+                  <strong>Correo Electrónico:</strong>
+                  <a href="mailto:contacto@educarparalavida.org.bo" aria-label="Enviar correo a contacto arroba educar para la vida punto org punto bo">
+                    contacto@educarparalavida.org.bo
+                  </a>
+                </p>
+              </section>
+
+              <!-- Enlaces -->
+              <nav class="col-lg-4 col-md-6 footer-links" aria-label="Enlaces asociados">
+                <h4>Links Asociados</h4>
+                <ul class="list-unstyled">
+                  <li>
+                    <i class="bx bx-chevron-right"></i>
+                    <a href="https://educarparalavida.org.bo/web/Inicio.html" target="_blank" rel="noopener" aria-label="Abrir Inicio en una nueva pestaña">Inicio</a>
+                  </li>
+                  <li>
+                    <i class="bx bx-chevron-right"></i>
+                    <a href="https://educarparalavida.org.bo/web/Quienes-somos.html" target="_blank" rel="noopener" aria-label="Abrir Quienes Somos en una nueva pestaña">Quiénes Somos</a>
+                  </li>
+                  <li>
+                    <i class="bx bx-chevron-right"></i>
+                    <a href="https://educarparalavida.org.bo/web/Proyectos-y-servicios.html" target="_blank" rel="noopener" aria-label="Abrir Servicios en una nueva pestaña">Servicios</a>
+                  </li>
+                </ul>
+              </nav>
+
+              <!-- Redes Sociales -->
+              <section class="col-lg-4 col-md-6 footer-links" aria-label="Redes sociales">
+                <h4>Nuestras Redes Sociales</h4>
+                <div class="social-links mt-3">
+                  <a href="https://x.com/FUNDVIDA2" class="twitter" target="_blank" rel="noopener" aria-label="Abrir perfil en X de Fundación">
+                    <i class="bx bxl-twitter" aria-hidden="true"></i>
+                  </a>
+                  <a href="https://www.facebook.com/profile.php?id=100063510101095" class="facebook" target="_blank" rel="noopener" aria-label="Abrir página en Facebook">
+                    <i class="bx bxl-facebook" aria-hidden="true"></i>
+                  </a>
+                  <a href="https://www.instagram.com/fundeducarparalavida/" class="instagram" target="_blank" rel="noopener" aria-label="Abrir perfil en Instagram">
+                    <i class="bx bxl-instagram" aria-hidden="true"></i>
+                  </a>
+                  <a href="https://wa.me/59172087186" class="whatsapp" target="_blank" rel="noopener" aria-label="Abrir chat de WhatsApp">
+                    <i class="bx bxl-whatsapp" aria-hidden="true"></i>
+                  </a>
                 </div>
+              </section>
+
             </div>
+          </div>
         </div>
 
+        <!-- Parte inferior -->
         <div class="container py-4">
-            <div class="copyright">
-                <script>
-                    document.write("&copy; " + new Date().getFullYear() +
-                        " <a href='' target='_blank'>Fundación educar para la vida</a>.");
-                </script>
+          <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-2">
+            <div class="copyright m-0">
+              <span>
+                &copy; <span id="copyright-year"></span>
+                <a href="#" aria-label="Fundación educar para la vida">Fundación Educar para la Vida</a>.
+              </span>
             </div>
-            <div class="credits">
-            </div>
+
+            <ul class="list-inline m-0">
+              <li class="list-inline-item"><a href="#" aria-label="Ver política de privacidad">Política de privacidad</a></li>
+              <li class="list-inline-item">|</li>
+              <li class="list-inline-item"><a href="#" aria-label="Ver términos y condiciones">Términos</a></li>
+              <li class="list-inline-item">|</li>
+              <li class="list-inline-item"><a href="#" aria-label="Contactar">Contacto</a></li>
+            </ul>
+          </div>
+
+          <script>
+            document.getElementById('copyright-year').textContent = new Date().getFullYear();
+          </script>
         </div>
-    </footer><!-- End Footer -->
+      </footer>
+
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center md-5"><i
             class="bi bi-arrow-up-short"></i></a>
