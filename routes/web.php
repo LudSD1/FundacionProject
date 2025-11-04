@@ -468,7 +468,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/certificados/obtener/{id}', [CertificadoController::class, 'obtenerCertificado'])
             ->name('certificados.obtener');
         Route::get('/Notificaciones', [UserController::class, 'notificaciones'])->name('notificaciones');
-        Route::get('/user/{user}', [UserController::class, 'Profile'])->name('perfil');
+        Route::get('/user/{id}', [UserController::class, 'Profile'])->name('perfil');
 
         Route::get('/Calendario', [MenuController::class, 'calendario'])->middleware('noCache')->name('calendario');
         //PAGOS (solo visualización, el proceso de pago está fuera del middleware verified)

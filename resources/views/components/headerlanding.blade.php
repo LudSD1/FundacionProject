@@ -30,9 +30,14 @@
                             @auth
                                 <li><a class="getstarted scrollto" href="{{ route('Inicio') }}">Mi aprendizaje</a></li>
                             @else
-                                <li><a class="getstarted scrollto" href="{{ route('login.signin') }}">Iniciar Sesión</a>
                                 </li>
+                                @if (Route::is('login'))
+                                    
                                 <li><a class="getstarted scrollto" href="{{ route('signin') }}">Crear cuenta</a></li>
+                                @else
+                                <li><a class="getstarted scrollto" href="{{ route('login.signin') }}">Iniciar Sesión</a>
+                                    
+                                @endif
                             @endauth
                         </ul>
                     </nav>

@@ -51,10 +51,6 @@ h6 {
     font-family: 'Montserrat', sans-serif;
     color: #145DA0;
 }
-
-/*--------------------------------------------------------------
-# Back to top button
---------------------------------------------------------------*/
 .back-to-top {
     position: fixed;
     visibility: hidden;
@@ -2083,7 +2079,7 @@ html {
 /* ===== HERO SECTION MEJORADO ===== */
 #hero {
     background: var(--gradient-primary);
-    color: white;
+    color: #fff;
     min-height: 80vh;
     position: relative;
     overflow: hidden;
@@ -2747,6 +2743,128 @@ html {
     scroll-margin-top: 80px;
 }
 
+/* Hero Section específico para detalles de curso - No interfiere con #hero del landing */
+#course-detail-hero {
+    position: relative;
+    padding: 80px 0 60px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    overflow: hidden;
+    margin-top: 0;
+}
+
+#course-detail-hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(20, 93, 160, 0.95);
+    z-index: 0;
+}
+
+#course-detail-hero::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+#course-detail-hero .container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Estilos para la información del curso */
+.course-detail-info {
+    padding: 20px 0;
+}
+
+.course-title {
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.course-description {
+    color: #f0f4ff;
+    font-weight: 500;
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    opacity: 0.95;
+}
+
+.course-date {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    display: inline-block;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 25px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Ajustes para el carousel de imágenes */
+#course-detail-hero .course-carousel {
+    position: relative;
+    z-index: 1;
+}
+
+#course-detail-hero .course-carousel img {
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    #course-detail-hero {
+        padding: 60px 0 40px;
+    }
+
+    .course-title {
+        font-size: 2rem;
+    }
+
+    .course-description {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    #course-detail-hero {
+        padding: 40px 0 30px;
+    }
+
+    .course-title {
+        font-size: 1.75rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .course-description {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .course-date {
+        font-size: 0.95rem;
+        padding: 8px 16px;
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* Estilos legacy para compatibilidad */
 .course-hero h3 {
     color: #ffffff;
     font-weight: 800;
@@ -2758,11 +2876,6 @@ html {
     color: #e8eefc;
     font-weight: 600;
     font-size: 1.1rem;
-}
-
-@media (max-width: 768px) {
-    .course-hero h3 { font-size: 1.6rem; }
-    .course-hero h2 { font-size: 1rem; }
 }
 
 .course-purchase-card .card-header {
@@ -2798,6 +2911,238 @@ html {
 
 .modal-content.border-0.shadow .modal-footer {
     border-top: 0;
+}
+
+/*--------------------------------------------------------------
+# Course Purchase Modal Styles
+--------------------------------------------------------------*/
+/* Bootstrap usa z-index 1040 para backdrop y 1050 para modal */
+/* Usamos valores más altos para asegurar que aparezca por encima de todo */
+.modal-backdrop {
+    z-index: 1040 !important;
+}
+
+.modal-backdrop.show {
+    z-index: 1040 !important;
+    background-color: rgba(0, 0, 0, 0.7) !important;
+    backdrop-filter: blur(5px);
+}
+
+.modal {
+    z-index: 1050 !important;
+}
+
+#compraCursoModal {
+    z-index: 1055 !important;
+}
+
+#compraCursoModal.show {
+    z-index: 1055 !important;
+    display: block !important;
+}
+
+#compraCursoModal .modal-dialog {
+    z-index: 1056 !important;
+    position: relative;
+    margin: 1.75rem auto;
+    pointer-events: auto;
+}
+
+.course-purchase-modal {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    position: relative;
+    z-index: 1057 !important;
+    pointer-events: auto;
+}
+
+.course-modal-header {
+    background: linear-gradient(135deg, #145DA0 0%, #1e7bd8 100%);
+    color: #ffffff;
+    padding: 1.5rem 2rem;
+    border-bottom: none;
+    border-radius: 20px 20px 0 0;
+}
+
+.course-modal-header .modal-title {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.course-modal-header .btn-close-white {
+    filter: brightness(0) invert(1);
+    opacity: 0.9;
+    transition: opacity 0.3s;
+}
+
+.course-modal-header .btn-close-white:hover {
+    opacity: 1;
+}
+
+.course-modal-body {
+    padding: 2rem;
+    background: #ffffff;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.course-modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.course-modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.course-modal-body::-webkit-scrollbar-thumb {
+    background: #145DA0;
+    border-radius: 10px;
+}
+
+.course-modal-body::-webkit-scrollbar-thumb:hover {
+    background: #1e7bd8;
+}
+
+.course-modal-body .form-label {
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.course-modal-body .form-label i {
+    font-size: 1.1rem;
+}
+
+.course-modal-body .form-control,
+.course-modal-body .form-select {
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s;
+}
+
+.course-modal-body .form-control:focus,
+.course-modal-body .form-select:focus {
+    border-color: #145DA0;
+    box-shadow: 0 0 0 0.2rem rgba(20, 93, 160, 0.15);
+}
+
+.course-modal-body .form-control[readonly] {
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+}
+
+.course-modal-body .input-group-text {
+    border: 2px solid #e0e0e0;
+    border-left: none;
+}
+
+.course-modal-body .input-group .form-control {
+    border-right: none;
+}
+
+.course-modal-body .input-group .form-control:focus + .input-group-text,
+.course-modal-body .input-group .form-control:focus ~ .input-group-text {
+    border-color: #145DA0;
+}
+
+.payment-methods-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    border: 2px solid #e0e0e0;
+}
+
+.payment-methods-section h6 {
+    color: #145DA0;
+    font-size: 1.1rem;
+}
+
+.payment-methods-section .card {
+    border-radius: 12px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.payment-methods-section .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.course-modal-footer {
+    background: #f8f9fa;
+    padding: 1.5rem 2rem;
+    border-top: 2px solid #e0e0e0;
+    border-radius: 0 0 20px 20px;
+}
+
+.course-modal-footer .btn {
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: all 0.3s;
+}
+
+.course-modal-footer .btn-outline-secondary {
+    border: 2px solid #6c757d;
+    color: #6c757d;
+}
+
+.course-modal-footer .btn-outline-secondary:hover {
+    background: #6c757d;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+.course-modal-footer .btn-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border: none;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.course-modal-footer .btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+    background: linear-gradient(135deg, #218838 0%, #1ea080 100%);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .course-modal-header {
+        padding: 1.25rem 1.5rem;
+    }
+
+    .course-modal-header .modal-title {
+        font-size: 1.25rem;
+    }
+
+    .course-modal-body {
+        padding: 1.5rem;
+        max-height: 60vh;
+    }
+
+    .course-modal-footer {
+        padding: 1.25rem 1.5rem;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .course-modal-footer .btn {
+        width: 100%;
+    }
+
+    .payment-methods-section {
+        padding: 1rem;
+        margin: 1rem 0;
+    }
 }
 
 .course-carousel .carousel-inner {
@@ -2877,47 +3222,47 @@ html {
 
 .auth-card {
     background: #ffffff;
-    border-radius: 25px;
-    padding: 40px 35px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    border-radius: 20px;
+    padding: 60px 45px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
     position: relative;
     z-index: 1;
-    max-width: 860px; /* Más compacto para registro */
+    max-width: 700px;
     width: 100%;
     margin: 0 auto;
 }
 
 .auth-card-header h2 {
     color: #1a1a1a;
-    font-size: 2rem;
+    font-size: 1.75rem;
 }
 
 .auth-card-header p {
-    font-size: 1.1rem;
+    font-size: 0.95rem;
 }
 
-/* Inputs mejorados */
-/* Mejorar espaciado y tamaño de los inputs */
+/* Inputs mejorados - Tamaños reducidos */
 .auth-form .form-control,
 .auth-form .form-select,
 .auth-form .form-control-lg,
 .auth-form .form-select-lg {
-    padding: 1rem 1.1rem; /* Más aire dentro del input */
-    font-size: 1.02rem;
-    min-height: 56px;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.95rem;
+    min-height: 42px;
     border: 1px solid #dee2e6;
-    border-radius: 0.5rem;
+    border-radius: 0.4rem;
 }
 
 .auth-form .input-group-text {
-    padding: 0.875rem 1rem;
-    min-width: 50px;
+    padding: 0.75rem 1rem;
+    min-width: 45px;
     display: flex;
     align-items: center;
     justify-content: center;
     border: 1px solid #dee2e6;
-    background-color: #f8f9fa !important;
+    background-color: #f8f9fa;
     color: #495057;
+    font-size: 1rem;
 }
 
 /* Override bg-light class for better visibility */
@@ -2926,15 +3271,15 @@ html {
     color: #495057 !important;
 }
 
-/* Mejorar visibilidad de iconos */
+/* Mejorar visibilidad de iconos - Tamaños reducidos */
 .auth-form .input-group-text i {
     color: #495057 !important;
-    font-size: 1.1rem;
+    font-size: 0.95rem;
 }
 
 .auth-form .input-group .btn i {
     color: #495057 !important;
-    font-size: 1.1rem;
+    font-size: 0.95rem;
 }
 
 /* Solucionar bordes superpuestos */
@@ -2950,14 +3295,15 @@ html {
     border-right: 0;
 }
 
-/* Botón de toggle password */
+/* Botón de toggle password - Mejorado */
 .auth-form .input-group .btn {
-    min-height: 56px;
-    padding: 1rem 1.1rem;
+    min-height: 45px;
+    padding: 0.75rem 1rem;
     border: 1px solid #dee2e6;
-    background-color: #f8f9fa !important;
-    color: #495057 !important;
+    background-color: #f8f9fa;
+    color: #495057;
     transition: all 0.3s ease;
+    font-size: 1rem;
 }
 
 .auth-form .input-group .btn:hover {
@@ -2968,15 +3314,15 @@ html {
 
 /* Override btn-outline-secondary class */
 .auth-form .input-group .btn.btn-outline-secondary {
-    background-color: #f8f9fa !important;
-    color: #495057 !important;
-    border-color: #dee2e6 !important;
+    background-color: #f8f9fa;
+    color: #495057;
+    border-color: #dee2e6;
 }
 
 .auth-form .input-group .btn.btn-outline-secondary:hover {
-    background-color: #e9ecef !important;
-    color: #212529 !important;
-    border-color: #adb5bd !important;
+    background-color: #e9ecef;
+    color: #212529;
+    border-color: #adb5bd;
 }
 
 /* Eliminar padding-start en inputs con iconos */
@@ -2984,9 +3330,17 @@ html {
     padding-left: 0.5rem !important;
 }
 
-/* Espaciado entre campos */
+/* Espaciado entre campos - Aumentado */
+.auth-form .mb-3 {
+    margin-bottom: 1.5rem !important;
+}
+
 .auth-form .mb-4 {
     margin-bottom: 2rem !important;
+}
+
+.auth-form .mb-5 {
+    margin-bottom: 4rem !important; /* Más espacio después de filas de campos */
 }
 
 .auth-form .row.g-4 {
@@ -2994,18 +3348,18 @@ html {
     --bs-gutter-y: 2rem;
 }
 
-/* Labels más espaciados */
+/* Labels más espaciados - Aumentado */
 .auth-form .form-label {
-    margin-bottom: 0.75rem !important;
+    margin-bottom: 1rem !important; /* Más espacio entre label e input */
+    font-size: 0.9rem;
 }
 
 /* Input group con mejor borde unificado */
 .auth-form .input-group {
-    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
     border-radius: 0.5rem;
-    overflow: hidden;
     border: 1px solid #dee2e6;
     background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .auth-form .input-group:focus-within {
@@ -3037,13 +3391,26 @@ html {
 
 /* Mejor espaciado para inputs en tarjeta más ancha */
 .auth-form .row.g-4 {
+    --bs-gutter-x: 1.5rem; /* Espacio horizontal natural */
+    --bs-gutter-y: 2rem; /* Espacio vertical adecuado */
+}
+
+.auth-form .row.g-5 {
     --bs-gutter-x: 2rem; /* Más espacio horizontal entre columnas */
-    --bs-gutter-y: 1.5rem; /* Espacio vertical consistente */
+    --bs-gutter-y: 3rem; /* Espacio vertical generoso pero razonable */
 }
 
 /* Espaciado mejorado para inputs individuales */
+.auth-form .mb-3 {
+    margin-bottom: 1.5rem !important; /* Espacio natural entre campos */
+}
+
 .auth-form .mb-4 {
-    margin-bottom: 2.5rem !important; /* Más espacio entre secciones */
+    margin-bottom: 2rem !important; /* Espacio generoso pero no excesivo */
+}
+
+.auth-form .mb-5 {
+    margin-bottom: 2.5rem !important; /* Espacio para separar secciones */
 }
 
 /* Mejor distribución de los inputs de tres columnas */
@@ -3090,13 +3457,39 @@ html {
     color: #2c3e50;
 }
 
-/* Botón de login */
+/* Botón de login - Tamaño reducido */
 .btn-auth {
-    font-size: 1.2rem;
-    border-radius: 12px;
+    font-size: 1rem;
+    border-radius: 0.5rem;
     transition: all 0.3s ease;
-    letter-spacing: 0.5px;
-    padding: 20px 30px; /* Añadido para más altura */
+    letter-spacing: 0.3px;
+    padding: 0.75rem 1.5rem;
+}
+
+/* Tamaño extra grande para inputs - Ajustado */
+.input-group-xl > .form-control,
+.input-group-xl > .form-select,
+.form-control-xl,
+.form-select-xl {
+    padding: 1rem 1.25rem;
+    font-size: 1.05rem;
+    min-height: 60px;
+    border-radius: 0.5rem;
+}
+
+.input-group-xl > .input-group-text {
+    padding: 1rem 1.25rem;
+    font-size: 1.1rem;
+    min-height: 60px;
+}
+
+.input-group-xl {
+    border-radius: 0.5rem;
+}
+
+/* Margen extra grande */
+.mb-6 {
+    margin-bottom: 5rem !important;
 }
 
 .btn-auth:hover {
@@ -3104,11 +3497,12 @@ html {
     box-shadow: 0 8px 20px rgba(13, 110, 253, 0.4);
 }
 
-/* Toggle password button */
+/* Toggle password button - Ajustado */
 #togglePassword,
 #togglePasswordConfirmation {
-    padding: 20px 22px; /* Aumentado */
-    min-width: 55px; /* Añadido */
+    padding: 1rem 1.25rem;
+    min-height: 60px;
+    min-width: 50px;
 }
 
 .auth-form .mb-4 {
@@ -3124,14 +3518,19 @@ html {
 /* Responsive */
 @media (max-width: 768px) {
     .auth-card {
-        padding: 30px 24px;
+        padding: 50px 30px; /* Más espacio interior en móviles */
         max-width: 100%;
     }
 
     /* Ajustar espaciado en móviles */
     .auth-form .row.g-4 {
         --bs-gutter-x: 1rem;
-        --bs-gutter-y: 1rem;
+        --bs-gutter-y: 2rem; /* Espacio vertical natural en móviles */
+    }
+
+    .auth-form .row.g-5 {
+        --bs-gutter-x: 1rem;
+        --bs-gutter-y: 2.5rem; /* Espacio vertical adecuado en móviles */
     }
 
     .auth-form .mb-4 {
@@ -3190,7 +3589,339 @@ html {
     }
 }
 
+/*--------------------------------------------------------------
+# Registration Wizard/Carousel Styles
+--------------------------------------------------------------*/
+.registration-progress {
+    margin-bottom: 2rem;
+}
+
+.progress-steps {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    padding: 0 20px;
+}
+
+.progress-steps::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: #e0e0e0;
+    z-index: 0;
+}
+
+.progress-steps .step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    color: #999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.step-label {
+    font-size: 0.85rem;
+    color: #999;
+    text-align: center;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.step.active .step-number {
+    background: linear-gradient(135deg, #145DA0 0%, #1e7bd8 100%);
+    color: #fff;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(20, 93, 160, 0.3);
+}
+
+.step.active .step-label {
+    color: #145DA0;
+    font-weight: 600;
+}
+
+.step.completed .step-number {
+    background: #28a745;
+    color: #fff;
+}
+
+.step.completed .step-label {
+    color: #28a745;
+}
+
+/* Pasos del formulario */
+.registration-step {
+    display: none;
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+.registration-step.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.registration-step h5 {
+    font-size: 1.25rem;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 0.75rem;
+}
+
+.registration-step .btn-next,
+.registration-step .btn-prev {
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.registration-step .btn-next:hover {
+    transform: translateX(5px);
+}
+
+.registration-step .btn-prev:hover {
+    transform: translateX(-5px);
+}
+
+#review-data {
+    line-height: 1.8;
+}
+
+#review-data .row {
+    margin: 0;
+}
+
+#review-data .col-6 {
+    padding: 0.25rem 0;
+}
+
+/* Responsive para el wizard */
+@media (max-width: 768px) {
+    .progress-steps {
+        padding: 0 10px;
+    }
+
+    .step-number {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+
+    .step-label {
+        font-size: 0.75rem;
+    }
+
+    .progress-steps::before {
+        left: 15%;
+        right: 15%;
+    }
+
+    .registration-step h5 {
+        font-size: 1.1rem;
+    }
+
+    .registration-step .btn-next,
+    .registration-step .btn-prev {
+        padding: 0.5rem 1.2rem;
+        font-size: 0.9rem;
+    }
+}
 
 
+   /* Estilos del sistema de pasos */
+    .registration-progress {
+        padding: 1rem 0;
+    }
 
+    .progress-steps {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        margin: 0 auto;
+        max-width: 600px;
+    }
 
+    .progress-steps::before {
+        content: '';
+        position: absolute;
+        top: 30px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #e0e0e0;
+        z-index: 0;
+    }
+
+    .step {
+        flex: 1;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+    }
+
+    .step-number {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: #f8f9fa;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 0.5rem;
+        font-weight: bold;
+        font-size: 1.25rem;
+        border: 3px solid #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
+
+    .step.active .step-number {
+        background: var(--bs-primary);
+        color: white;
+        transform: scale(1.1);
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+    }
+
+    .step.completed .step-number {
+        background: var(--bs-success);
+        color: white;
+    }
+
+    .step.completed .step-number::after {
+        content: '✓';
+        font-size: 1.5rem;
+    }
+
+    .step-label {
+        font-size: 0.875rem;
+        color: #6c757d;
+        font-weight: 500;
+        margin-top: 0.5rem;
+    }
+
+    .step.active .step-label {
+        color: var(--bs-primary);
+        font-weight: 600;
+    }
+
+    .step.completed .step-label {
+        color: var(--bs-success);
+    }
+
+    /* Estilos para los pasos del formulario */
+    .registration-step {
+        display: none;
+        animation: fadeInStep 0.4s ease;
+    }
+
+    .registration-step.active {
+        display: block;
+    }
+
+    @keyframes fadeInStep {
+        from {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Estilos para inputs */
+    .input-spaced {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+    }
+
+    .input-group-text {
+        padding: 0.75rem 1rem;
+        background-color: #f8f9fa !important;
+        border-right: none;
+    }
+
+    .form-control:focus {
+        border-color: var(--bs-primary);
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+
+    .form-control:focus + .input-group-text,
+    .input-group:focus-within .input-group-text {
+        border-color: var(--bs-primary);
+    }
+
+    /* Estilos para botones */
+    .btn-auth {
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .btn-next, .btn-prev {
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+    }
+
+    /* Estilos para la revisión de datos */
+    #review-data-modal {
+        line-height: 1.8;
+    }
+
+    #review-data-modal strong {
+        color: var(--bs-primary);
+        font-weight: 600;
+    }
+
+    /* Animación para el modal */
+    .modal.fade .modal-dialog {
+        transition: transform 0.3s ease-out;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .step-label {
+            font-size: 0.75rem;
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            font-size: 1rem;
+        }
+
+        .progress-steps::before {
+            top: 25px;
+        }
+    }

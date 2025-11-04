@@ -106,8 +106,6 @@
         </section>
 
 
-        <!-- Cursos Section -->
-        {{-- Buscador --}}
 
         <section id="cursos" class="py-5 bg-white">
             <div class="container">

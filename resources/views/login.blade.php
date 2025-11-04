@@ -7,11 +7,11 @@
     <div class="auth-overlay"></div>
     <div class="container position-relative">
         <div class="row justify-content-center">
-            <div class="col-12 col-md-11 col-lg-8 col-xl-7">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
                 <div class="auth-card">
-                    <div class="auth-card-header text-center mb-5">
-                        <h2 class="fw-bold mb-3">Bienvenido</h2>
-                        <p class="text-muted fs-5">Inicia sesión para continuar</p>
+                    <div class="auth-card-header text-center mb-4">
+                        <h2 class="fw-bold mb-2">Bienvenido</h2>
+                        <p class="text-muted mb-0">Inicia sesión para continuar</p>
                     </div>
 
                     @guest
@@ -19,53 +19,53 @@
                         <form method="POST" action="{{ route('login') }}" class="auth-form">
                             @csrf
 
-                            <div class="mb-4">
-                                <label for="email" class="form-label fw-semibold fs-5 mb-3">Correo electrónico</label>
-                                <div class="input-group input-group-lg">
+                            <div class="mb-3">
+                                <label for="email" class="form-label fw-semibold mb-2">Correo electrónico</label>
+                                <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0">
-                                        <i class="bi bi-envelope fs-5"></i>
+                                        <i class="bi bi-envelope"></i>
                                     </span>
-                                    <input type="email" name="email" id="email" 
-                                           class="form-control form-control-lg border-start-0 ps-0" 
+                                    <input type="email" name="email" id="email"
+                                           class="form-control border-start-0 ps-0"
                                            placeholder="tu@correo.com"
                                            required autofocus>
                                 </div>
                             </div>
 
-                            <div class="mb-4">
-                                <label for="password" class="form-label fw-semibold fs-5 mb-3">Contraseña</label>
-                                <div class="input-group input-group-lg">
+                            <div class="mb-3">
+                                <label for="password" class="form-label fw-semibold mb-2">Contraseña</label>
+                                <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0">
-                                        <i class="bi bi-lock fs-5"></i>
+                                        <i class="bi bi-lock"></i>
                                     </span>
-                                    <input type="password" name="password" id="password" 
-                                           class="form-control form-control-lg border-start-0 border-end-0 ps-0" 
+                                    <input type="password" name="password" id="password"
+                                           class="form-control border-start-0 border-end-0 ps-0"
                                            placeholder="••••••••"
                                            required>
                                     <button class="btn btn-outline-secondary border-start-0" type="button" id="togglePassword">
-                                        <i class="bi bi-eye fs-5"></i>
+                                        <i class="bi bi-eye"></i>
                                     </button>
                                 </div>
                             </div>
 
-                            <div class="mb-5 text-end">
-                                <a href="{{ route('password.request') }}" class="text-decoration-none text-primary fw-semibold fs-6">
+                            <div class="mb-4 text-end">
+                                <a href="{{ route('password.request') }}" class="text-decoration-none text-primary fw-semibold small">
                                     <i class="bi bi-lock-fill me-1"></i>¿Olvidaste tu contraseña?
                                 </a>
                             </div>
 
-                            <button type="submit" class="btn btn-primary w-100 btn-auth py-4 fw-semibold fs-5">
+                            <button type="submit" class="btn btn-primary w-100 btn-auth py-2 fw-semibold">
                                 <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar sesión
                             </button>
                         </form>
                     @else
                         <!-- Usuario autenticado -->
-                        <div class="alert alert-info border-0 shadow-sm py-5">
+                        <div class="alert alert-info border-0 shadow-sm py-4">
                             <div class="text-center">
-                                <i class="bi bi-check-circle-fill fs-1 text-success mb-4" style="font-size: 4rem !important;"></i>
-                                <h4 class="mb-3">¡Ya has iniciado sesión!</h4>
-                                <p class="mb-4 fs-5">Sesión activa como <strong>{{ Auth::user()->name }}</strong></p>
-                                <a href="{{ route('home') }}" class="btn btn-primary btn-lg px-5 py-3">
+                                <i class="bi bi-check-circle-fill text-success mb-3" style="font-size: 3rem;"></i>
+                                <h5 class="mb-2">¡Ya has iniciado sesión!</h5>
+                                <p class="mb-3">Sesión activa como <strong>{{ Auth::user()->name }}</strong></p>
+                                <a href="{{ route('home') }}" class="btn btn-primary px-4 py-2">
                                     <i class="bi bi-house-door me-2"></i>Ir al inicio
                                 </a>
                             </div>
@@ -76,7 +76,7 @@
         </div>
     </div>
 </section>
-  
+
     <!-- Script para cambiar la visibilidad de la contraseña -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
