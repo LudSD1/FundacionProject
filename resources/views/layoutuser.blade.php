@@ -45,8 +45,9 @@
 
     @include('components.headerlanding')
 
-    @yield('hero')
-    @yield('main')
+
+    @yield('container')
+
 
     @include('components.footer')
 

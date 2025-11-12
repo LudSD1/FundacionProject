@@ -32,11 +32,9 @@
                             @else
                                 </li>
                                 @if (Route::is('login'))
-                                    
-                                <li><a class="getstarted scrollto" href="{{ route('signin') }}">Crear cuenta</a></li>
+                                    <li><a class="getstarted scrollto" href="{{ route('signin') }}">Crear cuenta</a></li>
                                 @else
-                                <li><a class="getstarted scrollto" href="{{ route('login.signin') }}">Iniciar Sesión</a>
-                                    
+                                    <li><a class="getstarted scrollto" href="{{ route('login.signin') }}">Iniciar Sesión</a>
                                 @endif
                             @endauth
                         </ul>
@@ -115,9 +113,15 @@
 
     <hr class="my-0">
 
+
+
+
     <!-- 🔽 CATEGORÍAS PRINCIPALES (CARRUSEL) -->
     {{-- <div class="header-bottom bg-white py-2 shadow-sm position-relative">
         <!-- Código del carrusel comentado -->
     </div> --}}
-</header>
 
+
+
+
+</header>

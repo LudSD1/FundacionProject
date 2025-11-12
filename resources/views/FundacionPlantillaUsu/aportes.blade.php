@@ -15,7 +15,7 @@
 
 @section('content')
 <div class="container py-5">
-    <div class="row justify-content-center">
+    <div class=" justify-content-center">
         <div class="col-12">
             <!-- Card Container -->
             <div class="card border-0 shadow-sm">

@@ -5,27 +5,37 @@
 
 @section('content')
     <div class="container my-4">
-        <div class="border p-3 rounded shadow-sm bg-light">
-            <div class="row align-items-center">
-                <div class="col-md-6 mb-2">
-                    <a href="{{ route('CrearDocente') }}" class="btn btn-sm btn-success">
-                        <i class="bi bi-person-plus"></i> Crear Docente
-                    </a>
-                    <a href="{{ route('DocentesEliminados') }}" class="btn btn-sm btn-info">
-                        <i class="bi bi-trash"></i> Docentes Eliminados
-                    </a>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <form action="{{ route('ListaDocentes') }}" method="GET" class="d-inline-block w-100 w-md-auto">
-                        <div class="input-group">
-                            <button type="submit" class="input-group-text"><i class="fa fa-search"></i></button>
-                            <input class="form-control" placeholder="Buscar estudiante..." name="search" type="text"
-                                id="searchInput" value="{{ request('search') }}">
+        <div class="card card-modern">
+            <div class="card-header-modern">
+                <div class="row align-items-center g-3">
+                    <div class="col-lg-6 col-md-12">
+                        <div class="action-buttons-header">
+                            <a href="{{ route('CrearDocente') }}" class="btn btn-modern btn-create">
+                                <i class="bi bi-person-plus me-2"></i>
+                                <span>Crear Docente</span>
+                            </a>
+                            <a href="{{ route('DocentesEliminados') }}" class="btn btn-modern btn-deleted">
+                                <i class="bi bi-trash-fill me-2"></i>
+                                <span>Docentes Eliminados</span>
+                            </a>
                         </div>
-                    </form>
+                    </div>
+                    <div class="col-lg-6 col-md-12">
+                        <form action="{{ route('ListaDocentes') }}" method="GET" class="w-100">
+                            <div class="search-box-table">
+                                <i class="bi bi-search search-icon-table"></i>
+                                <input type="text"
+                                       class="form-control search-input-table"
+                                       placeholder="Buscar docente..."
+                                       name="search"
+                                       id="searchInput"
+                                       value="{{ request('search') }}">
+                                <div class="search-indicator"></div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
         @if (request('search'))
             <div class="alert alert-info mt-3">
                 Mostrando resultados para: <strong>{{ request('search') }}</strong>
@@ -33,44 +43,94 @@
             </div>
         @endif
 
-        <div class="table-responsive mt-3">
-            <table class="table table-hover table-striped align-middle">
+        <div class="table-responsive table-container-modern">
+            <table class="table table-modern align-middle">
                 <thead class="">
                     <tr>
-                        <th scope="col">Nro</th>
-                        <th scope="col">Nombre y Apellidos</th>
-                        <th scope="col">Celular</th>
-                        <th scope="col"w>Correo</th>
-                        <th scope="col" class="text-center">Acciones</th>
+                        <th width="5%">
+                            <div class="th-content">
+                                <i class="bi bi-hash"></i>
+                                <span>Nº</span>
+                            </div>
+                        </th>
+                        <th width="35%">
+                            <div class="th-content">
+                                <i class="bi bi-person-badge"></i>
+                                <span>Nombre y Apellidos</span>
+                            </div>
+                        </th>
+                        <th width="20%">
+                            <div class="th-content">
+                                <i class="bi bi-telephone-fill"></i>
+                                <span>Celular</span>
+                            </div>
+                        </th>
+                        <th width="20%">
+                            <div class="th-content">
+                                <i class="bi bi-envelope-fill"></i>
+                                <span>Correo</span>
+                            </div>
+                        </th>
+                        <th width="20%" class="text-center">
+                            <div class="th-content justify-content-center">
+                                <i class="bi bi-gear-fill"></i>
+                                <span>Acciones</span>
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($docentes as $docente)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $docente->name }} {{ $docente->lastname1 }} {{ $docente->lastname2 }}</td>
-                            <td>+{{ $docente->Celular }}</td>
-                            <td>{{ $docente->email }}</td>
-                            <td class="text-center">
-                                <a class="btn btn-sm btn-info" href="{{ route('perfil', [encrypt($docente->id)]) }}"
-                                    title="Ver perfil">
-                                    <i class="fa fa-eye"></i>
-                                </a>
-                                <form action="{{ route('deleteUser', encrypt($docente->id)) }}" method="POST"
-                                    style="display:inline;">
-                                    @csrf
-                                    <button type="submit" class="btn btn-sm btn-danger btn-delete" title="Eliminar"
-                                        onclick="return mostrarAdvertencia(event)">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </form>
+                        <tr class="curso-row" data-docente-id="{{ $docente->id }}">
+                            <td>
+                                <span class="row-number">{{ $loop->iteration }}</span>
+                            </td>
+                            <td>
+                                <div class="teacher-cell">
+                                    <i class="bi bi-person-badge"></i>
+                                    <span>{{ $docente->name }} {{ $docente->lastname1 }} {{ $docente->lastname2 }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="teacher-cell">
+                                    <i class="bi bi-telephone-fill"></i>
+                                    <span>+{{ $docente->Celular }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="teacher-cell">
+                                    <i class="bi bi-envelope"></i>
+                                    <span>{{ $docente->email }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="action-buttons-cell">
+                                    <a class="btn-action-modern btn-view" href="{{ route('perfil', [encrypt($docente->id)]) }}"
+                                       data-bs-toggle="tooltip" title="Ver perfil">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+                                    <form action="{{ route('deleteUser', encrypt($docente->id)) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn-action-modern btn-delete" data-bs-toggle="tooltip" title="Eliminar">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
                             <td colspan="5" class="text-center">
-                                <div class="alert alert-warning m-0">
-                                    <i class="bi bi-exclamation-triangle"></i> No hay estudiantes registrados.
+                                <div class="empty-state-table">
+                                    <div class="empty-icon-table">
+                                        <i class="bi bi-exclamation-triangle"></i>
+                                    </div>
+                                    <h5 class="empty-title-table">No hay docentes registrados</h5>
+                                    <p class="empty-text-table">Comienza creando tu primer docente</p>
+                                    <a href="{{ route('CrearDocente') }}" class="btn btn-modern btn-create">
+                                        <i class="bi bi-person-plus me-2"></i>
+                                        Crear Docente
+                                    </a>
                                 </div>
                             </td>
                         </tr>
@@ -98,3 +158,34 @@
 @endsection
 
 @include('layout')
+
+<!-- SweetAlert2 para confirmación y tooltips -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar tooltips de Bootstrap 5
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.forEach(function (tooltipTriggerEl) { new bootstrap.Tooltip(tooltipTriggerEl); });
+
+    // Confirmación de eliminación
+    document.querySelectorAll('.btn-action-modern.btn-delete').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const form = btn.closest('form');
+        Swal.fire({
+          title: '¿Estás seguro?',
+          text: 'Esta acción eliminará el docente permanentemente.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Sí, eliminar',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.isConfirmed) form.submit();
+        });
+      });
+    });
+  });
+</script>

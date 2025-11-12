@@ -1,168 +1,4 @@
-@extends('FundacionPlantillaUsu.layout')
 @section('nav2')
-
-<!-- Decorative Diagonal Header -->
-<div class="position-fixed top-0 start-0 w-100" style="height: 6rem; z-index: 1040;">
-    <!-- White Background -->
-    <div class="bg-white w-100 h-100 position-absolute top-0 start-0"></div>
-
-    <!-- Blue Diagonal Background -->
-    <div class="position-absolute top-0 end-0 h-100" style="background-color: #1a4789; width: 60%; clip-path: polygon(30% 0%, 100% 0, 100% 100%, 0% 100%); z-index: 1;"></div>
-
-    <!-- Content Container -->
-    <div class="container position-relative h-100 d-flex justify-content-between align-items-center z-2 px-3">
-        <!-- Aprendo Hoy Logo -->
-        <img src="{{ asset('./assets/img/Acceder.png') }}" alt="Aprendo Hoy" class="img-fluid logo-header">
-
-        <!-- Fundación Logo -->
-        <img src="{{ asset('./resources/img/logof.png') }}" alt="Fundación Educar para la Vida" class="img-fluid logo-header">
-    </div>
-</div>
-
-<!-- Navbar below the header -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top border-bottom" style="top: 6rem; z-index: 1030;">
-    <div class="container">
-        <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-            <i class="bi bi-list fs-2 text-primary"></i>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarContent">
-            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{{ route('Inicio') }}">
-                        <i class="bi bi-house me-2"></i>Inicio
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{{ route('calendario') }}">
-                        <i class="bi bi-calendar me-2"></i>Calendario
-                    </a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="notificacionesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-bell me-2"></i>Notificaciones
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="notificacionesDropdown" style="min-width: 300px;">
-                        @forelse (auth()->user()->notifications()->latest()->take(4)->get() as $notification)
-                            <li class="px-3 py-2 small">
-                                <p class="mb-1">{{ $notification->data['message'] }}</p>
-                                <span class="text-muted">{{ $notification->created_at->diffForHumans() }}</span>
-                            </li>
-                        @empty
-                            <li class="text-center text-muted py-3 small">No hay notificaciones</li>
-                        @endforelse
-                    </ul>
-                </li>
-
-                @if (auth()->user()->hasRole('Docente'))
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{{ route('sumario') }}">
-                        <i class="bi bi-bar-chart me-2"></i>Sumario
-                    </a>
-                </li>
-                @endif
-
-                @if (auth()->user()->hasRole('Estudiante'))
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{{ route('lista.cursos.congresos') }}">
-                        <i class="bi bi-collection me-2"></i>Cursos/Congresos
-                    </a>
-                </li>
-                @endif
-
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{{ route('pagos') }}">
-                        <i class="bi bi-credit-card me-2"></i>Pagos
-                    </a>
-                </li>
-
-                <!-- User Dropdown -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <span class="me-2">{{ auth()->user()->name }} {{ auth()->user()->lastname1 }}</span>
-                        <i class="bi bi-person-circle fs-5"></i>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end shadow">
-                        <li><a class="dropdown-item" href="{{ route('Miperfil') }}">Mi perfil</a></li>
-                        <li><a class="dropdown-item" href="#">Notificaciones</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="{{ route('logout') }}">Cerrar Sesión</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-
-
-<!-- Optional CSS Enhancements -->
-<style>
-    :root {
-        --primary-color: #1a4789;
-        --secondary-color: #39a6cb;
-        --accent-color: #63becf;
-        --hover-color: #055c9d;
-        --active-color: #2197bd;
-        --link-color: #2f89a8;
-        --focus-color: #145da0;
-        --highlight-color: #2a81c2;
-    }
-
-    .navbar-nav .nav-link {
-        position: relative;
-        transition: all 0.3s ease;
-        color: var(--primary-color);
-    }
-
-    .navbar-nav .nav-link:hover {
-        color: var(--hover-color);
-    }
-
-    .navbar-nav .nav-link.active {
-        color: var(--active-color);
-    }
-
-    .dropdown-menu li:hover {
-        background-color: rgba(26, 71, 137, 0.1);
-    }
-
-    .dropdown-item:hover {
-        background-color: rgba(26, 71, 137, 0.1);
-        color: var(--hover-color);
-    }
-
-    .navbar {
-        border-color: var(--primary-color) !important;
-    }
-
-    .bi {
-        color: var(--primary-color);
-    }
-
-    .nav-link:hover .bi {
-        color: var(--hover-color);
-    }
-
-    .text-primary {
-        color: var(--primary-color) !important;
-    }
-
-    .bg-primary {
-        background-color: var(--primary-color) !important;
-    }
-
-    .logo-header {
-        max-height: 3.5rem;
-        object-fit: contain;
-    }
-
-    @media (max-width: 576px) {
-        .logo-header {
-            max-height: 1.5rem;
-        }
-    }
-</style>
 
 @endsection
 
@@ -172,11 +8,149 @@
 <!--Container-->
 @section('container')
 
-    <div class="container pt-5" style="padding-top: 8rem !important;">>
+ <nav class="auth-navbar mt-8">
+        <div class="auth-navbar-container">
+            <button class="auth-navbar-toggler" type="button"
+                    onclick="document.querySelector('.auth-navbar-content').classList.toggle('show')">
+                <i class="bi bi-list auth-navbar-toggler-icon"></i>
+            </button>
 
+            <div class="auth-navbar-content">
+                <ul class="auth-navbar-menu">
+
+                    <!-- Inicio -->
+                    <li class="auth-nav-item" data-tooltip="Ir al inicio">
+                        <a class="auth-nav-link {{ request()->routeIs('Inicio') ? 'active' : '' }}"
+                           href="{{ route('Inicio') }}">
+                            <i class="bi bi-house auth-nav-icon"></i>
+                            <span>Inicio</span>
+                        </a>
+                    </li>
+
+                    <!-- Calendario -->
+                    <li class="auth-nav-item" data-tooltip="Ver calendario">
+                        <a class="auth-nav-link {{ request()->routeIs('calendario') ? 'active' : '' }}"
+                           href="{{ route('calendario') }}">
+                            <i class="bi bi-calendar-event auth-nav-icon"></i>
+                            <span>Calendario</span>
+                        </a>
+                    </li>
+
+                    <!-- Notificaciones -->
+                    <li class="auth-nav-item auth-notifications-dropdown auth-dropdown">
+                        <button class="auth-nav-link auth-dropdown-toggle"
+                                onclick="this.parentElement.classList.toggle('show')">
+                            <i class="bi bi-bell auth-nav-icon"></i>
+                            <span>Notificaciones</span>
+                            @if(auth()->user()->unreadNotifications->count() > 0)
+                                <span class="auth-notification-badge">
+                                    {{ auth()->user()->unreadNotifications->count() }}
+                                </span>
+                            @endif
+                        </button>
+                        <div class="auth-dropdown-menu">
+                            <div class="auth-dropdown-header">
+                                <i class="bi bi-bell-fill me-2"></i>Notificaciones Recientes
+                            </div>
+                            @forelse (auth()->user()->notifications()->latest()->take(5)->get() as $notification)
+                                <div class="auth-notification-item {{ $notification->read_at ? '' : 'unread' }}"
+                                     onclick="this.classList.remove('unread')">
+                                    <p class="auth-notification-message">
+                                        {{ $notification->data['message'] }}
+                                    </p>
+                                    <span class="auth-notification-time">
+                                        <i class="bi bi-clock me-1"></i>
+                                        {{ $notification->created_at->diffForHumans() }}
+                                    </span>
+                                </div>
+                            @empty
+                                <div class="auth-notification-empty">
+                                    <i class="bi bi-inbox"></i>
+                                    <span>No hay notificaciones</span>
+                                </div>
+                            @endforelse
+                            @if(auth()->user()->notifications->count() > 0)
+                                <div class="auth-dropdown-footer">
+                                    <a href="#" class="auth-view-all-link">
+                                        Ver todas las notificaciones
+                                        <i class="bi bi-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
+                    </li>
+
+                    <!-- Sumario (Solo Docentes) -->
+                    @if (auth()->user()->hasRole('Docente'))
+                        <li class="auth-nav-item" data-tooltip="Ver estadísticas">
+                            <a class="auth-nav-link {{ request()->routeIs('sumario') ? 'active' : '' }}"
+                               href="{{ route('sumario') }}">
+                                <i class="bi bi-bar-chart-line auth-nav-icon"></i>
+                                <span>Sumario</span>
+                            </a>
+                        </li>
+                    @endif
+
+                    <!-- Cursos/Congresos (Solo Estudiantes) -->
+                    @if (auth()->user()->hasRole('Estudiante'))
+                        <li class="auth-nav-item" data-tooltip="Explorar cursos">
+                            <a class="auth-nav-link {{ request()->routeIs('lista.cursos.congresos') ? 'active' : '' }}"
+                               href="{{ route('lista.cursos.congresos') }}">
+                                <i class="bi bi-collection auth-nav-icon"></i>
+                                <span>Cursos/Congresos</span>
+                            </a>
+                        </li>
+                    @endif
+
+                    <!-- Pagos -->
+                    <li class="auth-nav-item" data-tooltip="Gestionar pagos">
+                        <a class="auth-nav-link {{ request()->routeIs('pagos') ? 'active' : '' }}"
+                           href="{{ route('pagos') }}">
+                            <i class="bi bi-credit-card-2-front auth-nav-icon"></i>
+                            <span>Pagos</span>
+                        </a>
+                    </li>
+
+                    <!-- User Dropdown -->
+                    <li class="auth-nav-item auth-user-dropdown auth-dropdown">
+                        <button class="auth-user-toggle auth-dropdown-toggle"
+                                onclick="this.parentElement.classList.toggle('show')">
+                            <span class="auth-user-name">
+                                {{ auth()->user()->name }} {{ auth()->user()->lastname1 }}
+                            </span>
+                            <div class="auth-user-avatar-wrapper">
+                                <i class="bi bi-person-circle auth-user-avatar-icon"></i>
+                                <span class="auth-user-status"></span>
+                            </div>
+                        </button>
+                        <div class="auth-user-menu">
+                            <a class="auth-user-menu-item" href="{{ route('Miperfil') }}">
+                                <i class="bi bi-person"></i>
+                                <span>Mi perfil</span>
+                            </a>
+                            <a class="auth-user-menu-item" href="#">
+                                <i class="bi bi-bell"></i>
+                                <span>Notificaciones</span>
+                            </a>
+                            <a class="auth-user-menu-item" href="#">
+                                <i class="bi bi-gear"></i>
+                                <span>Configuración</span>
+                            </a>
+                            <hr class="auth-user-divider">
+                            <a class="auth-user-menu-item logout" href="{{ route('logout') }}">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span>Cerrar Sesión</span>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container pt-5" style="margin-top: 7rem !important;">
         @yield('content')
     </div>
-
 @endsection
 
-
+@include('layoutuser')

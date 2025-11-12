@@ -9,8 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
-    <link href="{{ asset('./assets/js/plugins/nucleo/css/nucleo.css') }}" rel="stylesheet" />
-    <link href="{{ asset('./assets/js/plugins/@fortawesome/fontawesome-free/css/all.min.css') }}" rel="stylesheet" />
+
+    <link rel="stylesheet" href="{{asset('assets/css/dashboard.css')}}">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/driver.js@latest/dist/driver.js.iife.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@latest/dist/driver.css" />
@@ -20,32 +20,39 @@
 </head>
 
 <body>
-    <!-- Include Sidebar Component -->
-    @include('components.sidebar')
+        <!-- Layout Structure -->
+        <div class="layout-wrapper">
+            <!-- Sidebar -->
+            @include('components.sidebar')
 
-    <!-- Main Content -->
-    <div class="content">
-        <!-- Include Header Component -->
-        @include('components.header')
+            <!-- Main Content Wrapper -->
+            <div class="main-content-wrapper">
+                <!-- Header -->
 
-        <!-- Main Content Area -->
-        <div class="container-fluid mt-4">
-            @yield('content')
-            @yield('contentini')
-        </div>
+                <!-- Main Content -->
+                <main class="main-content">
 
-        <!-- Footer -->
-        <footer class="footer mt-5 py-4">
-            <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-md-6 text-center text-md-start text-muted">
-                        &copy; <span id="currentYear"></span>
-                        <a href="#" class="text-decoration-none">Fundación Educar para la Vida</a>
+                    @include('components.header')
+                    <div class="container-fluid py-4">
+                        @yield('contentup')
+                        @yield('content')
+                        @yield('contentini')
                     </div>
-                </div>
+                </main>
+
+                <!-- Footer -->
+                <footer class="footer mt-auto py-4 bg-light">
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-md-6 text-center text-md-start text-muted">
+                                &copy; <span id="currentYear"></span>
+                                <a href="#" class="text-decoration-none">Fundación Educar para la Vida</a>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
             </div>
-        </footer>
-    </div>
+        </div>
 
     <!-- Include Achievements Component -->
     @role('Estudiante')
@@ -54,17 +61,13 @@
     <!-- JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ asset('./assets/js/plugins/jquery/dist/jquery.min.js') }}"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Set current year
             document.getElementById('currentYear').textContent = new Date().getFullYear();
 
-            // Sidebar toggle
-            document.getElementById('toggleSidebar').addEventListener('click', function() {
-                document.getElementById('sidebar').classList.toggle('collapsed');
-            });
+            // El toggle del sidebar se maneja en el componente sidebar.blade.php
 
             // Show floating XP button after delay
             setTimeout(() => {

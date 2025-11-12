@@ -1,14 +1,36 @@
+<style>
+    .stat-card {
+        border-radius: 10px;
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        font-size: 1.5rem;
+    }
+</style>
+
 <div class="container py-1">
-    <!-- Tarjetas de estadísticas -->
-    <div class="row g-2">
+    <div class="row g-3">
+
         <div class="col-xl-3 col-md-6">
-            <div class="card shadow-sm border-2">
-                <div class="card-body d-flex justify-content-between align-items-center">
+            <div class="card stat-card shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h5 class="text-muted text-uppercase mb-1">Cursos</h5>
-                        <span class="h2 fw-bold">{{ count($cursos) }}</span>
+                        <h6 class="text-muted text-uppercase mb-1">Cursos</h6>
+                        <h3 class="fw-bold">0</h3>
                     </div>
-                    <div class="icon bg-danger text-white rounded-circle p-3">
+                    <div class="stat-icon bg-danger text-white">
                         <i class="bi bi-bar-chart-fill"></i>
                     </div>
                 </div>
@@ -16,13 +38,13 @@
         </div>
 
         <div class="col-xl-3 col-md-6">
-            <div class="card shadow-sm border-2">
-                <div class="card-body d-flex justify-content-between align-items-center">
+            <div class="card stat-card shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h5 class="text-muted text-uppercase mb-1">Estudiantes</h5>
-                        <span class="h2 fw-bold">{{ count($estudiantes) }}</span>
+                        <h6 class="text-muted text-uppercase mb-1">Estudiantes</h6>
+                        <h3 class="fw-bold">0</h3>
                     </div>
-                    <div class="icon bg-warning text-white rounded-circle p-3">
+                    <div class="stat-icon bg-warning text-white">
                         <i class="bi bi-people-fill"></i>
                     </div>
                 </div>
@@ -30,13 +52,13 @@
         </div>
 
         <div class="col-xl-3 col-md-6">
-            <div class="card shadow-sm border-2">
-                <div class="card-body d-flex justify-content-between align-items-center">
+            <div class="card stat-card shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h5 class="text-muted text-uppercase mb-1">Docentes</h5>
-                        <span class="h2 fw-bold">{{ count($docentes) }}</span>
+                        <h6 class="text-muted text-uppercase mb-1">Docentes</h6>
+                        <h3 class="fw-bold">0</h3>
                     </div>
-                    <div class="icon bg-primary text-white rounded-circle p-3">
+                    <div class="stat-icon bg-primary text-white">
                         <i class="bi bi-person-check-fill"></i>
                     </div>
                 </div>
@@ -44,17 +66,18 @@
         </div>
 
         <div class="col-xl-3 col-md-6">
-            <div class="card shadow-sm border-2">
-                <div class="card-body d-flex justify-content-between align-items-center">
+            <div class="card stat-card shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h5 class="text-muted text-uppercase mb-1">Inscripciones</h5>
-                        <span class="h2 fw-bold">{{ count($inscritos) }}</span>
+                        <h6 class="text-muted text-uppercase mb-1">Inscripciones</h6>
+                        <h3 class="fw-bold">0</h3>
                     </div>
-                    <div class="icon bg-info text-white rounded-circle p-3">
+                    <div class="stat-icon bg-info text-white">
                         <i class="bi bi-clipboard-check-fill"></i>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
-</div> 
+</div>

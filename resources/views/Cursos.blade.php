@@ -227,8 +227,8 @@
                                                 </a>
                                             </li>
                                         @endif
-                                        <a href="{{ route('certificados.vistaPrevia', encrypt($cursos->id)) }}" class="btn "
-                                            target="_blank">
+                                        <a href="{{ route('certificados.vistaPrevia', encrypt($cursos->id)) }}"
+                                            class="btn " target="_blank">
                                             <i class="fas fa-eye"></i> Vista previa del certificado
                                         </a>
                                     @endif
