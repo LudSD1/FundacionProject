@@ -8,8 +8,8 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
+            <div class="card-modern">
+                <div class="card-header-modern">
                     <h4 class="mb-0">Importar Usuarios para Congreso</h4>
                 </div>
                 <div class="card-body">
@@ -64,9 +64,9 @@
                             </ul>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="congreso_id" class="form-label">Seleccionar Congreso</label>
-                            <select name="congreso_id" id="congreso_id" class="form-control" required>
+                        <div class="form-group-modern">
+                            <label for="congreso_id" class="form-label-modern">Seleccionar Congreso</label>
+                            <select name="congreso_id" id="congreso_id" class="form-select-modern" required>
                                 <option value="">Seleccione un congreso</option>
                                 @foreach($congresos as $congreso)
                                     <option value="{{ $congreso->id }}">{{ $congreso->nombreCurso }}</option>
@@ -74,14 +74,16 @@
                             </select>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="excel_file" class="form-label">Archivo Excel</label>
-                            <input type="file" name="excel_file" id="excel_file" class="form-control" required>
-                            <small class="form-text text-muted">Formatos aceptados: xlsx, xls, csv</small>
+                        <div class="form-group-modern">
+                            <label for="excel_file" class="form-label-modern">Archivo Excel</label>
+                            <input type="file" name="excel_file" id="excel_file" class="form-control-modern" required>
+                            <p class="helper-text-modern">Formatos aceptados: xlsx, xls, csv</p>
                         </div>
 
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary">Importar Usuarios</button>
+                            <button type="submit" class="btn-modern btn-submit">
+                                <i class="fas fa-file-upload me-1"></i> Importar Usuarios
+                            </button>
                         </div>
                     </form>
                 </div>

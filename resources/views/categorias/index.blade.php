@@ -18,41 +18,41 @@
             <p class="text-muted mb-0">Administra las categorías del sistema</p>
         </div>
         <div class="col-md-4 text-end">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearCategoriaModal">
-                <i class="fas fa-plus me-2"></i>
-                Nueva Categoría
+            <button class="btn-modern btn-create" data-bs-toggle="modal" data-bs-target="#crearCategoriaModal">
+                <i class="fa fa-plus"></i>
+                <span class="ms-1">Nueva Categoría</span>
             </button>
         </div>
     </div>
 
-    <!-- Barra de búsqueda mejorada -->
-    <div class="card shadow-sm mb-4">
+    <!-- Barra de búsqueda moderna -->
+    <div class="card-modern mb-4">
         <div class="card-body">
-            <form action="{{ route('categorias.index') }}" method="GET" class="row g-3">
+            <form action="{{ route('categorias.index') }}" method="GET" class="row g-3 align-items-center">
                 <input type="hidden" name="tab" value="{{ request('tab', 'activas') }}">
                 <div class="col-md-8">
-                    <div class="input-group">
-                        <span class="input-group-text bg-light">
-                            <i class="fas fa-search text-muted"></i>
-                        </span>
-                        <input type="text" name="busqueda" class="form-control"
+                    <div class="search-box-table">
+                        <i class="fas fa-search search-icon-table"></i>
+                        <input type="text" name="busqueda" class="search-input-table"
                                placeholder="Buscar por nombre, descripción..."
                                value="{{ request('busqueda') }}">
+                        <button type="submit" class="btn-search-icon" aria-label="Buscar">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <span class="search-indicator"></span>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-search me-1"></i>
-                            Buscar
-                        </button>
                         @if(request('busqueda'))
-                            <a href="{{ route('categorias.index', ['tab' => request('tab', 'activas')]) }}"
-                               class="btn btn-outline-secondary">
+                            <a href="{{ route('categorias.index', ['tab' => request('tab', 'activas')]) }}" class="btn btn-outline-secondary">
                                 <i class="fas fa-times me-1"></i>
                                 Limpiar
                             </a>
                         @endif
+                        <button type="button" class="btn-modern btn-create" data-bs-toggle="modal" data-bs-target="#crearCategoriaModal">
+                            <i class="fas fa-plus"></i><span class="ms-1">Nueva</span>
+                        </button>
                     </div>
                 </div>
             </form>
@@ -62,7 +62,7 @@
     <!-- Tabs mejorados -->
     <div class="card shadow-sm">
         <div class="card-header bg-white border-0">
-            <ul class="nav nav-pills nav-fill" id="categoriaTabs" role="tablist">
+            <ul class="nav nav-tabs" id="categoriaTabs" role="tablist">
                 <li class="nav-item" role="presentation">
                     <a class="nav-link {{ request('tab', 'activas') === 'activas' ? 'active' : '' }}"
                        href="{{ route('categorias.index', ['tab' => 'activas', 'busqueda' => request('busqueda')]) }}">
@@ -84,8 +84,8 @@
 
         <!-- Tabla mejorada -->
         <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
+            <div class="table-container-modern">
+                <table class="table-modern table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
                             <th scope="col" class="fw-semibold">ID</th>
@@ -110,9 +110,9 @@
                     </thead>
                     <tbody>
                         @forelse ($categorias as $categoria)
-                            <tr class="{{ $categoria->trashed() ? 'table-light' : '' }}">
+                            <tr>
                                 <td>
-                                    <span class="badge bg-light text-dark">#{{ $categoria->id }}</span>
+                                    <span class="row-number">#{{ $categoria->id }}</span>
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
@@ -175,9 +175,9 @@
                                         </div>
                                     @else
                                         <!-- Para categorías activas -->
-                                        <div class="btn-group btn-group-sm" role="group">
+                                        <div class="action-buttons-cell">
                                             <button
-                                                class="btn btn-outline-info"
+                                                class="btn-action-modern btn-edit"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#editarCategoriaModal"
                                                 data-id="{{ $categoria->id }}"
@@ -187,17 +187,15 @@
                                                 data-parent="{{ $categoria->parent_id }}"
                                                 title="Editar categoría">
                                                 <i class="fas fa-edit"></i>
-                                                <span class="d-none d-lg-inline ms-1">Editar</span>
                                             </button>
 
                                             <form action="{{ route('categorias.destroy', $categoria->id) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('delete')
-                                                <button class="btn btn-outline-danger"
+                                                <button class="btn-action-modern btn-delete"
                                                         onclick="return confirm('¿Eliminar esta categoría?')"
                                                         title="Eliminar categoría">
                                                     <i class="fas fa-trash"></i>
-                                                    <span class="d-none d-lg-inline ms-1">Eliminar</span>
                                                 </button>
                                             </form>
                                         </div>
@@ -207,15 +205,15 @@
                         @empty
                             <tr>
                                 <td colspan="4" class="text-center py-5">
-                                    <div class="d-flex flex-column align-items-center text-muted">
+                                    <div class="empty-state">
                                         @if(request('tab') === 'eliminadas')
-                                            <i class="fas fa-trash fa-3x mb-3 opacity-50"></i>
-                                            <h5 class="mb-1">No hay categorías eliminadas</h5>
-                                            <p class="mb-0">Todas las categorías están activas.</p>
+                                            <i class="fas fa-trash"></i>
+                                            <h5>No hay categorías eliminadas</h5>
+                                            <p>Todas las categorías están activas.</p>
                                         @else
-                                            <i class="fas fa-folder-open fa-3x mb-3 opacity-50"></i>
-                                            <h5 class="mb-1">No se encontraron categorías</h5>
-                                            <p class="mb-0">Crea tu primera categoría para comenzar.</p>
+                                            <i class="fas fa-folder-open"></i>
+                                            <h5>No se encontraron categorías</h5>
+                                            <p>Crea tu primera categoría para comenzar.</p>
                                         @endif
                                     </div>
                                 </td>

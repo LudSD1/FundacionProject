@@ -246,7 +246,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/CrearEstudianteMenor', [MenuController::class, 'storeETIndex'])->name('CrearEstudianteMenor');
         Route::post('/CrearEstudianteMenor', [AdministradorController::class, 'storeEstudianteMenor'])->name('CrearEstudianteMenorPost');
 
-        Route::get('/ListaAportes', [MenuController::class, 'ListaAportes'])->name('aportesLista');
+        Route::get('/ListaPagos', [MenuController::class, 'ListaAportes'])->name('aportesLista');
 
         Route::put('/ActualizarPago/{codigopago}', [AportesController::class, 'actualizarPago'])->name('pagos.update');
 
@@ -463,7 +463,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/ranking-quizz/{id}', [CuestionarioController::class, 'rankingQuizz'])->name('rankingQuizz');
 
         //Calendario
-        Route::get('listaParticipantes/cursoid={id}', [CursosController::class, 'listaCurso'])->name('listacurso');
+        Route::get('listaParticipantes/{id}', [CursosController::class, 'listaCurso'])->name('listacurso');
         // Ruta para obtener el certificado
         Route::post('/certificados/obtener/{id}', [CertificadoController::class, 'obtenerCertificado'])
             ->name('certificados.obtener');

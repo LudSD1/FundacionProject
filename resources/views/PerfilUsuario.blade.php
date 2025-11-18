@@ -32,10 +32,9 @@ Perfil {{$usuario->name}} {{$usuario->lastname1}} {{$usuario->lastname2}}
     <div class="row">
         <!-- Columna de perfil (izquierda) -->
         <div class="col-lg-4 mb-4">
-            <div class="card border-0 shadow rounded-lg">
-                <!-- Sección de avatar -->
-                <div class="card-header bg-primary text-white text-center py-4 rounded-top">
-                    <h4 class="mb-0">Perfil de Usuario</h4>
+            <div class="card-modern">
+                <div class="card-header-modern text-center">
+                    <h4 class="card-title-modern mb-0">Perfil de Usuario</h4>
                 </div>
 
                 <div class="text-center position-relative avatar-container">
@@ -83,16 +82,14 @@ Perfil {{$usuario->name}} {{$usuario->lastname1}} {{$usuario->lastname2}}
 
                     <!-- Botones de acción -->
                     @if (auth()->user()->hasRole('Administrador') )
-                    <div class="mt-4 d-flex justify-content-between">
-                        <a href="{{ route('EditarperfilUser', [encrypt($usuario->id)]) }}"
-                            class="btn btn-primary btn-block mr-2">
-                            <i class="fas fa-user-edit mr-1"></i> Editar Perfil
+                    <div class="mt-4">
+                        <a href="{{ route('EditarperfilUser', [encrypt($usuario->id)]) }}" class="btn-modern btn-primary-custom w-100">
+                            <i class="fas fa-user-edit mr-1"></i><span class="ms-1">Editar Perfil</span>
                         </a>
                     </div>
-                    <div class="mt-4 d-flex justify-content-between">
-                        <a href="{{ route('CambiarContrasena', [encrypt($usuario->id)]) }}"
-                            class="btn btn-outline-primary btn-block">
-                            <i class="fas fa-key mr-1"></i> Cambiar Contraseña
+                    <div class="mt-3">
+                        <a href="{{ route('CambiarContrasena', [encrypt($usuario->id)]) }}" class="btn-modern btn-accent-custom w-100">
+                            <i class="fas fa-key mr-1"></i><span class="ms-1">Cambiar Contraseña</span>
                         </a>
                     </div>
                     @endif
@@ -106,9 +103,8 @@ Perfil {{$usuario->name}} {{$usuario->lastname1}} {{$usuario->lastname2}}
                                     No se ha cargado hoja de vida
                                 </div>
                             @else
-                                <a href="{{ asset('storage/' . $usuario->cv_file) }}"
-                                    class="btn btn-outline-info btn-block">
-                                    <i class="fas fa-file-pdf mr-1"></i> Ver Hoja de Vida
+                                <a href="{{ asset('storage/' . $usuario->cv_file) }}" class="btn-modern btn-accent-custom w-100">
+                                    <i class="fas fa-file-pdf mr-1"></i><span class="ms-1">Ver Hoja de Vida</span>
                                 </a>
                             @endif
                         </div>
@@ -122,10 +118,10 @@ Perfil {{$usuario->name}} {{$usuario->lastname1}} {{$usuario->lastname2}}
             @yield('content')
 
             <!-- Sección de datos personales -->
-            <div class="card shadow rounded-lg mb-4">
-                <div class="card-header bg-white p-4 d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0">Información Personal</h4>
-                    <span class="badge badge-pill badge-light py-2 px-3 text-muted">
+            <div class="card-modern mb-4">
+                <div class="card-header-modern d-flex justify-content-between align-items-center">
+                    <h4 class="card-title-modern mb-0">Información Personal</h4>
+                    <span class="badge bg-light text-muted">
                         <i class="fas fa-lock mr-1"></i> Solo lectura
                     </span>
                 </div>
@@ -139,7 +135,7 @@ Perfil {{$usuario->name}} {{$usuario->lastname1}} {{$usuario->lastname2}}
                                     <div class="input-group-prepend">
                                         <span class="input-group-text bg-light"><i class="fas fa-user"></i></span>
                                     </div>
-                                    <input type="text" class="form-control bg-light" value="{{ $usuario->name }}" readonly>
+                                    <input type="text" class="form-control-modern" value="{{ $usuario->name }}" readonly>
                                 </div>
                             </div>
                         </div>
@@ -151,7 +147,7 @@ Perfil {{$usuario->name}} {{$usuario->lastname1}} {{$usuario->lastname2}}
                                     <div class="input-group-prepend">
                                         <span class="input-group-text bg-light"><i class="fas fa-envelope"></i></span>
                                     </div>
-                                    <input type="email" class="form-control bg-light" value="{{ $usuario->email }}" readonly>
+                                    <input type="email" class="form-control-modern" value="{{ $usuario->email }}" readonly>
                                 </div>
                             </div>
                         </div>
@@ -165,7 +161,7 @@ Perfil {{$usuario->name}} {{$usuario->lastname1}} {{$usuario->lastname2}}
                                     <div class="input-group-prepend">
                                         <span class="input-group-text bg-light"><i class="fas fa-user-tag"></i></span>
                                     </div>
-                                    <input type="text" class="form-control bg-light" value="{{ $usuario->lastname1 }}" readonly>
+                                    <input type="text" class="form-control-modern" value="{{ $usuario->lastname1 }}" readonly>
                                 </div>
                             </div>
                         </div>
@@ -177,7 +173,7 @@ Perfil {{$usuario->name}} {{$usuario->lastname1}} {{$usuario->lastname2}}
                                     <div class="input-group-prepend">
                                         <span class="input-group-text bg-light"><i class="fas fa-user-tag"></i></span>
                                     </div>
-                                    <input type="text" class="form-control bg-light" value="{{ $usuario->lastname2 }}" readonly>
+                                    <input type="text" class="form-control-modern" value="{{ $usuario->lastname2 }}" readonly>
                                 </div>
                             </div>
                         </div>
@@ -186,9 +182,9 @@ Perfil {{$usuario->name}} {{$usuario->lastname1}} {{$usuario->lastname2}}
             </div>
 
             <!-- Sección de contacto -->
-            <div class="card shadow rounded-lg">
-                <div class="card-header bg-white p-4">
-                    <h4 class="mb-0">Información de Contacto</h4>
+            <div class="card-modern">
+                <div class="card-header-modern">
+                    <h4 class="card-title-modern mb-0">Información de Contacto</h4>
                 </div>
 
                 <div class="card-body p-4">
@@ -200,7 +196,7 @@ Perfil {{$usuario->name}} {{$usuario->lastname1}} {{$usuario->lastname2}}
                                     <div class="input-group-prepend">
                                         <span class="input-group-text bg-light"><i class="fas fa-phone"></i></span>
                                     </div>
-                                    <input type="text" class="form-control bg-light" value="{{ $usuario->Celular }}" readonly>
+                                    <input type="text" class="form-control-modern" value="{{ $usuario->Celular }}" readonly>
                                 </div>
                             </div>
                         </div>
@@ -212,7 +208,7 @@ Perfil {{$usuario->name}} {{$usuario->lastname1}} {{$usuario->lastname2}}
                                     <div class="input-group-prepend">
                                         <span class="input-group-text bg-light"><i class="fas fa-map-marker-alt"></i></span>
                                     </div>
-                                    <input type="text" class="form-control bg-light"
+                                    <input type="text" class="form-control-modern"
                                            value="{{ $usuario->CiudadReside }}, {{ $usuario->PaisReside }}" readonly>
                                 </div>
                             </div>

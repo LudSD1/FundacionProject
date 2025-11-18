@@ -3,12 +3,12 @@
 @endsection
 
 @section('content')
-<div class="container py-5">
-    <div class="card shadow">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h2 class="mb-0"><i class="fas fa-credit-card me-2"></i>Gestión de Métodos de Pago</h2>
-            <a href="{{ route('payment-methods.create') }}" class="btn btn-light">
-                <i class="fas fa-plus me-1"></i> Nuevo Método
+<div class="container-fluid py-5">
+    <div class="card-modern">
+        <div class="card-header-modern d-flex justify-content-between align-items-center">
+            <h2 class="card-title-modern mb-0"><i class="fas fa-credit-card me-2"></i>Gestión de Métodos de Pago</h2>
+            <a href="{{ route('payment-methods.create') }}" class="btn-modern btn-primary-custom">
+                <i class="fas fa-plus me-1"></i><span class="ms-1">Nuevo Método</span>
             </a>
         </div>
         <div class="card-body">
@@ -26,8 +26,8 @@
                 </div>
             @endif
 
-            <div class="table-responsive">
-                <table class="table table-hover">
+            <div class="table-container-modern">
+                <table class="table-modern table table-hover">
                     <thead class="table-light">
                         <tr>
                             <th>Orden</th>
@@ -81,51 +81,35 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <div class="btn-group" role="group">
+                                    <div class="action-buttons-cell" role="group">
                                         @if(!$method->trashed())
-                                            <a href="{{ route('payment-methods.show', $method) }}"
-                                               class="btn btn-sm btn-outline-info"
-                                               title="Ver detalles">
+                                            <a href="{{ route('payment-methods.show', $method) }}" class="btn-action-modern" title="Ver detalles">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="{{ route('payment-methods.edit', $method) }}"
-                                               class="btn btn-sm btn-outline-primary"
-                                               title="Editar">
+                                            <a href="{{ route('payment-methods.edit', $method) }}" class="btn-action-modern" title="Editar">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form action="{{ route('payment-methods.toggle-status', $method) }}"
-                                                  method="POST"
-                                                  class="d-inline">
+                                            <form action="{{ route('payment-methods.toggle-status', $method) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('PATCH')
-                                                <button type="submit"
-                                                        class="btn btn-sm btn-outline-{{ $method->is_active ? 'warning' : 'success' }}"
-                                                        title="{{ $method->is_active ? 'Desactivar' : 'Activar' }}"
+                                                <button type="submit" class="btn-action-modern" title="{{ $method->is_active ? 'Desactivar' : 'Activar' }}"
                                                         onclick="return confirm('¿Está seguro de {{ $method->is_active ? 'desactivar' : 'activar' }} este método de pago?')">
                                                     <i class="fas fa-{{ $method->is_active ? 'pause' : 'play' }}"></i>
                                                 </button>
                                             </form>
-                                            <form action="{{ route('payment-methods.destroy', $method) }}"
-                                                  method="POST"
-                                                  class="d-inline">
+                                            <form action="{{ route('payment-methods.destroy', $method) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit"
-                                                        class="btn btn-sm btn-outline-danger"
-                                                        title="Eliminar"
+                                                <button type="submit" class="btn-action-modern btn-action-delete" title="Eliminar"
                                                         onclick="return confirm('¿Está seguro de eliminar este método de pago?')">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
                                         @else
-                                            <form action="{{ route('payment-methods.restore', $method->id) }}"
-                                                  method="POST"
-                                                  class="d-inline">
+                                            <form action="{{ route('payment-methods.restore', $method->id) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('PATCH')
-                                                <button type="submit"
-                                                        class="btn btn-sm btn-outline-success"
-                                                        title="Restaurar"
+                                                <button type="submit" class="btn-action-modern" title="Restaurar"
                                                         onclick="return confirm('¿Está seguro de restaurar este método de pago?')">
                                                     <i class="fas fa-undo"></i>
                                                 </button>
@@ -159,11 +143,9 @@
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                                <a href="{{ $method->qr_image_url }}"
-                                                   download="QR_{{ $method->name }}.png"
-                                                   class="btn btn-primary">
-                                                    <i class="fas fa-download me-1"></i>Descargar
+                                                <button type="button" class="btn-modern btn-accent-custom" data-bs-dismiss="modal">Cerrar</button>
+                                                <a href="{{ $method->qr_image_url }}" download="QR_{{ $method->name }}.png" class="btn-modern btn-primary-custom">
+                                                    <i class="fas fa-download me-1"></i><span class="ms-1">Descargar</span>
                                                 </a>
                                             </div>
                                         </div>
@@ -173,11 +155,11 @@
                         @empty
                             <tr>
                                 <td colspan="8" class="text-center py-5">
-                                    <div class="text-muted">
-                                        <i class="fas fa-credit-card fa-3x mb-3"></i>
+                                    <div class="empty-state">
+                                        <i class="fas fa-credit-card"></i>
                                         <p>No hay métodos de pago registrados</p>
-                                        <a href="{{ route('payment-methods.create') }}" class="btn btn-primary">
-                                            <i class="fas fa-plus me-1"></i> Crear primer método
+                                        <a href="{{ route('payment-methods.create') }}" class="btn-modern btn-primary-custom">
+                                            <i class="fas fa-plus me-1"></i><span class="ms-1">Crear primer método</span>
                                         </a>
                                     </div>
                                 </td>

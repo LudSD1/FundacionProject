@@ -10,232 +10,267 @@
 
 @section('contentup')
     <div class="container-fluid my-4">
-        <!-- Collapsible Section Toggle -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h1 class="mb-0">{{ $cursos->nombreCurso }}</h1>
-            <button class="btn btn-outline-primary collapse-toggle" type="button" data-bs-toggle="collapse"
-                data-bs-target="#course-info" aria-expanded="true" aria-controls="course-info">
-                <i class="fa fa-chevron-up me-1"></i>
-                <span class="d-none d-sm-inline toggle-text">Ocultar</span>
-            </button>
+        <!-- Hero Section -->
+        <div class="course-hero">
+            <div class="course-hero-content">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+                    <div>
+                        <h1 class="course-title mb-0">{{ $cursos->nombreCurso }}</h1>
+                    </div>
+                    <button class="collapse-toggle" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#course-info" aria-expanded="true" aria-controls="course-info">
+                        <i class="fa fa-chevron-up me-1"></i>
+                        <span class="toggle-text">Ocultar detalles</span>
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- Main Course Content -->
         <div id="course-info" class="collapse show">
-            <div class="card shadow-sm border-0 mb-4">
-                <div class="card-body">
-                    <!-- Teacher Information -->
-                    <div class="d-flex align-items-center mb-4">
-                        <div class="bg-light rounded-circle p-3 me-3">
-                            <i class="fas fa-user-tie fa-2x text-primary"></i>
-                        </div>
-                        <div>
-                            <p class="text-muted mb-0">Docente</p>
-                            <h4 class="mb-0">
-                                <a href="{{ route('perfil', ['id' => encrypt($cursos->docente->id)]) }}"
-                                    class="text-decoration-none">
-                                    {{ $cursos->docente ? $cursos->docente->name . ' ' . $cursos->docente->lastname1 . ' ' . $cursos->docente->lastname2 : 'N/A' }}
-                                </a>
-                            </h4>
-                        </div>
+            <!-- Teacher Card -->
+            <div class="teacher-card">
+                <div class="d-flex align-items-center gap-4">
+                    <div class="teacher-avatar">
+                        <i class="fas fa-user-tie"></i>
                     </div>
-
-                    <!-- Course Status & Info -->
-                    <div class="row g-4 mb-4">
-                        <div class="col-md-6">
-                            <div class="card h-100 border-0 bg-light">
-                                <div class="card-body">
-                                    <h5 class="card-title">
-                                        <i class="fas fa-info-circle text-primary me-2"></i>Estado
-                                    </h5>
-                                    <p class="card-text">
-                                        <span
-                                            class="badge bg-{{ $cursos->estado === 'Activo' ? 'success' : ($cursos->estado === 'Certificado Disponible' ? 'primary' : 'secondary') }} px-3 py-2">
-                                            {{ $cursos->estado }}
-                                        </span>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card h-100 border-0 bg-light">
-                                <div class="card-body">
-                                    <h5 class="card-title">
-                                        <i class="fas fa-tags text-primary me-2"></i>Tipo
-                                    </h5>
-                                    <p class="card-text">
-                                        <span class="badge bg-info px-3 py-2">{{ $cursos->tipo }}</span>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Course Description -->
-                    <div class="card border-0 bg-light mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                <i class="fas fa-align-left text-primary me-2"></i>Descripción
-                            </h5>
-                            <p class="card-text">{{ $cursos->descripcionC }}</p>
-                        </div>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="d-flex flex-wrap gap-2 mb-2">
-                        <a class="btn btn-primary" href="{{ route('listacurso', [encrypt($cursos->id)]) }}">
-                            <i class="fas fa-users me-2"></i> Participantes
-                        </a>
-
-                        @if ($cursos->tipo == 'curso')
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalHorario">
-                                <i class="fa fa-calendar me-2"></i> Horarios
-                            </button>
-
-                            <a href="{{ route('historialAsistencias', encrypt($cursos->id)) }}" class="btn btn-primary">
-                                <i class="fas fa-clipboard-list me-2"></i> Asistencias
+                    <div class="teacher-info flex-grow-1">
+                        <p>Docente del curso</p>
+                        <h4>
+                            <a href="{{ route('perfil', ['id' => encrypt($cursos->docente->id)]) }}">
+                                {{ $cursos->docente ? $cursos->docente->name . ' ' . $cursos->docente->lastname1 . ' ' . $cursos->docente->lastname2 : 'N/A' }}
                             </a>
-                        @endif
+                        </h4>
+                    </div>
+                    <div>
+                        <i class="fas fa-arrow-right text-muted"></i>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Info Cards Grid -->
+            <div class="info-grid">
+                <!-- Estado -->
+                <div class="info-card">
+                    <div class="info-card-icon primary">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <h5>Estado del Curso</h5>
+                    <div class="info-card-content">
+                        <span class="status-badge {{ $cursos->estado === 'Activo' ? 'active' : ($cursos->estado === 'Certificado Disponible' ? 'certified' : 'inactive') }}">
+                            <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
+                            {{ $cursos->estado }}
+                        </span>
+                    </div>
+                </div>
 
-                        <!-- Admin/Teacher Actions -->
-                        @if ($esDocente || auth()->user()->hasRole('Administrador'))
+                <!-- Tipo -->
+                <div class="info-card">
+                    <div class="info-card-icon accent">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <h5>Tipo de Formación</h5>
+                    <div class="info-card-content">
+                        <span class="type-badge">
+                            <i class="fas {{ $cursos->tipo === 'curso' ? 'fa-book' : 'fa-calendar-alt' }}"></i>
+                            {{ ucfirst($cursos->tipo) }}
+                        </span>
+                    </div>
+                </div>
 
-                            <div class="dropdown">
-                                <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-cog me-2"></i> Gestionar Curso
-                                </button>
-                                <ul class="dropdown-menu shadow" aria-labelledby="dropdownMenuButton">
+                <!-- Formato (ejemplo adicional) -->
+                <div class="info-card">
+                    <div class="info-card-icon orange">
+                        <i class="fas fa-desktop"></i>
+                    </div>
+                    <h5>Modalidad</h5>
+                    <div class="info-card-content">
+                        <span class="type-badge" style="background: var(--gradient-orange);">
+                            <i class="fas fa-globe"></i>
+                            {{ $cursos->formato ?? 'Virtual' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Description Card -->
+            <div class="description-card">
+                <h5>
+                    <i class="fas fa-align-left"></i>
+                    Descripción del Curso
+                </h5>
+                <p>{{ $cursos->descripcionC }}</p>
+            </div>
+
+            <!-- Actions Container -->
+            <div class="actions-container">
+                <h5 class="actions-title">
+                    <i class="fas fa-bolt"></i>
+                    Acciones Rápidas
+                </h5>
+
+                <div class="d-flex flex-wrap gap-3">
+                    <!-- Participantes -->
+                    <a class="btn-modern btn-primary-custom" href="{{ route('listacurso', encrypt($cursos->id)) }}">
+                        <i class="fas fa-users"></i>
+                        <span>Participantes</span>
+                    </a>
+
+                    @if ($cursos->tipo == 'curso')
+                        <!-- Horarios -->
+                        <button class="btn-modern btn-accent-custom" data-bs-toggle="modal" data-bs-target="#modalHorario">
+                            <i class="fa fa-calendar"></i>
+                            <span>Horarios</span>
+                        </button>
+
+                        <!-- Asistencias -->
+                        <a href="{{ route('historialAsistencias', encrypt($cursos->id)) }}" class="btn-modern btn-primary-custom">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Asistencias</span>
+                        </a>
+                    @endif
+
+                    <!-- Gestionar Curso (Dropdown) -->
+                    @if ($esDocente || auth()->user()->hasRole('Administrador'))
+                        <div class="dropdown">
+                            <button class="btn-modern btn-success-custom dropdown-toggle" type="button"
+                                    id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-cog"></i>
+                                <span>Gestionar Curso</span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('curso-imagenes.index', $cursos) }}">
+                                        <i class="fas fa-image text-primary"></i>
+                                        Imágenes de Presentación
+                                    </a>
+                                </li>
+
+                                @if ($esDocente)
+                                    <li><hr class="dropdown-divider"></li>
+
+                                    @if ($cursos->tipo == 'curso')
+                                        <li>
+                                            <a class="dropdown-item" href="#" data-bs-toggle="modal"
+                                                data-bs-target="#modalCrearHorario">
+                                                <i class="fas fa-calendar-plus text-success"></i>
+                                                Crear Horarios
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a class="dropdown-item"
+                                                href="{{ route('repF', [encrypt($cursos->id)]) }}"
+                                                onclick="mostrarAdvertencia2(event)">
+                                                <i class="fas fa-star text-warning"></i>
+                                                Calificaciones
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a class="dropdown-item"
+                                                href="{{ route('asistencias', [encrypt($cursos->id)]) }}">
+                                                <i class="fas fa-check text-success"></i>
+                                                Dar Asistencia
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a href="{{ route('cursos.elementos-eliminados', encrypt($cursos->id)) }}"
+                                                class="dropdown-item">
+                                                <i class="fas fa-trash text-danger"></i>
+                                                Ver Elementos Eliminados
+                                            </a>
+                                        </li>
+                                    @endif
 
                                     <li>
-                                        <a class="dropdown-item py-2" href="{{ route('curso-imagenes.index', $cursos) }}">
-                                            <i class="fas fa-image text-dark me-2"></i> Imagenes de Presentacion
+                                        <a class="dropdown-item"
+                                            href="{{ route('editarCurso', [encrypt($cursos->id)]) }}">
+                                            <i class="fas fa-edit text-info"></i>
+                                            Editar Curso
                                         </a>
                                     </li>
+                                @endif
 
-                                    @if ($esDocente)
-                                        <li>
-                                            <hr class="dropdown-divider">
-                                        </li>
-                                        @if ($cursos->tipo == 'curso')
-                                            <li>
-                                                <a class="dropdown-item py-2" href="#" data-bs-toggle="modal"
-                                                    data-bs-target="#modalCrearHorario">
-                                                    <i class="fas fa-calendar-plus text-primary me-2"></i> Crear Horarios
-                                                </a>
-                                            </li>
-
-
-                                            {{-- <li>
-                                                <a class="dropdown-item py-2" href="#" data-bs-toggle="modal"
-                                                    data-bs-target="#qrModal">
-                                                    <i class="fas fa-qrcode text-dark me-2"></i> Generar Código QR
-                                                </a>
-                                            </li> --}}
-                                            <li>
-                                                <a class="dropdown-item py-2"
-                                                    href="{{ route('repF', [encrypt($cursos->id)]) }}"
-                                                    onclick="mostrarAdvertencia2(event)">
-                                                    <i class="fas fa-star text-warning me-2"></i> Calificaciones
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item py-2"
-                                                    href="{{ route('asistencias', [encrypt($cursos->id)]) }}">
-                                                    <i class="fas fa-check text-success me-2"></i> Dar Asistencia
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="{{ route('cursos.elementos-eliminados', encrypt($cursos->id)) }}"
-                                                    class="dropdown-item py-2">
-                                                    <i class="fas fa-trash text-success me-2"></i> Ver elementos eliminados
-                                                </a>
-                                            </li>
-                                        @endif
-                                        <li>
-                                            <a class="dropdown-item py-2"
-                                                href="{{ route('editarCurso', [encrypt($cursos->id)]) }}">
-                                                <i class="fas fa-edit text-info me-2"></i> Editar Curso
-                                            </a>
-                                        </li>
-                                    @endif
-
-                                    @if (auth()->user()->hasRole('Administrador') && !empty($cursos->archivoContenidodelCurso))
-                                        <li>
-                                            <a class="dropdown-item py-2"
-                                                href="{{ asset('storage/' . $cursos->archivoContenidodelCurso) }}">
-                                                <i class="fas fa-file-pdf text-danger me-2"></i> Ver Plan Del Curso
-                                            </a>
-                                        </li>
-                                    @endif
-                                    @role('Administrador')
-                                        <li>
-                                            <a class="dropdown-item py-2"
-                                                href="{{ route('editarCurso', [encrypt($cursos->id)]) }}">
-                                                <i class="fas fa-edit text-info me-2"></i> Editar Curso
-                                            </a>
-                                        </li>
-                                    @endrole
-
-                                    <!-- Certificate Options -->
-                                    @if ($cursos->tipo === 'congreso')
-                                        <li>
-                                            <hr class="dropdown-divider">
-                                        </li>
-
-                                        @if ($cursos->estado === 'Certificado Disponible')
-                                            <li>
-                                                <button type="button" class="dropdown-item py-2" data-bs-toggle="modal"
-                                                    data-bs-target="#certificadoModal">
-                                                    <i class="fas fa-certificate text-warning me-2"></i> Obtener
-                                                    Certificado
-                                                </button>
-                                            </li>
-                                        @endif
-
-                                        @if ($cursos->estado == 'Activo')
-                                            <li>
-                                                <form
-                                                    action="{{ route('cursos.activarCertificados', ['id' => $cursos->id]) }}"
-                                                    method="POST">
-                                                    @csrf
-                                                    <button type="submit" class="dropdown-item py-2">
-                                                        <i class="fas fa-certificate text-success me-2"></i> Activar
-                                                        Certificados
-                                                    </button>
-                                                </form>
-                                            </li>
-                                        @endif
-                                    @endif
-                                    @if (auth()->user()->hasRole('Administrador') || $esDocente)
-                                        @if (!isset($template))
-                                            <li>
-                                                <a class="dropdown-item py-2" href="#" data-bs-toggle="modal"
-                                                    data-bs-target="#modalCertificado">
-                                                    <i class="fas fa-file-upload text-primary me-2"></i> Subir Plantilla de
-                                                    Certificado
-                                                </a>
-                                            </li>
-                                        @else
-                                            <li>
-                                                <a class="dropdown-item py-2" href="#" data-bs-toggle="modal"
-                                                    data-bs-target="#modalEditarCertificado">
-                                                    <i class="fas fa-edit text-primary me-2"></i> Actualizar Plantilla de
-                                                    Certificado
-                                                </a>
-                                            </li>
-                                        @endif
-                                        <a href="{{ route('certificados.vistaPrevia', encrypt($cursos->id)) }}"
-                                            class="btn " target="_blank">
-                                            <i class="fas fa-eye"></i> Vista previa del certificado
+                                @if (auth()->user()->hasRole('Administrador') && !empty($cursos->archivoContenidodelCurso))
+                                    <li>
+                                        <a class="dropdown-item"
+                                            href="{{ asset('storage/' . $cursos->archivoContenidodelCurso) }}">
+                                            <i class="fas fa-file-pdf text-danger"></i>
+                                            Ver Plan Del Curso
                                         </a>
+                                    </li>
+                                @endif
+
+                                @role('Administrador')
+                                    <li>
+                                        <a class="dropdown-item"
+                                            href="{{ route('editarCurso', [encrypt($cursos->id)]) }}">
+                                            <i class="fas fa-edit text-info"></i>
+                                            Editar Curso
+                                        </a>
+                                    </li>
+                                @endrole
+
+                                <!-- Certificate Options -->
+                                @if ($cursos->tipo === 'congreso')
+                                    <li><hr class="dropdown-divider"></li>
+
+                                    @if ($cursos->estado === 'Certificado Disponible')
+                                        <li>
+                                            <button type="button" class="dropdown-item" data-bs-toggle="modal"
+                                                data-bs-target="#certificadoModal">
+                                                <i class="fas fa-certificate text-warning"></i>
+                                                Obtener Certificado
+                                            </button>
+                                        </li>
                                     @endif
-                                </ul>
-                            </div>
-                        @endif
-                    </div>
+
+                                    @if ($cursos->estado == 'Activo')
+                                        <li>
+                                            <form action="{{ route('cursos.activarCertificados', ['id' => $cursos->id]) }}"
+                                                method="POST">
+                                                @csrf
+                                                <button type="submit" class="dropdown-item">
+                                                    <i class="fas fa-certificate text-success"></i>
+                                                    Activar Certificados
+                                                </button>
+                                            </form>
+                                        </li>
+                                    @endif
+                                @endif
+
+                                @if (auth()->user()->hasRole('Administrador') || $esDocente)
+                                    @if (!isset($template))
+                                        <li>
+                                            <a class="dropdown-item" href="#" data-bs-toggle="modal"
+                                                data-bs-target="#modalCertificado">
+                                                <i class="fas fa-file-upload text-primary"></i>
+                                                Subir Plantilla de Certificado
+                                            </a>
+                                        </li>
+                                    @else
+                                        <li>
+                                            <a class="dropdown-item" href="#" data-bs-toggle="modal"
+                                                data-bs-target="#modalEditarCertificado">
+                                                <i class="fas fa-edit text-primary"></i>
+                                                Actualizar Plantilla de Certificado
+                                            </a>
+                                        </li>
+                                    @endif
+
+                                    <li>
+                                        <a href="{{ route('certificados.vistaPrevia', encrypt($cursos->id)) }}"
+                                            class="dropdown-item" target="_blank">
+                                            <i class="fas fa-eye text-info"></i>
+                                            Vista Previa del Certificado
+                                        </a>
+                                    </li>
+                                @endif
+                            </ul>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -255,61 +290,6 @@
     </div>
 
 
-    <!-- Modal para editar plantilla -->
-    <style>
-        .image-preview {
-            transition: all 0.3s ease;
-            border: 2px dashed var(--bs-border-color);
-            border-radius: var(--bs-border-radius);
-        }
-
-        .image-preview:hover {
-            border-color: var(--bs-primary);
-        }
-
-        .file-input-wrapper {
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-            width: 100%;
-        }
-
-        .color-preview {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--bs-border-radius);
-            border: 2px solid var(--bs-border-color);
-            display: inline-block;
-            vertical-align: middle;
-            margin-left: 10px;
-        }
-
-        .form-floating-custom {
-            position: relative;
-        }
-
-        .preview-container {
-            background: var(--bs-gray-100);
-            border-radius: var(--bs-border-radius);
-            padding: 1rem;
-            text-align: center;
-            min-height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .preview-placeholder {
-            color: var(--bs-secondary);
-            font-size: 0.9rem;
-        }
-
-        .current-template {
-            background: var(--bs-light);
-            border-radius: var(--bs-border-radius);
-            padding: 1rem;
-        }
-    </style>
     <!-- Modal: Subir Nueva Plantilla -->
     <div class="modal fade" id="modalCertificado" tabindex="-1" aria-labelledby="modalCertificadoLabel"
         aria-hidden="true">
@@ -1035,312 +1015,371 @@
 
 
 @section('content')
-    @if ((auth()->user()->hasRole('Docente') && $esDocente) || (auth()->user()->hasRole('Estudiante') && $inscritos))
-
-        @section('nav')
-            <!-- Temas y Subtemas -->
-            <a href="#temario" class="nav-link" data-bs-toggle="tab">
-                <i class="bi bi-list-ul"></i> <span>Temario</span>
-            </a>
-
-            @forelse ($temas as $index => $tema)
-                @php
-                    $estaDesbloqueado =
-                        auth()->user()->hasRole('Docente') ||
-                        (auth()->user()->hasRole('Estudiante') && $tema->estaDesbloqueado($inscritos2->id));
-                @endphp
-
-                <!-- Tema -->
-                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
-                    href="#subtemas-{{ $tema->id }}" role="button" aria-expanded="false"
-                    aria-controls="subtemas-{{ $tema->id }}">
-                    <div>
-                        <i class="bi bi-book"></i>
-                        <span>{{ $tema->titulo_tema }}</span>
-                    </div>
-                    <i class="bi bi-chevron-down"></i>
-                </a>
-
-                <!-- Subtemas -->
-                <div class="collapse" id="subtemas-{{ $tema->id }}">
-                    @forelse($tema->subtemas as $subtema)
-                        @php
-                            $desbloqueado =
-                                auth()->user()->hasRole('Docente') ||
-                                (auth()->user()->hasRole('Estudiante') && $subtema->estaDesbloqueado($inscritos2->id));
-                        @endphp
-
-                        @if ($desbloqueado)
-                            <a href="#subtema-{{ $subtema->id }}" class="nav-link ms-4">
-                                <i class="bi bi-dash"></i>
-                                <span>{{ $subtema->titulo_subtema }}</span>
-                            </a>
-                        @else
-                            <a href="#" class="nav-link ms-4 disabled">
-                                <i class="bi bi-lock"></i>
-                                <span class="text-muted">{{ $subtema->titulo_subtema }}</span>
-                            </a>
-                        @endif
-                    @empty
-                        <a href="#" class="nav-link ms-4 disabled">
-                            <span class="text-muted">No hay subtemas disponibles</span>
-                        </a>
-                    @endforelse
-                </div>
-            @empty
-                <a href="#" class="nav-link disabled">
-                    <i class="bi bi-exclamation-circle"></i>
-                    <span>No hay temas disponibles</span>
-                </a>
-            @endforelse
-        @endsection
-
-
-
+  @if ((auth()->user()->hasRole('Docente') && $esDocente) || (auth()->user()->hasRole('Estudiante') && $inscritos))
         <div class="container-fluid py-4">
-            <!-- Barra de progreso solo para estudiantes -->
-            @if (auth()->user()->hasRole('Estudiante'))
-                @if ($cursos->tipo == 'curso')
-                    <div class="row mb-4">
-                        <div class="col-12">
-                            <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
-                                <div class="card-body p-4">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h5 class="fw-bold m-0">PROGRESO DEL CURSO</h5>
-                                        <span
-                                            class="badge bg-primary rounded-pill fs-6">{{ $cursos->calcularProgreso($inscritos2->id) }}%</span>
-                                    </div>
-                                    <div class="progress" style="height: 10px;">
-                                        <div class="progress-bar bg-primary" role="progressbar"
-                                            style="width: {{ $cursos->calcularProgreso($inscritos2->id) }}%;"
-                                            aria-valuenow="{{ $cursos->calcularProgreso($inscritos2->id) }}"
-                                            aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
+            <div class="row">
+                <!-- Navegación lateral -->
+                <div class="col-lg-3">
+                    <div class="course-nav sticky-top" style="top: 2rem;">
+                        <h5 class="mb-3 fw-bold" style="color: var(--color-primary);">
+                            <i class="fas fa-book-open me-2"></i>Contenido del Curso
+                        </h5>
 
+                        <!-- Temas y Subtemas -->
+                        <a href="#temario" class="nav-link active" data-bs-toggle="tab">
+                            <i class="fas fa-list-ul"></i> <span>Temario General</span>
+                        </a>
+
+                        @forelse ($temas as $index => $tema)
+                            @php
+                                $estaDesbloqueado =
+                                    auth()->user()->hasRole('Docente') ||
+                                    (auth()->user()->hasRole('Estudiante') && $tema->estaDesbloqueado($inscritos2->id));
+                            @endphp
+
+                            <!-- Tema -->
+                            <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
+                                href="#subtemas-{{ $tema->id }}" role="button" aria-expanded="false"
+                                aria-controls="subtemas-{{ $tema->id }}">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-folder me-2"></i>
+                                    <span>{{ $tema->titulo_tema }}</span>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-            @endif
+                                <i class="fas fa-chevron-down transition-all"></i>
+                            </a>
 
-            <!-- Contenido principal -->
-            <div class="card shadow border-0 rounded-3 overflow-hidden">
-                <!-- Pestañas de navegación -->
+                            <!-- Subtemas -->
+                            <div class="collapse" id="subtemas-{{ $tema->id }}">
+                                @forelse($tema->subtemas as $subtema)
+                                    @php
+                                        $desbloqueado =
+                                            auth()->user()->hasRole('Docente') ||
+                                            (auth()->user()->hasRole('Estudiante') && $subtema->estaDesbloqueado($inscritos2->id));
+                                    @endphp
 
-                <div class="card-header bg-white p-0 border-bottom">
-                    <ul class="nav nav-tabs nav-fill" id="course-tabs" role="tablist">
-
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active px-4 py-3" id="temario-tab" data-bs-toggle="tab"
-                                data-bs-target="#tab-actividades" type="button" role="tab"
-                                aria-controls="tab-actividades" aria-selected="true">
-                                <i class="fas fa-list me-2"></i>Temario
-                            </button>
-                        </li>
-
-                        @if ($cursos->tipo == 'congreso')
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link px-4 py-3" id="expositores-tab" data-bs-toggle="tab"
-                                    data-bs-target="#tab-expositores" type="button" role="tab"
-                                    aria-controls="tab-expositores" aria-selected="false">
-                                    <i class="fas fa-tasks me-2"></i>Expositores
-                                </button>
-                            </li>
-                        @endif
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link px-4 py-3" id="foros-tab" data-bs-toggle="tab"
-                                data-bs-target="#tab-foros" type="button" role="tab" aria-controls="tab-foros"
-                                aria-selected="false">
-                                <i class="fas fa-comments me-2"></i>Foros
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link px-4 py-3" id="recursos-tab" data-bs-toggle="tab"
-                                data-bs-target="#tab-recursos" type="button" role="tab"
-                                aria-controls="tab-recursos" aria-selected="false">
-                                <i class="fas fa-book me-2"></i>Recursos Globales
-                            </button>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="card-body p-4">
-                    <div class="tab-content" id="course-tab-content">
-                        <!-- Contenido de las pestañas (común para ambos roles) -->
-                        @include('partials.cursos.temario_tab')
-                        @if ($cursos->tipo == 'congreso')
-                            <!-- Botón para abrir modal -->
-
-
-
-                            <div class="tab-pane fade" id="tab-expositores">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h4 class="mb-0">Expositores asignados</h4>
-                                    <button class="btn btn-primary" data-bs-toggle="modal"
-                                        data-bs-target="#modalExpositores">
-                                        <i class="bi bi-person-plus"></i> Asignar Expositores
-                                    </button>
-                                </div>
-
-                                {{-- Modal Asignar Expositores --}}
-                                <div class="modal fade" id="modalExpositores" tabindex="-1"
-                                    aria-labelledby="modalExpositoresLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg">
-                                        <form method="POST"
-                                            action="{{ route('cursos.asignarExpositores', $cursos->id) }}">
-                                            @csrf
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="modalExpositoresLabel">Asignar Expositores
-                                                        al Curso</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Cerrar"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <input type="text" id="buscadorExpositores"
-                                                        class="form-control mb-3"
-                                                        placeholder="Buscar expositor por nombre...">
-
-                                                    <div class="overflow-auto" style="max-height: 400px;">
-                                                        @foreach ($expositores as $expositor)
-                                                            <div class="border rounded p-3 mb-3 expositor-item"
-                                                                data-nombre="{{ strtolower($expositor->nombre) }}">
-                                                                <strong
-                                                                    class="d-block mb-2">{{ $expositor->nombre }}</strong>
-                                                                <div class="row g-2 align-items-center">
-                                                                    <input type="hidden"
-                                                                        name="expositores[{{ $loop->index }}][id]"
-                                                                        value="{{ $expositor->id }}">
-
-                                                                    <div class="col-md-4">
-                                                                        <input type="text" class="form-control"
-                                                                            name="expositores[{{ $loop->index }}][cargo]"
-                                                                            placeholder="Cargo">
-                                                                    </div>
-                                                                    <div class="col-md-4">
-                                                                        <input type="text" class="form-control"
-                                                                            name="expositores[{{ $loop->index }}][tema]"
-                                                                            placeholder="Tema">
-                                                                    </div>
-                                                                    <div class="col-md-2">
-                                                                        <input type="number" class="form-control"
-                                                                            name="expositores[{{ $loop->index }}][orden]"
-                                                                            placeholder="Orden">
-                                                                    </div>
-                                                                    <div class="col-md-2 text-center">
-                                                                        <div class="form-check">
-                                                                            <input type="checkbox"
-                                                                                class="form-check-input"
-                                                                                name="expositoresSeleccionados[]"
-                                                                                value="{{ $loop->index }}">
-
-                                                                            <label
-                                                                                class="form-check-label">Seleccionar</label>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        @endforeach
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Cancelar</button>
-                                                    <button type="submit" class="btn btn-success">Guardar
-                                                        Asignaciones</button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-
-                                {{-- Lista de Expositores asignados --}}
-                                @forelse ($cursos->expositores as $expositor)
-                                    <div class="card mb-3 shadow-sm">
-                                        <div class="row g-0 align-items-center">
-                                            <div class="col-md-3 text-center p-3">
-                                                @if ($expositor->imagen && file_exists(public_path('storage/' . $expositor->imagen)))
-                                                    <img src="{{ asset('storage/' . $expositor->imagen) }}"
-                                                        class="img-fluid rounded" style="max-height: 130px;"
-                                                        alt="Foto de {{ $expositor->nombre }}">
-                                                @else
-                                                    <img src="{{ asset('assets2/img/talker.png') }}"
-                                                        class="img-fluid rounded" style="max-height: 130px;"
-                                                        alt="Imagen no disponible">
-                                                @endif
-                                            </div>
-                                            <div class="col-md-7">
-                                                <div class="card-body">
-                                                    <h5 class="card-title mb-1">{{ $expositor->nombre }}</h5>
-                                                    <p class="mb-1"><strong>Cargo:</strong>
-                                                        {{ $expositor->pivot->cargo ?? 'No especificado' }}</p>
-                                                    <p class="mb-1"><strong>Tema:</strong>
-                                                        {{ $expositor->pivot->tema ?? 'No especificado' }}</p>
-                                                    <p class="mb-0"><strong>Orden:</strong>
-                                                        {{ $expositor->pivot->orden ?? '-' }}</p>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2 text-end pe-3">
-                                                @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Docente'))
-                                                    <form
-                                                        action="{{ route('cursos.quitarExpositor', [$cursos->id, $expositor->id]) }}"
-                                                        method="POST"
-                                                        onsubmit="return confirm('¿Deseas quitar este expositor del curso?');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button class="btn btn-outline-danger btn-sm"
-                                                            title="Quitar expositor">
-                                                            <i class="bi bi-x-circle"></i> Quitar
-                                                        </button>
-                                                    </form>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
+                                    @if ($desbloqueado)
+                                        <a href="#subtema-{{ $subtema->id }}" class="nav-link ms-4">
+                                            <i class="fas fa-file-alt me-2"></i>
+                                            <span>{{ $subtema->titulo_subtema }}</span>
+                                        </a>
+                                    @else
+                                        <a href="#" class="nav-link ms-4 disabled">
+                                            <i class="fas fa-lock me-2"></i>
+                                            <span class="text-muted">{{ $subtema->titulo_subtema }}</span>
+                                        </a>
+                                    @endif
                                 @empty
-                                    <div class="alert alert-info text-center">
-                                        <i class="bi bi-info-circle"></i> No hay expositores asignados a este curso.
-                                    </div>
+                                    <a href="#" class="nav-link ms-4 disabled">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        <span class="text-muted">No hay subtemas disponibles</span>
+                                    </a>
                                 @endforelse
                             </div>
+                        @empty
+                            <a href="#" class="nav-link disabled">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <span>No hay temas disponibles</span>
+                            </a>
+                        @endforelse
+                    </div>
+                </div>
+
+                <!-- Contenido principal -->
+                <div class="col-lg-9">
+                    <!-- Barra de progreso solo para estudiantes -->
+                    @if (auth()->user()->hasRole('Estudiante'))
+                        @if ($cursos->tipo == 'curso')
+                            <div class="progress-container fade-in-up">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div>
+                                        <h5 class="fw-bold mb-1" style="color: var(--color-primary);">
+                                            <i class="fas fa-chart-line me-2"></i>PROGRESO DEL CURSO
+                                        </h5>
+                                        <p class="text-muted mb-0">Tu avance en el contenido del curso</p>
+                                    </div>
+                                    <span class="badge bg-primary fs-6 px-3 py-2">
+                                        {{ $cursos->calcularProgreso($inscritos2->id) }}%
+                                    </span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar"
+                                        style="width: {{ $cursos->calcularProgreso($inscritos2->id) }}%;"
+                                        aria-valuenow="{{ $cursos->calcularProgreso($inscritos2->id) }}"
+                                        aria-valuemin="0" aria-valuemax="100">
+                                    </div>
+                                </div>
+                            </div>
                         @endif
-                        @include('partials.cursos.foros_tab')
-                        @include('partials.cursos.recursos_tab')
+                    @endif
+
+                    <!-- Contenido principal -->
+                    <div class="course-card fade-in-up">
+                        <!-- Pestañas de navegación -->
+                        <div class="card-header">
+                            <ul class="nav nav-tabs nav-fill" id="course-tabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active px-4 py-3" id="temario-tab" data-bs-toggle="tab"
+                                        data-bs-target="#tab-actividades" type="button" role="tab"
+                                        aria-controls="tab-actividades" aria-selected="true">
+                                        <i class="fas fa-list me-2"></i>Temario
+                                    </button>
+                                </li>
+
+                                @if ($cursos->tipo == 'congreso')
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link px-4 py-3" id="expositores-tab" data-bs-toggle="tab"
+                                            data-bs-target="#tab-expositores" type="button" role="tab"
+                                            aria-controls="tab-expositores" aria-selected="false">
+                                            <i class="fas fa-users me-2"></i>Expositores
+                                        </button>
+                                    </li>
+                                @endif
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link px-4 py-3" id="foros-tab" data-bs-toggle="tab"
+                                        data-bs-target="#tab-foros" type="button" role="tab" aria-controls="tab-foros"
+                                        aria-selected="false">
+                                        <i class="fas fa-comments me-2"></i>Foros
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link px-4 py-3" id="recursos-tab" data-bs-toggle="tab"
+                                        data-bs-target="#tab-recursos" type="button" role="tab"
+                                        aria-controls="tab-recursos" aria-selected="false">
+                                        <i class="fas fa-folder-open me-2"></i>Recursos Globales
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="card-body p-4">
+                            <div class="tab-content" id="course-tab-content">
+                                <!-- Contenido de las pestañas -->
+                                @include('partials.cursos.temario_tab')
+
+                                @if ($cursos->tipo == 'congreso')
+                                    <div class="tab-pane fade" id="tab-expositores">
+                                        <div class="d-flex justify-content-between align-items-center mb-4">
+                                            <div>
+                                                <h4 class="mb-1" style="color: var(--color-primary);">
+                                                    <i class="fas fa-users me-2"></i>Expositores Asignados
+                                                </h4>
+                                                <p class="text-muted mb-0">Profesionales que impartirán el congreso</p>
+                                            </div>
+                                            <button class="btn btn-primary" data-bs-toggle="modal"
+                                                data-bs-target="#modalExpositores">
+                                                <i class="fas fa-user-plus me-2"></i> Asignar Expositores
+                                            </button>
+                                        </div>
+
+                                        {{-- Lista de Expositores asignados --}}
+                                        <div class="row">
+                                            @forelse ($cursos->expositores as $expositor)
+                                                <div class="col-md-6 mb-4">
+                                                    <div class="expositor-card h-100">
+                                                        <div class="row g-0 h-100">
+                                                            <div class="col-4">
+                                                                @if ($expositor->imagen && file_exists(public_path('storage/' . $expositor->imagen)))
+                                                                    <img src="{{ asset('storage/' . $expositor->imagen) }}"
+                                                                        class="img-fluid h-100 w-100" style="object-fit: cover;"
+                                                                        alt="Foto de {{ $expositor->nombre }}">
+                                                                @else
+                                                                    <img src="{{ asset('assets2/img/talker.png') }}"
+                                                                        class="img-fluid h-100 w-100" style="object-fit: cover;"
+                                                                        alt="Imagen no disponible">
+                                                                @endif
+                                                            </div>
+                                                            <div class="col-8">
+                                                                <div class="card-body h-100 d-flex flex-column">
+                                                                    <h5 class="card-title mb-2" style="color: var(--color-primary);">
+                                                                        {{ $expositor->nombre }}
+                                                                    </h5>
+                                                                    <div class="mb-2">
+                                                                        <small class="text-muted">Cargo:</small>
+                                                                        <p class="mb-1 fw-semibold">{{ $expositor->pivot->cargo ?? 'No especificado' }}</p>
+                                                                    </div>
+                                                                    <div class="mb-2">
+                                                                        <small class="text-muted">Tema:</small>
+                                                                        <p class="mb-1">{{ $expositor->pivot->tema ?? 'No especificado' }}</p>
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <small class="text-muted">Orden:</small>
+                                                                        <span class="badge bg-primary">{{ $expositor->pivot->orden ?? '-' }}</span>
+                                                                    </div>
+                                                                    @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Docente'))
+                                                                        <div class="mt-auto">
+                                                                            <form
+                                                                                action="{{ route('cursos.quitarExpositor', [$cursos->id, $expositor->id]) }}"
+                                                                                method="POST"
+                                                                                onsubmit="return confirm('¿Deseas quitar este expositor del curso?');">
+                                                                                @csrf
+                                                                                @method('DELETE')
+                                                                                <button class="btn btn-outline-danger btn-sm w-100"
+                                                                                    title="Quitar expositor">
+                                                                                    <i class="fas fa-times me-1"></i> Quitar Expositor
+                                                                                </button>
+                                                                            </form>
+                                                                        </div>
+                                                                    @endif
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @empty
+                                                <div class="col-12">
+                                                    <div class="alert alert-info text-center py-4">
+                                                        <i class="fas fa-info-circle fa-2x mb-3"></i>
+                                                        <h5>No hay expositores asignados</h5>
+                                                        <p class="mb-0">Asigna expositores para comenzar con el congreso</p>
+                                                    </div>
+                                                </div>
+                                            @endforelse
+                                        </div>
+                                    </div>
+                                @endif
+
+                                @include('partials.cursos.foros_tab')
+                                @include('partials.cursos.recursos_tab')
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Modales (extraer a archivos parciales si son muchos) -->
+        <!-- Modal Asignar Expositores -->
+        <div class="modal fade" id="modalExpositores" tabindex="-1"
+            aria-labelledby="modalExpositoresLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <form method="POST"
+                    action="{{ route('cursos.asignarExpositores', $cursos->id) }}">
+                    @csrf
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalExpositoresLabel">
+                                <i class="fas fa-user-plus me-2"></i>Asignar Expositores al Curso
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-4">
+                                <input type="text" id="buscadorExpositores"
+                                    class="form-control"
+                                    placeholder="🔍 Buscar expositor por nombre...">
+                            </div>
+
+                            <div class="overflow-auto" style="max-height: 400px;">
+                                @foreach ($expositores as $expositor)
+                                    <div class="expositor-item border rounded p-3 mb-3"
+                                        data-nombre="{{ strtolower($expositor->nombre) }}">
+                                        <div class="d-flex align-items-center mb-2">
+                                            @if ($expositor->imagen && file_exists(public_path('storage/' . $expositor->imagen)))
+                                                <img src="{{ asset('storage/' . $expositor->imagen) }}"
+                                                    class="rounded-circle me-3" width="50" height="50"
+                                                    alt="Foto de {{ $expositor->nombre }}">
+                                            @else
+                                                <img src="{{ asset('assets2/img/talker.png') }}"
+                                                    class="rounded-circle me-3" width="50" height="50"
+                                                    alt="Imagen no disponible">
+                                            @endif
+                                            <div>
+                                                <strong class="d-block">{{ $expositor->nombre }}</strong>
+                                                <small class="text-muted">Expositor disponible</small>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-2 align-items-center">
+                                            <input type="hidden"
+                                                name="expositores[{{ $loop->index }}][id]"
+                                                value="{{ $expositor->id }}">
+
+                                            <div class="col-md-4">
+                                                <input type="text" class="form-control"
+                                                    name="expositores[{{ $loop->index }}][cargo]"
+                                                    placeholder="Cargo del expositor">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input type="text" class="form-control"
+                                                    name="expositores[{{ $loop->index }}][tema]"
+                                                    placeholder="Tema a exponer">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input type="number" class="form-control"
+                                                    name="expositores[{{ $loop->index }}][orden]"
+                                                    placeholder="Orden" min="1">
+                                            </div>
+                                            <div class="col-md-2 text-center">
+                                                <div class="form-check">
+                                                    <input type="checkbox"
+                                                        class="form-check-input"
+                                                        name="expositoresSeleccionados[]"
+                                                        value="{{ $loop->index }}">
+                                                    <label class="form-check-label small">Seleccionar</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary"
+                                data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save me-2"></i>Guardar Asignaciones
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modales adicionales -->
         @include('partials.cursos.modals.agregar_tema')
         @include('partials.cursos.modals.agregar_subtema')
-        <!-- ... otros modales ... -->
+
     @else
         <!-- Acceso denegado -->
-        <div class="card shadow">
-            <div class="card-body text-center">
-                <h3>No tienes acceso a este curso.</h3>
-                <a href="{{ route('Inicio') }}" class="btn btn-primary">Volver a Inicio</a>
+        <div class="container-fluid py-4">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="course-card text-center py-5">
+                        <div class="card-body">
+                            <i class="fas fa-lock fa-4x mb-4" style="color: var(--color-error);"></i>
+                            <h3 class="mb-3" style="color: var(--color-primary);">Acceso Denegado</h3>
+                            <p class="text-muted mb-4">No tienes permisos para acceder a este curso.</p>
+                            <a href="{{ route('Inicio') }}" class="btn btn-primary">
+                                <i class="fas fa-home me-2"></i>Volver al Inicio
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     @endif
 
     @if ($errors->any())
         <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Errores de validación',
-                html: `
-                <ul style='text-align: left;'>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            `,
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Errores de validación',
+                    html: `
+                    <div style="text-align: left; max-height: 300px; overflow-y: auto;">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                `,
+                    confirmButtonColor: '#1a4789'
+                });
             });
         </script>
     @endif
+
 @endsection
 
 

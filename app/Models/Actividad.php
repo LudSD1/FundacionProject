@@ -32,6 +32,8 @@ class Actividad extends BaseModel
         'fecha_limite' => 'datetime',
     ];
 
+    
+
     public function subtema()
     {
         return $this->belongsTo(Subtema::class, 'subtema_id');

@@ -90,7 +90,34 @@ class Tema extends BaseModel
             ->first();
     }
 
+    public function calcularProgreso($inscritoId)
+    {
+        $inscrito_id = is_object($inscritoId) ? $inscritoId->id : $inscritoId;
+        if (!$inscrito_id) {
+            return 0;
+        }
 
+        $subtemas = $this->subtemas()->with(['actividades:id,subtema_id', 'recursos:id,subtema_id'])->get();
+        $actividadIds = $subtemas->flatMap(fn($s) => $s->actividades->pluck('id'));
+        $recursoIds = $subtemas->flatMap(fn($s) => $s->recursos->pluck('id'));
 
+        $totalElementos = $actividadIds->count() + $recursoIds->count();
+        if ($totalElementos === 0) {
+            return 0;
+        }
 
+        $actividadesCompletadas = ActividadCompletion::where('inscritos_id', $inscrito_id)
+            ->whereIn('completable_id', $actividadIds)
+            ->where('completable_type', Actividad::class)
+            ->where('completed', true)
+            ->count();
+
+        $recursosCompletados = ActividadCompletion::where('inscritos_id', $inscrito_id)
+            ->whereIn('completable_id', $recursoIds)
+            ->where('completable_type', RecursoSubtema::class)
+            ->where('completed', true)
+            ->count();
+
+        return round((($actividadesCompletadas + $recursosCompletados) / $totalElementos) * 100, 2);
+    }
 }

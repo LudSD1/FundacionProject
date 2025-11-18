@@ -72,8 +72,10 @@ class UserController extends Controller
         return redirect()->route('login.signin');
     }
 
-    public function Profile(User $usuario)
+    public function Profile($id)
     {
+
+        $usuario = User::findOrFail($id);
         $trabajos = DocentesTrabajos::where('docente_id', $usuario->id)->get();
         $tutor = TutorRepresentanteLegal::where('estudiante_id', $usuario->id)->get();
         $atributosD = atributosDocente::where('docente_id', $usuario->id)->get();

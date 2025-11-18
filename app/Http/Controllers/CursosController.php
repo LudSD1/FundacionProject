@@ -148,8 +148,8 @@ class CursosController extends Controller
 
     public function listaCurso($id)
     {
-        $cursos = Cursos::findOrFail($id);
         $inscritos = Inscritos::where('cursos_id', $id)->whereNull('deleted_at')->get();
+        $cursos = Cursos::findOrFail($id);
         // ["cursos"=>$cursos]
         return view('ListaParticipantes')->with('inscritos', $inscritos)->with('cursos', $cursos);
     }

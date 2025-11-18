@@ -3,20 +3,24 @@
 <div class="container-fluid my-4">
     <div class="row mb-3 align-items-center">
         <div class="col-md-4 mb-2">
-            <a href="{{ route('registrarpagoadmin') }}" class="btn btn-success w-100">
-                <i class="bi bi-plus-circle"></i> Registrar Pago
+            <a href="{{ route('registrarpagoadmin') }}" class="btn-modern btn-create w-100">
+                <i class="bi bi-plus-circle"></i><span class="ms-1">Registrar Pago</span>
             </a>
         </div>
         <div class="col-md-8">
-            <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-search"></i></span>
-                <input type="text" id="searchInput" class="form-control" placeholder="Buscar...">
+            <div class="search-box-table">
+                <i class="bi bi-search search-icon-table"></i>
+                <input type="text" id="searchInput" name="busqueda" class="search-input-table" placeholder="Buscar...">
+                <button type="button" class="btn-search-icon" aria-label="Buscar">
+                    <i class="bi bi-search"></i>
+                </button>
+                <span class="search-indicator"></span>
             </div>
         </div>
     </div>
 
-    <div class="table-responsive">
-        <table class="table table-hover align-middle">
+    <div class="table-container-modern">
+        <table class="table-modern table table-hover align-middle">
             <thead class="">
                 <tr>
                     <th>#</th>
@@ -32,51 +36,51 @@
             <tbody>
                 @forelse ($aportes as $aportes)
                     <tr>
-                        <td>{{ $loop->iteration }}</td>
+                        <td><span class="row-number">#{{ $loop->iteration }}</span></td>
                         <td>{{ $aportes->datosEstudiante }}</td>
                         <td>{{ $aportes->created_at }}</td>
                         <td>{{ $aportes->monto_a_pagar }} Bs.</td>
                         <td>{{ $aportes->monto_pagado }} Bs.</td>
                                                 <td>
-                            <div class="btn-group" role="group">
-                                <a href="{{ route('descargar.comprobante', basename($aportes->comprobante)) }}" class="btn btn-sm btn-primary">
-                                    <i class="bi bi-download"></i> Comprobante
+                            <div class="action-buttons-cell">
+                                <a href="{{ route('descargar.comprobante', basename($aportes->comprobante)) }}" class="btn-action-modern" title="Comprobante">
+                                    <i class="bi bi-download"></i>
                                 </a>
-                                <a href="{{ route('recibo.generar',encrypt($aportes->id)) }}" target="_blank" class="btn btn-sm btn-success">
-                                    <i class="bi bi-receipt"></i> Recibo
+                                <a href="{{ route('recibo.generar',encrypt($aportes->id)) }}" target="_blank" class="btn-action-modern" title="Recibo">
+                                    <i class="bi bi-receipt"></i>
                                 </a>
-                                <button type="button" class="btn btn-sm btn-info reenviar-email-btn"
+                                <button type="button" class="btn-action-modern reenviar-email-btn"
                                         data-id="{{ $aportes->id }}"
                                         data-estudiante="{{ $aportes->user->name }} {{ $aportes->user->lastname1 }}"
                                         data-email="{{ $aportes->user->email }}"
                                         title="Reenviar Email">
                                     <i class="bi bi-envelope"></i>
                                 </button>
-                                <button type="button" class="btn btn-sm btn-secondary test-email-btn"
+                                {{-- <button type="button" class="btn-action-modern test-email-btn"
                                         data-id="{{ $aportes->id }}"
                                         title="Test Email">
                                     <i class="bi bi-bug"></i>
-                                </button>
+                                </button> --}}
                             </div>
                         </td>
                         <td>
                             <!-- Botón Editar -->
-                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editarPagoModal{{ $aportes->id }}">
+                            <button class="btn-action-modern btn-edit" data-bs-toggle="modal" data-bs-target="#editarPagoModal{{ $aportes->id }}" title="Editar">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
 
                             <!-- Botón Eliminar -->
-                            <button class="btn btn-sm btn-danger delete-btn" data-id="{{ $aportes->id }}">
+                            <button class="btn-action-modern btn-delete delete-btn" data-id="{{ $aportes->id }}" title="Eliminar">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </td>
                         <td>
-                            <button type="button" class="btn btn-sm btn-success confirm-pago-btn"
+                            <button type="button" class="btn-modern btn-submit confirm-pago-btn"
                                     data-id="{{ $aportes->id }}"
                                     data-estudiante="{{ $aportes->user->name }} {{ $aportes->user->lastname1 }}"
                                     data-curso="{{ $aportes->curso->nombreCurso }}"
                                     title="Confirmar Pago">
-                                <i class="bi bi-check-circle"></i> Confirmar Pago
+                                <i class="bi bi-check-circle me-1"></i> Confirmar Pago
                             </button>
                         </td>
                     </tr>
@@ -84,18 +88,23 @@
                     <!-- Modal Editar Pago -->
                     <div class="modal fade" id="editarPagoModal{{ $aportes->id }}" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog">
-                            <div class="modal-content">
+                            <div class="modal-content modal-modern">
                                 <form action="{{ route('pagos.update', $aportes->codigopago) }}" method="POST">
                                     @csrf
                                     @method('PUT')
                                     <input type="hidden" name="codigopago" value="{{ $aportes->codigopago }}">
 
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Editar Pago</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                    <div class="modal-header-modern">
+                                        <div class="modal-title-wrapper">
+                                            <i class="bi bi-pencil-square modal-icon"></i>
+                                            <h5 class="modal-title mb-0">Editar Pago</h5>
+                                        </div>
+                                        <button type="button" class="btn-close-modern" data-bs-dismiss="modal" aria-label="Cerrar">
+                                            <i class="bi bi-x"></i>
+                                        </button>
                                     </div>
 
-                                    <div class="modal-body">
+                                    <div class="modal-body-modern">
                                         <p><strong>Estudiante:</strong> {{ $aportes->user->name }} {{ $aportes->user->lastname1 }} {{ $aportes->user->lastname2 }}</p>
                                         <p><strong>Curso:</strong> {{ $aportes->curso->nombreCurso }}</p>
 
@@ -105,9 +114,9 @@
                                         </div>
                                     </div>
 
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                    <div class="modal-footer-modern">
+                                        <button type="button" class="btn-secondary-modern" data-bs-dismiss="modal">Cancelar</button>
+                                        <button type="submit" class="btn-submit">Guardar Cambios</button>
                                     </div>
                                 </form>
                             </div>
@@ -115,8 +124,12 @@
                     </div>
                 @empty
                     <tr>
-                        <td colspan="8" class="text-center">
-                            <h5 class="text-muted">No hay pagos registrados</h5>
+                        <td colspan="8" class="text-center py-5">
+                            <div class="empty-state">
+                                <i class="bi bi-receipt"></i>
+                                <h5>No hay pagos registrados</h5>
+                                <p>Registra tu primer pago para comenzar.</p>
+                            </div>
                         </td>
                     </tr>
                 @endforelse

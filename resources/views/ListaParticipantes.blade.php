@@ -7,29 +7,28 @@
         <!-- Header con botones de acción -->
         <div class="row mb-4">
             <div class="col-md-6">
-                <a href="{{ route('Curso', ['id' => encrypt($cursos->id)]) }}"
-                    class="btn btn-outline-primary btn-lg shadow-sm">
-                    <i class="bi bi-arrow-left-circle me-2"></i>Volver al Curso
+                <a href="{{ route('Curso', encrypt($cursos->id)) }}" class="btn-back-modern">
+                    <i class="bi bi-arrow-left-circle"></i>
+                    <span class="ms-1">Volver al Curso</span>
                 </a>
             </div>
             <div class="col-md-6 text-end">
                 @if (auth()->user()->id == $cursos->docente_id || auth()->user()->hasRole('Administrador'))
-                    <div class="btn-group shadow-sm">
-                        <a class="btn btn-danger" href="{{ route('listaretirados', encrypt($cursos->id)) }}">
-                            <i class="bi bi-person-x me-2"></i>Retirados
+                    <div class="action-buttons-header">
+                        <a class="btn-modern btn-orange-custom" href="{{ route('listaretirados', encrypt($cursos->id)) }}" title="Retirados">
+                            <i class="bi bi-person-x"></i><span class="ms-1">Retirados</span>
                         </a>
                         @if ($cursos->tipo == 'congreso')
-                            <a class="btn btn-info text-white"
-                                href="{{ route('certificadosCongreso.generar', $cursos->id) }}">
-                                <i class="bi bi-award me-2"></i>Certificados
+                            <a class="btn-modern btn-accent-custom" href="{{ route('certificadosCongreso.generar', $cursos->id) }}" title="Certificados">
+                                <i class="bi bi-award"></i><span class="ms-1">Generar Certificados</span>
                             </a>
                         @endif
-                        <a class="btn btn-success" href="{{ route('lista', encrypt($cursos->id)) }}">
-                            <i class="bi bi-download me-2"></i>Descargar
+                        <a class="btn-modern btn-success-custom" href="{{ route('lista', encrypt($cursos->id)) }}" title="Descargar">
+                            <i class="bi bi-download"></i><span class="ms-1">Descargar Lista</span>
                         </a>
-                        <button type="button" class="btn btn-outline-secondary" id="selectAllBtn">
-                            <i class="bi bi-check-square me-2"></i>Seleccionar Todo
-                        </button>
+                        {{-- <button type="button" class="btn-modern btn-read-all" id="selectAllBtn" title="Seleccionar Todo">
+                            <i class="bi bi-check-square"></i><span class="ms-1">Seleccionar Todo</span>
+                        </button> --}}
                     </div>
                 @endif
             </div>
@@ -55,25 +54,23 @@
         <!-- Barra de búsqueda y filtros mejorada -->
         <div class="row mb-4">
             <div class="col-md-8 mx-auto">
-                <div class="input-group input-group-lg shadow-sm">
-                    <span class="input-group-text bg-white">
-                        <i class="bi bi-search text-primary"></i>
-                    </span>
-                    <input type="text" class="form-control border-start-0" id="searchInput"
-                        placeholder="Buscar participante..." autocomplete="off">
-                    <button class="btn btn-outline-secondary" type="button" id="clearSearch">
+                <div class="search-box-table">
+                    <i class="bi bi-search search-icon-table"></i>
+                    <input type="text" class="search-input-table" id="searchInput" placeholder="Buscar participante..." autocomplete="off">
+                    <button class="btn-search-icon" type="button" id="clearSearch" aria-label="Limpiar">
                         <i class="bi bi-x-lg"></i>
                     </button>
+                    <span class="search-indicator"></span>
                     @role('Administrador')
                         @if ($cursos->tipo == 'curso')
-                            <select class="form-select" id="statusFilter" style="max-width: 200px;">
+                            <select class="filter-select-modern ms-2" id="statusFilter" style="max-width: 200px;">
                                 <option value="">Todos los estados</option>
                                 <option value="pago-completado">Pago Completado</option>
                                 <option value="pago-revision">Pago en Revisión</option>
                                 <option value="sin-pago">Sin información de pago</option>
                             </select>
                         @elseif($cursos->tipo == 'congreso')
-                            <select class="form-select" id="statusFilter" style="max-width: 200px;">
+                            <select class="filter-select-modern ms-2" id="statusFilter" style="max-width: 200px;">
                                 <option value="">Todos los estados</option>
                                 <option value="certificado">Certificado</option>
                                 <option value="sin-certificado">Sin certificado</option>
@@ -101,10 +98,10 @@
         </div>
 
         <!-- Tabla mejorada -->
-        <div class="card shadow-sm">
+        <div class="card-modern">
             <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0 align-middle" id="participantesTable">
+                <div class="table-container-modern">
+                    <table class="table-modern table table-hover mb-0 align-middle" id="participantesTable">
                         <thead>
                             <tr>
                                 @if (auth()->user()->hasRole('Docente') || auth()->user()->hasRole('Administrador'))
@@ -138,7 +135,7 @@
                                                     value="{{ $inscrito->id }}">
                                             </td>
                                         @endif
-                                        <td class="px-4 fw-bold text-primary">{{ $loop->iteration }}</td>
+                                        <td class="px-4"><span class="row-number">#{{ $loop->iteration }}</span></td>
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-circle bg-primary text-white me-3">
@@ -209,50 +206,36 @@
                     </td>
                 @endrole
                 <td>
-                    <div class="d-flex justify-content-center gap-2">
-                        <a class="btn btn-sm btn-outline-info"
-                            href="{{ route('perfil', [encrypt($inscrito->estudiantes->id)]) }}" data-bs-toggle="tooltip"
-                            title="Ver Perfil">
+                    <div class="action-buttons-cell">
+                        <a class="btn-action-modern btn-action-view" href="{{ route('perfil', [encrypt($inscrito->estudiantes->id)]) }}" data-bs-toggle="tooltip" title="Ver Perfil">
                             <i class="bi bi-person-badge"></i>
                         </a>
 
                         @if (auth()->user()->hasRole('Docente') || auth()->user()->hasRole('Administrador'))
-                            <form action="{{ route('quitarInscripcion', $inscrito->id) }}" method="POST"
-                                style="display:inline;" class="retire-form">
+                            <form action="{{ route('quitarInscripcion', $inscrito->id) }}" method="POST" style="display:inline;" class="retire-form">
                                 @csrf
-                                <button type="submit" class="btn btn-sm btn-outline-danger"
-                                    onclick="mostrarAdvertencia(event)" data-bs-toggle="tooltip"
-                                    title="Retirar Estudiante">
+                                <button type="submit" class="btn-action-modern btn-action-delete" onclick="mostrarAdvertencia(event)" data-bs-toggle="tooltip" title="Retirar Estudiante">
                                     <i class="bi bi-person-x"></i>
                                 </button>
                             </form>
 
                             @if ($cursos->tipo == 'congreso')
-                                @if ($cursos->tipo == 'congreso')
-                                    <a class="btn btn-sm btn-outline-success"
-                                        href="{{ !isset($inscrito->certificado)
-                                            ? route('certificadosCongreso.generar.admin', encrypt($inscrito->id))
-                                            : route('certificados.reenviar.email', encrypt($inscrito->id)) }}"
-                                        data-bs-toggle="tooltip"
-                                        title="{{ !isset($inscrito->certificado) ? 'Generar Certificado' : 'Reenviar Certificado' }}">
-                                        <i class="bi bi-award"></i>
-                                    </a>
-                                @endif
+                                <a class="btn-action-modern btn-action-check"
+                                    href="{{ !isset($inscrito->certificado) ? route('certificadosCongreso.generar.admin', encrypt($inscrito->id)) : route('certificados.reenviar.email', encrypt($inscrito->id)) }}"
+                                    data-bs-toggle="tooltip"
+                                    title="{{ !isset($inscrito->certificado) ? 'Generar Certificado' : 'Reenviar Certificado' }}">
+                                    <i class="bi bi-award"></i>
+                                </a>
                             @endif
 
                             @if ($cursos->tipo == 'curso')
-                                <div class="btn-group">
-                                    <a class="btn btn-sm btn-outline-primary"
-                                        href="{{ route('boletin', [encrypt($inscrito->id)]) }}" data-bs-toggle="tooltip"
-                                        title="Ver Boletín">
+                                <div class="action-buttons-cell">
+                                    <a class="btn-action-modern" href="{{ route('boletin', [encrypt($inscrito->id)]) }}" data-bs-toggle="tooltip" title="Ver Boletín">
                                         <i class="bi bi-journal-text"></i>
                                     </a>
-                                    <a class="btn btn-sm btn-outline-primary"
-                                        href="{{ route('verBoletin2', [encrypt($inscrito->id)]) }}"
-                                        data-bs-toggle="tooltip" title="Calificaciones Finales">
+                                    <a class="btn-action-modern" href="{{ route('verBoletin2', [encrypt($inscrito->id)]) }}" data-bs-toggle="tooltip" title="Calificaciones Finales">
                                         <i class="bi bi-journal-check"></i>
                                     </a>
-
                                 </div>
                             @endif
                         @endif
@@ -263,9 +246,10 @@
             @empty
                 <tr id="noResultsRow">
                     <td colspan="{{ auth()->user()->hasRole('Administrador') ? '6' : '5' }}" class="text-center py-5">
-                        <div class="d-flex flex-column align-items-center">
-                            <i class="bi bi-emoji-frown display-1 text-muted mb-3"></i>
-                            <h4 class="text-muted">No hay participantes inscritos</h4>
+                        <div class="empty-state">
+                            <i class="bi bi-emoji-frown"></i>
+                            <h5>No hay participantes inscritos</h5>
+                            <p>Registra o inscribe participantes para verlos aquí.</p>
                         </div>
                     </td>
                 </tr>
@@ -277,36 +261,34 @@
     </div>
 
     <!-- Mensaje cuando no hay resultados de búsqueda -->
-    <div class="card shadow-sm mt-3" id="noSearchResults" style="display: none;">
-        <div class="card-body text-center py-5">
-            <i class="bi bi-search display-1 text-muted mb-3"></i>
-            <h4 class="text-muted">Sin resultados</h4>
-            <p class="text-muted">No se encontraron participantes que coincidan con los filtros</p>
-            <button class="btn btn-outline-primary" id="clearSearchBtn">
-                <i class="bi bi-x-lg me-1"></i>Limpiar filtros
-            </button>
-        </div>
+    <div class="empty-state" id="noSearchResults" style="display: none;">
+        <i class="bi bi-search"></i>
+        <h5>Sin resultados</h5>
+        <p>No se encontraron participantes que coincidan con los filtros</p>
+        <button class="btn-modern btn-primary-custom" id="clearSearchBtn">
+            <i class="bi bi-x-lg me-1"></i>Limpiar filtros
+        </button>
     </div>
 
     <!-- Acciones masivas -->
     @if (auth()->user()->hasRole('Docente') || auth()->user()->hasRole('Administrador'))
-        <div class="card shadow-sm mt-3" id="massActionsCard" style="display: none;">
-            <div class="card-body">
+        <div class="info-card-modern mt-3" id="massActionsCard" style="display: none;">
+            <div class="info-card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <span class="text-muted">
                         <i class="bi bi-check-square me-2"></i>
                         <strong id="selectedCount">0</strong> participante(s) seleccionado(s)
                     </span>
-                    <div class="btn-group">
-                        <button class="btn btn-outline-danger" id="retirarSeleccionados">
+                    <div class="action-buttons-header">
+                        <button class="btn-modern btn-orange-custom" id="retirarSeleccionados">
                             <i class="bi bi-person-x me-1"></i>Retirar Seleccionados
                         </button>
                         @if ($cursos->tipo == 'congreso')
-                            <button class="btn btn-outline-success" id="generarCertificados">
+                            <button class="btn-modern btn-success-custom" id="generarCertificados">
                                 <i class="bi bi-award me-1"></i>Generar Certificados
                             </button>
                         @endif
-                        <button class="btn btn-outline-secondary" id="deselectAll">
+                        <button class="btn-modern btn-accent-custom" id="deselectAll">
                             <i class="bi bi-square me-1"></i>Deseleccionar
                         </button>
                     </div>

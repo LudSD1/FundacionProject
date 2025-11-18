@@ -6,20 +6,18 @@
 <div class="container-fluid py-4">
     <div class="row">
         <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+            <div class="card-modern">
+                <div class="card-header-modern d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">
                         <i class="fas fa-database me-2"></i>
                         Gestión de Backups de Base de Datos
                     </h4>
                     <div>
-                        <a href="{{ route('Inicio') }}" class="btn btn-light btn-sm me-2">
-                            <i class="fas fa-home me-1"></i>
-                            Inicio
+                        <a href="{{ route('Inicio') }}" class="btn-modern btn-primary-custom me-2">
+                            <i class="fas fa-home me-1"></i><span class="ms-1">Inicio</span>
                         </a>
-                        <button onclick="location.reload()" class="btn btn-outline-light btn-sm">
-                            <i class="fas fa-sync-alt me-1"></i>
-                            Actualizar
+                        <button onclick="location.reload()" class="btn-modern btn-accent-custom">
+                            <i class="fas fa-sync-alt me-1"></i><span class="ms-1">Actualizar</span>
                         </button>
                     </div>
                 </div>
@@ -34,7 +32,7 @@
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="card bg-light">
+                            <div class="card-modern">
                                 <div class="card-body text-center">
                                     <h6 class="card-title">
                                         <i class="fas fa-plus-circle text-success me-1"></i>
@@ -48,7 +46,7 @@
                                                 <small>Comprimir (recomendado)</small>
                                             </label>
                                         </div>
-                                        <button type="submit" class="btn btn-success btn-sm">
+                                        <button type="submit" class="btn-modern btn-success-custom">
                                             <i class="fas fa-download me-1"></i>
                                             Crear Backup
                                         </button>
@@ -65,8 +63,8 @@
                             No hay backups disponibles. Crea tu primer backup usando el botón de arriba.
                         </div>
                     @else
-                        <div class="table-responsive">
-                            <table class="table table-hover">
+                        <div class="table-container-modern">
+                            <table class="table-modern table table-hover">
                                 <thead class="table-dark">
                                     <tr>
                                         <th><i class="fas fa-file me-1"></i>Archivo</th>
@@ -106,16 +104,11 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <div class="btn-group" role="group">
-                                                    <a href="{{ route('admin.backup.download', $backup['name']) }}"
-                                                       class="btn btn-primary btn-sm"
-                                                       title="Descargar backup">
+                                                <div class="action-buttons-cell" role="group">
+                                                    <a href="{{ route('admin.backup.download', $backup['name']) }}" class="btn-action-modern" title="Descargar backup">
                                                         <i class="fas fa-download"></i>
                                                     </a>
-                                                    <button type="button"
-                                                            class="btn btn-danger btn-sm"
-                                                            title="Eliminar backup"
-                                                            onclick="confirmDelete('{{ $backup['name'] }}')">
+                                                    <button type="button" class="btn-action-modern btn-action-delete" title="Eliminar backup" onclick="confirmDelete('{{ $backup['name'] }}')">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 </div>
@@ -129,27 +122,21 @@
                         <!-- Estadísticas -->
                         <div class="row mt-4">
                             <div class="col-md-4">
-                                <div class="card bg-primary text-white">
-                                    <div class="card-body text-center">
-                                        <h5>{{ count($backups) }}</h5>
-                                        <small>Total de Backups</small>
-                                    </div>
+                                <div class="stats-card text-center">
+                                    <div class="stats-number">{{ count($backups) }}</div>
+                                    <div class="stats-label">Total de Backups</div>
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="card bg-success text-white">
-                                    <div class="card-body text-center">
-                                        <h5>{{ array_sum(array_column($backups, 'size_mb')) }} MB</h5>
-                                        <small>Espacio Total Usado</small>
-                                    </div>
+                                <div class="stats-card text-center">
+                                    <div class="stats-number">{{ array_sum(array_column($backups, 'size_mb')) }} MB</div>
+                                    <div class="stats-label">Espacio Total Usado</div>
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="card bg-info text-white">
-                                    <div class="card-body text-center">
-                                        <h5>{{ count(array_filter($backups, fn($b) => $b['is_compressed'])) }}</h5>
-                                        <small>Backups Comprimidos</small>
-                                    </div>
+                                <div class="stats-card text-center">
+                                    <div class="stats-number">{{ count(array_filter($backups, fn($b) => $b['is_compressed'])) }}</div>
+                                    <div class="stats-label">Backups Comprimidos</div>
                                 </div>
                             </div>
                         </div>
@@ -179,16 +166,14 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="fas fa-times me-1"></i>
-                    Cancelar
+                <button type="button" class="btn-modern btn-accent-custom" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i><span class="ms-1">Cancelar</span>
                 </button>
                 <form id="deleteForm" method="POST" class="d-inline">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger">
-                        <i class="fas fa-trash me-1"></i>
-                        Eliminar
+                    <button type="submit" class="btn-modern btn-orange-custom">
+                        <i class="fas fa-trash me-1"></i><span class="ms-1">Eliminar</span>
                     </button>
                 </form>
             </div>

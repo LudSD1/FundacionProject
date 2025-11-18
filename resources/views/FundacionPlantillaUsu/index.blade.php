@@ -1,14 +1,10 @@
-@section('nav2')
-
-@endsection
-
 
 
 
 <!--Container-->
 @section('container')
 
- <nav class="auth-navbar mt-8">
+ <nav class="auth-navbar mt-8 mb-6">
         <div class="auth-navbar-container">
             <button class="auth-navbar-toggler" type="button"
                     onclick="document.querySelector('.auth-navbar-content').classList.toggle('show')">
@@ -132,10 +128,10 @@
                                 <i class="bi bi-bell"></i>
                                 <span>Notificaciones</span>
                             </a>
-                            <a class="auth-user-menu-item" href="#">
+                            {{-- <a class="auth-user-menu-item" href="#">
                                 <i class="bi bi-gear"></i>
                                 <span>Configuración</span>
-                            </a>
+                            </a> --}}
                             <hr class="auth-user-divider">
                             <a class="auth-user-menu-item logout" href="{{ route('logout') }}">
                                 <i class="bi bi-box-arrow-right"></i>
@@ -146,11 +142,11 @@
                 </ul>
             </div>
         </div>
-    </nav>
+</nav>
+ <section id="course" class="pt-5">
+     @yield('content')
+ </section>
 
-    <div class="container pt-5" style="margin-top: 7rem !important;">
-        @yield('content')
-    </div>
-@endsection
+    @endsection
 
 @include('layoutuser')
