@@ -75,7 +75,7 @@
 
                 @if ($cursos->fecha_fin && \Carbon\Carbon::now() > \Carbon\Carbon::parse($cursos->fecha_fin))
                 @else
-                <input class="btn btn-lg btn-success" type="submit" value="DAR ASISTENCIA">
+                    <input class="btn btn-lg btn-success" type="submit" value="DAR ASISTENCIA">
                 @endif
 
 

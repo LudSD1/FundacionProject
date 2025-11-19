@@ -343,7 +343,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('CrearForo/cursoid={id}', [ForoController::class, 'store'])->name('CrearForoPost');
         Route::get('EditarForo/{id}', [ForoController::class, 'EditarForoIndex'])->name('EditarForo');
         Route::post('EditarForo/{id}', [ForoController::class, 'update'])->name('EditarForoPost');
-        Route::get('QuitarForo/{id}', [ForoController::class, 'delete'])->name('quitarForo');
+        Route::post('QuitarForo/{id}', [ForoController::class, 'delete'])->name('quitarForo');
         Route::get('ForosEliminados/{id}', [ForoController::class, 'indexE'])->name('forosE');
         Route::get('RestaurarForo/{id}', [ForoController::class, 'restore'])->name('restaurar');
 
@@ -410,8 +410,8 @@ Route::group(['middleware' => ['auth']], function () {
             ->name('cursos.restaurarTodos');
         //ASISTENCIA
         Route::get('listaAsistencia/cursoid={id}', [AsistenciaController::class, 'show'])->name('asistencias');
-        Route::get('DarAsistencia/cursoid={id}', [AsistenciaController::class, 'index2'])->name('darasistencias');
-        Route::post('DarAsistencia/cursoid={id}', [AsistenciaController::class, 'store2'])->name('darasistenciasPostIndividual');
+        // Route::get('DarAsistencia/cursoid={id}', [AsistenciaController::class, 'index2'])->name('darasistencias');
+        // Route::post('DarAsistencia/cursoid={id}', [AsistenciaController::class, 'store2'])->name('darasistenciasPostIndividual');
         Route::post('listaAsistencia/cursoid={id}', [AsistenciaController::class, 'store'])->name('darasistenciasPostMultiple');
         Route::post('HistorialAsistencia/cursoid={id}', [AsistenciaController::class, 'edit'])->name('historialAsistenciasPost');
 

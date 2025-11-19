@@ -1,5 +1,4 @@
-<div class="tab-pane fade {{ $index === 0 ? 'show active' : '' }}" id="tema-{{ $tema->id }}" role="tabpanel"
-    aria-labelledby="tema-{{ $tema->id }}-tab">
+<div class="tema-item-content" id="tema-{{ $tema->id }}">
 
     <!-- Header del Tema Mejorado -->
     <div class="theme-header-card mb-4">
@@ -43,7 +42,7 @@
                 <!-- Acciones del docente -->
                 @if (auth()->user()->hasRole('Docente') && $cursos->docente_id == auth()->user()->id)
                 <div class="theme-actions">
-                    <div class="action-buttons-header" role="group">
+                    <div class="" role="group">
                         <button class="btn-modern btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modalSubtema-{{ $tema->id }}">
                             <i class="fas fa-plus-circle me-1"></i><span class="ms-1">Nuevo Subtema</span>
                         </button>

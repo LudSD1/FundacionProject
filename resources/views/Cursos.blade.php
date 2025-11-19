@@ -17,8 +17,8 @@
                     <div>
                         <h1 class="course-title mb-0">{{ $cursos->nombreCurso }}</h1>
                     </div>
-                    <button class="collapse-toggle" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#course-info" aria-expanded="true" aria-controls="course-info">
+                    <button class="collapse-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#course-info"
+                        aria-expanded="true" aria-controls="course-info">
                         <i class="fa fa-chevron-up me-1"></i>
                         <span class="toggle-text">Ocultar detalles</span>
                     </button>
@@ -57,7 +57,8 @@
                     </div>
                     <h5>Estado del Curso</h5>
                     <div class="info-card-content">
-                        <span class="status-badge {{ $cursos->estado === 'Activo' ? 'active' : ($cursos->estado === 'Certificado Disponible' ? 'certified' : 'inactive') }}">
+                        <span
+                            class="status-badge {{ $cursos->estado === 'Activo' ? 'active' : ($cursos->estado === 'Certificado Disponible' ? 'certified' : 'inactive') }}">
                             <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
                             {{ $cursos->estado }}
                         </span>
@@ -124,7 +125,8 @@
                         </button>
 
                         <!-- Asistencias -->
-                        <a href="{{ route('historialAsistencias', encrypt($cursos->id)) }}" class="btn-modern btn-primary-custom">
+                        <a href="{{ route('historialAsistencias', encrypt($cursos->id)) }}"
+                            class="btn-modern btn-primary-custom">
                             <i class="fas fa-clipboard-list"></i>
                             <span>Asistencias</span>
                         </a>
@@ -134,7 +136,7 @@
                     @if ($esDocente || auth()->user()->hasRole('Administrador'))
                         <div class="dropdown">
                             <button class="btn-modern btn-success-custom dropdown-toggle" type="button"
-                                    id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-cog"></i>
                                 <span>Gestionar Curso</span>
                             </button>
@@ -147,7 +149,9 @@
                                 </li>
 
                                 @if ($esDocente)
-                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
 
                                     @if ($cursos->tipo == 'curso')
                                         <li>
@@ -159,8 +163,7 @@
                                         </li>
 
                                         <li>
-                                            <a class="dropdown-item"
-                                                href="{{ route('repF', [encrypt($cursos->id)]) }}"
+                                            <a class="dropdown-item" href="{{ route('repF', [encrypt($cursos->id)]) }}"
                                                 onclick="mostrarAdvertencia2(event)">
                                                 <i class="fas fa-star text-warning"></i>
                                                 Calificaciones
@@ -185,8 +188,7 @@
                                     @endif
 
                                     <li>
-                                        <a class="dropdown-item"
-                                            href="{{ route('editarCurso', [encrypt($cursos->id)]) }}">
+                                        <a class="dropdown-item" href="{{ route('editarCurso', [encrypt($cursos->id)]) }}">
                                             <i class="fas fa-edit text-info"></i>
                                             Editar Curso
                                         </a>
@@ -205,8 +207,7 @@
 
                                 @role('Administrador')
                                     <li>
-                                        <a class="dropdown-item"
-                                            href="{{ route('editarCurso', [encrypt($cursos->id)]) }}">
+                                        <a class="dropdown-item" href="{{ route('editarCurso', [encrypt($cursos->id)]) }}">
                                             <i class="fas fa-edit text-info"></i>
                                             Editar Curso
                                         </a>
@@ -215,7 +216,9 @@
 
                                 <!-- Certificate Options -->
                                 @if ($cursos->tipo === 'congreso')
-                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
 
                                     @if ($cursos->estado === 'Certificado Disponible')
                                         <li>
@@ -229,7 +232,8 @@
 
                                     @if ($cursos->estado == 'Activo')
                                         <li>
-                                            <form action="{{ route('cursos.activarCertificados', ['id' => $cursos->id]) }}"
+                                            <form
+                                                action="{{ route('cursos.activarCertificados', ['id' => $cursos->id]) }}"
                                                 method="POST">
                                                 @csrf
                                                 <button type="submit" class="dropdown-item">
@@ -1015,7 +1019,7 @@
 
 
 @section('content')
-  @if ((auth()->user()->hasRole('Docente') && $esDocente) || (auth()->user()->hasRole('Estudiante') && $inscritos))
+    @if ((auth()->user()->hasRole('Docente') && $esDocente) || (auth()->user()->hasRole('Estudiante') && $inscritos))
         <div class="container-fluid py-4">
             <div class="row">
                 <!-- Navegación lateral -->
@@ -1026,7 +1030,7 @@
                         </h5>
 
                         <!-- Temas y Subtemas -->
-                        <a href="#temario" class="nav-link active" data-bs-toggle="tab">
+                        <a href="#temario" class="nav-link " data-bs-toggle="tab">
                             <i class="fas fa-list-ul"></i> <span>Temario General</span>
                         </a>
 
@@ -1038,9 +1042,9 @@
                             @endphp
 
                             <!-- Tema -->
-                            <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
-                                href="#subtemas-{{ $tema->id }}" role="button" aria-expanded="false"
-                                aria-controls="subtemas-{{ $tema->id }}">
+                            <a class="nav-link d-flex justify-content-between align-items-center"
+                                data-bs-toggle="collapse" href="#subtemas-{{ $tema->id }}" role="button"
+                                aria-expanded="false" aria-controls="subtemas-{{ $tema->id }}">
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-folder me-2"></i>
                                     <span>{{ $tema->titulo_tema }}</span>
@@ -1054,7 +1058,8 @@
                                     @php
                                         $desbloqueado =
                                             auth()->user()->hasRole('Docente') ||
-                                            (auth()->user()->hasRole('Estudiante') && $subtema->estaDesbloqueado($inscritos2->id));
+                                            (auth()->user()->hasRole('Estudiante') &&
+                                                $subtema->estaDesbloqueado($inscritos2->id));
                                     @endphp
 
                                     @if ($desbloqueado)
@@ -1118,38 +1123,71 @@
                         <div class="card-header">
                             <ul class="nav nav-tabs nav-fill" id="course-tabs" role="tablist">
                                 <li class="nav-item" role="presentation">
-                                    <button class="nav-link active px-4 py-3" id="temario-tab" data-bs-toggle="tab"
-                                        data-bs-target="#tab-actividades" type="button" role="tab"
+                                    <a class="nav-link active px-4 py-3" id="temario-tab" data-bs-toggle="tab"
+                                        href="#tab-actividades" role="tab"
                                         aria-controls="tab-actividades" aria-selected="true">
                                         <i class="fas fa-list me-2"></i>Temario
-                                    </button>
+                                    </a>
                                 </li>
 
                                 @if ($cursos->tipo == 'congreso')
                                     <li class="nav-item" role="presentation">
-                                        <button class="nav-link px-4 py-3" id="expositores-tab" data-bs-toggle="tab"
-                                            data-bs-target="#tab-expositores" type="button" role="tab"
+                                        <a class="nav-link px-4 py-3" id="expositores-tab" data-bs-toggle="tab"
+                                            href="#tab-expositores" role="tab"
                                             aria-controls="tab-expositores" aria-selected="false">
                                             <i class="fas fa-users me-2"></i>Expositores
-                                        </button>
+                                        </a>
                                     </li>
                                 @endif
                                 <li class="nav-item" role="presentation">
-                                    <button class="nav-link px-4 py-3" id="foros-tab" data-bs-toggle="tab"
-                                        data-bs-target="#tab-foros" type="button" role="tab" aria-controls="tab-foros"
-                                        aria-selected="false">
+                                    <a class="nav-link px-4 py-3" id="foros-tab" data-bs-toggle="tab"
+                                        href="#tab-foros" role="tab"
+                                        aria-controls="tab-foros" aria-selected="false">
                                         <i class="fas fa-comments me-2"></i>Foros
-                                    </button>
+                                        <span
+                                            class="badge bg-primary ms-2">{{ isset($foros) ? $foros->count() : 0 }}</span>
+                                    </a>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <button class="nav-link px-4 py-3" id="recursos-tab" data-bs-toggle="tab"
-                                        data-bs-target="#tab-recursos" type="button" role="tab"
+                                    <a class="nav-link px-4 py-3" id="recursos-tab" data-bs-toggle="tab"
+                                        href="#tab-recursos" role="tab"
                                         aria-controls="tab-recursos" aria-selected="false">
                                         <i class="fas fa-folder-open me-2"></i>Recursos Globales
-                                    </button>
+                                        <span
+                                            class="badge bg-primary ms-2">{{ isset($recursos) ? $recursos->count() : 0 }}</span>
+                                    </a>
                                 </li>
                             </ul>
                         </div>
+
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var links = document.querySelectorAll('#course-tabs .nav-link');
+                                var panes = document.querySelectorAll('#course-tab-content .tab-pane');
+                                function activate(link) {
+                                    var targetSel = link.getAttribute('href') || link.getAttribute('data-bs-target');
+                                    var pane = document.querySelector(targetSel);
+                                    if (!pane) return;
+                                    panes.forEach(function(p){ p.classList.remove('show','active'); });
+                                    pane.classList.add('show','active');
+                                    links.forEach(function(l){ l.classList.remove('active'); l.setAttribute('aria-selected','false'); });
+                                    link.classList.add('active');
+                                    link.setAttribute('aria-selected','true');
+                                    if (targetSel) { try { location.hash = targetSel; } catch(_){} }
+                                }
+                                links.forEach(function(link){
+                                    link.addEventListener('click', function(e){
+                                        e.preventDefault();
+                                        activate(link);
+                                    });
+                                });
+                                var initial = location.hash;
+                                if (initial) {
+                                    var link = document.querySelector('#course-tabs .nav-link[href="'+initial+'"], #course-tabs .nav-link[data-bs-target="'+initial+'"]');
+                                    if (link) activate(link);
+                                }
+                            });
+                        </script>
 
                         <div class="card-body p-4">
                             <div class="tab-content" id="course-tab-content">
@@ -1157,7 +1195,7 @@
                                 @include('partials.cursos.temario_tab')
 
                                 @if ($cursos->tipo == 'congreso')
-                                    <div class="tab-pane fade" id="tab-expositores">
+                                    <div class="tab-pane fade" id="tab-expositores" role="tabpanel" aria-labelledby="expositores-tab">
                                         <div class="d-flex justify-content-between align-items-center mb-4">
                                             <div>
                                                 <h4 class="mb-1" style="color: var(--color-primary);">
@@ -1180,30 +1218,38 @@
                                                             <div class="col-4">
                                                                 @if ($expositor->imagen && file_exists(public_path('storage/' . $expositor->imagen)))
                                                                     <img src="{{ asset('storage/' . $expositor->imagen) }}"
-                                                                        class="img-fluid h-100 w-100" style="object-fit: cover;"
+                                                                        class="img-fluid h-100 w-100"
+                                                                        style="object-fit: cover;"
                                                                         alt="Foto de {{ $expositor->nombre }}">
                                                                 @else
                                                                     <img src="{{ asset('assets2/img/talker.png') }}"
-                                                                        class="img-fluid h-100 w-100" style="object-fit: cover;"
+                                                                        class="img-fluid h-100 w-100"
+                                                                        style="object-fit: cover;"
                                                                         alt="Imagen no disponible">
                                                                 @endif
                                                             </div>
                                                             <div class="col-8">
                                                                 <div class="card-body h-100 d-flex flex-column">
-                                                                    <h5 class="card-title mb-2" style="color: var(--color-primary);">
+                                                                    <h5 class="card-title mb-2"
+                                                                        style="color: var(--color-primary);">
                                                                         {{ $expositor->nombre }}
                                                                     </h5>
                                                                     <div class="mb-2">
                                                                         <small class="text-muted">Cargo:</small>
-                                                                        <p class="mb-1 fw-semibold">{{ $expositor->pivot->cargo ?? 'No especificado' }}</p>
+                                                                        <p class="mb-1 fw-semibold">
+                                                                            {{ $expositor->pivot->cargo ?? 'No especificado' }}
+                                                                        </p>
                                                                     </div>
                                                                     <div class="mb-2">
                                                                         <small class="text-muted">Tema:</small>
-                                                                        <p class="mb-1">{{ $expositor->pivot->tema ?? 'No especificado' }}</p>
+                                                                        <p class="mb-1">
+                                                                            {{ $expositor->pivot->tema ?? 'No especificado' }}
+                                                                        </p>
                                                                     </div>
                                                                     <div class="mb-3">
                                                                         <small class="text-muted">Orden:</small>
-                                                                        <span class="badge bg-primary">{{ $expositor->pivot->orden ?? '-' }}</span>
+                                                                        <span
+                                                                            class="badge bg-primary">{{ $expositor->pivot->orden ?? '-' }}</span>
                                                                     </div>
                                                                     @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Docente'))
                                                                         <div class="mt-auto">
@@ -1213,9 +1259,11 @@
                                                                                 onsubmit="return confirm('¿Deseas quitar este expositor del curso?');">
                                                                                 @csrf
                                                                                 @method('DELETE')
-                                                                                <button class="btn btn-outline-danger btn-sm w-100"
+                                                                                <button
+                                                                                    class="btn btn-outline-danger btn-sm w-100"
                                                                                     title="Quitar expositor">
-                                                                                    <i class="fas fa-times me-1"></i> Quitar Expositor
+                                                                                    <i class="fas fa-times me-1"></i>
+                                                                                    Quitar Expositor
                                                                                 </button>
                                                                             </form>
                                                                         </div>
@@ -1230,7 +1278,8 @@
                                                     <div class="alert alert-info text-center py-4">
                                                         <i class="fas fa-info-circle fa-2x mb-3"></i>
                                                         <h5>No hay expositores asignados</h5>
-                                                        <p class="mb-0">Asigna expositores para comenzar con el congreso</p>
+                                                        <p class="mb-0">Asigna expositores para comenzar con el congreso
+                                                        </p>
                                                     </div>
                                                 </div>
                                             @endforelse
@@ -1238,8 +1287,13 @@
                                     </div>
                                 @endif
 
+
+
                                 @include('partials.cursos.foros_tab')
                                 @include('partials.cursos.recursos_tab')
+
+
+
                             </div>
                         </div>
                     </div>
@@ -1247,12 +1301,119 @@
             </div>
         </div>
 
+        @push('scripts')
+            <script>
+                (function() {
+                    'use strict';
+
+                    function initializeTabs() {
+                        // Seleccionar todos los tabs y panes
+                        const tabButtons = document.querySelectorAll('#course-tabs [data-bs-toggle="tab"]');
+                        const panes = document.querySelectorAll('#course-tab-content .tab-pane');
+
+                        if (tabButtons.length === 0 || panes.length === 0) {
+                            console.warn('No se encontraron tabs o panes para inicializar');
+                            return;
+                        }
+
+                        // Función para activar un tab específico
+                        function activateTab(tabButton) {
+                            // Obtener el target del tab
+                            const targetSel = tabButton.getAttribute('href') || tabButton.getAttribute('data-bs-target');
+                            if (!targetSel) {
+                                console.warn('Tab sin target:', tabButton);
+                                return;
+                            }
+
+                            const target = document.querySelector(targetSel);
+                            if (!target) {
+                                console.warn('Target no encontrado:', targetSel);
+                                return;
+                            }
+
+                            // Remover clases activas de todos los tabs y panes
+                            tabButtons.forEach(btn => {
+                                btn.classList.remove('active');
+                                btn.setAttribute('aria-selected', 'false');
+                            });
+
+                            panes.forEach(pane => {
+                                pane.classList.remove('show', 'active');
+                            });
+
+                            // Activar el tab y pane seleccionado
+                            tabButton.classList.add('active');
+                            tabButton.setAttribute('aria-selected', 'true');
+                            target.classList.add('show', 'active');
+
+                            // Disparar evento personalizado
+                            const event = new CustomEvent('tab-activated', {
+                                detail: { tab: tabButton, pane: target }
+                            });
+                            document.dispatchEvent(event);
+                        }
+
+                        // Inicializar: activar el tab por defecto (temario)
+                        const defaultTab = document.querySelector('#course-tabs .nav-link.active');
+                        if (defaultTab) {
+                            // Activar inmediatamente y también después de un pequeño delay para asegurar renderizado
+                            activateTab(defaultTab);
+                            setTimeout(() => {
+                                activateTab(defaultTab);
+                            }, 100);
+                        } else {
+                            // Si no hay tab activo por defecto, activar el primero
+                            const firstTab = tabButtons[0];
+                            if (firstTab) {
+                                activateTab(firstTab);
+                            }
+                        }
+
+                        // Agregar event listeners a todos los tabs
+                        tabButtons.forEach(btn => {
+                            btn.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                activateTab(this);
+                            });
+                        });
+
+                        // Si Bootstrap está disponible, también usar su API
+                        if (window.bootstrap && bootstrap.Tab) {
+                            tabButtons.forEach(btn => {
+                                try {
+                                    const tab = new bootstrap.Tab(btn);
+                                    btn.addEventListener('shown.bs.tab', function() {
+                                        // Asegurar que las clases estén correctas después de que Bootstrap active el tab
+                                        const targetSel = btn.getAttribute('href') || btn.getAttribute('data-bs-target');
+                                        const target = document.querySelector(targetSel);
+                                        if (target) {
+                                            target.classList.add('show', 'active');
+                                        }
+                                    });
+                                } catch (e) {
+                                    console.warn('Error inicializando Bootstrap Tab:', e);
+                                }
+                            });
+                        }
+                    }
+
+                    // Inicializar cuando el DOM esté listo
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', initializeTabs);
+                    } else {
+                        // DOM ya está listo
+                        initializeTabs();
+                    }
+                })();
+            </script>
+        @endpush
+
         <!-- Modal Asignar Expositores -->
-        <div class="modal fade" id="modalExpositores" tabindex="-1"
-            aria-labelledby="modalExpositoresLabel" aria-hidden="true">
+        <div class="modal fade" id="modalExpositores" tabindex="-1" aria-labelledby="modalExpositoresLabel"
+            aria-hidden="true">
             <div class="modal-dialog modal-lg">
-                <form method="POST"
-                    action="{{ route('cursos.asignarExpositores', $cursos->id) }}">
+                <form method="POST" action="{{ route('cursos.asignarExpositores', $cursos->id) }}">
                     @csrf
                     <div class="modal-content">
                         <div class="modal-header">
@@ -1264,8 +1425,7 @@
                         </div>
                         <div class="modal-body">
                             <div class="mb-4">
-                                <input type="text" id="buscadorExpositores"
-                                    class="form-control"
+                                <input type="text" id="buscadorExpositores" class="form-control"
                                     placeholder="🔍 Buscar expositor por nombre...">
                             </div>
 
@@ -1290,8 +1450,7 @@
                                         </div>
 
                                         <div class="row g-2 align-items-center">
-                                            <input type="hidden"
-                                                name="expositores[{{ $loop->index }}][id]"
+                                            <input type="hidden" name="expositores[{{ $loop->index }}][id]"
                                                 value="{{ $expositor->id }}">
 
                                             <div class="col-md-4">
@@ -1306,15 +1465,13 @@
                                             </div>
                                             <div class="col-md-2">
                                                 <input type="number" class="form-control"
-                                                    name="expositores[{{ $loop->index }}][orden]"
-                                                    placeholder="Orden" min="1">
+                                                    name="expositores[{{ $loop->index }}][orden]" placeholder="Orden"
+                                                    min="1">
                                             </div>
                                             <div class="col-md-2 text-center">
                                                 <div class="form-check">
-                                                    <input type="checkbox"
-                                                        class="form-check-input"
-                                                        name="expositoresSeleccionados[]"
-                                                        value="{{ $loop->index }}">
+                                                    <input type="checkbox" class="form-check-input"
+                                                        name="expositoresSeleccionados[]" value="{{ $loop->index }}">
                                                     <label class="form-check-label small">Seleccionar</label>
                                                 </div>
                                             </div>
@@ -1338,6 +1495,16 @@
         <!-- Modales adicionales -->
         @include('partials.cursos.modals.agregar_tema')
         @include('partials.cursos.modals.agregar_subtema')
+        @include('Docente.CrearForo')
+        @include('Docente.CrearRecursos')
+    
+        @foreach ($foros as $foro)
+            @include('Docente.EditarForo')
+        @endforeach
+        @foreach ($recursos as $recurso)
+            @include('Docente.EditarRecursos')
+        @endforeach
+
 
     @else
         <!-- Acceso denegado -->
@@ -1560,10 +1727,19 @@
     document.addEventListener('DOMContentLoaded', function() {
         const toggleButton = document.querySelector('.collapse-toggle');
         const toggleText = document.querySelector('.toggle-text');
+        const courseInfo = document.getElementById('course-info');
+
+        // Verificar que los elementos existan antes de continuar
+        if (!toggleButton || !toggleText || !courseInfo) {
+            return;
+        }
+
         const toggleIcon = toggleButton.querySelector('i');
+        if (!toggleIcon) {
+            return;
+        }
 
         // Initialize Bootstrap collapse events
-        const courseInfo = document.getElementById('course-info');
         courseInfo.addEventListener('hide.bs.collapse', function() {
             toggleText.textContent = 'Mostrar';
             toggleIcon.classList.remove('fa-chevron-up');
@@ -1576,22 +1752,6 @@
             toggleIcon.classList.add('fa-chevron-up');
         });
     });
-</script>
-
-
-<script>
-    function previewImage(input, previewSelector) {
-        const file = input.files[0];
-        const preview = document.querySelector(previewSelector);
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-                preview.classList.remove('d-none');
-            };
-            reader.readAsDataURL(file);
-        }
-    }
 </script>
 
 

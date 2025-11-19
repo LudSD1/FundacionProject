@@ -115,7 +115,6 @@ h6 {
     left: 0;
     right: 0;
     overflow: hidden;
-    overflow: hidden;
     /* Mantiene el contenido dentro del header */
     min-height: 80px;
 }
@@ -133,7 +132,6 @@ h6 {
     background: linear-gradient(145deg, transparent 70%, #1a4789 30%);
     z-index: 1;
     /* Diagonal por encima del fondo blanco pero debajo del contenido */
-    transition: all 0.3s ease-in-out;
     transition: all 0.3s ease-in-out;
     /* Transición suave */
     pointer-events: none;
@@ -268,15 +266,6 @@ h6 {
 .dropdown-item:hover {
     background-color: #145da0;
     color: white;
-}
-
-#categoriasCarousel .btn {
-    transition: 0.3s ease;
-}
-
-#categoriasCarousel .btn:hover {
-    background-color: #145da0;
-    color: #fff;
 }
 
 /*--------------------------------------------------------------
@@ -1879,17 +1868,6 @@ section {
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeInRight {
-    from {
-        opacity: 0;
         transform: translateX(-30px);
     }
     to {
@@ -1898,6 +1876,17 @@ section {
     }
 }
 
+.course-hero [data-aos="fade-right"] {
+    animation: fadeInRight 0.8s ease;
+}
+
+.course-hero [data-aos="fade-right"][data-aos-delay="200"] {
+    animation: fadeInRight 0.8s ease 0.2s both;
+}
+
+/* Prevent double animation when AOS is active */
+.course-hero [data-aos="fade-up"] { animation: none !important; }
+.course-hero [data-aos="fade-up"][data-aos-delay] { animation-delay: 0s !important; }
 .course-hero [data-aos="fade-up"] {
     animation: fadeInUp 0.8s ease;
 }
@@ -2148,15 +2137,12 @@ section {
     color: #8a8c95;
 }
 
-#footer .footer-top h4 {
+.footer-title {
     font-size: 16px;
     font-weight: 800;
     color: var(--color-primary);
     position: relative;
     padding-bottom: 12px;
-}
-
-#footer .footer-top h4::after {
     content: "";
     position: absolute;
     bottom: 0;
@@ -2167,47 +2153,47 @@ section {
     border-radius: 2px;
 }
 
-#footer .footer-top .footer-links {
+.footer-links {
     margin-bottom: 30px;
 }
 
-#footer .footer-top .footer-links ul {
+.footer-links-list {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
-#footer .footer-top .footer-links ul i {
+.footer-link-item > i {
     padding-right: 2px;
     color: #9fb2d8;
     font-size: 18px;
     line-height: 1;
 }
 
-#footer .footer-top .footer-links ul li {
+.footer-link-item {
     padding: 10px 0;
     display: flex;
     align-items: center;
 }
 
-#footer .footer-top .footer-links ul li:first-child {
+.footer-link-item:first-child {
     padding-top: 0;
 }
 
-#footer .footer-top .footer-links ul a {
+.footer-link {
     color: #6b7280;
     transition: color 0.2s ease, transform 0.2s ease;
     display: inline-block;
     line-height: 1.5;
+    text-decoration: none;
 }
 
-#footer .footer-top .footer-links ul a:hover {
-    text-decoration: none;
+.footer-link:hover {
     color: var(--color-primary);
     transform: translateX(2px);
 }
 
-#footer .footer-top .social-links a {
+.social-link {
     font-size: 18px;
     display: inline-block;
     background: var(--gradient-accent);
@@ -2223,7 +2209,7 @@ section {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-#footer .footer-top .social-links a:hover {
+.social-link:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 22px rgba(33, 151, 189, 0.35);
 }
@@ -7401,9 +7387,7 @@ html {
 /* ==========================================
    Uniformidad de cards (courses)
    ========================================== */
-.course-card { display: flex; flex-direction: column; height: 100%; }
-.course-card-body { flex: 1; display: flex; flex-direction: column; }
-.course-card-footer { margin-top: auto; }
+
 
 /* Limitar líneas para uniformar alturas visuales */
 .course-description { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }

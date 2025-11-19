@@ -18,11 +18,7 @@ class RecursosController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($id)
-    {
-        $curso = Cursos::findOrFail($id);
-        return view('Docente.CrearRecursos')->with('curso', $curso);
-    }
+
 
     public function store(Request $request, $id)
     {
@@ -62,7 +58,7 @@ class RecursosController extends Controller
         $recurso->save();
 
         // Redirigir con un mensaje de éxito
-        return redirect(route('Curso', $id))->with('success', 'Recurso creado con éxito');
+        return redirect(route('Curso', encrypt($id)))->with('success', 'Recurso creado con éxito');
     }
 
     private function procesarDescripcionConIframe(string $descripcion): string
@@ -148,11 +144,7 @@ class RecursosController extends Controller
         }
     }
 
-    public function edit($id)
-    {
-        $recurso = Recursos::findOrFail($id);
-        return view('Docente.EditarRecursos')->with('recurso', $recurso);
-    }
+
 
     public function update(Request $request, $id)
     {
@@ -201,7 +193,7 @@ class RecursosController extends Controller
         $recurso->save();
 
         // Redirigir con un mensaje de éxito
-        return redirect(route('Curso', $validatedData['cursos_id']))->with('success', 'Recurso editado con éxito');
+        return back()->with('success', 'Recurso editado con éxito');
     }
 
     public function delete($id)

@@ -1,6 +1,3 @@
-/* ============================================
-   SIDEBAR STYLES - APRENDO HOY
-   ============================================ */
 
 :root {
     --color-primary: #1a4789;
@@ -16,6 +13,7 @@
     --gradient-secondary: linear-gradient(135deg, #39a6cb 0%, #63becf 100%);
     --gradient-accent: linear-gradient(135deg, #2197bd 0%, #2a81c2 100%);
     --gradient-orange: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+    
 
     /* Colores adicionales para estados */
     --color-primary-hover: #0d3568;
@@ -27,6 +25,8 @@
     --color-warning: #ffc107;
     --color-info: #17a2b8;
     --color-success: #28a745;
+    --color-danger: #dc3545;
+    --color-info: #17a2b8;
 
     /* Colores de fondo para logs */
     --bg-light-error: rgba(220, 53, 69, 0.08);
@@ -43,6 +43,9 @@
     --sidebar-width: 280px;
     --sidebar-collapsed-width: 80px;
     --sidebar-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --border-radius: 12px;
+    --border-radius-sm: 8px;
 }
 
 .sidebar {
@@ -110,16 +113,6 @@
     justify-content: center;
     flex-shrink: 0;
 }
-
-/* Asegurar que Font Awesome e iconos Bootstrap funcionen correctamente */
-.sidebar .nav-link i::before,
-.sidebar .notification-btn i::before,
-.sidebar .sidebar-toggler i::before {
-    display: inline-block;
-    text-align: center;
-    width: 100%;
-}
-
 .sidebar .nav-link.active i,
 .sidebar .nav-link:hover i {
     color: var(--orange-accent);
@@ -183,11 +176,6 @@
     justify-content: center;
     width: 24px;
     min-width: 24px;
-}
-
-.notification-btn .label-notification {
-    flex: 1;
-    text-align: left;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -243,12 +231,6 @@
     flex-shrink: 0;
 }
 
-.sidebar-toggler span {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
 /* ============================================
    COLLAPSED STATE
    ============================================ */
@@ -257,7 +239,7 @@
 }
 
 .sidebar.collapsed .user-name,
-.sidebar.collapsed .label-notification,
+.sidebar.collapsed .notification-btn span,
 .sidebar.collapsed .nav-link span,
 .sidebar.collapsed .sidebar-toggler span {
     display: none !important;
@@ -1918,7 +1900,6 @@
 }
 
 .btn-action {
-    width: 36px;
     height: 36px;
     border-radius: 10px;
     border: none;
@@ -4584,5 +4565,7 @@ body {
 .btn-mark-viewed { background: transparent; border: 1px solid var(--color-success); color: var(--color-success); padding: 0.5rem 1rem; border-radius: var(--border-radius-sm); font-size: 0.8rem; transition: all 0.3s ease; display: flex; align-items: center; gap: 0.5rem; }
 .btn-mark-viewed:hover { background: var(--color-success); color: white; }
 .teacher-actions { display: flex; gap: 0.5rem; }
+
+
 
 

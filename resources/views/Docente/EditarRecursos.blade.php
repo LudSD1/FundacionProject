@@ -1,515 +1,485 @@
 
-
-
-
-
-@section('content')
-<div class="container-fluid py-4">
-    <!-- Header con navegación -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-1 text-gray-800">Modificar Recurso</h1>
-            <p class="text-muted mb-0">Actualiza la información y configuración del recurso educativo</p>
-        </div>
-        <button onclick="history.back()" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-2"></i>Volver
-        </button>
-    </div>
-
-    <div class="row">
-        <div class="col-12 col-lg-8">
-            <!-- Formulario principal -->
-            <div class="card shadow-sm border-0 mb-4">
-                <div class="card-header bg-white py-3">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-edit text-primary me-2"></i>Información del Recurso
-                    </h5>
+<!-- Modal para Modificar Recurso -->
+<div class="modal fade" id="modalEditarRecurso-{{ $recurso->id }}" tabindex="-1" aria-labelledby="modalEditarRecursoLabel-{{ $recurso->id }}" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <!-- Header del Modal -->
+            <div class="modal-header bg-gradient-warning text-dark">
+                <div class="modal-header-content">
+                    <i class="fas fa-edit fa-lg me-3"></i>
+                    <div>
+                        <h5 class="modal-title mb-0">Modificar Recurso</h5>
+                        <small class="opacity-75">Actualiza la información del recurso educativo</small>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <form method="POST" enctype="multipart/form-data" action="{{route('editarRecursosPost', encrypt($recurso->id))}}" id="resourceForm">
-                        @csrf
-                        <input type="hidden" value="{{$recurso->cursos_id}}" name="cursos_id">
-                        <input type="hidden" value="{{$recurso->id}}" name="idRecurso">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
 
-                        <!-- Título del recurso -->
-                        <div class="form-group mb-4">
-                            <label for="tituloRecurso" class="form-label fw-semibold">
-                                <i class="fas fa-heading text-primary me-2"></i>Título del Recurso
-                            </label>
-                            <input type="text"
-                                   id="tituloRecurso"
-                                   name="tituloRecurso"
-                                   class="form-control form-control-lg @error('tituloRecurso') is-invalid @enderror"
-                                   value="{{old('tituloRecurso', $recurso->nombreRecurso)}}"
-                                   placeholder="Ingrese el título del recurso"
-                                   required>
-                            @error('tituloRecurso')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+            <!-- Body del Modal -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12 col-lg-8">
+                        <!-- Formulario principal -->
+                        <div class="card shadow-sm border-0 mb-4">
+                            <div class="card-header bg-white py-3">
+                                <h6 class="card-title mb-0">
+                                    <i class="fas fa-edit text-warning me-2"></i>Información del Recurso
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <form method="POST" enctype="multipart/form-data" action="{{ route('editarRecursosPost', encrypt($recurso->id)) }}" id="resourceForm-{{ $recurso->id }}">
+                                    @csrf
+                                    <input type="hidden" value="{{ $recurso->cursos_id }}" name="cursos_id">
+                                    <input type="hidden" value="{{ $recurso->id }}" name="idRecurso">
+
+                                    <!-- Título del recurso -->
+                                    <div class="form-group mb-4">
+                                        <label for="tituloRecurso-{{ $recurso->id }}" class="form-label fw-semibold">
+                                            <i class="fas fa-heading text-warning me-2"></i>Título del Recurso *
+                                        </label>
+                                        <input type="text"
+                                               id="tituloRecurso-{{ $recurso->id }}"
+                                               name="tituloRecurso"
+                                               class="form-control modern-input @error('tituloRecurso') is-invalid @enderror"
+                                               value="{{ old('tituloRecurso', $recurso->nombreRecurso) }}"
+                                               placeholder="Ingrese el título del recurso"
+                                               required>
+                                        @error('tituloRecurso')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Descripción -->
+                                    <div class="form-group mb-4">
+                                        <label for="descripcionRecurso-{{ $recurso->id }}" class="form-label fw-semibold">
+                                            <i class="fas fa-align-left text-warning me-2"></i>Descripción del Recurso *
+                                        </label>
+                                        <textarea id="descripcionRecurso-{{ $recurso->id }}"
+                                                  name="descripcionRecurso"
+                                                  rows="4"
+                                                  class="form-control modern-input @error('descripcionRecurso') is-invalid @enderror"
+                                                  placeholder="Describe el contenido y propósito del recurso"
+                                                  required>{{ old('descripcionRecurso', $recurso->descripcionRecursos) }}</textarea>
+                                        @error('descripcionRecurso')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Upload de archivo -->
+                                    <div class="form-group mb-4">
+                                        <label class="form-label fw-semibold">
+                                            <i class="fas fa-upload text-warning me-2"></i>Reemplazar Archivo
+                                        </label>
+                                        
+                                        <!-- Archivo actual -->
+                                        @if($recurso->archivoRecurso)
+                                        <div class="current-file mb-3 p-3 bg-light rounded">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-file text-success fa-2x me-3"></i>
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mb-1">Archivo Actual</h6>
+                                                    <p class="mb-0 text-muted small">{{ basename($recurso->archivoRecurso) }}</p>
+                                                </div>
+                                                <a href="{{ asset('storage/' . $recurso->archivoRecurso) }}" 
+                                                   class="btn btn-outline-success btn-sm"
+                                                   target="_blank">
+                                                    <i class="fas fa-download me-1"></i> Descargar
+                                                </a>
+                                            </div>
+                                        </div>
+                                        @endif
+
+                                        <div class="upload-area border-2 border-dashed border-secondary rounded p-4 text-center">
+                                            <input type="file"
+                                                   id="archivo-{{ $recurso->id }}"
+                                                   name="archivo"
+                                                   class="form-control @error('archivo') is-invalid @enderror"
+                                                   style="display: none;"
+                                                   accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.mp4,.mp3">
+                                            <div id="upload-display-{{ $recurso->id }}">
+                                                <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                                                <p class="mb-2 text-muted">Haz clic para seleccionar un archivo o arrastra y suelta</p>
+                                                <button type="button" class="btn btn-outline-warning" onclick="document.getElementById('archivo-{{ $recurso->id }}').click()">
+                                                    Seleccionar Archivo
+                                                </button>
+                                            </div>
+                                            <div id="file-info-{{ $recurso->id }}" class="d-none">
+                                                <i class="fas fa-file fa-2x text-success mb-2"></i>
+                                                <p class="mb-0" id="file-name-{{ $recurso->id }}"></p>
+                                                <small class="text-muted" id="file-size-{{ $recurso->id }}"></small>
+                                            </div>
+                                        </div>
+                                        @error('archivo')
+                                            <div class="text-danger small mt-2">{{ $message }}</div>
+                                        @enderror
+                                        <small class="form-text text-muted">
+                                            Deja vacío si no deseas cambiar el archivo actual
+                                        </small>
+                                    </div>
+
+                                    <input type="hidden" id="tipoRecurso-{{ $recurso->id }}" name="tipoRecurso" value="{{ old('tipoRecurso', $recurso->tipoRecurso ?? '') }}">
+                                </form>
+                            </div>
                         </div>
+                    </div>
 
-                        <!-- Descripción -->
-                        <div class="form-group mb-4">
-                            <label for="descripcionRecurso" class="form-label fw-semibold">
-                                <i class="fas fa-align-left text-primary me-2"></i>Descripción del Recurso
-                            </label>
-                            <textarea id="descripcionRecurso"
-                                      name="descripcionRecurso"
-                                      rows="4"
-                                      class="form-control @error('descripcionRecurso') is-invalid @enderror"
-                                      placeholder="Describe el contenido y propósito del recurso"
-                                      required>{{old('descripcionRecurso', $recurso->descripcionRecursos)}}</textarea>
-                            @error('descripcionRecurso')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                    <div class="col-12 col-lg-4">
+                        <!-- Selector de tipo de recurso -->
+                        <div class="card shadow-sm border-0">
+                            <div class="card-header bg-white py-3">
+                                <h6 class="card-title mb-0">
+                                    <i class="fas fa-icons text-warning me-2"></i>Tipo de Recurso *
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="selected-type-display mb-3 p-3 bg-light rounded">
+                                    <div class="d-flex align-items-center" id="selected-display-{{ $recurso->id }}">
+                                        @if($recurso->tipoRecurso)
+                                            @php
+                                                $iconos = [
+                                                    'word' => 'fas fa-file-word text-primary',
+                                                    'excel' => 'fas fa-file-excel text-success',
+                                                    'powerpoint' => 'fas fa-file-powerpoint text-warning',
+                                                    'pdf' => 'fas fa-file-pdf text-danger',
+                                                    'docs' => 'fab fa-google-drive text-primary',
+                                                    'imagen' => 'fas fa-image text-info',
+                                                    'video' => 'fas fa-video text-dark',
+                                                    'audio' => 'fas fa-music text-purple',
+                                                    'youtube' => 'fab fa-youtube text-danger',
+                                                    'forms' => 'fas fa-wpforms text-success',
+                                                    'drive' => 'fab fa-google-drive text-warning',
+                                                    'kahoot' => 'fas fa-gamepad text-info',
+                                                    'canva' => 'fas fa-palette text-pink',
+                                                    'enlace' => 'fas fa-link text-secondary',
+                                                    'archivos-adjuntos' => 'fas fa-paperclip text-muted',
+                                                    'zoom' => 'fas fa-video text-primary',
+                                                    'meet' => 'fas fa-video text-success',
+                                                    'teams' => 'fas fa-users text-info'
+                                                ];
+                                                $currentIcon = $iconos[$recurso->tipoRecurso] ?? 'fas fa-file text-muted';
+                                                $currentName = ucfirst($recurso->tipoRecurso);
+                                            @endphp
+                                            <i class="{{ $currentIcon }} fa-2x me-3"></i>
+                                            <div>
+                                                <h6 class="mb-1">{{ $currentName }}</h6>
+                                                <small class="text-muted">Tipo actual</small>
+                                            </div>
+                                        @else
+                                            <i class="fas fa-question-circle fa-2x text-muted me-3"></i>
+                                            <div>
+                                                <h6 class="mb-1">Ninguno seleccionado</h6>
+                                                <small class="text-muted">Selecciona un tipo de recurso</small>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
 
-                        <!-- Upload de archivo -->
-                        <div class="form-group mb-4">
-                            <label for="archivo" class="form-label fw-semibold">
-                                <i class="fas fa-upload text-primary me-2"></i>Reemplazar Archivo (Opcional)
-                            </label>
-                            <div class="upload-area border-2 border-dashed border-secondary rounded p-4 text-center">
-                                <input type="file"
-                                       id="archivo"
-                                       name="archivo"
-                                       class="form-control @error('archivo') is-invalid @enderror"
-                                       style="display: none;"
-                                       accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.mp4,.mp3">
-                                <div id="upload-display">
-                                    <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
-                                    <p class="mb-2 text-muted">Haz clic para seleccionar un archivo o arrastra y suelta</p>
-                                    <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('archivo').click()">
-                                        Seleccionar Archivo
+                                <!-- Selector de tipo mejorado -->
+                                <div class="resource-type-selector">
+                                    <select class="form-select modern-input" id="resourceSelect-{{ $recurso->id }}" required>
+                                        <option value="" disabled {{ !$recurso->tipoRecurso ? 'selected' : '' }}>Selecciona un tipo...</option>
+                                        <optgroup label="📄 Documentos">
+                                            <option value="word" {{ $recurso->tipoRecurso == 'word' ? 'selected' : '' }}>📝 Word</option>
+                                            <option value="excel" {{ $recurso->tipoRecurso == 'excel' ? 'selected' : '' }}>📊 Excel</option>
+                                            <option value="powerpoint" {{ $recurso->tipoRecurso == 'powerpoint' ? 'selected' : '' }}>📈 PowerPoint</option>
+                                            <option value="pdf" {{ $recurso->tipoRecurso == 'pdf' ? 'selected' : '' }}>📕 PDF</option>
+                                        </optgroup>
+                                        <optgroup label="🌐 Google Workspace">
+                                            <option value="docs" {{ $recurso->tipoRecurso == 'docs' ? 'selected' : '' }}>📝 Google Docs</option>
+                                            <option value="forms" {{ $recurso->tipoRecurso == 'forms' ? 'selected' : '' }}>📋 Google Forms</option>
+                                            <option value="drive" {{ $recurso->tipoRecurso == 'drive' ? 'selected' : '' }}>☁️ Google Drive</option>
+                                        </optgroup>
+                                        <optgroup label="🎥 Multimedia">
+                                            <option value="imagen" {{ $recurso->tipoRecurso == 'imagen' ? 'selected' : '' }}>🖼️ Imagen</option>
+                                            <option value="video" {{ $recurso->tipoRecurso == 'video' ? 'selected' : '' }}>🎬 Video</option>
+                                            <option value="audio" {{ $recurso->tipoRecurso == 'audio' ? 'selected' : '' }}>🎵 Audio</option>
+                                            <option value="youtube" {{ $recurso->tipoRecurso == 'youtube' ? 'selected' : '' }}>📺 YouTube</option>
+                                        </optgroup>
+                                        <optgroup label="💬 Videoconferencia">
+                                            <option value="zoom" {{ $recurso->tipoRecurso == 'zoom' ? 'selected' : '' }}>📹 Zoom</option>
+                                            <option value="meet" {{ $recurso->tipoRecurso == 'meet' ? 'selected' : '' }}>🎥 Google Meet</option>
+                                            <option value="teams" {{ $recurso->tipoRecurso == 'teams' ? 'selected' : '' }}>💬 Microsoft Teams</option>
+                                        </optgroup>
+                                        <optgroup label="🎮 Herramientas Educativas">
+                                            <option value="kahoot" {{ $recurso->tipoRecurso == 'kahoot' ? 'selected' : '' }}>🎮 Kahoot</option>
+                                            <option value="canva" {{ $recurso->tipoRecurso == 'canva' ? 'selected' : '' }}>🎨 Canva</option>
+                                        </optgroup>
+                                        <optgroup label="🔗 Otros">
+                                            <option value="enlace" {{ $recurso->tipoRecurso == 'enlace' ? 'selected' : '' }}>🔗 Enlace Web</option>
+                                            <option value="archivos-adjuntos" {{ $recurso->tipoRecurso == 'archivos-adjuntos' ? 'selected' : '' }}>📎 Archivos Adjuntos</option>
+                                        </optgroup>
+                                    </select>
+                                    <div class="form-text">Selecciona la categoría que mejor describa tu recurso</div>
+                                </div>
+                            </div>
+
+                            <!-- Botones de acción -->
+                            <div class="card-footer bg-white border-0 pt-0">
+                                <div class="d-grid gap-2">
+                                    <button type="submit" form="resourceForm-{{ $recurso->id }}" class="btn btn-warning btn-lg">
+                                        <i class="fas fa-save me-2"></i>Guardar Cambios
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                        <i class="fas fa-times me-2"></i>Cancelar
                                     </button>
                                 </div>
-                                <div id="file-info" class="d-none">
-                                    <i class="fas fa-file fa-2x text-success mb-2"></i>
-                                    <p class="mb-0" id="file-name"></p>
-                                    <small class="text-muted" id="file-size"></small>
-                                </div>
-                            </div>
-                            @error('archivo')
-                                <div class="text-danger small mt-2">{{ $message }}</div>
-                            @enderror
-                            <small class="form-text text-muted">
-                                Deja vacío si no deseas cambiar el archivo actual
-                            </small>
-                        </div>
-
-                        <input type="hidden" id="tipoRecurso" name="tipoRecurso" value="{{old('tipoRecurso', $recurso->tipoRecurso ?? '')}}">
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-lg-4">
-            <!-- Selector de tipo de recurso -->
-            <div class="card shadow-sm border-0 sticky-top" style="top: 20px;">
-                <div class="card-header bg-white py-3">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-icons text-primary me-2"></i>Tipo de Recurso
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="selected-type-display mb-3 p-3 bg-light rounded">
-                        <div class="d-flex align-items-center" id="selected-display">
-                            <i class="fas fa-question-circle fa-2x text-muted me-3"></i>
-                            <div>
-                                <h6 class="mb-1">Ninguno seleccionado</h6>
-                                <small class="text-muted">Selecciona un tipo de recurso</small>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Acordeón de categorías -->
-                    <div class="accordion" id="iconAccordion">
-                        <!-- Documentos -->
-                        <div class="accordion-item border-0 mb-2">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#documents">
-                                    <i class="fas fa-file-alt text-primary me-2"></i>Documentos
-                                </button>
-                            </h2>
-                            <div id="documents" class="accordion-collapse collapse" data-bs-parent="#iconAccordion">
-                                <div class="accordion-body">
-                                    <div class="row g-2">
-                                        <div class="col-6">
-                                            <div class="icon-option" data-value="word" data-name="Word" data-icon="fas fa-file-word">
-                                                <img src="{{asset('resources/icons/word.png')}}" alt="Word" height="40">
-                                                <small>Word</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="icon-option" data-value="excel" data-name="Excel" data-icon="fas fa-file-excel">
-                                                <img src="{{asset('resources/icons/excel.png')}}" alt="Excel" height="40">
-                                                <small>Excel</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="icon-option" data-value="powerpoint" data-name="PowerPoint" data-icon="fas fa-file-powerpoint">
-                                                <img src="{{asset('resources/icons/powerpoint.png')}}" alt="PowerPoint" height="40">
-                                                <small>PowerPoint</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="icon-option" data-value="pdf" data-name="PDF" data-icon="fas fa-file-pdf">
-                                                <img src="{{asset('resources/icons/pdf.png')}}" alt="PDF" height="40">
-                                                <small>PDF</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Google Workspace -->
-                        <div class="accordion-item border-0 mb-2">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#google">
-                                    <i class="fab fa-google text-primary me-2"></i>Google Workspace
-                                </button>
-                            </h2>
-                            <div id="google" class="accordion-collapse collapse" data-bs-parent="#iconAccordion">
-                                <div class="accordion-body">
-                                    <div class="row g-2">
-                                        <div class="col-6">
-                                            <div class="icon-option" data-value="drive" data-name="Google Drive" data-icon="fab fa-google-drive">
-                                                <img src="{{asset('resources/icons/drive.png')}}" alt="Drive" height="40">
-                                                <small>Drive</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="icon-option" data-value="forms" data-name="Google Forms" data-icon="fas fa-wpforms">
-                                                <img src="{{asset('resources/icons/forms.png')}}" alt="Forms" height="40">
-                                                <small>Forms</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Multimedia -->
-                        <div class="accordion-item border-0 mb-2">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#multimedia">
-                                    <i class="fas fa-play-circle text-primary me-2"></i>Multimedia
-                                </button>
-                            </h2>
-                            <div id="multimedia" class="accordion-collapse collapse" data-bs-parent="#iconAccordion">
-                                <div class="accordion-body">
-                                    <div class="row g-2">
-                                        <div class="col-6">
-                                            <div class="icon-option" data-value="imagen" data-name="Imagen" data-icon="fas fa-image">
-                                                <img src="{{asset('resources/icons/imagen.png')}}" alt="Imagen" height="40">
-                                                <small>Imagen</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="icon-option" data-value="video" data-name="Video" data-icon="fas fa-video">
-                                                <img src="{{asset('resources/icons/video.png')}}" alt="Video" height="40">
-                                                <small>Video</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="icon-option" data-value="audio" data-name="Audio" data-icon="fas fa-music">
-                                                <img src="{{asset('resources/icons/audio.png')}}" alt="Audio" height="40">
-                                                <small>Audio</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="icon-option" data-value="youtube" data-name="YouTube" data-icon="fab fa-youtube">
-                                                <img src="{{asset('resources/icons/youtube.png')}}" alt="YouTube" height="40">
-                                                <small>YouTube</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Videoconferencia -->
-                        <div class="accordion-item border-0 mb-2">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#video-conf">
-                                    <i class="fas fa-video text-primary me-2"></i>Videoconferencia
-                                </button>
-                            </h2>
-                            <div id="video-conf" class="accordion-collapse collapse" data-bs-parent="#iconAccordion">
-                                <div class="accordion-body">
-                                    <div class="row g-2">
-                                        <div class="col-6">
-                                            <div class="icon-option" data-value="zoom" data-name="Zoom" data-icon="fas fa-video">
-                                                <img src="{{asset('resources/icons/zoom.png')}}" alt="Zoom" height="40">
-                                                <small>Zoom</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="icon-option" data-value="meet" data-name="Google Meet" data-icon="fas fa-video">
-                                                <img src="{{asset('resources/icons/meet.png')}}" alt="Meet" height="40">
-                                                <small>Meet</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="icon-option" data-value="teams" data-name="Microsoft Teams" data-icon="fas fa-users">
-                                                <img src="{{asset('resources/icons/teams.png')}}" alt="Teams" height="40">
-                                                <small>Teams</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Herramientas Educativas -->
-                        <div class="accordion-item border-0 mb-2">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#educational">
-                                    <i class="fas fa-graduation-cap text-primary me-2"></i>Herramientas Educativas
-                                </button>
-                            </h2>
-                            <div id="educational" class="accordion-collapse collapse" data-bs-parent="#iconAccordion">
-                                <div class="accordion-body">
-                                    <div class="row g-2">
-                                        <div class="col-6">
-                                            <div class="icon-option" data-value="kahoot" data-name="Kahoot" data-icon="fas fa-gamepad">
-                                                <img src="{{asset('resources/icons/kahoot.png')}}" alt="Kahoot" height="40">
-                                                <small>Kahoot</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="icon-option" data-value="canva" data-name="Canva" data-icon="fas fa-palette">
-                                                <img src="{{asset('resources/icons/canva.png')}}" alt="Canva" height="40">
-                                                <small>Canva</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Otros -->
-                        <div class="accordion-item border-0">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#others">
-                                    <i class="fas fa-ellipsis-h text-primary me-2"></i>Otros
-                                </button>
-                            </h2>
-                            <div id="others" class="accordion-collapse collapse" data-bs-parent="#iconAccordion">
-                                <div class="accordion-body">
-                                    <div class="row g-2">
-                                        <div class="col-6">
-                                            <div class="icon-option" data-value="enlace" data-name="Enlace Web" data-icon="fas fa-link">
-                                                <img src="{{asset('resources/icons/enlace.png')}}" alt="Enlace" height="40">
-                                                <small>Enlace</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="icon-option" data-value="archivos-adjuntos" data-name="Archivo Adjunto" data-icon="fas fa-paperclip">
-                                                <img src="{{asset('resources/icons/archivos-adjuntos.png')}}" alt="Archivos" height="40">
-                                                <small>Archivos</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Botones de acción -->
-                <div class="card-footer bg-white border-0 pt-0">
-                    <div class="d-grid gap-2">
-                        <button type="submit" form="resourceForm" class="btn btn-primary btn-lg">
-                            <i class="fas fa-save me-2"></i>Guardar Cambios
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary" onclick="history.back()">
-                            <i class="fas fa-times me-2"></i>Cancelar
-                        </button>
+                <!-- Mostrar errores -->
+                @if ($errors->any())
+                    <div class="alert alert-danger alert-dismissible fade show mt-4" role="alert">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Se encontraron errores:
+                        </h6>
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
-                </div>
+                @endif
             </div>
         </div>
     </div>
-
-    <!-- Mostrar errores -->
-    @if ($errors->any())
-        <div class="alert alert-danger alert-dismissible fade show mt-4" role="alert">
-            <h6 class="alert-heading">
-                <i class="fas fa-exclamation-triangle me-2"></i>Se encontraron errores:
-            </h6>
-            <ul class="mb-0">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
 </div>
 
 <style>
-    .icon-option {
-        display: flex;
+/* Estilos para el modal moderno */
+.modal-header-content {
+    display: flex;
+    align-items: center;
+}
+
+.modal-header-content i {
+    font-size: 1.5rem;
+}
+
+.modal-title {
+    font-weight: 600;
+}
+
+.modal-content {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 12px 12px 0 0;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+/* Inputs modernos */
+.modern-input {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: #fff;
+}
+
+.modern-input:focus {
+    border-color: var(--color-warning);
+    box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.15);
+    transform: translateY(-1px);
+}
+
+/* Upload area mejorada */
+.upload-area {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #dee2e6 !important;
+}
+
+.upload-area:hover {
+    border-color: var(--color-warning) !important;
+    background-color: #fffbf0;
+}
+
+.upload-area.dragover {
+    border-color: var(--color-success) !important;
+    background-color: #f8fff9;
+}
+
+/* Current file display */
+.current-file {
+    border-left: 4px solid var(--color-success);
+}
+
+/* Cards mejoradas */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+    background: white;
+    border-bottom: 1px solid #f0f0f0;
+    border-radius: 10px 10px 0 0 !important;
+}
+
+/* Selected type display */
+.selected-type-display {
+    border-left: 4px solid var(--color-warning);
+    transition: all 0.3s ease;
+}
+
+/* Botones mejorados */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+    color: #212529;
+}
+
+.btn-warning:hover {
+    background: #e0a800;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+}
+
+.btn-outline-warning {
+    border: 1px solid var(--color-warning);
+    color: var(--color-warning);
+}
+
+.btn-outline-warning:hover {
+    background: var(--color-warning);
+    color: #212529;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    
+    .modal-header-content {
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 12px 8px;
-        border: 2px solid transparent;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        background: white;
-        text-decoration: none;
-        color: #6c757d;
-        min-height: 80px;
-    }
-
-    .icon-option:hover {
-        border-color: #007bff;
-        background-color: #f8f9ff;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,123,255,0.15);
-        color: #007bff;
-    }
-
-    .icon-option.selected {
-        border-color: #007bff;
-        background-color: #e7f3ff;
-        color: #007bff;
-    }
-
-    .icon-option img {
-        margin-bottom: 4px;
-        filter: grayscale(20%);
-        transition: filter 0.3s ease;
-    }
-
-    .icon-option:hover img,
-    .icon-option.selected img {
-        filter: grayscale(0%);
-    }
-
-    .icon-option small {
-        font-size: 11px;
-        font-weight: 500;
         text-align: center;
+        gap: 0.5rem;
     }
-
-    .upload-area {
-        transition: all 0.3s ease;
-        cursor: pointer;
-        min-height: 120px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    
+    .row {
+        flex-direction: column;
     }
-
-    .upload-area:hover {
-        border-color: #007bff !important;
-        background-color: #f8f9ff;
+    
+    .col-lg-4 {
+        margin-top: 1rem;
     }
+}
 
-    .upload-area.dragover {
-        border-color: #28a745 !important;
-        background-color: #f8fff9;
-    }
+/* Animaciones suaves */
+.modal.fade .modal-dialog {
+    transform: translateY(-50px);
+    transition: transform 0.3s ease-out;
+}
 
-    .accordion-button {
-        font-size: 14px;
-        font-weight: 600;
-        padding: 12px 16px;
-    }
+.modal.show .modal-dialog {
+    transform: translateY(0);
+}
 
-    .accordion-button:not(.collapsed) {
-        background-color: #e7f3ff;
-        color: #007bff;
-    }
+/* Select personalizado */
+.form-select.modern-input {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 16px 12px;
+    padding-right: 2.5rem;
+}
 
-    .selected-type-display {
-        transition: all 0.3s ease;
-    }
+/* Alertas mejoradas */
+.alert {
+    border: none;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+}
 
-    .card {
-        border-radius: 12px;
-    }
-
-    .form-control:focus {
-        border-color: #007bff;
-        box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
-    }
-
-    @media (max-width: 768px) {
-        .sticky-top {
-            position: relative !important;
-            top: auto !important;
-        }
-
-        .col-lg-4 {
-            margin-top: 20px;
-        }
-    }
+.alert-danger {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24;
+    border-left: 4px solid #dc3545;
+}
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Elementos del DOM
-    const iconOptions = document.querySelectorAll('.icon-option');
-    const tipoRecursoInput = document.getElementById('tipoRecurso');
-    const selectedDisplay = document.getElementById('selected-display');
-    const fileInput = document.getElementById('archivo');
-    const uploadDisplay = document.getElementById('upload-display');
-    const fileInfo = document.getElementById('file-info');
-    const fileName = document.getElementById('file-name');
-    const fileSize = document.getElementById('file-size');
+    const modalId = '{{ $recurso->id }}';
+    const resourceForm = document.getElementById('resourceForm-' + modalId);
+    const resourceSelect = document.getElementById('resourceSelect-' + modalId);
+    const tipoRecursoInput = document.getElementById('tipoRecurso-' + modalId);
+    const selectedDisplay = document.getElementById('selected-display-' + modalId);
+    const fileInput = document.getElementById('archivo-' + modalId);
+    const uploadDisplay = document.getElementById('upload-display-' + modalId);
+    const fileInfo = document.getElementById('file-info-' + modalId);
+    const fileName = document.getElementById('file-name-' + modalId);
+    const fileSize = document.getElementById('file-size-' + modalId);
     const uploadArea = document.querySelector('.upload-area');
 
-    // Inicializar selección actual si existe
-    const currentType = tipoRecursoInput.value;
-    if (currentType) {
-        const currentOption = document.querySelector(`[data-value="${currentType}"]`);
-        if (currentOption) {
-            selectResourceType(currentOption);
-        }
+    // Inicializar selección actual
+    if (resourceSelect.value) {
+        updateSelectedDisplay(resourceSelect.value, resourceSelect.options[resourceSelect.selectedIndex].text);
     }
 
-    // Manejo de selección de tipo de recurso
-    iconOptions.forEach(option => {
-        option.addEventListener('click', function() {
-            selectResourceType(this);
-        });
+    // Manejo de selección de tipo
+    resourceSelect.addEventListener('change', function() {
+        const value = this.value;
+        const text = this.options[this.selectedIndex].text.replace(/[📄📝📊📈📕🌐📋☁️🎥🖼️🎬🎵📺💬📹🎥💬🎮🎨🔗📎]/g, '').trim();
+        
+        tipoRecursoInput.value = value;
+        updateSelectedDisplay(value, text);
     });
 
-    function selectResourceType(option) {
-        // Remover selección anterior
-        iconOptions.forEach(opt => opt.classList.remove('selected'));
+    function updateSelectedDisplay(value, text) {
+        const iconMap = {
+            'word': 'fas fa-file-word text-primary',
+            'excel': 'fas fa-file-excel text-success',
+            'powerpoint': 'fas fa-file-powerpoint text-warning',
+            'pdf': 'fas fa-file-pdf text-danger',
+            'docs': 'fab fa-google-drive text-primary',
+            'forms': 'fas fa-wpforms text-success',
+            'drive': 'fab fa-google-drive text-warning',
+            'imagen': 'fas fa-image text-info',
+            'video': 'fas fa-video text-dark',
+            'audio': 'fas fa-music text-purple',
+            'youtube': 'fab fa-youtube text-danger',
+            'zoom': 'fas fa-video text-primary',
+            'meet': 'fas fa-video text-success',
+            'teams': 'fas fa-users text-info',
+            'kahoot': 'fas fa-gamepad text-info',
+            'canva': 'fas fa-palette text-pink',
+            'enlace': 'fas fa-link text-secondary',
+            'archivos-adjuntos': 'fas fa-paperclip text-muted'
+        };
 
-        // Seleccionar nuevo
-        option.classList.add('selected');
-
-        // Actualizar input oculto
-        const value = option.getAttribute('data-value');
-        const name = option.getAttribute('data-name');
-        const icon = option.getAttribute('data-icon');
-
-        tipoRecursoInput.value = value;
-
-        // Actualizar display
+        const iconClass = iconMap[value] || 'fas fa-file text-muted';
+        
         selectedDisplay.innerHTML = `
-            <i class="${icon} fa-2x text-primary me-3"></i>
+            <i class="${iconClass} fa-2x me-3"></i>
             <div>
-                <h6 class="mb-1">${name}</h6>
+                <h6 class="mb-1">${text}</h6>
                 <small class="text-muted">Tipo seleccionado</small>
             </div>
         `;
-
-        // Cerrar acordeón después de seleccionar (opcional)
-        const accordionCollapse = option.closest('.accordion-collapse');
-        if (accordionCollapse) {
-            const bsCollapse = new bootstrap.Collapse(accordionCollapse, {toggle: false});
-            bsCollapse.hide();
-        }
     }
 
     // Manejo de upload de archivos
@@ -518,26 +488,28 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Drag and drop
-    uploadArea.addEventListener('dragover', function(e) {
-        e.preventDefault();
-        this.classList.add('dragover');
-    });
+    if (uploadArea) {
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
 
-    uploadArea.addEventListener('dragleave', function(e) {
-        e.preventDefault();
-        this.classList.remove('dragover');
-    });
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+        });
 
-    uploadArea.addEventListener('drop', function(e) {
-        e.preventDefault();
-        this.classList.remove('dragover');
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
 
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-            fileInput.files = files;
-            handleFileSelect(files[0]);
-        }
-    });
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                handleFileSelect(files[0]);
+            }
+        });
+    }
 
     function handleFileSelect(file) {
         if (file) {
@@ -560,10 +532,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Validación del formulario
-    const form = document.getElementById('resourceForm');
-    form.addEventListener('submit', function(e) {
-        const titulo = document.getElementById('tituloRecurso').value.trim();
-        const descripcion = document.getElementById('descripcionRecurso').value.trim();
+    resourceForm.addEventListener('submit', function(e) {
+        const titulo = document.getElementById('tituloRecurso-' + modalId).value.trim();
+        const descripcion = document.getElementById('descripcionRecurso-' + modalId).value.trim();
         const tipoRecurso = tipoRecursoInput.value;
 
         let errors = [];
@@ -582,21 +553,38 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (errors.length > 0) {
             e.preventDefault();
-            alert('Por favor corrige los siguientes errores:\n\n' + errors.join('\n'));
+            showAlert('Por favor corrige los siguientes errores:\n\n' + errors.join('\n'), 'danger');
+            return;
         }
+
+        // Mostrar estado de carga
+        const submitBtn = this.querySelector('[type="submit"]');
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Guardando...';
+        submitBtn.disabled = true;
+
+        // Restaurar después de 5 segundos (en caso de error)
+        setTimeout(() => {
+            submitBtn.innerHTML = '<i class="fas fa-save me-2"></i>Guardar Cambios';
+            submitBtn.disabled = false;
+        }, 5000);
     });
 
-    // Loading state para el botón submit
-    const submitBtn = form.querySelector('[type="submit"]');
-    form.addEventListener('submit', function() {
-        if (this.checkValidity()) {
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Guardando...';
-            submitBtn.disabled = true;
-        }
+    function showAlert(message, type) {
+        // Implementar sistema de alertas según tu framework
+        alert(message);
+    }
+
+    // Limpiar formulario al cerrar el modal
+    const modalElement = document.getElementById('modalEditarRecurso-' + modalId);
+    modalElement.addEventListener('hidden.bs.modal', function() {
+        resourceForm.reset();
+        if (uploadDisplay) uploadDisplay.classList.remove('d-none');
+        if (fileInfo) fileInfo.classList.add('d-none');
+        
+        // Restaurar botón submit
+        const submitBtn = resourceForm.querySelector('[type="submit"]');
+        submitBtn.innerHTML = '<i class="fas fa-save me-2"></i>Guardar Cambios';
+        submitBtn.disabled = false;
     });
 });
 </script>
-@endsection
-
-@include('layout')
-

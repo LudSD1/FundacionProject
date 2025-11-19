@@ -30,14 +30,7 @@ class ForoController extends Controller
     const XP_NUEVA_RESPUESTA = 30;
     const XP_PRIMER_MENSAJE_DIA = 20;
 
-    public function Crearforo($id){
 
-        $cursos = Cursos::findOrFail($id);
-
-        return(view('Docente.CrearForo'))->with('cursos', $cursos);
-
-
-    }
 
     public function store(Request $request){
 
@@ -64,13 +57,15 @@ class ForoController extends Controller
         event(new ForoEvent($foro, 'crear'));
         $foro->save();
 
-        return redirect(route('Curso', $request->curso_id))->with('success', 'Foro Creado Correctamente');
+        return redirect(route('Curso', encrypt($request->curso_id)))->with('success', 'Foro Creado Correctamente');
 
 
     }
 
     public function index($id){
+
         $foro = Foro::findOrFail($id);
+        $curso = $foro->curso;
         $forosmensajes = ForoMensaje::where('foro_id', $foro->id)
             ->whereNull('respuesta_a')
             ->with('respuestas.estudiantes') // Cargar respuestas y sus autores
@@ -237,13 +232,7 @@ class ForoController extends Controller
         }
     }
 
-    public function EditarForoIndex($id){
 
-        $foro = Foro::findOrFail($id);
-
-        return view('Docente.EditarForo')->with('foro', $foro);
-
-    }
 
     public function update(Request $request){
 
@@ -272,7 +261,7 @@ class ForoController extends Controller
 
 
 
-        return redirect(route('Curso', $request->curso_id))->with('success', 'Foro editado correctamente');
+        return redirect(route('Curso', encrypt($request->curso_id)))->with('success', 'Foro editado correctamente');
 
     }
 
