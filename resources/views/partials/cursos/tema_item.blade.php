@@ -1,640 +1,706 @@
-<div class="tema-item-content" id="tema-{{ $tema->id }}">
+<style>
+:root {
+    --color-primary: #1a4789;
+    --color-secondary: #39a6cb;
+    --color-accent1: #63becf;
+    --color-accent2: #055c9d;
+    --color-accent3: #2197bd;
+    --color-success: #28a745;
+    --color-warning: #ffc107;
+    --color-danger: #dc3545;
+    --color-info: #17a2b8;
+    
+    --gradient-primary: linear-gradient(135deg, #1a4789 0%, #055c9d 100%);
+    --gradient-secondary: linear-gradient(135deg, #39a6cb 0%, #63becf 100%);
+    --gradient-success: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+    
+    --border-radius: 16px;
+    --border-radius-sm: 12px;
+    --border-radius-lg: 20px;
+}
 
-    <!-- Header del Tema Mejorado -->
-    <div class="theme-header-card mb-4">
-        <div class="theme-header-content">
-            @if ($tema->imagen)
-            <div class="theme-hero-image">
-                <img src="{{ asset('storage/' . $tema->imagen) }}" alt="Imagen del tema" class="theme-image">
-                <div class="theme-overlay"></div>
-            </div>
-            @endif
+/* Contenedor Principal Mejorado */
+.tema-container {
+    background: linear-gradient(135deg, #f8fafc 0%, #e9ecef 100%);
+    min-height: 100vh;
+    padding: 2rem 0;
+}
 
-            <div class="theme-info {{ $tema->imagen ? 'with-image' : '' }}">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <h1 class="theme-title">{{ $tema->titulo_tema }}</h1>
+/* Header del Tema - Diseño Hero */
+.theme-hero-section {
+    position: relative;
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-lg);
+}
 
-                    <!-- Contador de subtemas -->
-                    <div class="theme-stats">
-                        <span class="badge bg-primary">
-                            <i class="fas fa-layer-group me-1"></i>
-                            {{ count($tema->subtemas) }} Subtemas
-                        </span>
-                    </div>
+.theme-hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--gradient-primary);
+    z-index: 1;
+}
+
+.theme-hero-background::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+    opacity: 0.1;
+}
+
+.theme-hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 3rem 2rem;
+    color: white;
+}
+
+.theme-breadcrumb {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.theme-breadcrumb a {
+    color: white;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.theme-breadcrumb a:hover {
+    opacity: 0.8;
+}
+
+.theme-main-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+}
+
+.theme-title-section h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.theme-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 0;
+}
+
+.theme-stats-grid {
+    display: flex;
+    gap: 1rem;
+}
+
+.theme-stat {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius-sm);
+    padding: 0.75rem 1rem;
+    text-align: center;
+    min-width: 100px;
+}
+
+.theme-stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: block;
+}
+
+.theme-stat-label {
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
+/* Descripción Expandible Mejorada */
+.theme-description-enhanced {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius-sm);
+    overflow: hidden;
+}
+
+.description-toggle-enhanced {
+    padding: 1.5rem;
+    border: none;
+    background: none;
+    color: white;
+    width: 100%;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.description-toggle-enhanced:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.description-toggle-enhanced i:first-child {
+    font-size: 1.2rem;
+    margin-right: 0.75rem;
+}
+
+.toggle-icon-enhanced {
+    transition: transform 0.3s ease;
+}
+
+.description-toggle-enhanced[aria-expanded="true"] .toggle-icon-enhanced {
+    transform: rotate(180deg);
+}
+
+.description-content-enhanced {
+    padding: 0 1.5rem 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    line-height: 1.6;
+}
+
+/* Acciones del Docente Mejoradas */
+.teacher-actions-enhanced {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.btn-modern-enhanced {
+    border: none;
+    border-radius: var(--border-radius-sm);
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-primary-enhanced {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-primary-enhanced:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Contenedor de Subtemas - Timeline Design */
+.subtopics-timeline {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.subtopics-timeline::before {
+    content: '';
+    position: absolute;
+    left: 30px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--gradient-secondary);
+    border-radius: 3px;
+}
+
+.subtopic-timeline-item {
+    position: relative;
+    margin-bottom: 2rem;
+    padding-left: 80px;
+}
+
+.subtopic-timeline-marker {
+    position: absolute;
+    left: 18px;
+    top: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid var(--color-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: var(--color-primary);
+    z-index: 2;
+    box-shadow: var(--shadow-sm);
+}
+
+.subtopic-timeline-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border-left: 4px solid var(--color-secondary);
+}
+
+.subtopic-timeline-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.subtopic-timeline-card.locked {
+    opacity: 0.7;
+    border-left-color: var(--color-warning);
+}
+
+.subtopic-timeline-header {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid #dee2e6;
+    cursor: pointer;
+}
+
+.subtopic-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.subtopic-timeline-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.subtopic-timeline-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin: 0;
+}
+
+.subtopic-timeline-meta {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.subtopic-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-muted);
+    font-size: 0.875rem;
+}
+
+.subtopic-timeline-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.subtopic-toggle-timeline {
+    background: none;
+    border: none;
+    color: var(--color-primary);
+    font-size: 1.1rem;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: var(--border-radius-sm);
+}
+
+.subtopic-toggle-timeline:hover {
+    background: rgba(57, 166, 203, 0.1);
+}
+
+.subtopic-toggle-timeline.active {
+    transform: rotate(180deg);
+}
+
+/* Estados de Progreso */
+.progress-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.progress-circle {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--color-success);
+}
+
+.progress-circle.pending {
+    background: var(--color-warning);
+}
+
+.progress-circle.locked {
+    background: var(--color-muted);
+}
+
+/* Contenido del Subtema Mejorado */
+.subtopic-timeline-content {
+    padding: 0;
+}
+
+.subtopic-content-body {
+    padding: 2rem;
+}
+
+/* Estado Vacío Mejorado */
+.empty-state-enhanced {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+}
+
+.empty-state-icon {
+    font-size: 4rem;
+    color: var(--color-secondary);
+    opacity: 0.5;
+    margin-bottom: 1.5rem;
+}
+
+.empty-state-enhanced h4 {
+    color: var(--color-primary);
+    margin-bottom: 1rem;
+}
+
+.empty-state-enhanced p {
+    color: var(--color-muted);
+    margin-bottom: 2rem;
+}
+
+/* Modal Mejorado */
+.modal-enhanced .modal-content {
+    border: none;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-xl);
+    overflow: hidden;
+}
+
+.modal-enhanced .modal-header {
+    background: var(--gradient-primary);
+    color: white;
+    border-bottom: none;
+    padding: 2rem;
+}
+
+.modal-enhanced .modal-body {
+    padding: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .theme-main-info {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .theme-stats-grid {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .subtopic-timeline-item {
+        padding-left: 60px;
+    }
+    
+    .subtopics-timeline::before {
+        left: 20px;
+    }
+    
+    .subtopic-timeline-marker {
+        left: 8px;
+        width: 25px;
+        height: 25px;
+        font-size: 0.8rem;
+    }
+    
+    .subtopic-header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .teacher-actions-enhanced {
+        justify-content: center;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.subtopic-timeline-item {
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+.subtopic-timeline-item:nth-child(even) {
+    animation-delay: 0.1s;
+}
+
+.subtopic-timeline-item:nth-child(odd) {
+    animation-delay: 0.2s;
+}
+</style>
+
+<div class="tema-container">
+    <!-- Header Hero del Tema -->
+    <div class="theme-hero-section">
+        <div class="theme-hero-background"></div>
+        <div class="theme-hero-content">
+            <!-- Breadcrumb -->
+
+
+            <!-- Información Principal -->
+            <div class="theme-main-info">
+                <div class="theme-title-section">
+                    <h1>{{ $tema->titulo_tema }}</h1>
+                    <p class="theme-subtitle">Explora el contenido y avanza en tu aprendizaje</p>
                 </div>
+                
+                <div class="theme-stats-grid">
+                    <div class="theme-stat">
+                        <span class="theme-stat-number">{{ count($tema->subtemas) }}</span>
+                        <span class="theme-stat-label">Subtemas</span>
+                    </div>
+                    @if(auth()->user()->hasRole('Estudiante'))
+                    <div class="theme-stat">
+                        <span class="theme-stat-number">{{ $tema->calcularProgreso($inscritos2->id ?? null) }}%</span>
+                        <span class="theme-stat-label">Completado</span>
+                    </div>
+                    @endif
+                </div>
+            </div>
 
-                <!-- Descripción con acordeón mejorado -->
-                <div class="theme-description-section">
-                    <button class="description-toggle-btn" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#descripcionTema-{{ $tema->id }}" aria-expanded="false"
-                        aria-controls="descripcionTema-{{ $tema->id }}">
-                        <i class="fas fa-info-circle me-2"></i>
+            <!-- Descripción Expandible -->
+            <div class="theme-description-enhanced">
+                <button class="description-toggle-enhanced" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#descripcionTema-{{ $tema->id }}" aria-expanded="false">
+                    <div>
+                        <i class="fas fa-info-circle"></i>
                         <span>Descripción del Tema</span>
-                        <i class="toggle-icon fas fa-chevron-down"></i>
-                    </button>
-                    <div class="collapse" id="descripcionTema-{{ $tema->id }}">
-                        <div class="description-content">
-                            {!! nl2br(e($tema->descripcion)) !!}
-                        </div>
+                    </div>
+                    <i class="toggle-icon-enhanced fas fa-chevron-down"></i>
+                </button>
+                <div class="collapse" id="descripcionTema-{{ $tema->id }}">
+                    <div class="description-content-enhanced">
+                        {!! nl2br(e($tema->descripcion)) !!}
                     </div>
                 </div>
-
-                <!-- Acciones del docente -->
-                @if (auth()->user()->hasRole('Docente') && $cursos->docente_id == auth()->user()->id)
-                <div class="theme-actions">
-                    <div class="" role="group">
-                        <button class="btn-modern btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modalSubtema-{{ $tema->id }}">
-                            <i class="fas fa-plus-circle me-1"></i><span class="ms-1">Nuevo Subtema</span>
-                        </button>
-                        <button class="btn-modern btn-accent-custom" data-bs-toggle="modal" data-bs-target="#modalEditarTema-{{ $tema->id }}">
-                            <i class="fas fa-edit me-1"></i><span class="ms-1">Editar</span>
-                        </button>
-                        <form class="d-inline" action="{{ route('temas.delete', encrypt($tema->id)) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este tema y todos sus subtemas?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn-modern btn-orange-custom">
-                                <i class="fas fa-trash me-1"></i><span class="ms-1">Eliminar</span>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-                @endif
             </div>
-        </div>
-    </div>
 
-    <!-- Modal Editar Tema Mejorado -->
-    <div class="modal fade" id="modalEditarTema-{{ $tema->id }}" tabindex="-1" aria-labelledby="modalEditarTemaLabel-{{ $tema->id }}" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <div class="modal-header-content">
-                        <i class="fas fa-edit fa-lg me-3"></i>
-                        <div>
-                            <h5 class="modal-title mb-0" id="modalEditarTemaLabel-{{ $tema->id }}">Editar Tema</h5>
-                            <small class="opacity-75">{{ $tema->titulo_tema }}</small>
-                        </div>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form method="POST" action="{{ route('temas.update', encrypt($tema->id)) }}"
-                    enctype="multipart/form-data">
+            <!-- Acciones del Docente -->
+            @if(auth()->user()->hasRole('Docente') && $cursos->docente_id == auth()->user()->id)
+            <div class="teacher-actions-enhanced">
+                <button class="btn-modern-enhanced btn-primary-enhanced" data-bs-toggle="modal"
+                    data-bs-target="#modalSubtema-{{ $tema->id }}">
+                    <i class="fas fa-plus-circle me-2"></i>
+                    Nuevo Subtema
+                </button>
+                <button class="btn-modern-enhanced btn-primary-enhanced" data-bs-toggle="modal"
+                    data-bs-target="#modalEditarTema-{{ $tema->id }}">
+                    <i class="fas fa-edit me-2"></i>
+                    Editar Tema
+                </button>
+                <form action="{{ route('temas.delete', encrypt($tema->id)) }}" method="POST"
+                    onsubmit="return confirm('¿Estás seguro de eliminar este tema y todos sus subtemas?');">
                     @csrf
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="mb-3">
-                                    <label for="titulo" class="form-label-modern">Título del Tema *</label
-                                    ><input type="text" class="form-control-modern" name="titulo" value="{{ $tema->titulo_tema }}" required placeholder="Ingresa el título del tema">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="descripcion" class="form-label-modern">Descripción</label
-                                    ><textarea class="form-control-modern" name="descripcion" rows="4" placeholder="Describe el contenido de este tema...">{{ $tema->descripcion }}</textarea>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="image-upload-section">
-                                    <label class="form-label">Imagen del Tema</label>
-                                    <div class="current-image mb-3">
-                                        @if ($tema->imagen)
-                                            <img src="{{ asset('storage/' . $tema->imagen) }}"
-                                                class="img-thumbnail current-image-preview"
-                                                alt="Imagen actual">
-                                            <small class="text-muted d-block mt-1">Imagen actual</small>
-                                        @else
-                                            <div class="no-image-placeholder">
-                                                <i class="fas fa-image fa-2x text-muted mb-2"></i>
-                                                <small class="text-muted">No hay imagen cargada</small>
-                                            </div>
-                                        @endif
-                                    </div>
-                                    <div class="file-upload-wrapper">
-                                        <input type="file" class="form-control-modern" name="imagen" accept="image/*" id="imageUpload-{{ $tema->id }}">
-                                        <label for="imageUpload-{{ $tema->id }}" class="file-upload-label">
-                                            <i class="fas fa-upload me-2"></i>Seleccionar imagen
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn-modern btn-accent-custom" data-bs-dismiss="modal">
-                            <i class="fas fa-times me-1"></i><span class="ms-1">Cancelar</span>
-                        </button>
-                        <button type="submit" class="btn-modern btn-primary-custom">
-                            <i class="fas fa-save me-1"></i><span class="ms-1">Guardar Cambios</span>
-                        </button>
-                    </div>
+                    @method('DELETE')
+                    <button type="submit" class="btn-modern-enhanced" style="background: rgba(220, 53, 69, 0.8); color: white;">
+                        <i class="fas fa-trash me-2"></i>
+                        Eliminar
+                    </button>
                 </form>
             </div>
+            @endif
         </div>
     </div>
 
-    <!-- Lista de Subtemas Mejorada -->
-    <div class="subtopics-container">
-        <div class="subtopics-header">
-            <h3 class="subtopics-title">
-                <i class="fas fa-layer-group me-2"></i>
-                Contenido del Tema
-            </h3>
-            <div class="subtopics-progress">
-                @if(auth()->user()->hasRole('Estudiante'))
-                <div class="progress-info">
-                    <small class="text-muted">Progreso: </small>
-                    <span class="progress-text">
-                        {{ $tema->calcularProgreso($inscritos2->id ?? null) }}% completado
-                    </span>
+    <!-- Timeline de Subtemas -->
+    <div class="subtopics-timeline">
+        @forelse($tema->subtemas as $subtemaIndex => $subtema)
+            @php
+                $desbloqueado = auth()->user()->hasRole('Docente') || 
+                               (auth()->user()->hasRole('Estudiante') && $subtema->estaDesbloqueado($inscritos2->id ?? null));
+                $completado = auth()->user()->hasRole('Estudiante') ? $subtema->estaCompletado($inscritos2->id ?? null) : false;
+            @endphp
+
+            <div class="subtopic-timeline-item">
+                <!-- Marcador de Timeline -->
+                <div class="subtopic-timeline-marker">
+                    {{ $subtemaIndex + 1 }}
                 </div>
-                @endif
-            </div>
-        </div>
 
-        <div class="subtopics-list">
-            @forelse ($tema->subtemas as $subtemaIndex => $subtema)
-                @php
-                    $desbloqueado =
-                        auth()->user()->hasRole('Docente') ||
-                        (auth()->user()->hasRole('Estudiante') &&
-                            $subtema->estaDesbloqueado($inscritos2->id ?? null));
-                @endphp
-
-                <div class="subtopic-card {{ !$desbloqueado && auth()->user()->hasRole('Estudiante') ? 'locked' : '' }}"
-                    data-subtopic-id="{{ $subtema->id }}">
-
-                    <!-- Header del Subtema -->
-                    <div class="subtopic-header">
-                        <div class="subtopic-info">
-                            <div class="subtopic-number">
-                                {{ $subtemaIndex + 1 }}
-                            </div>
-                            <div class="subtopic-content">
-                                <h4 class="subtopic-title">
+                <!-- Card del Subtema -->
+                <div class="subtopic-timeline-card {{ !$desbloqueado ? 'locked' : '' }}">
+                    <!-- Header -->
+                    <div class="subtopic-timeline-header" data-bs-toggle="collapse"
+                        data-bs-target="#subtemaCollapse-{{ $subtema->id }}"
+                        aria-expanded="{{ $subtemaIndex === 0 ? 'true' : 'false' }}">
+                        <div class="subtopic-header-content">
+                            <div class="subtopic-timeline-info">
+                                <h4 class="subtopic-timeline-title">
                                     {{ $subtema->titulo_subtema }}
-                                    @if(!$desbloqueado && auth()->user()->hasRole('Estudiante'))
+                                    @if(!$desbloqueado)
                                     <i class="fas fa-lock ms-2 text-warning"></i>
                                     @endif
                                 </h4>
-                                @if($subtema->duracion)
-                                <small class="subtopic-meta">
-                                    <i class="fas fa-clock me-1"></i>
-                                    Duración: {{ $subtema->duracion }}
-                                </small>
-                                @endif
+                                
+                                <div class="subtopic-timeline-meta">
+                                    @if($subtema->duracion)
+                                    <div class="subtopic-meta-item">
+                                        <i class="fas fa-clock"></i>
+                                        <span>{{ $subtema->duracion }}</span>
+                                    </div>
+                                    @endif
+                                    
+                                    @if(auth()->user()->hasRole('Estudiante'))
+                                    <div class="progress-indicator">
+                                        <div class="progress-circle {{ $completado ? 'completed' : ($desbloqueado ? 'pending' : 'locked') }}"></div>
+                                        <small>{{ $completado ? 'Completado' : ($desbloqueado ? 'Disponible' : 'Bloqueado') }}</small>
+                                    </div>
+                                    @endif
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="subtopic-actions">
-                            @if(auth()->user()->hasRole('Estudiante') && $desbloqueado)
-                            <div class="completion-badge">
-                                <i class="fas fa-check-circle text-success"></i>
-                                <small>Disponible</small>
+                            <div class="subtopic-timeline-actions">
+                                <button class="subtopic-toggle-timeline {{ $subtemaIndex === 0 ? 'active' : '' }}">
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
                             </div>
-                            @endif
-
-                            <button class="subtopic-toggle-btn {{ $subtemaIndex === 0 ? 'active' : '' }}"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#subtemaCollapse-{{ $subtema->id }}"
-                                aria-expanded="{{ $subtemaIndex === 0 ? 'true' : 'false' }}">
-                                <i class="fas fa-chevron-down"></i>
-                            </button>
                         </div>
                     </div>
 
-                    <!-- Contenido del Subtema -->
-                    @if ($desbloqueado || auth()->user()->hasRole('Docente'))
-                    <div class="subtopic-content-collapse collapse {{ $subtemaIndex === 0 ? 'show' : '' }}"
-                        id="subtemaCollapse-{{ $subtema->id }}">
-                        <div class="subtopic-body">
+                    <!-- Contenido -->
+                    @if($desbloqueado || auth()->user()->hasRole('Docente'))
+                    <div class="subtopic-timeline-content collapse {{ $subtemaIndex === 0 ? 'show' : '' }}" 
+                         id="subtemaCollapse-{{ $subtema->id }}">
+                        <div class="subtopic-content-body">
                             @include('partials.cursos.subtema_item', [
                                 'subtema' => $subtema,
                                 'tema' => $tema,
                             ])
                         </div>
                     </div>
-                    @elseif(!$desbloqueado && auth()->user()->hasRole('Estudiante'))
-                    <div class="subtopic-locked-message">
-                        <div class="locked-content">
-                            <i class="fas fa-lock fa-2x text-warning mb-2"></i>
-                            <h5>Contenido Bloqueado</h5>
-                            <p class="text-muted">Completa los requisitos anteriores para desbloquear este contenido.</p>
+                    @else
+                    <div class="subtopic-timeline-content">
+                        <div class="subtopic-content-body text-center py-4">
+                            <i class="fas fa-lock fa-2x text-warning mb-3"></i>
+                            <h5 class="text-muted">Contenido Bloqueado</h5>
+                            <p class="text-muted mb-0">Completa los requisitos anteriores para desbloquear este contenido.</p>
                         </div>
                     </div>
                     @endif
                 </div>
-            @empty
-                <div class="empty-subtopics">
-                    <div class="empty-state">
-                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                        <h5>No hay subtemas disponibles</h5>
-                        <p class="text-muted">Aún no se han agregado subtemas a este tema.</p>
-                        @if (auth()->user()->hasRole('Docente') && $cursos->docente_id == auth()->user()->id)
-                        <button class="btn-modern btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modalSubtema-{{ $tema->id }}">
-                            <i class="fas fa-plus me-1"></i><span class="ms-1">Crear Primer Subtema</span>
-                        </button>
-                        @endif
-                    </div>
+            </div>
+        @empty
+            <!-- Estado Vacío -->
+            <div class="empty-state-enhanced">
+                <div class="empty-state-icon">
+                    <i class="fas fa-inbox"></i>
                 </div>
-            @endforelse
-        </div>
+                <h4>No hay subtemas disponibles</h4>
+                <p>Aún no se han agregado subtemas a este tema.</p>
+                @if(auth()->user()->hasRole('Docente') && $cursos->docente_id == auth()->user()->id)
+                <button class="btn-modern-enhanced btn-primary-enhanced" data-bs-toggle="modal"
+                    data-bs-target="#modalSubtema-{{ $tema->id }}">
+                    <i class="fas fa-plus me-2"></i>
+                    Crear Primer Subtema
+                </button>
+                @endif
+            </div>
+        @endforelse
     </div>
 </div>
 
-<style>
-/* Estilos para el tema mejorado */
-.theme-header-card {
-    background: white;
-    border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-md);
-    overflow: hidden;
-    margin-bottom: 1.5rem;
-}
-
-.theme-header-content {
-    position: relative;
-}
-
-.theme-hero-image {
-    position: relative;
-    height: 200px;
-    overflow: hidden;
-}
-
-.theme-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.theme-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 60%;
-    background: linear-gradient(transparent, rgba(0,0,0,0.7));
-}
-
-.theme-info {
-    padding: 2rem;
-}
-
-.theme-info.with-image {
-    position: relative;
-    margin-top: -60px;
-    z-index: 2;
-}
-
-.theme-title {
-    color: var(--color-primary);
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    font-size: 2rem;
-}
-
-.theme-stats .badge {
-    font-size: 0.9rem;
-    padding: 0.5rem 1rem;
-}
-
-/* Descripción del tema */
-.theme-description-section {
-    margin: 1.5rem 0;
-}
-
-.description-toggle-btn {
-    background: var(--gradient-secondary);
-    color: white;
-    border: none;
-    padding: 1rem 1.5rem;
-    border-radius: var(--border-radius-sm);
-    width: 100%;
-    text-align: left;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.description-toggle-btn:hover {
-    background: var(--color-secondary);
-    transform: translateY(-1px);
-}
-
-.description-content {
-    background: #f8f9fa;
-    border-radius: var(--border-radius-sm);
-    padding: 1.5rem;
-    margin-top: 1rem;
-    border-left: 4px solid var(--color-accent1);
-    line-height: 1.6;
-}
-
-/* Acciones del docente */
-.theme-actions {
-    margin-top: 1.5rem;
-}
-
-.theme-actions .btn-group {
-    gap: 0.5rem;
-}
-
-/* Lista de subtemas */
-.subtopics-container {
-    background: white;
-    border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-md);
-    overflow: hidden;
-}
-
-.subtopics-header {
-    background: var(--gradient-primary);
-    color: white;
-    padding: 1.5rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.subtopics-title {
-    margin: 0;
-    font-weight: 600;
-}
-
-.subtopics-progress {
-    text-align: right;
-}
-
-.progress-text {
-    font-weight: 600;
-    color: var(--color-accent1);
-}
-
-/* Tarjetas de subtemas */
-.subtopics-list {
-    padding: 1.5rem;
-}
-
-.subtopic-card {
-    background: white;
-    border: 1px solid #e9ecef;
-    border-radius: var(--border-radius-sm);
-    margin-bottom: 1rem;
-    transition: all 0.3s ease;
-    overflow: hidden;
-}
-
-.subtopic-card:hover {
-    border-color: var(--color-accent1);
-    box-shadow: var(--shadow-sm);
-}
-
-.subtopic-card.locked {
-    opacity: 0.7;
-    background: #f8f9fa;
-}
-
-.subtopic-header {
-    padding: 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    background: white;
-}
-
-.subtopic-info {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex: 1;
-}
-
-.subtopic-number {
-    background: var(--gradient-primary);
-    color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 1.1rem;
-}
-
-.subtopic-content {
-    flex: 1;
-}
-
-.subtopic-title {
-    color: var(--color-primary);
-    margin: 0;
-    font-weight: 600;
-    font-size: 1.2rem;
-}
-
-.subtopic-meta {
-    color: #6c757d;
-    font-size: 0.9rem;
-}
-
-.subtopic-actions {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.completion-badge {
-    text-align: center;
-}
-
-.completion-badge small {
-    font-size: 0.8rem;
-    color: var(--color-success);
-}
-
-.subtopic-toggle-btn {
-    background: none;
-    border: 1px solid #e9ecef;
-    border-radius: 50%;
-    width: 35px;
-    height: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-}
-
-.subtopic-toggle-btn:hover {
-    background: var(--color-accent1);
-    color: white;
-    border-color: var(--color-accent1);
-}
-
-.subtopic-toggle-btn.active {
-    transform: rotate(180deg);
-}
-
-/* Contenido bloqueado */
-.subtopic-locked-message {
-    padding: 3rem 2rem;
-    text-align: center;
-    background: #f8f9fa;
-}
-
-.locked-content {
-    max-width: 300px;
-    margin: 0 auto;
-}
-
-/* Estado vacío */
-.empty-subtopics {
-    padding: 3rem 2rem;
-    text-align: center;
-}
-
-.empty-state {
-    max-width: 400px;
-    margin: 0 auto;
-}
-
-/* Modal mejorado */
-.modal-header-content {
-    display: flex;
-    align-items: center;
-}
-
-.image-upload-section {
-    text-align: center;
-}
-
-.current-image-preview {
-    max-height: 150px;
-    width: auto;
-}
-
-.no-image-placeholder {
-    padding: 2rem;
-    border: 2px dashed #e9ecef;
-    border-radius: var(--border-radius-sm);
-    color: #6c757d;
-}
-
-.file-upload-wrapper {
-    position: relative;
-}
-
-.file-upload-label {
-    display: block;
-    padding: 0.75rem 1rem;
-    background: var(--gradient-secondary);
-    color: white;
-    border-radius: var(--border-radius-sm);
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.file-upload-label:hover {
-    background: var(--color-secondary);
-}
-
-.modern-input {
-    border: 1px solid #e0e0e0;
-    border-radius: var(--border-radius-sm);
-    padding: 0.75rem;
-    transition: all 0.2s ease;
-}
-
-.modern-input:focus {
-    border-color: var(--color-accent3);
-    box-shadow: 0 0 0 0.2rem rgba(57, 166, 203, 0.25);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .theme-info {
-        padding: 1.5rem 1rem;
-    }
-
-    .theme-title {
-        font-size: 1.5rem;
-    }
-
-    .subtopics-header {
-        padding: 1rem;
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-    }
-
-    .subtopic-header {
-        padding: 1rem;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-    }
-
-    .subtopic-actions {
-        width: 100%;
-        justify-content: space-between;
-    }
-}
-</style>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Reubicar modales de edición bajo <body> para evitar desplazamientos por transform/overflow
-    document.querySelectorAll('[id^="modalEditarTema-"]').forEach(function(modal){ if(modal.parentElement !== document.body){ document.body.appendChild(modal); } });
-    // Animación para botones de toggle
-    const toggleButtons = document.querySelectorAll('.subtopic-toggle-btn');
+    // Animación para los toggles
+    const toggleButtons = document.querySelectorAll('.subtopic-toggle-timeline');
+    
     toggleButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            this.classList.toggle('active');
-        });
-    });
-
-    // Efecto hover para tarjetas de subtemas
-    const subtopicCards = document.querySelectorAll('.subtopic-card');
-    subtopicCards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            if (!this.classList.contains('locked')) {
-                this.style.transform = 'translateY(-2px)';
-                this.style.boxShadow = 'var(--shadow-md)';
-            }
-        });
-
-        card.addEventListener('mouseleave', function() {
-            if (!this.classList.contains('locked')) {
-                this.style.transform = 'translateY(0)';
-                this.style.boxShadow = 'none';
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const isActive = this.classList.contains('active');
+            
+            // Remover active de todos los botones
+            toggleButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Toggle del estado actual
+            if (!isActive) {
+                this.classList.add('active');
             }
         });
     });
 
-    // Previsualización de imagen en el modal
-    const imageUploads = document.querySelectorAll('input[type="file"][name="imagen"]');
-    imageUploads.forEach(input => {
-        input.addEventListener('change', function() {
-            const preview = this.closest('.image-upload-section').querySelector('.current-image-preview');
-            const noImage = this.closest('.image-upload-section').querySelector('.no-image-placeholder');
-
-            if (this.files && this.files[0]) {
-                const reader = new FileReader();
-
-                reader.onload = function(e) {
-                    if (preview) {
-                        preview.src = e.target.result;
-                    } else if (noImage) {
-                        noImage.innerHTML = `<img src="${e.target.result}" class="img-thumbnail current-image-preview" alt="Vista previa">`;
-                    }
-                }
-
-                reader.readAsDataURL(this.files[0]);
+    // Efecto de scroll suave para los collapses
+    const subtemaHeaders = document.querySelectorAll('.subtopic-timeline-header');
+    
+    subtemaHeaders.forEach(header => {
+        header.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-bs-target');
+            const targetElement = document.querySelector(targetId);
+            
+            if (targetElement) {
+                setTimeout(() => {
+                    targetElement.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'nearest' 
+                    });
+                }, 300);
             }
         });
+    });
+
+    // Efecto de carga progresiva
+    const timelineItems = document.querySelectorAll('.subtopic-timeline-item');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+
+    timelineItems.forEach(item => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(20px)';
+        item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        observer.observe(item);
     });
 });
 </script>
+
+  

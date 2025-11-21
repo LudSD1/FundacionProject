@@ -102,4 +102,29 @@ class Subtema extends BaseModel
             ->where('completed', true)
             ->get();
     }
+
+    /**
+     * Verifica si el subtema está completado por un estudiante
+     * 
+     * @param int|object $inscritoId ID del inscrito o objeto inscrito
+     * @return bool
+     */
+    public function estaCompletado($inscritoId)
+    {
+        $inscrito_id = is_object($inscritoId) ? $inscritoId->id : $inscritoId;
+        
+        // Obtener el total de actividades del subtema
+        $totalActividades = $this->actividades()->count();
+        
+        // Si no hay actividades, considerar como completado
+        if ($totalActividades === 0) {
+            return true;
+        }
+        
+        // Contar las actividades completadas
+        $actividadesCompletadas = $this->actividadesCompletadas($inscrito_id)->count();
+        
+        // El subtema está completado si todas las actividades están completadas
+        return $actividadesCompletadas === $totalActividades;
+    }
 }

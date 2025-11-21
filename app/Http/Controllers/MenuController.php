@@ -395,34 +395,81 @@ class MenuController extends Controller
         return view('Administrador.CrearCursos')->with('docente', $docente)->with('horario', $horario);
     }
 
-    public function calendario()
-    {
-        $user = Auth::user();
-        $cursos = $this->obtenerCursosPorRol($user);
+  public function calendario()
+{
+    $user = Auth::user();
+    $cursos = $this->obtenerCursosPorRol($user);
 
-        // Si no hay cursos, mostrar calendario vacío con mensaje
-        if ($cursos->isEmpty()) {
-            return view('calendario', [
-                'cursos' => collect(),
-                'eventos' => [],
-                'estadisticas' => [
-                    'total' => 0,
-                    'entregadas' => 0,
-                    'pendientes' => 0,
-                    'proximasVencer' => 0
-                ]
-            ])->with('warning', 'No tienes cursos asignados.');
-        }
-
-        $fechaInicio = now()->subMonths(1);
-        $fechaFin = now()->addMonths(6);
-
-        $actividades = $this->obtenerActividadesPorCursos($cursos, $fechaInicio, $fechaFin);
-        $eventos = $this->formatearEventosParaCalendario($actividades);
-        $estadisticas = $this->calcularEstadisticas($actividades, auth()->user());
-
-        return view('calendario', compact('cursos', 'eventos', 'estadisticas'));
+    // Si no hay cursos, mostrar calendario vacío con mensaje
+    if ($cursos->isEmpty()) {
+        return view('calendario', [
+            'cursos' => collect(),
+            'eventos' => [],
+            'estadisticas' => [
+                'total' => 0,
+                'entregadas' => 0,
+                'pendientes' => 0,
+                'proximasVencer' => 0
+            ]
+        ])->with('warning', 'No tienes cursos asignados.');
     }
+
+    $fechaInicio = now()->subMonths(1);
+    $fechaFin = now()->addMonths(6);
+
+    $actividades = $this->obtenerActividadesPorCursos($cursos, $fechaInicio, $fechaFin);
+    $eventos = $this->formatearEventosParaFullCalendar($actividades);
+    $estadisticas = $this->calcularEstadisticas($actividades, auth()->user());
+
+    return view('calendario', compact('cursos', 'eventos', 'estadisticas'));
+}
+
+private function formatearEventosParaFullCalendar($actividades)
+{
+    return $actividades->map(function ($actividad) {
+        $fechaVencimiento = \Carbon\Carbon::parse($actividad->fecha_vencimiento);
+        $ahora = now();
+        
+        // Determinar color según estado y urgencia
+        $color = $this->determinarColorEvento($actividad, $fechaVencimiento, $ahora);
+        
+        return [
+            'id' => $actividad->id,
+            'title' => $actividad->titulo,
+            'start' => $fechaVencimiento->format('Y-m-d'),
+            'end' => $fechaVencimiento->format('Y-m-d'),
+            'color' => $color,
+            'textColor' => '#ffffff',
+            'extendedProps' => [
+                'curso' => $actividad->subtema->tema->curso->nombreCurso,
+                'tipo' => $actividad->tipo,
+                'estado' => $actividad->estado,
+                'descripcion' => $actividad->descripcion,
+                'urgente' => $fechaVencimiento->diffInDays($ahora) <= 2,
+                'entregada' => $actividad->estado === 'entregada'
+            ]
+        ];
+    });
+}
+
+private function determinarColorEvento($actividad, $fechaVencimiento, $ahora)
+{
+    if ($actividad->estado === 'entregada') {
+        return '#28a745'; // Verde para entregadas
+    }
+    
+    $diasRestantes = $fechaVencimiento->diffInDays($ahora, false);
+    
+    if ($diasRestantes < 0) {
+        return '#dc3545'; // Rojo para vencidas
+    } elseif ($diasRestantes <= 2) {
+        return '#ffc107'; // Amarillo para próximas a vencer
+    } elseif ($diasRestantes <= 7) {
+        return '#fd7e14'; // Naranja para esta semana
+    } else {
+        return '#17a2b8'; // Azul para normales
+    }
+}
 
     private function obtenerCursosPorRol($user)
     {

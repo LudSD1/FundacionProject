@@ -51,6 +51,10 @@
     @include('components.footer')
 
 
+    @role('estudiante') 
+    @include('components.achievements')
+    @endrole
+
 
 
 

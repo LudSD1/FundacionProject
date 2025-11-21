@@ -1,10 +1,10 @@
-<div class="tab-pane fade" id="tab-actividades" role="tabpanel" aria-labelledby="temario-tab">
+<div class="tab-pane fade show active" id="tab-actividades" role="tabpanel" aria-labelledby="temario-tab">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h3 class="fw-bold mb-1">Contenido del Curso</h3>
             <p class="text-muted mb-0">Explora los temas y subtemas del curso</p>
         </div>
-        @if(auth()->user()->hasRole('Docente') && $cursos->docente_id == auth()->user()->id)
+        @if (auth()->user()->hasRole('Docente') && $cursos->docente_id == auth()->user()->id)
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTema">
                 <i class="fas fa-plus me-2"></i>Añadir Contenido
             </button>
@@ -175,19 +175,20 @@
     <div class="temas-accordion">
         @forelse($temas as $index => $tema)
             @php
-                $estaDesbloqueado = auth()->user()->hasRole('Docente') ||
-                                  (auth()->user()->hasRole('Estudiante') && $tema->estaDesbloqueado($inscritos2->id));
+                $estaDesbloqueado =
+                    auth()->user()->hasRole('Docente') ||
+                    (auth()->user()->hasRole('Estudiante') && $tema->estaDesbloqueado($inscritos2->id));
             @endphp
             <div class="tema-card {{ $index === 0 && $estaDesbloqueado ? 'active' : '' }} {{ !$estaDesbloqueado ? 'locked' : '' }}"
-                 data-tema-id="{{ $tema->id }}">
+                data-tema-id="{{ $tema->id }}">
                 <div class="tema-header {{ !$estaDesbloqueado ? 'locked' : '' }}"
-                     onclick="{{ $estaDesbloqueado ? "toggleTema(this)" : "showLockMessage()" }}">
+                    onclick="{{ $estaDesbloqueado ? 'toggleTema(this)' : 'showLockMessage()' }}">
                     <div class="tema-info">
                         <div class="tema-number">{{ $loop->iteration }}</div>
                         <div class="tema-title-section">
                             <h4 class="tema-title">
                                 {{ $tema->titulo_tema }}
-                                @if(!$estaDesbloqueado)
+                                @if (!$estaDesbloqueado)
                                     <i class="fas fa-lock lock-icon"></i>
                                 @endif
                             </h4>
@@ -196,7 +197,7 @@
                                     <i class="fas fa-layer-group"></i>
                                     {{ count($tema->subtemas) }} Subtemas
                                 </span>
-                                @if(auth()->user()->hasRole('Estudiante'))
+                                @if (auth()->user()->hasRole('Estudiante'))
                                     @php
                                         $progreso = $tema->calcularProgreso($inscritos2->id);
                                     @endphp
@@ -212,12 +213,13 @@
                 </div>
                 <div class="tema-content">
                     <div class="tema-body">
-                        @if($estaDesbloqueado)
+                        @if ($estaDesbloqueado)
                             @include('partials.cursos.tema_item', ['tema' => $tema, 'index' => $index])
                         @else
                             <div class="alert alert-warning mb-0">
                                 <i class="fas fa-lock me-2"></i>
-                                <strong>Tema bloqueado:</strong> Debes completar el tema anterior para desbloquear este contenido.
+                                <strong>Tema bloqueado:</strong> Debes completar el tema anterior para desbloquear este
+                                contenido.
                             </div>
                         @endif
                     </div>
@@ -228,7 +230,7 @@
                 <i class="fas fa-book-open"></i>
                 <h4 class="mt-3 mb-2">No hay temas disponibles</h4>
                 <p class="text-muted">Aún no se ha agregado contenido a este curso.</p>
-                @if(auth()->user()->hasRole('Docente') && $cursos->docente_id == auth()->user()->id)
+                @if (auth()->user()->hasRole('Docente') && $cursos->docente_id == auth()->user()->id)
                     <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#modalTema">
                         <i class="fas fa-plus me-2"></i>Crear Primer Tema
                     </button>
@@ -252,7 +254,10 @@
                 card.classList.add('active');
                 // Scroll suave al tema
                 setTimeout(() => {
-                    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    card.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'nearest'
+                    });
                 }, 100);
             }
         }

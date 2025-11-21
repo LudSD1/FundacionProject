@@ -1118,185 +1118,196 @@
                     @endif
 
                     <!-- Contenido principal -->
-                    <div class="course-card fade-in-up">
-                        <!-- Pestañas de navegación -->
-                        <div class="card-header">
-                            <ul class="nav nav-tabs nav-fill" id="course-tabs" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <a class="nav-link active px-4 py-3" id="temario-tab" data-bs-toggle="tab"
-                                        href="#tab-actividades" role="tab"
-                                        aria-controls="tab-actividades" aria-selected="true">
-                                        <i class="fas fa-list me-2"></i>Temario
-                                    </a>
-                                </li>
-
-                                @if ($cursos->tipo == 'congreso')
+                        <div class="course-card fade-in-up">
+                            <!-- Pestañas de navegación -->
+                            <div class="card-header">
+                                <ul class="nav nav-tabs nav-fill" id="course-tabs" role="tablist">
                                     <li class="nav-item" role="presentation">
-                                        <a class="nav-link px-4 py-3" id="expositores-tab" data-bs-toggle="tab"
-                                            href="#tab-expositores" role="tab"
-                                            aria-controls="tab-expositores" aria-selected="false">
-                                            <i class="fas fa-users me-2"></i>Expositores
+                                        <a class="nav-link active px-4 py-3" id="temario-tab" data-bs-toggle="tab"
+                                            href="#tab-actividades" role="tab" aria-controls="tab-actividades"
+                                            aria-selected="true">
+                                            <i class="fas fa-list me-2"></i>Temario
                                         </a>
                                     </li>
-                                @endif
-                                <li class="nav-item" role="presentation">
-                                    <a class="nav-link px-4 py-3" id="foros-tab" data-bs-toggle="tab"
-                                        href="#tab-foros" role="tab"
-                                        aria-controls="tab-foros" aria-selected="false">
-                                        <i class="fas fa-comments me-2"></i>Foros
-                                        <span
-                                            class="badge bg-primary ms-2">{{ isset($foros) ? $foros->count() : 0 }}</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <a class="nav-link px-4 py-3" id="recursos-tab" data-bs-toggle="tab"
-                                        href="#tab-recursos" role="tab"
-                                        aria-controls="tab-recursos" aria-selected="false">
-                                        <i class="fas fa-folder-open me-2"></i>Recursos Globales
-                                        <span
-                                            class="badge bg-primary ms-2">{{ isset($recursos) ? $recursos->count() : 0 }}</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
 
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                var links = document.querySelectorAll('#course-tabs .nav-link');
-                                var panes = document.querySelectorAll('#course-tab-content .tab-pane');
-                                function activate(link) {
-                                    var targetSel = link.getAttribute('href') || link.getAttribute('data-bs-target');
-                                    var pane = document.querySelector(targetSel);
-                                    if (!pane) return;
-                                    panes.forEach(function(p){ p.classList.remove('show','active'); });
-                                    pane.classList.add('show','active');
-                                    links.forEach(function(l){ l.classList.remove('active'); l.setAttribute('aria-selected','false'); });
-                                    link.classList.add('active');
-                                    link.setAttribute('aria-selected','true');
-                                    if (targetSel) { try { location.hash = targetSel; } catch(_){} }
-                                }
-                                links.forEach(function(link){
-                                    link.addEventListener('click', function(e){
-                                        e.preventDefault();
-                                        activate(link);
+                                    @if ($cursos->tipo == 'congreso')
+                                        <li class="nav-item" role="presentation">
+                                            <a class="nav-link px-4 py-3" id="expositores-tab" data-bs-toggle="tab"
+                                                href="#tab-expositores" role="tab" aria-controls="tab-expositores"
+                                                aria-selected="false">
+                                                <i class="fas fa-users me-2"></i>Expositores
+                                            </a>
+                                        </li>
+                                    @endif
+                                    <li class="nav-item" role="presentation">
+                                        <a class="nav-link px-4 py-3" id="foros-tab" data-bs-toggle="tab" href="#tab-foros"
+                                            role="tab" aria-controls="tab-foros" aria-selected="false">
+                                            <i class="fas fa-comments me-2"></i>Foros
+                                            <span
+                                                class="badge bg-primary ms-2">{{ isset($foros) ? $foros->count() : 0 }}</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <a class="nav-link px-4 py-3" id="recursos-tab" data-bs-toggle="tab"
+                                            href="#tab-recursos" role="tab" aria-controls="tab-recursos"
+                                            aria-selected="false">
+                                            <i class="fas fa-folder-open me-2"></i>Recursos Globales
+                                            <span
+                                                class="badge bg-primary ms-2">{{ isset($recursos) ? $recursos->count() : 0 }}</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    var links = document.querySelectorAll('#course-tabs .nav-link');
+                                    var panes = document.querySelectorAll('#course-tab-content .tab-pane');
+
+                                    function activate(link) {
+                                        var targetSel = link.getAttribute('href') || link.getAttribute('data-bs-target');
+                                        var pane = document.querySelector(targetSel);
+                                        if (!pane) return;
+                                        panes.forEach(function(p) {
+                                            p.classList.remove('show', 'active');
+                                        });
+                                        pane.classList.add('show', 'active');
+                                        links.forEach(function(l) {
+                                            l.classList.remove('active');
+                                            l.setAttribute('aria-selected', 'false');
+                                        });
+                                        link.classList.add('active');
+                                        link.setAttribute('aria-selected', 'true');
+                                        if (targetSel) {
+                                            try {
+                                                location.hash = targetSel;
+                                            } catch (_) {}
+                                        }
+                                    }
+                                    links.forEach(function(link) {
+                                        link.addEventListener('click', function(e) {
+                                            e.preventDefault();
+                                            activate(link);
+                                        });
                                     });
+                                    var initial = location.hash;
+                                    if (initial) {
+                                        var link = document.querySelector('#course-tabs .nav-link[href="' + initial +
+                                            '"], #course-tabs .nav-link[data-bs-target="' + initial + '"]');
+                                        if (link) activate(link);
+                                    }
                                 });
-                                var initial = location.hash;
-                                if (initial) {
-                                    var link = document.querySelector('#course-tabs .nav-link[href="'+initial+'"], #course-tabs .nav-link[data-bs-target="'+initial+'"]');
-                                    if (link) activate(link);
-                                }
-                            });
-                        </script>
+                            </script>
 
-                        <div class="card-body p-4">
-                            <div class="tab-content" id="course-tab-content">
-                                <!-- Contenido de las pestañas -->
-                                @include('partials.cursos.temario_tab')
+                            <div class="card-body p-4">
+                                <div class="tab-content" id="course-tab-content">
+                                    <!-- Contenido de las pestañas -->
+                                    @include('partials.cursos.temario_tab')
 
-                                @if ($cursos->tipo == 'congreso')
-                                    <div class="tab-pane fade" id="tab-expositores" role="tabpanel" aria-labelledby="expositores-tab">
-                                        <div class="d-flex justify-content-between align-items-center mb-4">
-                                            <div>
-                                                <h4 class="mb-1" style="color: var(--color-primary);">
-                                                    <i class="fas fa-users me-2"></i>Expositores Asignados
-                                                </h4>
-                                                <p class="text-muted mb-0">Profesionales que impartirán el congreso</p>
+                                    @if ($cursos->tipo == 'congreso')
+                                        <div class="tab-pane fade" id="tab-expositores" role="tabpanel"
+                                            aria-labelledby="expositores-tab">
+                                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                                <div>
+                                                    <h4 class="mb-1" style="color: var(--color-primary);">
+                                                        <i class="fas fa-users me-2"></i>Expositores Asignados
+                                                    </h4>
+                                                    <p class="text-muted mb-0">Profesionales que impartirán el congreso</p>
+                                                </div>
+                                                <button class="btn btn-primary" data-bs-toggle="modal"
+                                                    data-bs-target="#modalExpositores">
+                                                    <i class="fas fa-user-plus me-2"></i> Asignar Expositores
+                                                </button>
                                             </div>
-                                            <button class="btn btn-primary" data-bs-toggle="modal"
-                                                data-bs-target="#modalExpositores">
-                                                <i class="fas fa-user-plus me-2"></i> Asignar Expositores
-                                            </button>
-                                        </div>
 
-                                        {{-- Lista de Expositores asignados --}}
-                                        <div class="row">
-                                            @forelse ($cursos->expositores as $expositor)
-                                                <div class="col-md-6 mb-4">
-                                                    <div class="expositor-card h-100">
-                                                        <div class="row g-0 h-100">
-                                                            <div class="col-4">
-                                                                @if ($expositor->imagen && file_exists(public_path('storage/' . $expositor->imagen)))
-                                                                    <img src="{{ asset('storage/' . $expositor->imagen) }}"
-                                                                        class="img-fluid h-100 w-100"
-                                                                        style="object-fit: cover;"
-                                                                        alt="Foto de {{ $expositor->nombre }}">
-                                                                @else
-                                                                    <img src="{{ asset('assets2/img/talker.png') }}"
-                                                                        class="img-fluid h-100 w-100"
-                                                                        style="object-fit: cover;"
-                                                                        alt="Imagen no disponible">
-                                                                @endif
-                                                            </div>
-                                                            <div class="col-8">
-                                                                <div class="card-body h-100 d-flex flex-column">
-                                                                    <h5 class="card-title mb-2"
-                                                                        style="color: var(--color-primary);">
-                                                                        {{ $expositor->nombre }}
-                                                                    </h5>
-                                                                    <div class="mb-2">
-                                                                        <small class="text-muted">Cargo:</small>
-                                                                        <p class="mb-1 fw-semibold">
-                                                                            {{ $expositor->pivot->cargo ?? 'No especificado' }}
-                                                                        </p>
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <small class="text-muted">Tema:</small>
-                                                                        <p class="mb-1">
-                                                                            {{ $expositor->pivot->tema ?? 'No especificado' }}
-                                                                        </p>
-                                                                    </div>
-                                                                    <div class="mb-3">
-                                                                        <small class="text-muted">Orden:</small>
-                                                                        <span
-                                                                            class="badge bg-primary">{{ $expositor->pivot->orden ?? '-' }}</span>
-                                                                    </div>
-                                                                    @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Docente'))
-                                                                        <div class="mt-auto">
-                                                                            <form
-                                                                                action="{{ route('cursos.quitarExpositor', [$cursos->id, $expositor->id]) }}"
-                                                                                method="POST"
-                                                                                onsubmit="return confirm('¿Deseas quitar este expositor del curso?');">
-                                                                                @csrf
-                                                                                @method('DELETE')
-                                                                                <button
-                                                                                    class="btn btn-outline-danger btn-sm w-100"
-                                                                                    title="Quitar expositor">
-                                                                                    <i class="fas fa-times me-1"></i>
-                                                                                    Quitar Expositor
-                                                                                </button>
-                                                                            </form>
-                                                                        </div>
+                                            {{-- Lista de Expositores asignados --}}
+                                            <div class="row">
+                                                @forelse ($cursos->expositores as $expositor)
+                                                    <div class="col-md-6 mb-4">
+                                                        <div class="expositor-card h-100">
+                                                            <div class="row g-0 h-100">
+                                                                <div class="col-4">
+                                                                    @if ($expositor->imagen && file_exists(public_path('storage/' . $expositor->imagen)))
+                                                                        <img src="{{ asset('storage/' . $expositor->imagen) }}"
+                                                                            class="img-fluid h-100 w-100"
+                                                                            style="object-fit: cover;"
+                                                                            alt="Foto de {{ $expositor->nombre }}">
+                                                                    @else
+                                                                        <img src="{{ asset('assets2/img/talker.png') }}"
+                                                                            class="img-fluid h-100 w-100"
+                                                                            style="object-fit: cover;"
+                                                                            alt="Imagen no disponible">
                                                                     @endif
+                                                                </div>
+                                                                <div class="col-8">
+                                                                    <div class="card-body h-100 d-flex flex-column">
+                                                                        <h5 class="card-title mb-2"
+                                                                            style="color: var(--color-primary);">
+                                                                            {{ $expositor->nombre }}
+                                                                        </h5>
+                                                                        <div class="mb-2">
+                                                                            <small class="text-muted">Cargo:</small>
+                                                                            <p class="mb-1 fw-semibold">
+                                                                                {{ $expositor->pivot->cargo ?? 'No especificado' }}
+                                                                            </p>
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <small class="text-muted">Tema:</small>
+                                                                            <p class="mb-1">
+                                                                                {{ $expositor->pivot->tema ?? 'No especificado' }}
+                                                                            </p>
+                                                                        </div>
+                                                                        <div class="mb-3">
+                                                                            <small class="text-muted">Orden:</small>
+                                                                            <span
+                                                                                class="badge bg-primary">{{ $expositor->pivot->orden ?? '-' }}</span>
+                                                                        </div>
+                                                                        @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Docente'))
+                                                                            <div class="mt-auto">
+                                                                                <form
+                                                                                    action="{{ route('cursos.quitarExpositor', [$cursos->id, $expositor->id]) }}"
+                                                                                    method="POST"
+                                                                                    onsubmit="return confirm('¿Deseas quitar este expositor del curso?');">
+                                                                                    @csrf
+                                                                                    @method('DELETE')
+                                                                                    <button
+                                                                                        class="btn btn-outline-danger btn-sm w-100"
+                                                                                        title="Quitar expositor">
+                                                                                        <i class="fas fa-times me-1"></i>
+                                                                                        Quitar Expositor
+                                                                                    </button>
+                                                                                </form>
+                                                                            </div>
+                                                                        @endif
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            @empty
-                                                <div class="col-12">
-                                                    <div class="alert alert-info text-center py-4">
-                                                        <i class="fas fa-info-circle fa-2x mb-3"></i>
-                                                        <h5>No hay expositores asignados</h5>
-                                                        <p class="mb-0">Asigna expositores para comenzar con el congreso
-                                                        </p>
+                                                @empty
+                                                    <div class="col-12">
+                                                        <div class="alert alert-info text-center py-4">
+                                                            <i class="fas fa-info-circle fa-2x mb-3"></i>
+                                                            <h5>No hay expositores asignados</h5>
+                                                            <p class="mb-0">Asigna expositores para comenzar con el congreso
+                                                            </p>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            @endforelse
+                                                @endforelse
+                                            </div>
                                         </div>
-                                    </div>
-                                @endif
+                                    @endif
 
 
 
-                                @include('partials.cursos.foros_tab')
-                                @include('partials.cursos.recursos_tab')
+                                    @include('partials.cursos.foros_tab')
+                                    @include('partials.cursos.recursos_tab')
 
 
 
+                                </div>
                             </div>
                         </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -1348,7 +1359,10 @@
 
                             // Disparar evento personalizado
                             const event = new CustomEvent('tab-activated', {
-                                detail: { tab: tabButton, pane: target }
+                                detail: {
+                                    tab: tabButton,
+                                    pane: target
+                                }
                             });
                             document.dispatchEvent(event);
                         }
@@ -1385,7 +1399,8 @@
                                     const tab = new bootstrap.Tab(btn);
                                     btn.addEventListener('shown.bs.tab', function() {
                                         // Asegurar que las clases estén correctas después de que Bootstrap active el tab
-                                        const targetSel = btn.getAttribute('href') || btn.getAttribute('data-bs-target');
+                                        const targetSel = btn.getAttribute('href') || btn.getAttribute(
+                                            'data-bs-target');
                                         const target = document.querySelector(targetSel);
                                         if (target) {
                                             target.classList.add('show', 'active');
@@ -1497,7 +1512,7 @@
         @include('partials.cursos.modals.agregar_subtema')
         @include('Docente.CrearForo')
         @include('Docente.CrearRecursos')
-    
+
         @foreach ($foros as $foro)
             @include('Docente.EditarForo')
         @endforeach
@@ -1505,7 +1520,80 @@
             @include('Docente.EditarRecursos')
         @endforeach
 
-
+        @foreach ($temas as $tema)
+            <div class="modal fade" id="modalEditarTema-{{ $tema->id }}" tabindex="-1"
+                aria-labelledby="modalEditarTemaLabel-{{ $tema->id }}" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div class="modal-header-content">
+                                <i class="fas fa-edit fa-lg me-3"></i>
+                                <div>
+                                    <h5 class="modal-title mb-0" id="modalEditarTemaLabel-{{ $tema->id }}">Editar
+                                        Tema</h5>
+                                    <small class="opacity-75">{{ $tema->titulo_tema }}</small>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <form method="POST" action="{{ route('temas.update', encrypt($tema->id)) }}"
+                            enctype="multipart/form-data">
+                            @csrf
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="mb-3">
+                                            <label for="titulo" class="form-label-modern">Título del Tema
+                                                *</label><input type="text" class="form-control-modern" name="titulo"
+                                                value="{{ $tema->titulo_tema }}" required
+                                                placeholder="Ingresa el título del tema">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="descripcion" class="form-label-modern">Descripción</label>
+                                            <textarea class="form-control-modern" name="descripcion" rows="4"
+                                                placeholder="Describe el contenido de este tema...">{{ $tema->descripcion }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="image-upload-section">
+                                            <label class="form-label">Imagen del Tema</label>
+                                            <div class="current-image mb-3">
+                                                @if ($tema->imagen)
+                                                    <img src="{{ asset('storage/' . $tema->imagen) }}"
+                                                        class="img-thumbnail current-image-preview" alt="Imagen actual">
+                                                    <small class="text-muted d-block mt-1">Imagen actual</small>
+                                                @else
+                                                    <div class="no-image-placeholder">
+                                                        <i class="fas fa-image fa-2x text-muted mb-2"></i>
+                                                        <small class="text-muted">No hay imagen cargada</small>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div class="file-upload-wrapper">
+                                                <input type="file" class="form-control-modern" name="imagen"
+                                                    accept="image/*" id="imageUpload-{{ $tema->id }}">
+                                                <label for="imageUpload-{{ $tema->id }}" class="file-upload-label">
+                                                    <i class="fas fa-upload me-2"></i>Seleccionar imagen
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn-modern btn-accent-custom" data-bs-dismiss="modal">
+                                    <i class="fas fa-times me-1"></i><span class="ms-1">Cancelar</span>
+                                </button>
+                                <button type="submit" class="btn-modern btn-primary-custom">
+                                    <i class="fas fa-save me-1"></i><span class="ms-1">Guardar Cambios</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        @endforeach
     @else
         <!-- Acceso denegado -->
         <div class="container-fluid py-4">
