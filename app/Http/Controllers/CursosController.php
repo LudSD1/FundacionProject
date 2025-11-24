@@ -51,12 +51,13 @@ class CursosController extends Controller
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
-     */ protected $qrTokenService;
+     */ 
+    // protected $qrTokenService;
     protected $youTubeEmbedService;
 
     public function __construct(QrTokenService $qrTokenService, YouTubeEmbedService $youTubeEmbedService)
     {
-        $this->qrTokenService = $qrTokenService;
+        // $this->qrTokenService = $qrTokenService;
         $this->youTubeEmbedService = $youTubeEmbedService;
     }
 
@@ -108,12 +109,12 @@ class CursosController extends Controller
             : null;
 
         // Generar token y QR
-        $token = $this->qrTokenService->generarToken($curso->id);
-        $urlInscripcion = route('inscribirse.qr', [
-            'id' => $curso->id,
-            'token' => $token->token,
-        ]);
-        $qrCode = $this->qrTokenService->generarQrCode($urlInscripcion);
+        // $token = $this->qrTokenService->generarToken($curso->id);
+        // $urlInscripcion = route('inscribirse.qr', [
+        //     'id' => $curso->id,
+        //     'token' => $token->token,
+        // ]);
+        // $qrCode = $this->qrTokenService->generarQrCode($urlInscripcion);
 
         // Procesar descripciones de recursos
         foreach ($recursos as $recurso) {
@@ -136,7 +137,7 @@ class CursosController extends Controller
             'inscritos2' => $inscrito,
             'boletin' => $boletin,
             'horarios' => $horarios,
-            'qrCode' => $qrCode,
+            // 'qrCode' => $qrCode,
             'template' => $certificado_template,
             'expositores' => $expositores,
             'esDocente' => $esDocente,

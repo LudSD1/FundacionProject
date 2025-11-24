@@ -62,7 +62,6 @@ class Inscritos extends BaseModel
         return $this->hasOne(Certificado::class, 'inscrito_id');
     }
 
-    // Configuración para soft deletes en cascada
 
 
     public function actividadCompletions()

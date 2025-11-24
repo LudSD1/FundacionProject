@@ -13,6 +13,7 @@ use App\Traits\CalificacionTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Services\XPService;
 use App\Services\AchievementService;
 use Carbon\Carbon;
@@ -78,7 +79,7 @@ class ActividadController extends Controller
 
             // Verificar logro de entregas tempranas
             $earlySubmissions = EntregaArchivo::where('user_id', $request->user_id)
-                ->whereHas('actividad', function($q) {
+                ->whereHas('actividad', function ($q) {
                     $q->whereNotNull('fecha_limite')
                         ->whereRaw('fecha_entrega < DATE_SUB(fecha_limite, INTERVAL 1 DAY)');
                 })->count();
@@ -121,15 +122,113 @@ class ActividadController extends Controller
             'inscritos_id' => 'required|exists:inscritos,id',
         ]);
 
-        $actividad = Actividad::with(['subtema.tema.curso'])->findOrFail($actividadId);
+        $actividad = Actividad::with(['subtema.tema.curso', 'tipoActividad', 'cuestionario'])->findOrFail($actividadId);
+        $inscritoId = $request->inscritos_id;
 
-        if (!$this->verificarCalificacionActividad($actividad, $request->inscritos_id)) {
-            return back()->with('error', 'La actividad debe ser calificada o el cuestionario debe ser completado antes de marcarla como completada.');
+        // Log para debugging
+        \Log::info('Intentando completar actividad', [
+            'actividad_id' => $actividadId,
+            'inscrito_id' => $inscritoId,
+            'tipo_actividad' => $actividad->tipoActividad->nombre ?? 'N/A',
+            'tipo_curso' => $actividad->subtema->tema->curso->tipo ?? 'N/A',
+            'tiene_cuestionario' => $actividad->cuestionario ? 'Si' : 'No'
+        ]);
+
+        // Verificar si ya está completada
+        if ($actividad->isCompletedByInscrito($inscritoId)) {
+            return back()->with('info', 'Esta actividad ya está marcada como completada.');
         }
 
-        $this->marcarActividadCompletada($actividad, $request->inscritos_id);
-        return back()->with('success', 'Actividad marcada como completada.');
+        // Verificar requisitos según el tipo de curso
+        $tipoCurso = $actividad->subtema->tema->curso->tipo;
+
+        // Para congresos, permitir marcar como completado directamente
+        if ($tipoCurso === 'congreso') {
+            \Log::info('Actividad de congreso - marcando como completada directamente');
+            $this->marcarActividadCompletada($actividad, $inscritoId);
+            return back()->with('success', 'Actividad marcada como completada.');
+        }
+
+        // Verificar qué tiene la actividad: cuestionario, calificación, o ambos
+        $tieneCuestionario = $actividad->cuestionario !== null;
+        $tieneCalificacion = NotaEntrega::where('inscripcion_id', $inscritoId)
+            ->where('actividad_id', $actividad->id)
+            ->exists();
+
+        \Log::info('Estado de la actividad', [
+            'tiene_cuestionario_creado' => $tieneCuestionario,
+            'tiene_calificacion' => $tieneCalificacion
+        ]);
+
+        // Si tiene cuestionario, verificar que esté completado
+        if ($tieneCuestionario) {
+            $cuestionarioCompletado = DB::table('intentos_cuestionarios')
+                ->join('cuestionarios', 'intentos_cuestionarios.cuestionario_id', '=', 'cuestionarios.id')
+                ->where('cuestionarios.actividad_id', $actividad->id)
+                ->where('intentos_cuestionarios.inscrito_id', $inscritoId)
+                ->whereNotNull('intentos_cuestionarios.finalizado_en')
+                ->exists();
+
+            \Log::info('Verificación de cuestionario', [
+                'cuestionario_completado' => $cuestionarioCompletado
+            ]);
+
+            if (!$cuestionarioCompletado) {
+                return back()->with('error', 'Debes completar el cuestionario antes de marcar esta actividad como completada.');
+            }
+
+            // Si tiene cuestionario Y está completado, marcar como completada
+            $this->marcarActividadCompletada($actividad, $inscritoId);
+            \Log::info('Actividad con cuestionario marcada como completada');
+            return back()->with('success', 'Actividad marcada como completada.');
+        }
+
+        // Si NO tiene cuestionario, verificar que tenga calificación
+        if (!$tieneCuestionario) {
+            // Obtener TODAS las calificaciones para esta actividad (para debugging)
+            $todasLasNotas = NotaEntrega::where('actividad_id', $actividad->id)->get();
+
+            // Buscar la calificación específica del inscrito
+            $notaEntrega = NotaEntrega::where('inscripcion_id', $inscritoId)
+                ->where('actividad_id', $actividad->id)
+                ->first();
+
+            \Log::info('Verificación de calificación - DETALLADO', [
+                'tiene_calificacion' => $notaEntrega ? true : false,
+                'inscrito_id_buscado' => $inscritoId,
+                'actividad_id' => $actividad->id,
+                'nota_encontrada' => $notaEntrega ? $notaEntrega->toArray() : null,
+                'total_notas_actividad' => $todasLasNotas->count(),
+                'todas_las_notas_actividad' => $todasLasNotas->map(function ($nota) {
+                    return [
+                        'id' => $nota->id,
+                        'inscripcion_id' => $nota->inscripcion_id,
+                        'actividad_id' => $nota->actividad_id,
+                        'nota' => $nota->nota
+                    ];
+                })->toArray(),
+                'total_notas_inscrito' => NotaEntrega::where('inscripcion_id', $inscritoId)->count()
+            ]);
+
+            if (!$notaEntrega) {
+                return back()->with('error', 'Esta actividad debe ser calificada por el docente antes de marcarla como completada. (Inscrito ID: ' . $inscritoId . ', Actividad ID: ' . $actividad->id . ')');
+            }
+
+            // Si tiene calificación, marcar como completada
+            $this->marcarActividadCompletada($actividad, $inscritoId);
+            \Log::info('Actividad con calificación marcada como completada');
+            return back()->with('success', 'Actividad marcada como completada.');
+        }
+
+        // Si llegamos aquí, algo salió mal
+        \Log::error('No se pudo determinar cómo completar la actividad', [
+            'actividad_id' => $actividad->id,
+            'inscrito_id' => $inscritoId
+        ]);
+
+        return back()->with('error', 'No se pudo completar la actividad. Contacta al administrador.');
     }
+
 
 
 
@@ -160,7 +259,7 @@ class ActividadController extends Controller
         $nota = NotaEntrega::where('actividad_id', $id)->get();
 
         $vencido = ($actividad->subtema->tema->curso->fecha_fin && Carbon::parse($actividad->subtema->tema->curso->fecha_fin)->isPast()) ||
-           ($actividad->fecha_limite && Carbon::parse($actividad->fecha_limite)->isPast());
+            ($actividad->fecha_limite && Carbon::parse($actividad->fecha_limite)->isPast());
 
 
         return view('Docente.ListadeEntregas')
@@ -169,7 +268,6 @@ class ActividadController extends Controller
             ->with('actividad', $actividad)
             ->with('vencido', $vencido)
             ->with('entregas', $entregas);
-
     }
 
     public function listadeEntregasCalificar(Request $request, $id)
@@ -332,7 +430,6 @@ class ActividadController extends Controller
 
             DB::commit();
             return redirect()->back()->with('success', 'Actividad actualizada exitosamente.');
-
         } catch (\Exception $e) {
             DB::rollback();
             \Log::error('Error actualizando actividad: ' . $e->getMessage());

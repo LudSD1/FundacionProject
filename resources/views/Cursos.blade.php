@@ -37,7 +37,7 @@
                     <div class="teacher-info flex-grow-1">
                         <p>Docente del curso</p>
                         <h4>
-                            <a href="{{ route('perfil', ['id' => encrypt($cursos->docente->id)]) }}">
+                            <a href="{{ route('perfil', encrypt($cursos->docente->id)) }}">
                                 {{ $cursos->docente ? $cursos->docente->name . ' ' . $cursos->docente->lastname1 . ' ' . $cursos->docente->lastname2 : 'N/A' }}
                             </a>
                         </h4>

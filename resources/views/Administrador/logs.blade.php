@@ -4,27 +4,6 @@
 
 @section('content')
 <style>
-:root {
-    --color-primary: #1a4789;
-    --color-secondary: #39a6cb;
-    --color-accent1: #63becf;
-    --color-accent2: #055c9d;
-    --color-accent3: #2197bd;
-    --color-success: #28a745;
-    --color-warning: #ffc107;
-    --color-danger: #dc3545;
-    --color-info: #17a2b8;
-    
-    --gradient-primary: linear-gradient(135deg, #1a4789 0%, #055c9d 100%);
-    --gradient-secondary: linear-gradient(135deg, #39a6cb 0%, #63becf 100%);
-    
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
-    
-    --border-radius: 12px;
-    --border-radius-sm: 8px;
-}
 
 .logs-container .card {
     border: none;
@@ -218,17 +197,17 @@
         flex-direction: column;
         gap: 1rem;
     }
-    
+
     .logs-container .stats-bar {
         flex-direction: column;
         gap: 0.5rem;
     }
-    
+
     .logs-container .stat-item {
         margin-right: 0;
         justify-content: space-between;
     }
-    
+
     .logs-container .log-entry {
         padding: 0.75rem;
     }
@@ -243,7 +222,7 @@
                     <div class="d-flex align-items-center mb-2 mb-md-0">
                         <i class="fas fa-file-alt fa-2x me-3"></i>
                         <div>
-                            <h4 class="mb-0 fw-bold">Logs del Sistema</h4>
+                            <h4 class="mb-0 fw-bold text-white">Logs del Sistema</h4>
                             <small class="opacity-75">Monitor de actividad y errores</small>
                         </div>
                     </div>
@@ -317,13 +296,13 @@
                                 $filteredLogs = array_filter($logs);
                                 $totalLogs = count($filteredLogs);
                             @endphp
-                            
+
                             @foreach($filteredLogs as $index => $log)
                                 @php
                                     $logText = trim($log);
                                     $logClass = 'default';
                                     $logLower = strtolower($logText);
-                                    
+
                                     if (str_contains($logLower, 'error') || str_contains($logLower, 'exception')) {
                                         $logClass = 'error';
                                     } elseif (str_contains($logLower, 'warning')) {
@@ -333,10 +312,10 @@
                                     } elseif (str_contains($logLower, 'success') || str_contains($logLower, 'completed')) {
                                         $logClass = 'success';
                                     }
-                                    
+
                                     $logNumber = $totalLogs - $index;
                                 @endphp
-                                
+
                                 <div class="log-entry {{ $logClass }}" data-log-type="{{ $logClass }}">
                                     <div class="d-flex justify-content-between align-items-start">
                                         <div class="flex-grow-1 me-3">
@@ -394,13 +373,13 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Auto-scroll al final
     scrollToBottom();
-    
+
     // Contar tipos de logs
     countLogTypes();
-    
+
     // Configurar filtros
     setupFilters();
-    
+
     // Configurar botones de copiar
     setupCopyButtons();
 });
@@ -424,7 +403,7 @@ function scrollToBottom() {
 function countLogTypes() {
     const errorCount = document.querySelectorAll('.log-entry.error').length;
     const warningCount = document.querySelectorAll('.log-entry.warning').length;
-    
+
     document.getElementById('errorCount').textContent = errorCount;
     document.getElementById('warningCount').textContent = warningCount;
 }
@@ -432,15 +411,15 @@ function countLogTypes() {
 function setupFilters() {
     const filterBadges = document.querySelectorAll('.filter-badge');
     const logEntries = document.querySelectorAll('.log-entry');
-    
+
     filterBadges.forEach(badge => {
         badge.addEventListener('click', function() {
             const filter = this.getAttribute('data-filter');
-            
+
             // Actualizar badges activos
             filterBadges.forEach(b => b.classList.remove('active'));
             this.classList.add('active');
-            
+
             // Aplicar filtro
             logEntries.forEach(entry => {
                 if (filter === 'all') {
@@ -453,7 +432,7 @@ function setupFilters() {
                     }
                 }
             });
-            
+
             // Recontar después de filtrar
             setTimeout(countLogTypes, 100);
         });
@@ -469,18 +448,18 @@ function clearFilters() {
 
 function setupCopyButtons() {
     const copyButtons = document.querySelectorAll('.copy-log');
-    
+
     copyButtons.forEach(button => {
         button.addEventListener('click', function() {
             const logText = this.getAttribute('data-log');
-            
+
             navigator.clipboard.writeText(logText).then(() => {
                 // Feedback visual
                 const originalHtml = this.innerHTML;
                 this.innerHTML = '<i class="fas fa-check me-1"></i>Copiado!';
                 this.classList.remove('btn-outline-secondary');
                 this.classList.add('btn-success');
-                
+
                 setTimeout(() => {
                     this.innerHTML = originalHtml;
                     this.classList.remove('btn-success');
@@ -499,11 +478,11 @@ function exportLogs() {
     let logText = '=== LOGS DEL SISTEMA ===\n';
     logText += 'Generado: ' + new Date().toLocaleString() + '\n';
     logText += 'Total de entradas: ' + logEntries.length + '\n\n';
-    
+
     logEntries.forEach((entry, index) => {
         logText += `[${logEntries.length - index}] ${entry.textContent}\n\n`;
     });
-    
+
     const blob = new Blob([logText], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');

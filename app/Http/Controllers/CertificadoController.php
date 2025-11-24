@@ -421,8 +421,6 @@ class CertificadoController extends Controller
 
         $user->assignRole('Estudiante');
 
-        // Enviar correo de verificación
-        $user->sendEmailVerificationNotification();
 
         // Inscribir al usuario en el congreso
         $inscripcion = Inscritos::create([
