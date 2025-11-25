@@ -18,7 +18,7 @@ Foro de Discusión
                     @if($foro->SubtituloForo)
                     <p class="forum-subtitle">{{ $foro->SubtituloForo }}</p>
                     @endif
-                    
+
                     <!-- Metadatos del Foro -->
                     <div class="forum-metadata">
                         <div class="meta-item">
@@ -49,7 +49,7 @@ Foro de Discusión
                     <i class="fas fa-arrow-left me-2"></i>
                     Volver al Curso
                 </a>
-                
+
                 @if(auth()->user()->id == $foro->docente_id)
                 <div class="admin-actions">
                     <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#modalEditarForo-{{ $foro->id }}">
@@ -107,14 +107,14 @@ Foro de Discusión
     --color-success: #28a745;
     --color-warning: #ffc107;
     --color-danger: #dc3545;
-    
+
     --gradient-primary: linear-gradient(135deg, #1a4789 0%, #055c9d 100%);
     --gradient-primary-hover: linear-gradient(135deg, #0d3568 0%, #044a7a 100%);
-    
+
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
     --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
-    
+
     --border-radius: 12px;
     --border-radius-sm: 8px;
 }
@@ -344,53 +344,53 @@ Foro de Discusión
     .forum-hero-header {
         padding: 2rem 0 1rem 0;
     }
-    
+
     .forum-header-content {
         flex-direction: column;
         gap: 1.5rem;
         text-align: center;
     }
-    
+
     .forum-main-info {
         flex-direction: column;
         text-align: center;
         align-items: center;
     }
-    
+
     .forum-actions {
         align-items: center;
         width: 100%;
     }
-    
+
     .forum-actions .btn-back {
         width: 100%;
         justify-content: center;
     }
-    
+
     .admin-actions {
         justify-content: center;
         width: 100%;
     }
-    
+
     .forum-title {
         font-size: 1.75rem;
     }
-    
+
     .forum-icon-badge {
         width: 60px;
         height: 60px;
         font-size: 1.5rem;
     }
-    
+
     .forum-metadata {
         justify-content: center;
         gap: 1rem;
     }
-    
+
     .breadcrumb {
         justify-content: center;
     }
-    
+
     .breadcrumb-item {
         font-size: 0.8rem;
     }
@@ -402,16 +402,16 @@ Foro de Discusión
         gap: 0.75rem;
         align-items: center;
     }
-    
+
     .meta-item {
         justify-content: center;
     }
-    
+
     .admin-actions {
         flex-direction: column;
         width: 100%;
     }
-    
+
     .admin-actions .btn {
         width: 100%;
         justify-content: center;
@@ -467,7 +467,7 @@ Foro de Discusión
 document.addEventListener('DOMContentLoaded', function() {
     // Efecto de parallax suave en el header
     const forumHeader = document.querySelector('.forum-hero-header');
-    
+
     if (forumHeader) {
         window.addEventListener('scroll', function() {
             const scrolled = window.pageYOffset;
@@ -475,25 +475,25 @@ document.addEventListener('DOMContentLoaded', function() {
             forumHeader.style.transform = `translateY(${rate}px)`;
         });
     }
-    
+
     // Animación de los elementos al cargar
     const animatedElements = document.querySelectorAll('.forum-main-info, .forum-actions, .forum-breadcrumb');
     animatedElements.forEach((element, index) => {
         element.style.animationDelay = `${index * 0.2}s`;
     });
-    
+
     // Tooltips para botones de administración
     const adminButtons = document.querySelectorAll('.admin-actions .btn');
     adminButtons.forEach(button => {
         button.addEventListener('mouseenter', function() {
             this.style.transform = 'translateY(-2px)';
         });
-        
+
         button.addEventListener('mouseleave', function() {
             this.style.transform = 'translateY(0)';
         });
     });
-    
+
     // Confirmación mejorada para eliminar
     const deleteButtons = document.querySelectorAll('form[action*="quitarForo"] button[type="submit"]');
     deleteButtons.forEach(button => {
@@ -555,7 +555,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
 
         <div class="d-flex justify-content-between align-items-center mb-4">
-  
+
             <button class="btn btn-primary btn-lg d-flex align-items-center gap-2"
                     data-bs-toggle="modal"
                     data-bs-target="#commentModal">
@@ -695,16 +695,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                         </article>
 
-                        <!-- Modal para editar mensaje -->
-                        @include('partials.modals.edit-message', ['mensaje' => $mensaje])
 
-                        <!-- Modal para responder -->
-                        @include('partials.modals.reply-message', ['mensaje' => $mensaje, 'foro' => $foro])
-
-                        <!-- Modal para editar respuesta -->
-                        @foreach ($mensaje->respuestas as $respuesta)
-                            @include('partials.modals.edit-reply', ['respuesta' => $respuesta])
-                        @endforeach
 
                     @empty
                         <div class="text-center py-5">
@@ -717,6 +708,19 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         </div>
     </div>
+
+    @foreach ($forosmensajes as $mensaje)
+                        <!-- Modal para editar mensaje -->
+                        @include('partials.modals.edit-message', ['mensaje' => $mensaje])
+
+                        <!-- Modal para responder -->
+                        @include('partials.modals.reply-message', ['mensaje' => $mensaje, 'foro' => $foro])
+
+                        <!-- Modal para editar respuesta -->
+                        @foreach ($mensaje->respuestas as $respuesta)
+                            @include('partials.modals.edit-reply', ['respuesta' => $respuesta])
+                        @endforeach
+    @endforeach
 
     <!-- Modal para nuevo comentario -->
     @include('partials.modals.new-comment', ['foro' => $foro])

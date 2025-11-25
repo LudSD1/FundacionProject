@@ -45,8 +45,11 @@ class EmailVerificationController extends Controller
     }
 
 
-    public function verify(Request $request, User $user, $hash)
+    public function verify(Request $request, $id, $hash)
     {
+        // Find the user by ID
+        $user = User::findOrFail($id);
+
         Log::info('Iniciando verificación de email para usuario: ' . $user->id);
 
         // Verificar que la URL tenga una firma válida (previene expiraciones o manipulaciones)

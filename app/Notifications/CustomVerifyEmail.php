@@ -36,25 +36,23 @@ class CustomVerifyEmail extends Notification
      */
     public function toMail($notifiable)
     {
-        $actionText = 'Verificar Correo Electrónico';
-
         // Generar URL firmada y segura para verificación
-        $actionUrl = URL::temporarySignedRoute(
+        $verificationUrl = URL::temporarySignedRoute(
             'verification.verify',
             now()->addMinutes(60), // Expira en 60 minutos
             [
-                'id' => encrypt($notifiable->getKey()), // Encrypt the ID to match the trait
+                'id' => $notifiable->getKey(), // Use plain ID to match route parameter
                 'hash' => sha1($notifiable->getEmailForVerification()),
             ]
         );
 
         return (new MailMessage)
-            ->subject('Verifica tu correo electrónico')
-            ->greeting('¡Hola!')
-            ->line('Por favor, haz clic en el botón de abajo para verificar tu dirección de correo electrónico.')
-            ->action($actionText, $actionUrl)
-            ->line('Si no creaste una cuenta, no es necesario realizar ninguna acción.')
-            ->salutation('Saludos, ' . config('app.name'));
+            ->subject('Verifica tu correo electrónico - Aprendo Hoy')
+            ->view('emails.verificacion-correo-profesional', [
+                'user' => $notifiable,
+                'verificationUrl' => $verificationUrl,
+                'appName' => config('app.name')
+            ]);
     }
 
     /**
