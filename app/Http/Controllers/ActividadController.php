@@ -360,7 +360,7 @@ class ActividadController extends Controller
 
 
 
-        return redirect()->route('Curso', $cursoId)
+        return redirect()->route('Curso', encrypt($cursoId))
             ->with('success', 'Actividad creada exitosamente.');
     }
 

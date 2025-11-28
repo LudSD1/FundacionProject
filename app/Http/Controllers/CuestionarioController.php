@@ -40,7 +40,7 @@ class CuestionarioController extends Controller
 
 
         if ($cuestionario->preguntas->isEmpty()) {
-            return redirect()->route('Curso', $cuestionario->actividad->subtema->tema->curso->id)
+            return redirect()->route('Curso', encrypt($cuestionario->actividad->subtema->tema->curso->id))
                 ->with('error', 'Este cuestionario no tiene preguntas disponibles.');
         }
 
@@ -55,7 +55,7 @@ class CuestionarioController extends Controller
 
         // Verificar si se alcanzó el número máximo de intentos
         if ($intentosRealizados >= $cuestionario->max_intentos) {
-            return redirect()->route('Curso', $cuestionario->actividad->subtema->tema->curso->id)
+            return redirect()->route('Curso', encrypt($cuestionario->actividad->subtema->tema->curso->id))
                 ->with('error', 'Has alcanzado el número máximo de intentos para este cuestionario.');
         }
 
@@ -211,20 +211,18 @@ class CuestionarioController extends Controller
 
                     // Verificar logro de velocista
                     if ($puntajeObtenido == $puntajeTotal) {
-                        $speedyQuizzes = IntentoCuestionario::where('inscrito_id', $inscrito->id)
-                            ->whereHas('cuestionario', function ($q) {
-                                $q->whereNotNull('tiempo_limite');
-                            })
+                        $speedyQuizzes = IntentoCuestionario::where('intentos_cuestionarios.inscrito_id', $inscrito->id)
+                            ->join('cuestionarios', 'intentos_cuestionarios.cuestionario_id', '=', 'cuestionarios.id')
+                            ->join('preguntas', 'cuestionarios.id', '=', 'preguntas.cuestionario_id')
+                            ->whereNotNull('cuestionarios.tiempo_limite')
                             ->where(
                                 DB::raw('TIMESTAMPDIFF(MINUTE, iniciado_en, finalizado_en)'),
                                 '<',
                                 DB::raw('cuestionarios.tiempo_limite * 0.5')
                             )
-                            ->where('nota', function ($q) {
-                                $q->select(DB::raw('SUM(preguntas.puntaje)'))
-                                    ->from('preguntas')
-                                    ->whereColumn('preguntas.cuestionario_id', 'intentos_cuestionarios.cuestionario_id');
-                            })
+                            ->whereRaw('intentos_cuestionarios.nota = (SELECT SUM(p.puntaje) FROM preguntas p WHERE p.cuestionario_id = intentos_cuestionarios.cuestionario_id)')
+                            ->select('intentos_cuestionarios.*')
+                            ->distinct()
                             ->count();
 
                         $achievementService->checkAndAwardAchievements($inscrito, 'SPEED_RUNNER', $speedyQuizzes);
@@ -242,11 +240,7 @@ class CuestionarioController extends Controller
             if ($puntajeObtenido == $puntajeTotal) {
                 // Logro de cuestionarios perfectos
                 $perfectQuizzes = IntentoCuestionario::where('inscrito_id', $inscrito->id)
-                    ->where('nota', function ($q) {
-                        $q->select(DB::raw('SUM(preguntas.puntaje)'))
-                            ->from('preguntas')
-                            ->whereColumn('preguntas.cuestionario_id', 'intentos_cuestionarios.cuestionario_id');
-                    })
+                    ->whereRaw('nota = (SELECT SUM(p.puntaje) FROM preguntas p WHERE p.cuestionario_id = intentos_cuestionarios.cuestionario_id)')
                     ->count();
 
                 $achievementService->checkAndAwardAchievements($inscrito, 'QUIZ_MASTER', $perfectQuizzes);
@@ -256,10 +250,9 @@ class CuestionarioController extends Controller
             if ($cuestionario->tiempo_limite) {
                 $tiempoUtilizado = $intento->iniciado_en->diffInMinutes($intento->finalizado_en);
                 if ($tiempoUtilizado < ($cuestionario->tiempo_limite * 0.5)) {
-                    $earlySubmissions = IntentoCuestionario::where('inscrito_id', $inscrito->id)
-                        ->whereHas('cuestionario', function ($q) {
-                            $q->whereNotNull('tiempo_limite');
-                        })
+                    $earlySubmissions = IntentoCuestionario::where('intentos_cuestionarios.inscrito_id', $inscrito->id)
+                        ->join('cuestionarios', 'intentos_cuestionarios.cuestionario_id', '=', 'cuestionarios.id')
+                        ->whereNotNull('cuestionarios.tiempo_limite')
                         ->where(
                             DB::raw('TIMESTAMPDIFF(MINUTE, iniciado_en, finalizado_en)'),
                             '<',

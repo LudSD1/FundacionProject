@@ -34,10 +34,15 @@ use App\Http\Controllers\AchievementController;
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\XPController;
+use App\Http\Controllers\MC4Controller;
 use Illuminate\Support\Facades\Storage;
 
 Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
 Route::get('/mejores-cursos', [MenuController::class, 'mejoresCursosPorCategoria'])->name('mejores.cursos');
+
+// Ruta de prueba para MC4 (temporal - solo para testing)
+Route::get('/test-mc4', [MC4Controller::class, 'testConexion'])->name('test.mc4');
+
 Route::get('/botman/tinker', function () {
     return view('botman.tinker');
 });
