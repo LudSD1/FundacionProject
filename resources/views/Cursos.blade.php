@@ -215,7 +215,6 @@
                                 @endrole
 
                                 <!-- Certificate Options -->
-                                @if ($cursos->tipo === 'congreso')
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
@@ -243,7 +242,6 @@
                                             </form>
                                         </li>
                                     @endif
-                                @endif
 
                                 @if (auth()->user()->hasRole('Administrador') || $esDocente)
                                     @if (!isset($template))
@@ -1015,6 +1013,283 @@
     .dropdown-submenu:hover .dropdown-menu {
         display: block;
     }
+
+    /* ===== ESTILOS PARA CALENDARIO DE ACTIVIDADES Y CERTIFICADO ===== */
+
+    /* Sección de Sidebar */
+    .sidebar-section {
+        margin-bottom: 1.5rem;
+    }
+
+    /* Calendario de Actividades */
+    .activities-calendar {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e9ecef;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .activity-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: var(--color-secondary, #39a6cb);
+        text-decoration: none;
+    }
+
+    .activity-item.urgent {
+        border-left: 4px solid #dc3545;
+        background: linear-gradient(135deg, #fff 0%, #fff5f5 100%);
+    }
+
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--color-primary, #1a4789) 0%, var(--color-secondary, #39a6cb) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
+    .activity-item.urgent .activity-icon {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    }
+
+    .activity-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .activity-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.25rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .activity-date {
+        font-size: 0.75rem;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    /* Sección de Certificado */
+    .certificate-section {
+        margin-top: 1rem;
+    }
+
+    .certificate-card {
+        background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+        border-radius: 16px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+        border: 2px solid #f0c800;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .certificate-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+        animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+
+        0%,
+        100% {
+            transform: translate(-50%, -50%) rotate(0deg);
+        }
+
+        50% {
+            transform: translate(-30%, -30%) rotate(180deg);
+        }
+    }
+
+    .certificate-card.pending {
+        background: linear-gradient(135deg, #e9ecef 0%, #f8f9fa 100%);
+        border-color: #dee2e6;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .certificate-card.pending::before {
+        display: none;
+    }
+
+    .certificate-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #b8860b;
+        position: relative;
+        z-index: 1;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.1);
+        }
+    }
+
+    .certificate-card.pending .certificate-icon {
+        color: #6c757d;
+        animation: none;
+    }
+
+    .certificate-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .certificate-text {
+        font-size: 0.875rem;
+        color: #555;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .btn-certificate {
+        background: linear-gradient(135deg, #1a4789 0%, #055c9d 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 8px rgba(26, 71, 137, 0.3);
+        position: relative;
+        z-index: 1;
+        width: 100%;
+    }
+
+    .btn-certificate:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(26, 71, 137, 0.4);
+        background: linear-gradient(135deg, #055c9d 0%, #1a4789 100%);
+        color: white;
+    }
+
+    .btn-certificate:active {
+        transform: translateY(0);
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+        .sidebar-section {
+            margin-bottom: 1rem;
+        }
+
+        .activity-item {
+            padding: 0.5rem;
+        }
+
+        .activity-icon {
+            width: 35px;
+            height: 35px;
+            font-size: 1rem;
+        }
+
+        .certificate-card {
+            padding: 1rem;
+        }
+
+        .certificate-icon {
+            font-size: 2.5rem;
+        }
+    }
+
+    /* Animaciones de entrada */
+    .activity-item {
+        animation: fadeInUp 0.5s ease forwards;
+        opacity: 0;
+    }
+
+    .activity-item:nth-child(1) {
+        animation-delay: 0.1s;
+    }
+
+    .activity-item:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .activity-item:nth-child(3) {
+        animation-delay: 0.3s;
+    }
+
+    .activity-item:nth-child(4) {
+        animation-delay: 0.4s;
+    }
+
+    .activity-item:nth-child(5) {
+        animation-delay: 0.5s;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .certificate-card {
+        animation: fadeInScale 0.6s ease forwards;
+    }
+
+    @keyframes fadeInScale {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
 </style>
 
 
@@ -1086,6 +1361,131 @@
                                 <span>No hay temas disponibles</span>
                             </a>
                         @endforelse
+
+                        @if ($cursos->tipo == 'curso')
+                            <!-- Separador -->
+                            <hr class="my-4" style="border-color: rgba(26, 71, 137, 0.2);">
+
+                            <!-- Calendario de Actividades -->
+                            <div class="sidebar-section">
+                                <h6 class="mb-3 fw-bold d-flex align-items-center" style="color: var(--color-primary);">
+                                    <i class="fas fa-calendar-check me-2"></i>
+                                    Próximas Actividades
+                                </h6>
+
+                                @php
+                                    // Obtener todas las actividades (cuestionarios y tareas) del curso
+                                    $actividades = collect();
+
+                                    foreach ($temas as $tema) {
+                                        foreach ($tema->subtemas as $subtema) {
+                                            foreach ($subtema->actividades as $actividad) {
+                                                // Solo incluir cuestionarios y tareas con fecha límite
+                                                if (
+                                                    $actividad->cuestionario &&
+                                                    $actividad->cuestionario->fecha_limite
+                                                ) {
+                                                    $actividades->push([
+                                                        'tipo' => 'cuestionario',
+                                                        'titulo' => $actividad->cuestionario->titulo,
+                                                        'fecha' => $actividad->cuestionario->fecha_limite,
+                                                        'id' => $actividad->cuestionario->id,
+                                                        'subtema_id' => $subtema->id,
+                                                    ]);
+                                                }
+                                                // Aquí puedes agregar lógica para tareas si las tienes
+                                            }
+                                        }
+                                    }
+
+                                    // Ordenar por fecha y tomar las próximas 5
+                                    $proximasActividades = $actividades
+                                        ->sortBy('fecha')
+                                        ->filter(function ($act) {
+                                            return \Carbon\Carbon::parse($act['fecha'])->isFuture();
+                                        })
+                                        ->take(5);
+                                @endphp
+
+                                @if ($proximasActividades->count() > 0)
+                                    <div class="activities-calendar">
+                                        @foreach ($proximasActividades as $actividad)
+                                            @php
+                                                $fecha = \Carbon\Carbon::parse($actividad['fecha']);
+                                                $diasRestantes = now()->diffInDays($fecha, false);
+                                                $esUrgente = $diasRestantes <= 2;
+                                            @endphp
+                                            <a href="#subtema-{{ $actividad['subtema_id'] }}"
+                                                class="activity-item {{ $esUrgente ? 'urgent' : '' }}"
+                                                data-subtema-id="{{ $actividad['subtema_id'] }}">
+                                                <div class="activity-icon">
+                                                    <i
+                                                        class="fas {{ $actividad['tipo'] == 'cuestionario' ? 'fa-clipboard-check' : 'fa-tasks' }}"></i>
+                                                </div>
+                                                <div class="activity-info">
+                                                    <div class="activity-title">{{ Str::limit($actividad['titulo'], 30) }}
+                                                    </div>
+                                                    <div class="activity-date">
+                                                        <i class="fas fa-clock me-1"></i>
+                                                        {{ $fecha->format('d M') }}
+                                                        @if ($esUrgente)
+                                                            <span class="badge bg-danger ms-1">Urgente</span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div class="text-center py-3">
+                                        <i class="fas fa-calendar-times text-muted mb-2" style="font-size: 2rem;"></i>
+                                        <p class="text-muted small mb-0">No hay actividades próximas</p>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <!-- Botón de Certificado (solo para estudiantes) -->
+                            @if (auth()->user()->hasRole('Estudiante'))
+                                @php
+                                    $progreso = $cursos->calcularProgreso($inscritos2->id);
+                                    $certificadosActivos = $cursos->estado === 'Certificado Disponible';
+                                    $cursoCompletado = $progreso >= 100;
+                                    $puedeObtenerCertificado = $cursoCompletado && $certificadosActivos;
+                                @endphp
+
+                                @if ($puedeObtenerCertificado)
+                                    <hr class="my-4" style="border-color: rgba(26, 71, 137, 0.2);">
+
+                                    <div class="certificate-section">
+                                        <div class="certificate-card">
+                                            <div class="certificate-icon">
+                                                <i class="fas fa-certificate"></i>
+                                            </div>
+                                            <h6 class="certificate-title">¡Felicitaciones!</h6>
+                                            <p class="certificate-text">Has completado el curso</p>
+                                            <button type="button" class="btn btn-certificate" data-bs-toggle="modal"
+                                                data-bs-target="#certificadoModal">
+                                                <i class="fas fa-download me-2"></i>
+                                                Obtener Certificado
+                                            </button>
+                                        </div>
+                                    </div>
+                                @elseif($cursoCompletado && !$certificadosActivos)
+                                    <hr class="my-4" style="border-color: rgba(26, 71, 137, 0.2);">
+
+                                    <div class="certificate-section">
+                                        <div class="certificate-card pending">
+                                            <div class="certificate-icon">
+                                                <i class="fas fa-hourglass-half"></i>
+                                            </div>
+                                            <h6 class="certificate-title">Curso Completado</h6>
+                                            <p class="certificate-text small">Los certificados estarán disponibles pronto
+                                            </p>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endif
+                        @endif
                     </div>
                 </div>
 
@@ -1118,196 +1518,196 @@
                     @endif
 
                     <!-- Contenido principal -->
-                        <div class="course-card fade-in-up">
-                            <!-- Pestañas de navegación -->
-                            <div class="card-header">
-                                <ul class="nav nav-tabs nav-fill" id="course-tabs" role="tablist">
-                                    <li class="nav-item" role="presentation">
-                                        <a class="nav-link active px-4 py-3" id="temario-tab" data-bs-toggle="tab"
-                                            href="#tab-actividades" role="tab" aria-controls="tab-actividades"
-                                            aria-selected="true">
-                                            <i class="fas fa-list me-2"></i>Temario
-                                        </a>
-                                    </li>
+                    <div class="course-card fade-in-up">
+                        <!-- Pestañas de navegación -->
+                        <div class="card-header">
+                            <ul class="nav nav-tabs nav-fill" id="course-tabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link active px-4 py-3" id="temario-tab" data-bs-toggle="tab"
+                                        href="#tab-actividades" role="tab" aria-controls="tab-actividades"
+                                        aria-selected="true">
+                                        <i class="fas fa-list me-2"></i>Temario
+                                    </a>
+                                </li>
 
-                                    @if ($cursos->tipo == 'congreso')
-                                        <li class="nav-item" role="presentation">
-                                            <a class="nav-link px-4 py-3" id="expositores-tab" data-bs-toggle="tab"
-                                                href="#tab-expositores" role="tab" aria-controls="tab-expositores"
-                                                aria-selected="false">
-                                                <i class="fas fa-users me-2"></i>Expositores
-                                            </a>
-                                        </li>
-                                    @endif
+                                @if ($cursos->tipo == 'congreso')
                                     <li class="nav-item" role="presentation">
-                                        <a class="nav-link px-4 py-3" id="foros-tab" data-bs-toggle="tab" href="#tab-foros"
-                                            role="tab" aria-controls="tab-foros" aria-selected="false">
-                                            <i class="fas fa-comments me-2"></i>Foros
-                                            <span
-                                                class="badge bg-primary ms-2">{{ isset($foros) ? $foros->count() : 0 }}</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <a class="nav-link px-4 py-3" id="recursos-tab" data-bs-toggle="tab"
-                                            href="#tab-recursos" role="tab" aria-controls="tab-recursos"
+                                        <a class="nav-link px-4 py-3" id="expositores-tab" data-bs-toggle="tab"
+                                            href="#tab-expositores" role="tab" aria-controls="tab-expositores"
                                             aria-selected="false">
-                                            <i class="fas fa-folder-open me-2"></i>Recursos Globales
-                                            <span
-                                                class="badge bg-primary ms-2">{{ isset($recursos) ? $recursos->count() : 0 }}</span>
+                                            <i class="fas fa-users me-2"></i>Expositores
                                         </a>
                                     </li>
-                                </ul>
-                            </div>
+                                @endif
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link px-4 py-3" id="foros-tab" data-bs-toggle="tab" href="#tab-foros"
+                                        role="tab" aria-controls="tab-foros" aria-selected="false">
+                                        <i class="fas fa-comments me-2"></i>Foros
+                                        <span
+                                            class="badge bg-primary ms-2">{{ isset($foros) ? $foros->count() : 0 }}</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link px-4 py-3" id="recursos-tab" data-bs-toggle="tab"
+                                        href="#tab-recursos" role="tab" aria-controls="tab-recursos"
+                                        aria-selected="false">
+                                        <i class="fas fa-folder-open me-2"></i>Recursos Globales
+                                        <span
+                                            class="badge bg-primary ms-2">{{ isset($recursos) ? $recursos->count() : 0 }}</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
 
-                            <script>
-                                document.addEventListener('DOMContentLoaded', function() {
-                                    var links = document.querySelectorAll('#course-tabs .nav-link');
-                                    var panes = document.querySelectorAll('#course-tab-content .tab-pane');
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var links = document.querySelectorAll('#course-tabs .nav-link');
+                                var panes = document.querySelectorAll('#course-tab-content .tab-pane');
 
-                                    function activate(link) {
-                                        var targetSel = link.getAttribute('href') || link.getAttribute('data-bs-target');
-                                        var pane = document.querySelector(targetSel);
-                                        if (!pane) return;
-                                        panes.forEach(function(p) {
-                                            p.classList.remove('show', 'active');
-                                        });
-                                        pane.classList.add('show', 'active');
-                                        links.forEach(function(l) {
-                                            l.classList.remove('active');
-                                            l.setAttribute('aria-selected', 'false');
-                                        });
-                                        link.classList.add('active');
-                                        link.setAttribute('aria-selected', 'true');
-                                        if (targetSel) {
-                                            try {
-                                                location.hash = targetSel;
-                                            } catch (_) {}
-                                        }
-                                    }
-                                    links.forEach(function(link) {
-                                        link.addEventListener('click', function(e) {
-                                            e.preventDefault();
-                                            activate(link);
-                                        });
+                                function activate(link) {
+                                    var targetSel = link.getAttribute('href') || link.getAttribute('data-bs-target');
+                                    var pane = document.querySelector(targetSel);
+                                    if (!pane) return;
+                                    panes.forEach(function(p) {
+                                        p.classList.remove('show', 'active');
                                     });
-                                    var initial = location.hash;
-                                    if (initial) {
-                                        var link = document.querySelector('#course-tabs .nav-link[href="' + initial +
-                                            '"], #course-tabs .nav-link[data-bs-target="' + initial + '"]');
-                                        if (link) activate(link);
+                                    pane.classList.add('show', 'active');
+                                    links.forEach(function(l) {
+                                        l.classList.remove('active');
+                                        l.setAttribute('aria-selected', 'false');
+                                    });
+                                    link.classList.add('active');
+                                    link.setAttribute('aria-selected', 'true');
+                                    if (targetSel) {
+                                        try {
+                                            location.hash = targetSel;
+                                        } catch (_) {}
                                     }
+                                }
+                                links.forEach(function(link) {
+                                    link.addEventListener('click', function(e) {
+                                        e.preventDefault();
+                                        activate(link);
+                                    });
                                 });
-                            </script>
+                                var initial = location.hash;
+                                if (initial) {
+                                    var link = document.querySelector('#course-tabs .nav-link[href="' + initial +
+                                        '"], #course-tabs .nav-link[data-bs-target="' + initial + '"]');
+                                    if (link) activate(link);
+                                }
+                            });
+                        </script>
 
-                            <div class="card-body p-4">
-                                <div class="tab-content" id="course-tab-content">
-                                    <!-- Contenido de las pestañas -->
-                                    @include('partials.cursos.temario_tab')
+                        <div class="card-body p-4">
+                            <div class="tab-content" id="course-tab-content">
+                                <!-- Contenido de las pestañas -->
+                                @include('partials.cursos.temario_tab')
 
-                                    @if ($cursos->tipo == 'congreso')
-                                        <div class="tab-pane fade" id="tab-expositores" role="tabpanel"
-                                            aria-labelledby="expositores-tab">
-                                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                                <div>
-                                                    <h4 class="mb-1" style="color: var(--color-primary);">
-                                                        <i class="fas fa-users me-2"></i>Expositores Asignados
-                                                    </h4>
-                                                    <p class="text-muted mb-0">Profesionales que impartirán el congreso</p>
-                                                </div>
-                                                <button class="btn btn-primary" data-bs-toggle="modal"
-                                                    data-bs-target="#modalExpositores">
-                                                    <i class="fas fa-user-plus me-2"></i> Asignar Expositores
-                                                </button>
+                                @if ($cursos->tipo == 'congreso')
+                                    <div class="tab-pane fade" id="tab-expositores" role="tabpanel"
+                                        aria-labelledby="expositores-tab">
+                                        <div class="d-flex justify-content-between align-items-center mb-4">
+                                            <div>
+                                                <h4 class="mb-1" style="color: var(--color-primary);">
+                                                    <i class="fas fa-users me-2"></i>Expositores Asignados
+                                                </h4>
+                                                <p class="text-muted mb-0">Profesionales que impartirán el congreso</p>
                                             </div>
+                                            <button class="btn btn-primary" data-bs-toggle="modal"
+                                                data-bs-target="#modalExpositores">
+                                                <i class="fas fa-user-plus me-2"></i> Asignar Expositores
+                                            </button>
+                                        </div>
 
-                                            {{-- Lista de Expositores asignados --}}
-                                            <div class="row">
-                                                @forelse ($cursos->expositores as $expositor)
-                                                    <div class="col-md-6 mb-4">
-                                                        <div class="expositor-card h-100">
-                                                            <div class="row g-0 h-100">
-                                                                <div class="col-4">
-                                                                    @if ($expositor->imagen && file_exists(public_path('storage/' . $expositor->imagen)))
-                                                                        <img src="{{ asset('storage/' . $expositor->imagen) }}"
-                                                                            class="img-fluid h-100 w-100"
-                                                                            style="object-fit: cover;"
-                                                                            alt="Foto de {{ $expositor->nombre }}">
-                                                                    @else
-                                                                        <img src="{{ asset('assets2/img/talker.png') }}"
-                                                                            class="img-fluid h-100 w-100"
-                                                                            style="object-fit: cover;"
-                                                                            alt="Imagen no disponible">
-                                                                    @endif
-                                                                </div>
-                                                                <div class="col-8">
-                                                                    <div class="card-body h-100 d-flex flex-column">
-                                                                        <h5 class="card-title mb-2"
-                                                                            style="color: var(--color-primary);">
-                                                                            {{ $expositor->nombre }}
-                                                                        </h5>
-                                                                        <div class="mb-2">
-                                                                            <small class="text-muted">Cargo:</small>
-                                                                            <p class="mb-1 fw-semibold">
-                                                                                {{ $expositor->pivot->cargo ?? 'No especificado' }}
-                                                                            </p>
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <small class="text-muted">Tema:</small>
-                                                                            <p class="mb-1">
-                                                                                {{ $expositor->pivot->tema ?? 'No especificado' }}
-                                                                            </p>
-                                                                        </div>
-                                                                        <div class="mb-3">
-                                                                            <small class="text-muted">Orden:</small>
-                                                                            <span
-                                                                                class="badge bg-primary">{{ $expositor->pivot->orden ?? '-' }}</span>
-                                                                        </div>
-                                                                        @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Docente'))
-                                                                            <div class="mt-auto">
-                                                                                <form
-                                                                                    action="{{ route('cursos.quitarExpositor', [$cursos->id, $expositor->id]) }}"
-                                                                                    method="POST"
-                                                                                    onsubmit="return confirm('¿Deseas quitar este expositor del curso?');">
-                                                                                    @csrf
-                                                                                    @method('DELETE')
-                                                                                    <button
-                                                                                        class="btn btn-outline-danger btn-sm w-100"
-                                                                                        title="Quitar expositor">
-                                                                                        <i class="fas fa-times me-1"></i>
-                                                                                        Quitar Expositor
-                                                                                    </button>
-                                                                                </form>
-                                                                            </div>
-                                                                        @endif
+                                        {{-- Lista de Expositores asignados --}}
+                                        <div class="row">
+                                            @forelse ($cursos->expositores as $expositor)
+                                                <div class="col-md-6 mb-4">
+                                                    <div class="expositor-card h-100">
+                                                        <div class="row g-0 h-100">
+                                                            <div class="col-4">
+                                                                @if ($expositor->imagen && file_exists(public_path('storage/' . $expositor->imagen)))
+                                                                    <img src="{{ asset('storage/' . $expositor->imagen) }}"
+                                                                        class="img-fluid h-100 w-100"
+                                                                        style="object-fit: cover;"
+                                                                        alt="Foto de {{ $expositor->nombre }}">
+                                                                @else
+                                                                    <img src="{{ asset('assets2/img/talker.png') }}"
+                                                                        class="img-fluid h-100 w-100"
+                                                                        style="object-fit: cover;"
+                                                                        alt="Imagen no disponible">
+                                                                @endif
+                                                            </div>
+                                                            <div class="col-8">
+                                                                <div class="card-body h-100 d-flex flex-column">
+                                                                    <h5 class="card-title mb-2"
+                                                                        style="color: var(--color-primary);">
+                                                                        {{ $expositor->nombre }}
+                                                                    </h5>
+                                                                    <div class="mb-2">
+                                                                        <small class="text-muted">Cargo:</small>
+                                                                        <p class="mb-1 fw-semibold">
+                                                                            {{ $expositor->pivot->cargo ?? 'No especificado' }}
+                                                                        </p>
                                                                     </div>
+                                                                    <div class="mb-2">
+                                                                        <small class="text-muted">Tema:</small>
+                                                                        <p class="mb-1">
+                                                                            {{ $expositor->pivot->tema ?? 'No especificado' }}
+                                                                        </p>
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <small class="text-muted">Orden:</small>
+                                                                        <span
+                                                                            class="badge bg-primary">{{ $expositor->pivot->orden ?? '-' }}</span>
+                                                                    </div>
+                                                                    @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Docente'))
+                                                                        <div class="mt-auto">
+                                                                            <form
+                                                                                action="{{ route('cursos.quitarExpositor', [$cursos->id, $expositor->id]) }}"
+                                                                                method="POST"
+                                                                                onsubmit="return confirm('¿Deseas quitar este expositor del curso?');">
+                                                                                @csrf
+                                                                                @method('DELETE')
+                                                                                <button
+                                                                                    class="btn btn-outline-danger btn-sm w-100"
+                                                                                    title="Quitar expositor">
+                                                                                    <i class="fas fa-times me-1"></i>
+                                                                                    Quitar Expositor
+                                                                                </button>
+                                                                            </form>
+                                                                        </div>
+                                                                    @endif
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                @empty
-                                                    <div class="col-12">
-                                                        <div class="alert alert-info text-center py-4">
-                                                            <i class="fas fa-info-circle fa-2x mb-3"></i>
-                                                            <h5>No hay expositores asignados</h5>
-                                                            <p class="mb-0">Asigna expositores para comenzar con el congreso
-                                                            </p>
-                                                        </div>
+                                                </div>
+                                            @empty
+                                                <div class="col-12">
+                                                    <div class="alert alert-info text-center py-4">
+                                                        <i class="fas fa-info-circle fa-2x mb-3"></i>
+                                                        <h5>No hay expositores asignados</h5>
+                                                        <p class="mb-0">Asigna expositores para comenzar con el congreso
+                                                        </p>
                                                     </div>
-                                                @endforelse
-                                            </div>
+                                                </div>
+                                            @endforelse
                                         </div>
-                                    @endif
+                                    </div>
+                                @endif
 
 
 
-                                    @include('partials.cursos.foros_tab')
-                                    @include('partials.cursos.recursos_tab')
+                                @include('partials.cursos.foros_tab')
+                                @include('partials.cursos.recursos_tab')
 
 
 
-                                </div>
                             </div>
                         </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1914,6 +2314,172 @@
         }
     });
 </script>
+
+<!-- Script de Sincronización de Navegación Lateral -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Obtener todos los enlaces de subtemas en la navegación lateral
+        const sidebarLinks = document.querySelectorAll('.course-nav a[href^="#subtema-"]');
+
+        // Función para hacer scroll suave a un subtema
+        function scrollToSubtema(subtemaId) {
+            const targetElement = document.getElementById(subtemaId);
+            if (targetElement) {
+                // Primero, asegurarse de que el tab de temario esté activo
+                const temarioTab = document.querySelector('#temario-tab');
+                if (temarioTab) {
+                    temarioTab.click();
+                }
+
+                // Esperar un momento para que el tab se active
+                setTimeout(() => {
+                    // Expandir el tema correspondiente si está colapsado
+                    const temaCard = targetElement.closest('.tema-card');
+                    if (temaCard && !temaCard.classList.contains('active')) {
+                        const temaHeader = temaCard.querySelector('.tema-header');
+                        if (temaHeader) {
+                            temaHeader.click();
+                        }
+                    }
+
+                    // Esperar a que el tema se expanda
+                    setTimeout(() => {
+                        // Expandir el subtema si está colapsado
+                        const subtemaCard = targetElement.querySelector(
+                            '.subtopic-timeline-card');
+                        if (subtemaCard) {
+                            const collapseTarget = subtemaCard.querySelector(
+                                '[data-bs-toggle="collapse"]');
+                            const collapseId = collapseTarget?.getAttribute('data-bs-target');
+                            const collapseElement = collapseId ? document.querySelector(
+                                collapseId) : null;
+
+                            if (collapseElement && !collapseElement.classList.contains(
+                                    'show')) {
+                                collapseTarget.click();
+                            }
+                        }
+
+                        // Hacer scroll suave al elemento
+                        setTimeout(() => {
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start',
+                                inline: 'nearest'
+                            });
+
+                            // Agregar un efecto visual temporal
+                            targetElement.style.transition =
+                                'background-color 0.5s ease';
+                            const originalBg = targetElement.style.backgroundColor;
+                            targetElement.style.backgroundColor =
+                                'rgba(57, 166, 203, 0.1)';
+
+                            setTimeout(() => {
+                                targetElement.style.backgroundColor =
+                                    originalBg;
+                            }, 1500);
+                        }, 300);
+                    }, 300);
+                }, 100);
+            }
+        }
+
+        // Agregar event listeners a los enlaces de la navegación lateral
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const href = this.getAttribute('href');
+                const subtemaId = href.substring(1); // Remover el #
+
+                // Remover clase active de todos los enlaces
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+
+                // Agregar clase active al enlace clickeado
+                this.classList.add('active');
+
+                // Hacer scroll al subtema
+                scrollToSubtema(subtemaId);
+            });
+        });
+
+        // Función para actualizar el enlace activo basado en el scroll
+        function updateActiveLink() {
+            const scrollPosition = window.scrollY + 100; // Offset para mejor detección
+
+            // Obtener todos los subtemas visibles
+            const subtemas = document.querySelectorAll('[id^="subtema-"]');
+            let currentSubtema = null;
+
+            subtemas.forEach(subtema => {
+                const subtemaTop = subtema.offsetTop;
+                const subtemaBottom = subtemaTop + subtema.offsetHeight;
+
+                if (scrollPosition >= subtemaTop && scrollPosition < subtemaBottom) {
+                    currentSubtema = subtema;
+                }
+            });
+
+            if (currentSubtema) {
+                const subtemaId = currentSubtema.id;
+                const correspondingLink = document.querySelector(`.course-nav a[href="#${subtemaId}"]`);
+
+                if (correspondingLink) {
+                    // Remover active de todos los enlaces
+                    sidebarLinks.forEach(l => l.classList.remove('active'));
+
+                    // Agregar active al enlace correspondiente
+                    correspondingLink.classList.add('active');
+
+                    // Asegurar que el collapse del tema esté abierto
+                    const temaCollapse = correspondingLink.closest('.collapse');
+                    if (temaCollapse && !temaCollapse.classList.contains('show')) {
+                        const temaLink = document.querySelector(`[href="#${temaCollapse.id}"]`);
+                        if (temaLink) {
+                            temaLink.click();
+                        }
+                    }
+                }
+            }
+        }
+
+        // Actualizar el enlace activo al hacer scroll (con throttle para mejor rendimiento)
+        let scrollTimeout;
+        window.addEventListener('scroll', function() {
+            if (scrollTimeout) {
+                clearTimeout(scrollTimeout);
+            }
+            scrollTimeout = setTimeout(updateActiveLink, 100);
+        });
+
+        // Inicializar el enlace activo al cargar la página
+        updateActiveLink();
+
+        // ===== AGREGAR FUNCIONALIDAD PARA ENLACES DEL CALENDARIO =====
+        const activityLinks = document.querySelectorAll('.activity-item[href^="#subtema-"]');
+
+        activityLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const href = this.getAttribute('href');
+                const subtemaId = href.substring(1); // Remover el #
+
+                // Remover clase active de todos los enlaces
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                activityLinks.forEach(l => l.classList.remove('active'));
+
+                // Agregar clase active al enlace clickeado
+                this.classList.add('active');
+
+                // Hacer scroll al subtema
+                scrollToSubtema(subtemaId);
+            });
+        });
+
+        console.log('Navegación lateral sincronizada correctamente');
+    });
+</script>
+
 
 
 @include('layout')

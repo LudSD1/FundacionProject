@@ -286,7 +286,7 @@ class CuestionarioController extends Controller
             ];
         });
 
-        return redirect()->route('rankingQuizz', $id)
+        return redirect()->route('rankingQuizz', encrypt($id))
             ->with('success', "Cuestionario completado. Puntaje obtenido: {$resultado['puntajeObtenido']}/{$resultado['puntajeTotal']}.");
     }
 

@@ -349,7 +349,10 @@
                                             <th>Calificación</th>
                                             <th>Estado</th>
                                             <th>Fecha</th>
+                                            @hasrole('Docente')
                                             <th>Acciones</th>
+                                            @endhasrole
+
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -395,12 +398,14 @@
                                                         {{ $intento->finalizado_en ? $intento->finalizado_en->format('d/m/Y H:i') : 'En curso' }}
                                                     </small>
                                                 </td>
+                                                @hasrole('Docente')
                                                 <td>
-                                                    <a href="{{ route('cuestionarios.revisarIntento', [encrypt($cuestionario->id), encrypt($intento->id)]) }}"
+                                                    <a href="{{ route('cuestionarios.revisarIntento', [encrypt($intento->cuestionario->id), encrypt($intento->id)]) }}"
                                                         class="btn btn-outline-primary btn-sm">
                                                         <i class="fas fa-eye me-1"></i>Ver
                                                     </a>
                                                 </td>
+                                                @endhasrole
                                             </tr>
                                         @endforeach
                                     </tbody>

@@ -180,14 +180,13 @@
             <!-- Estado Vacío -->
             <div class="empty-state">
                 <div class="empty-content">
-                    <i class="fas fa-book-open fa-4x text-muted mb-4"></i>
                     <h3 class="empty-title">No hay recursos disponibles</h3>
                     <p class="empty-text">El instructor aún no ha subido material de apoyo para este curso.</p>
 
                     @if (auth()->user()->id == $cursos->docente_id)
-                        <a href="{{ route('CrearRecursos', encrypt($cursos->id)) }}" class="btn btn-primary btn-lg">
-                            <i class="fas fa-plus-circle me-2"></i>
-                            Crear Primer Recurso
+                        <a href="{{ route('CrearRecursos', encrypt($cursos->id)) }}" class="btn btn-primary btn-action"
+                            data-bs-toggle="modal" data-bs-target="#modalCrearRecurso">
+                            Nuevo Recurso
                         </a>
                     @endif
                 </div>
