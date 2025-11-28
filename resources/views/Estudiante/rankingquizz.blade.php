@@ -398,7 +398,7 @@
                                                         {{ $intento->finalizado_en ? $intento->finalizado_en->format('d/m/Y H:i') : 'En curso' }}
                                                     </small>
                                                 </td>
-                                                @hasrole('Docente')
+                                                @hasrole(  'Docente')
                                                 <td>
                                                     <a href="{{ route('cuestionarios.revisarIntento', [encrypt($intento->cuestionario->id), encrypt($intento->id)]) }}"
                                                         class="btn btn-outline-primary btn-sm">
