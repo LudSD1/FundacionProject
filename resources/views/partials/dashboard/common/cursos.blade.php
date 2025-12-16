@@ -959,7 +959,7 @@
                                             @endif
 
                                             <div class="course-actions-enhanced">
-                                                <a href="{{ route('evento.detalle', encrypt($inscrito->cursos_id)) }}"
+                                                <a href="{{ route('congreso.detalle', $inscrito->cursos_id) }}"
                                                     class="btn-course-action btn-course-success">
                                                     <i class="fas fa-door-open me-2"></i>
                                                     Acceder al Congreso

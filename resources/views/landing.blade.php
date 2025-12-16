@@ -16,7 +16,7 @@
                             Aprende a tu ritmo, donde quieras y cuando quieras.
                         </p>
                         <a href="{{ route('lista.cursos.congresos') }}" class="download-btn">
-                           Explorar Cursos y Eventos
+                            Explorar Cursos y Eventos
                         </a>
                     </div>
                 </div>
@@ -31,7 +31,7 @@
 
 
 
-@section('main')  
+@section('main')
 
     <main id="main">
         {{-- Buscador --}}
@@ -76,7 +76,7 @@
                                                         </p>
                                                         <p class="small text-muted mb-3">
                                                             {{ Str::limit($congreso->descripcionC, 100) }}</p>
-                                                        <a href="{{ route('evento.detalle', encrypt($congreso->id)) }}"
+                                                        <a href="{{ $congreso->url }}"
                                                             class="btn btn-primary btn-sm mt-auto">Inscribirse</a>
                                                     </div>
                                                 </div>
@@ -183,7 +183,8 @@
                 <div class="section-title">
                     <h2>🚀 ¿Por qué elegir APRENDO HOY?</h2>
                     <p>Descubre una plataforma educativa innovadora diseñada para tu éxito. Con tecnología avanzada,
-                        contenido de calidad y un enfoque centrado en el estudiante, transformamos tu experiencia de aprendizaje.</p>
+                        contenido de calidad y un enfoque centrado en el estudiante, transformamos tu experiencia de
+                        aprendizaje.</p>
                 </div>
 
                 <div class="row align-items-center">
@@ -193,21 +194,24 @@
                                 <div class="icon-box" data-aos="fade-up">
                                     <i class="bx bx-receipt"></i>
                                     <h4>📊 Evaluación Personalizada</h4>
-                                    <p>Análisis detallado de tu progreso con recomendaciones personalizadas para optimizar tu aprendizaje.</p>
+                                    <p>Análisis detallado de tu progreso con recomendaciones personalizadas para optimizar
+                                        tu aprendizaje.</p>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="icon-box" data-aos="fade-up" data-aos-delay="100">
                                     <i class="bx bx-cube-alt"></i>
                                     <h4>🎨 Interfaz Intuitiva</h4>
-                                    <p>Diseño moderno y fácil navegación que te permite acceder a todos los recursos sin complicaciones.</p>
+                                    <p>Diseño moderno y fácil navegación que te permite acceder a todos los recursos sin
+                                        complicaciones.</p>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="icon-box" data-aos="fade-up" data-aos-delay="200">
                                     <i class="bx bx-images"></i>
                                     <h4>📚 Recursos Educativos</h4>
-                                    <p>Contenido multimedia de alta calidad: videos, lecturas y ejercicios prácticos creados por expertos.</p>
+                                    <p>Contenido multimedia de alta calidad: videos, lecturas y ejercicios prácticos creados
+                                        por expertos.</p>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -221,21 +225,24 @@
                                 <div class="icon-box" data-aos="fade-up" data-aos-delay="400">
                                     <i class="bx bx-atom"></i>
                                     <h4>🤝 Aprendizaje Interactivo</h4>
-                                    <p>Foros, sesiones en vivo y actividades colaborativas que hacen del aprendizaje una experiencia dinámica.</p>
+                                    <p>Foros, sesiones en vivo y actividades colaborativas que hacen del aprendizaje una
+                                        experiencia dinámica.</p>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="icon-box" data-aos="fade-up" data-aos-delay="500">
                                     <i class="bx bx-id-card"></i>
                                     <h4>🌐 Acceso Ilimitado</h4>
-                                    <p>Estudia cuando y donde quieras con acceso completo a todos nuestros cursos desde cualquier dispositivo.</p>
+                                    <p>Estudia cuando y donde quieras con acceso completo a todos nuestros cursos desde
+                                        cualquier dispositivo.</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-6 order-1 order-lg-2 text-center">
                         <div class="features-image" data-aos="fade-left" data-aos-delay="100">
-                            <img src="assets2/img/details-5.png" class="img-fluid" alt="Características" style="max-width: 100%; height: auto;">
+                            <img src="assets2/img/details-5.png" class="img-fluid" alt="Características"
+                                style="max-width: 100%; height: auto;">
                         </div>
                     </div>
                 </div>
@@ -316,7 +323,7 @@
                         <div class="collaborators-grid">
                             <div class="collaborator-item" data-aos="fade-up" data-aos-delay="100">
                                 <img src="https://cdn.jsdelivr.net/gh/LudSD1/aphcolaboradores@main/logos/logo1.png"
-                                     alt="Colaborador 1" class="img-fluid">
+                                    alt="Colaborador 1" class="img-fluid">
                             </div>
                             {{-- <div class="collaborator-item" data-aos="fade-up" data-aos-delay="200">
                                 <img src="https://cdn.jsdelivr.net/gh/LudSD1/aphcolaboradores@main/logos/logo2.png"

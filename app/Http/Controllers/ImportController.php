@@ -16,7 +16,7 @@ class ImportController extends Controller
             ->where('fecha_fin', '>=', now())
             ->get();
 
-        return view('administrador.userExcel', compact('congresos'));
+        return view('Administrador.userExcel', compact('congresos'));
     }
 
     public function importUsers(Request $request)

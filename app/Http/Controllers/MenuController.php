@@ -23,16 +23,41 @@ class MenuController extends Controller
 {
     public function detalle(Cursos $curso)
     {
-        // Cargar relaciones necesarias sobre la instancia del curso ya vinculada
+        // Cargar TODAS las relaciones necesarias de una sola vez para evitar N+1 queries
         $curso->load([
-            'calificaciones.user',
-            'inscritos' => function ($query) {
-                $query->whereNull('deleted_at');
+            // Calificaciones con usuarios
+            'calificaciones.user' => function ($query) {
+                $query->select('id', 'name', 'lastname1', 'lastname2');
             },
-        ])->loadAvg('calificaciones', 'puntuacion')
+            // Inscritos activos con certificados
+            'inscritos' => function ($query) {
+                $query->whereNull('deleted_at')
+                    ->with('certificado');
+            },
+            // Temas ordenados (para la sección de temario)
+            'temas' => function ($query) {
+                $query->orderBy('orden', 'asc')
+                    ->select('id', 'curso_id', 'titulo_tema', 'descripcion', 'orden');
+            },
+            // Expositores con datos del pivot (para congresos)
+            'expositores' => function ($query) {
+                $query->select('expositores.id', 'expositores.nombre', 'expositores.imagen')
+                    ->orderBy('curso_expositor.orden');
+            },
+            // Imágenes del curso ordenadas
+            'imagenes' => function ($query) {
+                $query->where('activo', true)
+                    ->orderBy('orden')
+                    ->select('id', 'curso_id', 'url', 'titulo', 'orden', 'activo');
+            },
+        ])
+            ->loadAvg('calificaciones', 'puntuacion')
             ->loadCount('calificaciones');
 
-        $metodosPago = PaymentMethod::all();
+        // Cargar métodos de pago activos solamente
+        $metodosPago = PaymentMethod::where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
 
         // Inicializar variables
         $usuarioInscrito = null;
@@ -47,10 +72,9 @@ class MenuController extends Controller
         if (Auth::check()) {
             $userId = Auth::id();
 
-            // Verificar inscripción activa
-            $usuarioInscrito = Inscritos::where('estudiante_id', $userId)
-                ->where('cursos_id', $curso->id)
-                ->whereNull('deleted_at')
+            // Verificar inscripción activa (ya está cargada en la relación)
+            $usuarioInscrito = $curso->inscritos
+                ->where('estudiante_id', $userId)
                 ->first();
 
             // Verificar si fue retirado anteriormente
@@ -73,18 +97,24 @@ class MenuController extends Controller
                 $pagoAnterior = Aportes::where('estudiante_id', $userId)
                     ->where('cursos_id', $curso->id)
                     ->where('monto_pagado', '>=', $curso->precio)
+                    ->select('id', 'estudiante_id', 'cursos_id', 'monto_pagado')
                     ->first();
 
                 $yaHaPagado = $pagoAnterior !== null;
             }
 
-            // Verificar calificación del usuario
+            // Verificar calificación del usuario (ya está cargada en la relación)
             $calificacionUsuario = $curso->calificaciones
                 ->where('user_id', $userId)
                 ->first();
 
             $usuarioCalifico = $calificacionUsuario !== null;
         }
+
+        // Obtener las 5 calificaciones más recientes (ya están cargadas, solo filtrar)
+        $calificacionesRecientes = $curso->calificaciones
+            ->sortByDesc('created_at')
+            ->take(5);
 
         return view('cursosDetalle', [
             'cursos' => $curso,
@@ -95,11 +125,7 @@ class MenuController extends Controller
             'calificacionUsuario' => $calificacionUsuario,
             'yaHaPagado' => $yaHaPagado,
             'pagoAnterior' => $pagoAnterior,
-            'calificacionesRecientes' => $curso->calificaciones()
-                ->with('user')
-                ->latest()
-                ->take(5)
-                ->get(),
+            'calificacionesRecientes' => $calificacionesRecientes,
             'metodosPago' => $metodosPago,
         ]);
     }
@@ -395,81 +421,81 @@ class MenuController extends Controller
         return view('Administrador.CrearCursos')->with('docente', $docente)->with('horario', $horario);
     }
 
-  public function calendario()
-{
-    $user = Auth::user();
-    $cursos = $this->obtenerCursosPorRol($user);
+    public function calendario()
+    {
+        $user = Auth::user();
+        $cursos = $this->obtenerCursosPorRol($user);
 
-    // Si no hay cursos, mostrar calendario vacío con mensaje
-    if ($cursos->isEmpty()) {
-        return view('calendario', [
-            'cursos' => collect(),
-            'eventos' => [],
-            'estadisticas' => [
-                'total' => 0,
-                'entregadas' => 0,
-                'pendientes' => 0,
-                'proximasVencer' => 0
-            ]
-        ])->with('warning', 'No tienes cursos asignados.');
+        // Si no hay cursos, mostrar calendario vacío con mensaje
+        if ($cursos->isEmpty()) {
+            return view('calendario', [
+                'cursos' => collect(),
+                'eventos' => [],
+                'estadisticas' => [
+                    'total' => 0,
+                    'entregadas' => 0,
+                    'pendientes' => 0,
+                    'proximasVencer' => 0
+                ]
+            ])->with('warning', 'No tienes cursos asignados.');
+        }
+
+        $fechaInicio = now()->subMonths(1);
+        $fechaFin = now()->addMonths(6);
+
+        $actividades = $this->obtenerActividadesPorCursos($cursos, $fechaInicio, $fechaFin);
+        $eventos = $this->formatearEventosParaFullCalendar($actividades);
+        $estadisticas = $this->calcularEstadisticas($actividades, auth()->user());
+
+        return view('calendario', compact('cursos', 'eventos', 'estadisticas'));
     }
 
-    $fechaInicio = now()->subMonths(1);
-    $fechaFin = now()->addMonths(6);
+    private function formatearEventosParaFullCalendar($actividades)
+    {
+        return $actividades->map(function ($actividad) {
+            $fechaVencimiento = \Carbon\Carbon::parse($actividad->fecha_vencimiento);
+            $ahora = now();
 
-    $actividades = $this->obtenerActividadesPorCursos($cursos, $fechaInicio, $fechaFin);
-    $eventos = $this->formatearEventosParaFullCalendar($actividades);
-    $estadisticas = $this->calcularEstadisticas($actividades, auth()->user());
+            // Determinar color según estado y urgencia
+            $color = $this->determinarColorEvento($actividad, $fechaVencimiento, $ahora);
 
-    return view('calendario', compact('cursos', 'eventos', 'estadisticas'));
-}
-
-private function formatearEventosParaFullCalendar($actividades)
-{
-    return $actividades->map(function ($actividad) {
-        $fechaVencimiento = \Carbon\Carbon::parse($actividad->fecha_vencimiento);
-        $ahora = now();
-        
-        // Determinar color según estado y urgencia
-        $color = $this->determinarColorEvento($actividad, $fechaVencimiento, $ahora);
-        
-        return [
-            'id' => $actividad->id,
-            'title' => $actividad->titulo,
-            'start' => $fechaVencimiento->format('Y-m-d'),
-            'end' => $fechaVencimiento->format('Y-m-d'),
-            'color' => $color,
-            'textColor' => '#ffffff',
-            'extendedProps' => [
-                'curso' => $actividad->subtema->tema->curso->nombreCurso,
-                'tipo' => $actividad->tipo,
-                'estado' => $actividad->estado,
-                'descripcion' => $actividad->descripcion,
-                'urgente' => $fechaVencimiento->diffInDays($ahora) <= 2,
-                'entregada' => $actividad->estado === 'entregada'
-            ]
-        ];
-    });
-}
-
-private function determinarColorEvento($actividad, $fechaVencimiento, $ahora)
-{
-    if ($actividad->estado === 'entregada') {
-        return '#28a745'; // Verde para entregadas
+            return [
+                'id' => $actividad->id,
+                'title' => $actividad->titulo,
+                'start' => $fechaVencimiento->format('Y-m-d'),
+                'end' => $fechaVencimiento->format('Y-m-d'),
+                'color' => $color,
+                'textColor' => '#ffffff',
+                'extendedProps' => [
+                    'curso' => $actividad->subtema->tema->curso->nombreCurso,
+                    'tipo' => $actividad->tipo,
+                    'estado' => $actividad->estado,
+                    'descripcion' => $actividad->descripcion,
+                    'urgente' => $fechaVencimiento->diffInDays($ahora) <= 2,
+                    'entregada' => $actividad->estado === 'entregada'
+                ]
+            ];
+        });
     }
-    
-    $diasRestantes = $fechaVencimiento->diffInDays($ahora, false);
-    
-    if ($diasRestantes < 0) {
-        return '#dc3545'; // Rojo para vencidas
-    } elseif ($diasRestantes <= 2) {
-        return '#ffc107'; // Amarillo para próximas a vencer
-    } elseif ($diasRestantes <= 7) {
-        return '#fd7e14'; // Naranja para esta semana
-    } else {
-        return '#17a2b8'; // Azul para normales
+
+    private function determinarColorEvento($actividad, $fechaVencimiento, $ahora)
+    {
+        if ($actividad->estado === 'entregada') {
+            return '#28a745'; // Verde para entregadas
+        }
+
+        $diasRestantes = $fechaVencimiento->diffInDays($ahora, false);
+
+        if ($diasRestantes < 0) {
+            return '#dc3545'; // Rojo para vencidas
+        } elseif ($diasRestantes <= 2) {
+            return '#ffc107'; // Amarillo para próximas a vencer
+        } elseif ($diasRestantes <= 7) {
+            return '#fd7e14'; // Naranja para esta semana
+        } else {
+            return '#17a2b8'; // Azul para normales
+        }
     }
-}
 
     private function obtenerCursosPorRol($user)
     {
@@ -650,7 +676,4 @@ private function determinarColorEvento($actividad, $fechaVencimiento, $ahora)
 
         return view('Docente.analitics')->with('cursos2', $cursos2);
     }
-
-
-
 }

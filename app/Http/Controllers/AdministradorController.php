@@ -420,10 +420,21 @@ class AdministradorController extends Controller
     private function crearCurso($request)
     {
 
-
         $curso = new Cursos;
         $curso->nombreCurso = $request->nombre;
-        $curso->codigoCurso = $request->nombre . '_' . $request->docente_id . '_' . date("Ymd", strtotime($request->fecha_ini));
+
+        // Generar slug único desde el nombre del curso
+        $slug = \Illuminate\Support\Str::slug($request->nombre);
+        $originalSlug = $slug;
+        $counter = 1;
+
+        // Asegurar que el slug sea único
+        while (Cursos::where('codigoCurso', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $counter;
+            $counter++;
+        }
+
+        $curso->codigoCurso = $slug;
         $curso->descripcionC = $request->descripcion ?? '';
         $curso->fecha_ini = $request->fecha_ini . ' ' . $request->hora_ini;
         $curso->fecha_fin = $request->fecha_fin . ' ' . $request->hora_fin;

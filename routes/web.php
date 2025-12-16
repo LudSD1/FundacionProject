@@ -95,7 +95,24 @@ Route::post('/resgistrarse/Congreso/{id}', [CertificadoController::class, 'regis
 Route::post('/congreso/inscribir', [CertificadoController::class, 'inscribir'])
     ->name('congreso.inscribir');
 
-Route::get('/Detalle/{curso}', [MenuController::class, 'detalle'])->name('evento.detalle');
+// Rutas mejoradas para cursos y congresos (URLs más limpias y SEO-friendly)
+Route::get('/curso/{curso}', [MenuController::class, 'detalle'])->name('curso.detalle');
+Route::get('/congreso/{curso}', [MenuController::class, 'detalle'])->name('congreso.detalle');
+
+// Ruta legacy para compatibilidad (redirige a la nueva ruta)
+Route::get('/Detalle/{curso}', function ($curso) {
+    try {
+        // Intentar desencriptar si es un ID encriptado
+        $cursoId = is_numeric($curso) ? $curso : decrypt($curso);
+        $cursoModel = App\Models\Cursos::findOrFail($cursoId);
+
+        // Redirigir a la nueva ruta según el tipo
+        $routeName = $cursoModel->tipo === 'congreso' ? 'congreso.detalle' : 'curso.detalle';
+        return redirect()->route($routeName, $cursoModel->id, 301);
+    } catch (\Exception $e) {
+        abort(404);
+    }
+})->name('evento.detalle');
 Route::get('/Lista-General', [MenuController::class, 'lista'])->name('lista.cursos.congresos');
 Route::get('/', [MenuController::class, 'home'])->middleware('noCache')->name('home');
 

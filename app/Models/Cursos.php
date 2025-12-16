@@ -57,7 +57,42 @@ class Cursos extends BaseModel
 
     protected $appends = [
         'duracion_formateada',
+        'url', // URL amigable del curso
     ];
+
+    /**
+     * Obtiene la URL amigable del curso/congreso usando codigoCurso como slug
+     */
+    public function getUrlAttribute()
+    {
+        $routeName = $this->tipo === 'congreso' ? 'congreso.detalle' : 'curso.detalle';
+        return route($routeName, $this->codigoCurso ?? $this->id);
+    }
+
+    /**
+     * Obtiene la clave de ruta para model binding (usa codigoCurso como slug)
+     */
+    public function getRouteKeyName()
+    {
+        return 'codigoCurso';
+    }
+
+    /**
+     * Resolver el route model binding por codigoCurso
+     */
+    public function resolveRouteBinding($value, $field = null)
+    {
+        // Intentar buscar por codigoCurso primero
+        $curso = $this->where('codigoCurso', $value)->first();
+
+        // Si no se encuentra y el valor es numérico, buscar por ID (compatibilidad)
+        if (!$curso && is_numeric($value)) {
+            $curso = $this->where('id', $value)->first();
+        }
+
+        return $curso ?? abort(404);
+    }
+
     public function getDuracionFormateadaAttribute()
     {
         return gmdate("H:i:s", $this->duracion);
@@ -97,8 +132,8 @@ class Cursos extends BaseModel
     public function horarios()
     {
         return $this->belongsToMany(Horario::class, 'cursos_horarios', 'curso_id', 'horario_id')
-                    ->withTimestamps()
-                    ->withPivot('id');
+            ->withTimestamps()
+            ->withPivot('id');
     }
     public function inscritos(): HasMany
     {
@@ -256,7 +291,7 @@ class Cursos extends BaseModel
         ];
     }
 
-        protected function proximamente(): Attribute
+    protected function proximamente(): Attribute
     {
         return Attribute::get(function () {
             return $this->fecha_ini > now();
