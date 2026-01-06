@@ -1,4 +1,4 @@
-@section('titulo')
+     @section('titulo')
 
 Editar Perfil
 @endsection
@@ -25,8 +25,7 @@ Editar Perfil
                 <button class="nav-link" id="role-tab" data-bs-toggle="tab" data-bs-target="#role" type="button" role="tab" aria-controls="role" aria-selected="false">
                     <i class="fas fa-user-cog"></i> Cambiar Rol
                 </button>
-            </li>
-            @endhasrole
+            </li> 
         </ul>
 
 

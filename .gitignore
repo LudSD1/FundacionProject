@@ -24,3 +24,4 @@ docker-compose.yml
 /storage/framework/views/*
 /storage/logs/*
 /storage/backups/*
+/docs

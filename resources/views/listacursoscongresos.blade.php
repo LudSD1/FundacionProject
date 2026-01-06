@@ -456,7 +456,7 @@
                                                     <img src="{{ asset('assets/img/bg2.png') }}"
                                                         class="img-fluid rounded-start course-list-image"
                                                         alt="{{ $curso->nombreCurso }}">
-                                                @endif
+                                                @endif   
                                             </div>
                                             <div class="col-md-8">
                                                 <div class="card-body course-list-body">
