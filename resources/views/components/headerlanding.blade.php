@@ -12,10 +12,10 @@
 
                 <!-- Buscador centrado -->
                 <div class="search-section">
-                    <form action="" method="GET" class="search-form">
+                    <form action="{{ route('lista.cursos.congresos') }}" method="GET" class="search-form">
                         <div class="input-group">
-                            <input type="text" name="q" placeholder="Buscar cursos, eventos..."
-                                class="form-control search-input">
+                            <input type="text" name="search" placeholder="Buscar cursos, eventos..."
+                                class="form-control search-input" value="{{ request('search') }}">
                             <button type="submit" class="btn btn-primary search-btn">
                                 <i class="bi bi-search"></i>
                             </button>
@@ -71,10 +71,10 @@
                     <div class="mobile-menu-content">
                         <!-- Búsqueda móvil -->
                         <div class="mobile-search mb-4">
-                            <form action="" method="GET">
+                            <form action="{{ route('lista.cursos.congresos') }}" method="GET">
                                 <div class="input-group">
-                                    <input type="text" name="q" placeholder="Buscar cursos, eventos..."
-                                        class="form-control mobile-search-input">
+                                    <input type="text" name="search" placeholder="Buscar cursos, eventos..."
+                                        class="form-control mobile-search-input" value="{{ request('search') }}">
                                     <button type="submit" class="btn btn-primary mobile-search-btn">
                                         <i class="bi bi-search"></i>
                                     </button>

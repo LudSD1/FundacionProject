@@ -20,9 +20,86 @@
                         </a>
                     </div>
                 </div>
-                <div class="col-lg-6 d-lg-flex flex-lg-column align-items-stretch order-1 order-lg-2 hero-img"
+                <div class="col-lg-6 d-lg-flex flex-lg-column align-items-stretch order-1 order-lg-2 hero-carousel-container"
                     data-aos="fade-up">
-                    <img src="assets2/img/hero-img.png" class="img-fluid" alt="Hero Image">
+                    @php
+                        // Combinar congresos y cursos para el carousel del hero
+                        $destacados = collect();
+                        if ($congresos->count()) {
+                            $destacados = $destacados->merge($congresos->take(3));
+                        }
+                        if ($cursos->count()) {
+                            $destacados = $destacados->merge($cursos->take(3));
+                        }
+                    @endphp
+
+                    @if ($destacados->count())
+                        <div id="heroCarousel" class="carousel slide hero-carousel" data-bs-ride="carousel"
+                            data-bs-interval="4000">
+                            <div class="carousel-indicators">
+                                @foreach ($destacados as $index => $item)
+                                    <button type="button" data-bs-target="#heroCarousel"
+                                        data-bs-slide-to="{{ $index }}" class="{{ $index == 0 ? 'active' : '' }}"
+                                        aria-current="{{ $index == 0 ? 'true' : 'false' }}"
+                                        aria-label="Slide {{ $index + 1 }}"></button>
+                                @endforeach
+                            </div>
+                            <div class="carousel-inner">
+                                @foreach ($destacados as $index => $item)
+                                    @php
+                                        $fecha_ini = \Carbon\Carbon::parse($item->fecha_ini);
+                                        $fecha_fin = \Carbon\Carbon::parse($item->fecha_fin);
+                                        $esCongreso = $item->tipo === 'Congreso';
+                                    @endphp
+                                    <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                                        <div class="hero-card">
+                                            <div class="hero-card-badge">
+                                                {{ $esCongreso ? '🎯 Evento' : '📚 Curso' }}
+                                            </div>
+                                            <div class="hero-card-image">
+                                                <img src="{{ asset($esCongreso ? 'assets2/img/congress.jpg' : 'assets2/img/curso.jpg') }}"
+                                                    alt="{{ $item->nombreCurso }}">
+                                            </div>
+                                            <div class="hero-card-content">
+                                                <h3 class="hero-card-title">{{ Str::limit($item->nombreCurso, 50) }}</h3>
+                                                <p class="hero-card-date">
+                                                    📅
+                                                    @if ($fecha_ini->month == $fecha_fin->month)
+                                                        {{ $fecha_ini->format('d') }} - {{ $fecha_fin->format('d') }} de
+                                                        {{ $fecha_ini->locale('es')->isoFormat('MMMM') }}
+                                                    @else
+                                                        {{ $fecha_ini->format('d') }} de
+                                                        {{ $fecha_ini->locale('es')->isoFormat('MMMM') }} -
+                                                        {{ $fecha_fin->format('d') }} de
+                                                        {{ $fecha_fin->locale('es')->isoFormat('MMMM') }}
+                                                    @endif
+                                                </p>
+                                                <p class="hero-card-description">
+                                                    {{ Str::limit($item->descripcionC, 100) }}
+                                                </p>
+                                                <a href="{{ $esCongreso ? $item->url : route('evento.detalle', $item) }}"
+                                                    class="hero-card-btn">
+                                                    Ver Detalles <i class="bi bi-arrow-right ms-2"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel"
+                                data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Anterior</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel"
+                                data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Siguiente</span>
+                            </button>
+                        </div>
+                    @else
+                        <img src="assets2/img/hero-img.png" class="img-fluid" alt="Hero Image">
+                    @endif
                 </div>
             </div>
         </div>

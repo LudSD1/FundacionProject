@@ -1,5 +1,7 @@
 @php
-    $achievements = \App\Models\Achievement::with('users')->get();
+    $achievements = \App\Models\Achievement::with(['users', 'inscritos'])
+        ->withCount(['users', 'inscritos'])
+        ->get();
 @endphp
 
 <!-- ========================================================= -->
@@ -44,7 +46,12 @@
                         <div>
                             <h5 class="card-title mb-1">{{ $achievement->title }}</h5>
                             <p class="card-subtitle text-muted">
-                                {{ $achievement->users->count() ?? 0 }} usuarios han obtenido este logro
+                                @php
+                                    $totalCount =
+                                        ($achievement->users_count ?? 0) + ($achievement->inscritos_count ?? 0);
+                                @endphp
+                                {{ $totalCount }} {{ $totalCount === 1 ? 'usuario ha' : 'usuarios han' }} obtenido
+                                este logro
                             </p>
                         </div>
                     </div>
@@ -55,16 +62,15 @@
                     <!-- === PROGRESO (solo si aplica) === -->
                     @if ($achievement->requirement_value > 1)
                         @php
-                            $progress = $achievement->users->count()
-                                ? ($achievement->users->count() / $achievement->requirement_value) * 100
-                                : 0;
+                            $totalCount = ($achievement->users_count ?? 0) + ($achievement->inscritos_count ?? 0);
+                            $progress = $totalCount > 0 ? ($totalCount / $achievement->requirement_value) * 100 : 0;
                             $progress = min(100, $progress);
                         @endphp
 
                         <div class="progress mb-3">
                             <div class="progress-bar bg-success" role="progressbar" style="width: {{ $progress }}%"
                                 aria-valuenow="{{ $progress }}" aria-valuemin="0" aria-valuemax="100">
-                                {{ $achievement->users->count() }}/{{ $achievement->requirement_value }}
+                                {{ $totalCount }}/{{ $achievement->requirement_value }}
                             </div>
                         </div>
                     @endif
@@ -144,7 +150,8 @@
 <!-- ========================================================= -->
 <!-- MODAL: NUEVO LOGRO -->
 <!-- ========================================================= -->
-<div class="modal fade" id="newAchievementModal" tabindex="-1" aria-labelledby="newAchievementModalLabel" aria-hidden="true">
+<div class="modal fade" id="newAchievementModal" tabindex="-1" aria-labelledby="newAchievementModalLabel"
+    aria-hidden="true">
 
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
         <div class="modal-content">
