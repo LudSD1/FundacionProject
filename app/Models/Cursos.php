@@ -79,16 +79,12 @@ class Cursos extends BaseModel
 
     /**
      * Resolver el route model binding por codigoCurso
+     * Solo acepta codigoCurso, no IDs numéricos
      */
     public function resolveRouteBinding($value, $field = null)
     {
-        // Intentar buscar por codigoCurso primero
+        // Buscar SOLO por codigoCurso
         $curso = $this->where('codigoCurso', $value)->first();
-
-        // Si no se encuentra y el valor es numérico, buscar por ID (compatibilidad)
-        if (!$curso && is_numeric($value)) {
-            $curso = $this->where('id', $value)->first();
-        }
 
         return $curso ?? abort(404);
     }

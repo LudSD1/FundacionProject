@@ -77,8 +77,7 @@
                                                 <p class="hero-card-description">
                                                     {{ Str::limit($item->descripcionC, 100) }}
                                                 </p>
-                                                <a href="{{ $esCongreso ? $item->url : route('evento.detalle', $item) }}"
-                                                    class="hero-card-btn">
+                                                <a href="{{ $item->url }}" class="hero-card-btn">
                                                     Ver Detalles <i class="bi bi-arrow-right ms-2"></i>
                                                 </a>
                                             </div>
@@ -224,7 +223,7 @@
                                                         </p>
                                                         <p class="small text-muted mb-3">
                                                             {{ Str::limit($curso->descripcionC, 100) }}</p>
-                                                        <a href="{{ route('evento.detalle', $curso) }}"
+                                                        <a href="{{ $curso->url }}"
                                                             class="btn btn-primary btn-sm mt-auto">Inscribirse</a>
                                                     </div>
                                                 </div>

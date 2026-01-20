@@ -215,33 +215,32 @@
                                 @endrole
 
                                 <!-- Certificate Options -->
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+
+                                @if ($cursos->estado === 'Certificado Disponible')
                                     <li>
-                                        <hr class="dropdown-divider">
+                                        <button type="button" class="dropdown-item" data-bs-toggle="modal"
+                                            data-bs-target="#certificadoModal">
+                                            <i class="fas fa-certificate text-warning"></i>
+                                            Obtener Certificado
+                                        </button>
                                     </li>
+                                @endif
 
-                                    @if ($cursos->estado === 'Certificado Disponible')
-                                        <li>
-                                            <button type="button" class="dropdown-item" data-bs-toggle="modal"
-                                                data-bs-target="#certificadoModal">
-                                                <i class="fas fa-certificate text-warning"></i>
-                                                Obtener Certificado
+                                @if ($cursos->estado == 'Activo')
+                                    <li>
+                                        <form action="{{ route('cursos.activarCertificados', ['id' => $cursos->id]) }}"
+                                            method="POST">
+                                            @csrf
+                                            <button type="submit" class="dropdown-item">
+                                                <i class="fas fa-certificate text-success"></i>
+                                                Activar Certificados
                                             </button>
-                                        </li>
-                                    @endif
-
-                                    @if ($cursos->estado == 'Activo')
-                                        <li>
-                                            <form
-                                                action="{{ route('cursos.activarCertificados', ['id' => $cursos->id]) }}"
-                                                method="POST">
-                                                @csrf
-                                                <button type="submit" class="dropdown-item">
-                                                    <i class="fas fa-certificate text-success"></i>
-                                                    Activar Certificados
-                                                </button>
-                                            </form>
-                                        </li>
-                                    @endif
+                                        </form>
+                                    </li>
+                                @endif
 
                                 @if (auth()->user()->hasRole('Administrador') || $esDocente)
                                     @if (!isset($template))
@@ -1294,7 +1293,7 @@
 
 
 @section('content')
-    @if ((auth()->user()->hasRole('Docente') && $esDocente) || (auth()->user()->hasRole('Estudiante') && $inscritos))
+    @if ($esDocenteOAdmin || (auth()->user()->hasRole('Estudiante') && $inscritos))
         <div class="container-fluid py-4">
             <div class="row">
                 <!-- Navegación lateral -->
@@ -1557,162 +1556,121 @@
                                     </a>
                                 </li>
                             </ul>
-                        </div>
 
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                var links = document.querySelectorAll('#course-tabs .nav-link');
-                                var panes = document.querySelectorAll('#course-tab-content .tab-pane');
+                            <div class="card-body p-4">
+                                <div class="tab-content" id="course-tab-content">
+                                    <!-- Contenido de las pestañas -->
+                                    @include('partials.cursos.temario_tab')
 
-                                function activate(link) {
-                                    var targetSel = link.getAttribute('href') || link.getAttribute('data-bs-target');
-                                    var pane = document.querySelector(targetSel);
-                                    if (!pane) return;
-                                    panes.forEach(function(p) {
-                                        p.classList.remove('show', 'active');
-                                    });
-                                    pane.classList.add('show', 'active');
-                                    links.forEach(function(l) {
-                                        l.classList.remove('active');
-                                        l.setAttribute('aria-selected', 'false');
-                                    });
-                                    link.classList.add('active');
-                                    link.setAttribute('aria-selected', 'true');
-                                    if (targetSel) {
-                                        try {
-                                            location.hash = targetSel;
-                                        } catch (_) {}
-                                    }
-                                }
-                                links.forEach(function(link) {
-                                    link.addEventListener('click', function(e) {
-                                        e.preventDefault();
-                                        activate(link);
-                                    });
-                                });
-                                var initial = location.hash;
-                                if (initial) {
-                                    var link = document.querySelector('#course-tabs .nav-link[href="' + initial +
-                                        '"], #course-tabs .nav-link[data-bs-target="' + initial + '"]');
-                                    if (link) activate(link);
-                                }
-                            });
-                        </script>
-
-                        <div class="card-body p-4">
-                            <div class="tab-content" id="course-tab-content">
-                                <!-- Contenido de las pestañas -->
-                                @include('partials.cursos.temario_tab')
-
-                                @if ($cursos->tipo == 'congreso')
-                                    <div class="tab-pane fade" id="tab-expositores" role="tabpanel"
-                                        aria-labelledby="expositores-tab">
-                                        <div class="d-flex justify-content-between align-items-center mb-4">
-                                            <div>
-                                                <h4 class="mb-1" style="color: var(--color-primary);">
-                                                    <i class="fas fa-users me-2"></i>Expositores Asignados
-                                                </h4>
-                                                <p class="text-muted mb-0">Profesionales que impartirán el congreso</p>
+                                    @if ($cursos->tipo == 'congreso')
+                                        <div class="tab-pane fade" id="tab-expositores" role="tabpanel"
+                                            aria-labelledby="expositores-tab">
+                                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                                <div>
+                                                    <h4 class="mb-1" style="color: var(--color-primary);">
+                                                        <i class="fas fa-users me-2"></i>Expositores Asignados
+                                                    </h4>
+                                                    <p class="text-muted mb-0">Profesionales que impartirán el congreso</p>
+                                                </div>
+                                                <button class="btn btn-primary" data-bs-toggle="modal"
+                                                    data-bs-target="#modalExpositores">
+                                                    <i class="fas fa-user-plus me-2"></i> Asignar Expositores
+                                                </button>
                                             </div>
-                                            <button class="btn btn-primary" data-bs-toggle="modal"
-                                                data-bs-target="#modalExpositores">
-                                                <i class="fas fa-user-plus me-2"></i> Asignar Expositores
-                                            </button>
-                                        </div>
 
-                                        {{-- Lista de Expositores asignados --}}
-                                        <div class="row">
-                                            @forelse ($cursos->expositores as $expositor)
-                                                <div class="col-md-6 mb-4">
-                                                    <div class="expositor-card h-100">
-                                                        <div class="row g-0 h-100">
-                                                            <div class="col-4">
-                                                                @if ($expositor->imagen && file_exists(public_path('storage/' . $expositor->imagen)))
-                                                                    <img src="{{ asset('storage/' . $expositor->imagen) }}"
-                                                                        class="img-fluid h-100 w-100"
-                                                                        style="object-fit: cover;"
-                                                                        alt="Foto de {{ $expositor->nombre }}">
-                                                                @else
-                                                                    <img src="{{ asset('assets2/img/talker.png') }}"
-                                                                        class="img-fluid h-100 w-100"
-                                                                        style="object-fit: cover;"
-                                                                        alt="Imagen no disponible">
-                                                                @endif
-                                                            </div>
-                                                            <div class="col-8">
-                                                                <div class="card-body h-100 d-flex flex-column">
-                                                                    <h5 class="card-title mb-2"
-                                                                        style="color: var(--color-primary);">
-                                                                        {{ $expositor->nombre }}
-                                                                    </h5>
-                                                                    <div class="mb-2">
-                                                                        <small class="text-muted">Cargo:</small>
-                                                                        <p class="mb-1 fw-semibold">
-                                                                            {{ $expositor->pivot->cargo ?? 'No especificado' }}
-                                                                        </p>
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <small class="text-muted">Tema:</small>
-                                                                        <p class="mb-1">
-                                                                            {{ $expositor->pivot->tema ?? 'No especificado' }}
-                                                                        </p>
-                                                                    </div>
-                                                                    <div class="mb-3">
-                                                                        <small class="text-muted">Orden:</small>
-                                                                        <span
-                                                                            class="badge bg-primary">{{ $expositor->pivot->orden ?? '-' }}</span>
-                                                                    </div>
-                                                                    @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Docente'))
-                                                                        <div class="mt-auto">
-                                                                            <form
-                                                                                action="{{ route('cursos.quitarExpositor', [$cursos->id, $expositor->id]) }}"
-                                                                                method="POST"
-                                                                                onsubmit="return confirm('¿Deseas quitar este expositor del curso?');">
-                                                                                @csrf
-                                                                                @method('DELETE')
-                                                                                <button
-                                                                                    class="btn btn-outline-danger btn-sm w-100"
-                                                                                    title="Quitar expositor">
-                                                                                    <i class="fas fa-times me-1"></i>
-                                                                                    Quitar Expositor
-                                                                                </button>
-                                                                            </form>
-                                                                        </div>
+                                            {{-- Lista de Expositores asignados --}}
+                                            <div class="row">
+                                                @forelse ($cursos->expositores as $expositor)
+                                                    <div class="col-md-6 mb-4">
+                                                        <div class="expositor-card h-100">
+                                                            <div class="row g-0 h-100">
+                                                                <div class="col-4">
+                                                                    @if ($expositor->imagen && file_exists(public_path('storage/' . $expositor->imagen)))
+                                                                        <img src="{{ asset('storage/' . $expositor->imagen) }}"
+                                                                            class="img-fluid h-100 w-100"
+                                                                            style="object-fit: cover;"
+                                                                            alt="Foto de {{ $expositor->nombre }}">
+                                                                    @else
+                                                                        <img src="{{ asset('assets2/img/talker.png') }}"
+                                                                            class="img-fluid h-100 w-100"
+                                                                            style="object-fit: cover;"
+                                                                            alt="Imagen no disponible">
                                                                     @endif
+                                                                </div>
+                                                                <div class="col-8">
+                                                                    <div class="card-body h-100 d-flex flex-column">
+                                                                        <h5 class="card-title mb-2"
+                                                                            style="color: var(--color-primary);">
+                                                                            {{ $expositor->nombre }}
+                                                                        </h5>
+                                                                        <div class="mb-2">
+                                                                            <small class="text-muted">Cargo:</small>
+                                                                            <p class="mb-1 fw-semibold">
+                                                                                {{ $expositor->pivot->cargo ?? 'No especificado' }}
+                                                                            </p>
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <small class="text-muted">Tema:</small>
+                                                                            <p class="mb-1">
+                                                                                {{ $expositor->pivot->tema ?? 'No especificado' }}
+                                                                            </p>
+                                                                        </div>
+                                                                        <div class="mb-3">
+                                                                            <small class="text-muted">Orden:</small>
+                                                                            <span
+                                                                                class="badge bg-primary">{{ $expositor->pivot->orden ?? '-' }}</span>
+                                                                        </div>
+                                                                        @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Docente'))
+                                                                            <div class="mt-auto">
+                                                                                <form
+                                                                                    action="{{ route('cursos.quitarExpositor', [$cursos->id, $expositor->id]) }}"
+                                                                                    method="POST"
+                                                                                    onsubmit="return confirm('¿Deseas quitar este expositor del curso?');">
+                                                                                    @csrf
+                                                                                    @method('DELETE')
+                                                                                    <button
+                                                                                        class="btn btn-outline-danger btn-sm w-100"
+                                                                                        title="Quitar expositor">
+                                                                                        <i class="fas fa-times me-1"></i>
+                                                                                        Quitar Expositor
+                                                                                    </button>
+                                                                                </form>
+                                                                            </div>
+                                                                        @endif
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            @empty
-                                                <div class="col-12">
-                                                    <div class="alert alert-info text-center py-4">
-                                                        <i class="fas fa-info-circle fa-2x mb-3"></i>
-                                                        <h5>No hay expositores asignados</h5>
-                                                        <p class="mb-0">Asigna expositores para comenzar con el congreso
-                                                        </p>
+                                                @empty
+                                                    <div class="col-12">
+                                                        <div class="alert alert-info text-center py-4">
+                                                            <i class="fas fa-info-circle fa-2x mb-3"></i>
+                                                            <h5>No hay expositores asignados</h5>
+                                                            <p class="mb-0">Asigna expositores para comenzar con el
+                                                                congreso
+                                                            </p>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            @endforelse
+                                                @endforelse
+                                            </div>
                                         </div>
-                                    </div>
-                                @endif
+                                    @endif
 
 
 
-                                @include('partials.cursos.foros_tab')
-                                @include('partials.cursos.recursos_tab')
+                                    @include('partials.cursos.foros_tab')
+                                    @include('partials.cursos.recursos_tab')
 
 
 
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        @push('scripts')
             <script>
                 (function() {
                     'use strict';
@@ -1726,6 +1684,9 @@
                             console.warn('No se encontraron tabs o panes para inicializar');
                             return;
                         }
+
+                        console.log('Tabs encontrados:', tabButtons.length);
+                        console.log('Panes encontrados:', panes.length);
 
                         // Función para activar un tab específico
                         function activateTab(tabButton) {
@@ -1741,6 +1702,8 @@
                                 console.warn('Target no encontrado:', targetSel);
                                 return;
                             }
+
+                            console.log('Activando tab:', targetSel);
 
                             // Remover clases activas de todos los tabs y panes
                             tabButtons.forEach(btn => {
@@ -1779,6 +1742,7 @@
                             // Si no hay tab activo por defecto, activar el primero
                             const firstTab = tabButtons[0];
                             if (firstTab) {
+                                firstTab.classList.add('active');
                                 activateTab(firstTab);
                             }
                         }
@@ -1822,196 +1786,198 @@
                     }
                 })();
             </script>
-        @endpush
 
-        <!-- Modal Asignar Expositores -->
-        <div class="modal fade" id="modalExpositores" tabindex="-1" aria-labelledby="modalExpositoresLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <form method="POST" action="{{ route('cursos.asignarExpositores', $cursos->id) }}">
-                    @csrf
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="modalExpositoresLabel">
-                                <i class="fas fa-user-plus me-2"></i>Asignar Expositores al Curso
-                            </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Cerrar"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="mb-4">
-                                <input type="text" id="buscadorExpositores" class="form-control"
-                                    placeholder="🔍 Buscar expositor por nombre...">
+            <!-- Modal Asignar Expositores -->
+            <div class="modal fade" id="modalExpositores" tabindex="-1" aria-labelledby="modalExpositoresLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <form method="POST" action="{{ route('cursos.asignarExpositores', $cursos->id) }}">
+                        @csrf
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalExpositoresLabel">
+                                    <i class="fas fa-user-plus me-2"></i>Asignar Expositores al Curso
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Cerrar"></button>
                             </div>
+                            <div class="modal-body">
+                                <div class="mb-4">
+                                    <input type="text" id="buscadorExpositores" class="form-control"
+                                        placeholder="🔍 Buscar expositor por nombre...">
+                                </div>
 
-                            <div class="overflow-auto" style="max-height: 400px;">
-                                @foreach ($expositores as $expositor)
-                                    <div class="expositor-item border rounded p-3 mb-3"
-                                        data-nombre="{{ strtolower($expositor->nombre) }}">
-                                        <div class="d-flex align-items-center mb-2">
-                                            @if ($expositor->imagen && file_exists(public_path('storage/' . $expositor->imagen)))
-                                                <img src="{{ asset('storage/' . $expositor->imagen) }}"
-                                                    class="rounded-circle me-3" width="50" height="50"
-                                                    alt="Foto de {{ $expositor->nombre }}">
-                                            @else
-                                                <img src="{{ asset('assets2/img/talker.png') }}"
-                                                    class="rounded-circle me-3" width="50" height="50"
-                                                    alt="Imagen no disponible">
-                                            @endif
-                                            <div>
-                                                <strong class="d-block">{{ $expositor->nombre }}</strong>
-                                                <small class="text-muted">Expositor disponible</small>
+                                <div class="overflow-auto" style="max-height: 400px;">
+                                    @foreach ($expositores as $expositor)
+                                        <div class="expositor-item border rounded p-3 mb-3"
+                                            data-nombre="{{ strtolower($expositor->nombre) }}">
+                                            <div class="d-flex align-items-center mb-2">
+                                                @if ($expositor->imagen && file_exists(public_path('storage/' . $expositor->imagen)))
+                                                    <img src="{{ asset('storage/' . $expositor->imagen) }}"
+                                                        class="rounded-circle me-3" width="50" height="50"
+                                                        alt="Foto de {{ $expositor->nombre }}">
+                                                @else
+                                                    <img src="{{ asset('assets2/img/talker.png') }}"
+                                                        class="rounded-circle me-3" width="50" height="50"
+                                                        alt="Imagen no disponible">
+                                                @endif
+                                                <div>
+                                                    <strong class="d-block">{{ $expositor->nombre }}</strong>
+                                                    <small class="text-muted">Expositor disponible</small>
+                                                </div>
+                                            </div>
+
+                                            <div class="row g-2 align-items-center">
+                                                <input type="hidden" name="expositores[{{ $loop->index }}][id]"
+                                                    value="{{ $expositor->id }}">
+
+                                                <div class="col-md-4">
+                                                    <input type="text" class="form-control"
+                                                        name="expositores[{{ $loop->index }}][cargo]"
+                                                        placeholder="Cargo del expositor">
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <input type="text" class="form-control"
+                                                        name="expositores[{{ $loop->index }}][tema]"
+                                                        placeholder="Tema a exponer">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <input type="number" class="form-control"
+                                                        name="expositores[{{ $loop->index }}][orden]"
+                                                        placeholder="Orden" min="1">
+                                                </div>
+                                                <div class="col-md-2 text-center">
+                                                    <div class="form-check">
+                                                        <input type="checkbox" class="form-check-input"
+                                                            name="expositoresSeleccionados[]"
+                                                            value="{{ $loop->index }}">
+                                                        <label class="form-check-label small">Seleccionar</label>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary"
+                                    data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-save me-2"></i>Guardar Asignaciones
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
-                                        <div class="row g-2 align-items-center">
-                                            <input type="hidden" name="expositores[{{ $loop->index }}][id]"
-                                                value="{{ $expositor->id }}">
+            <!-- Modales adicionales -->
+            @include('partials.cursos.modals.agregar_tema')
+            @include('partials.cursos.modals.agregar_subtema')
+            @include('Docente.CrearForo')
+            @include('Docente.CrearRecursos')
 
-                                            <div class="col-md-4">
-                                                <input type="text" class="form-control"
-                                                    name="expositores[{{ $loop->index }}][cargo]"
-                                                    placeholder="Cargo del expositor">
+            @foreach ($foros as $foro)
+                @include('Docente.EditarForo')
+            @endforeach
+            @foreach ($recursos as $recurso)
+                @include('Docente.EditarRecursos')
+            @endforeach
+
+            @foreach ($temas as $tema)
+                <div class="modal fade" id="modalEditarTema-{{ $tema->id }}" tabindex="-1"
+                    aria-labelledby="modalEditarTemaLabel-{{ $tema->id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <div class="modal-header-content">
+                                    <i class="fas fa-edit fa-lg me-3"></i>
+                                    <div>
+                                        <h5 class="modal-title mb-0" id="modalEditarTemaLabel-{{ $tema->id }}">Editar
+                                            Tema</h5>
+                                        <small class="opacity-75">{{ $tema->titulo_tema }}</small>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <form method="POST" action="{{ route('temas.update', encrypt($tema->id)) }}"
+                                enctype="multipart/form-data">
+                                @csrf
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="mb-3">
+                                                <label for="titulo" class="form-label-modern">Título del Tema
+                                                    *</label><input type="text" class="form-control-modern"
+                                                    name="titulo" value="{{ $tema->titulo_tema }}" required
+                                                    placeholder="Ingresa el título del tema">
                                             </div>
-                                            <div class="col-md-4">
-                                                <input type="text" class="form-control"
-                                                    name="expositores[{{ $loop->index }}][tema]"
-                                                    placeholder="Tema a exponer">
+                                            <div class="mb-3">
+                                                <label for="descripcion" class="form-label-modern">Descripción</label>
+                                                <textarea class="form-control-modern" name="descripcion" rows="4"
+                                                    placeholder="Describe el contenido de este tema...">{{ $tema->descripcion }}</textarea>
                                             </div>
-                                            <div class="col-md-2">
-                                                <input type="number" class="form-control"
-                                                    name="expositores[{{ $loop->index }}][orden]" placeholder="Orden"
-                                                    min="1">
-                                            </div>
-                                            <div class="col-md-2 text-center">
-                                                <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input"
-                                                        name="expositoresSeleccionados[]" value="{{ $loop->index }}">
-                                                    <label class="form-check-label small">Seleccionar</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="image-upload-section">
+                                                <label class="form-label">Imagen del Tema</label>
+                                                <div class="current-image mb-3">
+                                                    @if ($tema->imagen)
+                                                        <img src="{{ asset('storage/' . $tema->imagen) }}"
+                                                            class="img-thumbnail current-image-preview"
+                                                            alt="Imagen actual">
+                                                        <small class="text-muted d-block mt-1">Imagen actual</small>
+                                                    @else
+                                                        <div class="no-image-placeholder">
+                                                            <i class="fas fa-image fa-2x text-muted mb-2"></i>
+                                                            <small class="text-muted">No hay imagen cargada</small>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                                <div class="file-upload-wrapper">
+                                                    <input type="file" class="form-control-modern" name="imagen"
+                                                        accept="image/*" id="imageUpload-{{ $tema->id }}">
+                                                    <label for="imageUpload-{{ $tema->id }}"
+                                                        class="file-upload-label">
+                                                        <i class="fas fa-upload me-2"></i>Seleccionar imagen
+                                                    </label>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                @endforeach
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary"
-                                data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-success">
-                                <i class="fas fa-save me-2"></i>Guardar Asignaciones
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Modales adicionales -->
-        @include('partials.cursos.modals.agregar_tema')
-        @include('partials.cursos.modals.agregar_subtema')
-        @include('Docente.CrearForo')
-        @include('Docente.CrearRecursos')
-
-        @foreach ($foros as $foro)
-            @include('Docente.EditarForo')
-        @endforeach
-        @foreach ($recursos as $recurso)
-            @include('Docente.EditarRecursos')
-        @endforeach
-
-        @foreach ($temas as $tema)
-            <div class="modal fade" id="modalEditarTema-{{ $tema->id }}" tabindex="-1"
-                aria-labelledby="modalEditarTemaLabel-{{ $tema->id }}" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <div class="modal-header-content">
-                                <i class="fas fa-edit fa-lg me-3"></i>
-                                <div>
-                                    <h5 class="modal-title mb-0" id="modalEditarTemaLabel-{{ $tema->id }}">Editar
-                                        Tema</h5>
-                                    <small class="opacity-75">{{ $tema->titulo_tema }}</small>
                                 </div>
-                            </div>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                        </div>
-                        <form method="POST" action="{{ route('temas.update', encrypt($tema->id)) }}"
-                            enctype="multipart/form-data">
-                            @csrf
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <div class="mb-3">
-                                            <label for="titulo" class="form-label-modern">Título del Tema
-                                                *</label><input type="text" class="form-control-modern" name="titulo"
-                                                value="{{ $tema->titulo_tema }}" required
-                                                placeholder="Ingresa el título del tema">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="descripcion" class="form-label-modern">Descripción</label>
-                                            <textarea class="form-control-modern" name="descripcion" rows="4"
-                                                placeholder="Describe el contenido de este tema...">{{ $tema->descripcion }}</textarea>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="image-upload-section">
-                                            <label class="form-label">Imagen del Tema</label>
-                                            <div class="current-image mb-3">
-                                                @if ($tema->imagen)
-                                                    <img src="{{ asset('storage/' . $tema->imagen) }}"
-                                                        class="img-thumbnail current-image-preview" alt="Imagen actual">
-                                                    <small class="text-muted d-block mt-1">Imagen actual</small>
-                                                @else
-                                                    <div class="no-image-placeholder">
-                                                        <i class="fas fa-image fa-2x text-muted mb-2"></i>
-                                                        <small class="text-muted">No hay imagen cargada</small>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                            <div class="file-upload-wrapper">
-                                                <input type="file" class="form-control-modern" name="imagen"
-                                                    accept="image/*" id="imageUpload-{{ $tema->id }}">
-                                                <label for="imageUpload-{{ $tema->id }}" class="file-upload-label">
-                                                    <i class="fas fa-upload me-2"></i>Seleccionar imagen
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn-modern btn-accent-custom" data-bs-dismiss="modal">
+                                        <i class="fas fa-times me-1"></i><span class="ms-1">Cancelar</span>
+                                    </button>
+                                    <button type="submit" class="btn-modern btn-primary-custom">
+                                        <i class="fas fa-save me-1"></i><span class="ms-1">Guardar Cambios</span>
+                                    </button>
                                 </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn-modern btn-accent-custom" data-bs-dismiss="modal">
-                                    <i class="fas fa-times me-1"></i><span class="ms-1">Cancelar</span>
-                                </button>
-                                <button type="submit" class="btn-modern btn-primary-custom">
-                                    <i class="fas fa-save me-1"></i><span class="ms-1">Guardar Cambios</span>
-                                </button>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-        @endforeach
-    @else
-        <!-- Acceso denegado -->
-        <div class="container-fluid py-4">
-            <div class="row justify-content-center">
-                <div class="col-md-6">
-                    <div class="course-card text-center py-5">
-                        <div class="card-body">
-                            <i class="fas fa-lock fa-4x mb-4" style="color: var(--color-error);"></i>
-                            <h3 class="mb-3" style="color: var(--color-primary);">Acceso Denegado</h3>
-                            <p class="text-muted mb-4">No tienes permisos para acceder a este curso.</p>
-                            <a href="{{ route('Inicio') }}" class="btn btn-primary">
-                                <i class="fas fa-home me-2"></i>Volver al Inicio
-                            </a>
+            @endforeach
+        @else
+            <!-- Acceso denegado -->
+            <div class="container-fluid py-4">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="course-card text-center py-5">
+                            <div class="card-body">
+                                <i class="fas fa-lock fa-4x mb-4" style="color: var(--color-error);"></i>
+                                <h3 class="mb-3" style="color: var(--color-primary);">Acceso Denegado</h3>
+                                <p class="text-muted mb-4">No tienes permisos para acceder a este curso.</p>
+                                <a href="{{ route('Inicio') }}" class="btn btn-primary">
+                                    <i class="fas fa-home me-2"></i>Volver al Inicio
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
     @endif
 
     @if ($errors->any())

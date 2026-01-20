@@ -51,7 +51,7 @@ class CursosController extends Controller
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
-     */ 
+     */
     // protected $qrTokenService;
     protected $youTubeEmbedService;
 
@@ -78,6 +78,7 @@ class CursosController extends Controller
 
         $esEstudiante = $user->hasRole('Estudiante');
         $esDocente = $user->id === $curso->docente_id;
+        $esDocenteOAdmin = $user->hasRole(['Docente', 'Administrador']);
         $esCursoNormal = $curso->tipo === 'curso';
         $pagoIncompleto = $pago_completado == 0;
 
@@ -141,6 +142,7 @@ class CursosController extends Controller
             'template' => $certificado_template,
             'expositores' => $expositores,
             'esDocente' => $esDocente,
+            'esDocenteOAdmin' => $esDocenteOAdmin,
         ]);
     }
 

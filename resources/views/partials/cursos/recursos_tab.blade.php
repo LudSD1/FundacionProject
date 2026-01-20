@@ -11,7 +11,7 @@
                     </div>
                 </div>
 
-                @if (auth()->user()->id == $cursos->docente_id)
+                @if (auth()->user()->hasRole('Docente') || auth()->user()->hasRole('Administrador'))
                     <div class="header-actions">
                         <a href="{{ route('CrearRecursos', encrypt($cursos->id)) }}" class="btn btn-primary btn-action"
                             data-bs-toggle="modal" data-bs-target="#modalCrearRecurso">
@@ -158,7 +158,7 @@
                                     </a>
                                 @endif
 
-                                @if (auth()->user()->id == $cursos->docente_id)
+                                @if (auth()->user()->hasRole('Docente') || auth()->user()->hasRole('Administrador'))
                                     <div class="admin-actions">
                                         <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
                                             data-bs-target="#modalEditarRecurso-{{ $recurso->id }}">
@@ -183,9 +183,10 @@
                     <h3 class="empty-title">No hay recursos disponibles</h3>
                     <p class="empty-text">El instructor aún no ha subido material de apoyo para este curso.</p>
 
-                    @if (auth()->user()->id == $cursos->docente_id)
-                        <a href="{{ route('CrearRecursos', encrypt($cursos->id)) }}" class="btn btn-primary btn-action"
-                            data-bs-toggle="modal" data-bs-target="#modalCrearRecurso">
+                    @if (auth()->user()->hasRole('Docente') || auth()->user()->hasRole('Administrador'))
+                        <a href="{{ route('CrearRecursos', encrypt($cursos->id)) }}"
+                            class="btn btn-primary btn-action" data-bs-toggle="modal"
+                            data-bs-target="#modalCrearRecurso">
                             Nuevo Recurso
                         </a>
                     @endif

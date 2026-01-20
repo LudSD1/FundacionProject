@@ -857,8 +857,11 @@
                                             @endif
 
                                             <div class="course-actions-enhanced">
+
+
                                                 @if ($inscrito->pago_completado)
-                                                    <a href="{{ route('Curso', encrypt($inscrito->cursos_id)) }}"
+                                                    {{-- @dd($inscrito->cursos->codigoCurso) --}}
+                                                    <a href="{{ route('Curso', $inscrito->cursos->codigoCurso) }}"
                                                         class="btn-course-action btn-course-primary">
                                                         <i class="fas fa-play-circle me-2"></i>
                                                         Continuar Curso
@@ -959,7 +962,7 @@
                                             @endif
 
                                             <div class="course-actions-enhanced">
-                                                <a href="{{ route('congreso.detalle', $inscrito->cursos_id) }}"
+                                                <a href="{{ $inscrito->cursos->url }}"
                                                     class="btn-course-action btn-course-success">
                                                     <i class="fas fa-door-open me-2"></i>
                                                     Acceder al Congreso
@@ -1054,7 +1057,7 @@
                                             </div>
 
                                             <div class="course-actions-enhanced">
-                                                <a href="{{ route('Curso', encrypt($curso->id)) }}"
+                                                <a href="{{ route('Curso', $curso->codigoCurso) }}"
                                                     class="btn-course-action btn-course-primary">
                                                     <i class="fas fa-cogs me-2"></i>
                                                     Gestionar Curso
