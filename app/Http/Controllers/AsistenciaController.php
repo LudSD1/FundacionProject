@@ -75,7 +75,7 @@ class AsistenciaController extends Controller
     {
         // Validación general del request
         $request->validate([
-            'fecha_asistencia' => 'required|date',
+            'fecha_asistencia' => 'required|date|before_or_equal:today',
             'asistencia' => 'required|array',
             'asistencia.*.tipo_asistencia' => 'required|in:Presente,Retraso,Licencia,Falta',
             'asistencia.*.curso_id' => 'required|exists:cursos,id',
@@ -83,6 +83,7 @@ class AsistenciaController extends Controller
         ], [
             'fecha_asistencia.required' => 'La fecha es obligatoria.',
             'fecha_asistencia.date' => 'La fecha debe ser válida.',
+            'fecha_asistencia.before_or_equal' => 'No se pueden registrar asistencias para fechas futuras.',
             'asistencia.required' => 'Debe seleccionar al menos una asistencia.',
             'asistencia.*.tipo_asistencia.required' => 'Debe seleccionar el tipo de asistencia para todos los estudiantes.',
             'asistencia.*.tipo_asistencia.in' => 'El tipo de asistencia debe ser válido.',
@@ -197,6 +198,8 @@ class AsistenciaController extends Controller
                 $asistenciaid = $asistenciaData['id'];
                 $asistencia = Asistencia::findOrFail($asistenciaid);
 
+                // Solo permitir cambios en el tipo de asistencia, no en la fecha
+                // La fecha de asistencia permanece inmutable una vez creada
                 $asistencia->tipoAsitencia = $asistenciaData['tipo_asistencia'];
                 $asistencia->save();
                 $updateCount++;

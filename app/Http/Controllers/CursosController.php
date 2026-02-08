@@ -89,7 +89,7 @@ class CursosController extends Controller
             return redirect()->back()->with('error', 'No estás inscrito en este curso.');
         }
 
-        // Si es estudiante y no ha completado el pago de un curso normal
+        // Si es estudiante y no ha completado el pago de un cu rso normal
         if ($esEstudiante && $esCursoNormal && $pagoIncompleto) {
             return view('LoadingPage.Loading');
         }
