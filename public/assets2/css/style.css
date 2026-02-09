@@ -1,79 +1,13 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 
 /*--------------------------------------------------------------
 # General
 --------------------------------------------------------------*/
-body {
-    font-family: "Montserrat", sans-serif;
-    color: #585a61;
-}
 
-:root {
-    --color-primary: #1a4789;
-    --color-secondary: #39a6cb;
-    --color-accent1: #63becf;
-    --color-accent2: #055c9d;
-    --color-accent3: #2197bd;
-    --color-accent4: #2f89a8;
-    --color-accent5: #145da0;
-    --color-accent6: #2a81c2;
-    --orange-accent: #ffa500;
-    --gradient-primary: linear-gradient(135deg, #1a4789 0%, #055c9d 100%);
-    --gradient-secondary: linear-gradient(135deg, #39a6cb 0%, #63becf 100%);
-    --gradient-accent: linear-gradient(135deg, #2197bd 0%, #2a81c2 100%);
-    --gradient-orange: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
-}
 
-a {
-    color: #145da0;
-    text-decoration: none;
-}
 
-a:hover {
-    color: #7b94c9;
-    text-decoration: none;
-}
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    font-family: "Montserrat", sans-serif;
-    color: #145da0;
-}
 
-.back-to-top {
-    position: fixed;
-    visibility: hidden;
-    opacity: 0;
-    left: 15px;
-    bottom: 15px;
-    z-index: 996;
-    background: #145da0;
-    background-image: url("https://www.transparenttextures.com/patterns/inspiration-geometry.png");
-    width: 40px;
-    height: 40px;
-    border-radius: 50px;
-    transition: all 0.4s;
-}
 
-.back-to-top i {
-    font-size: 24px;
-    color: #fff;
-    line-height: 0;
-}
-
-.back-to-top:hover {
-    background: #748ec6;
-    color: #fff;
-}
-
-.back-to-top.active {
-    visibility: visible;
-    opacity: 1;
-}
 
 /*--------------------------------------------------------------
 # Disable aos animation delay on mobile devices
@@ -84,135 +18,8 @@ h6 {
     }
 }
 
-.btn-primary {
-    --bs-btn-color: #fff;
-    --bs-btn-bg: #145da0;
-    --bs-btn-border-color: #145da0;
-    --bs-btn-hover-color: #fff;
-    --bs-btn-hover-bg: #145da0;
-    --bs-btn-hover-border-color: #145da0;
-    --bs-btn-focus-shadow-rgb: 49, 132, 253;
-    --bs-btn-active-color: #fff;
-    --bs-btn-active-bg: #145da0;
-    --bs-btn-active-border-color: #145da0;
-    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-    --bs-btn-disabled-color: #fff;
-    --bs-btn-disabled-bg: #0d6efd;
-    --bs-btn-disabled-border-color: #0d6efd;
-}
 
-/*/*--------------------------------------------------------------
-# Header
---------------------------------------------------------------*/
-#header {
-    transition: all 0.3s ease-in-out;
-    z-index: 1030;
-    padding: 0;
-    background: transparent;
-    /* Cambiado para que la diagonal sea visible */
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    overflow: hidden;
-    /* Mantiene el contenido dentro del header */
-    min-height: 80px;
-}
 
-/* Diagonal principal */
-#header::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-    /* Asegura que la diagonal comience desde la izquierda */
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(145deg, transparent 70%, #1a4789 30%);
-    z-index: 1;
-    /* Diagonal por encima del fondo blanco pero debajo del contenido */
-    transition: all 0.3s ease-in-out;
-    /* Transición suave */
-    pointer-events: none;
-    opacity: 1;
-}
-
-/* Asegurar que el contenido esté encima */
-#header>* {
-    position: relative;
-    z-index: 2;
-    /* Contenido por encima de la diagonal */
-}
-
-/* Capa de fondo blanca sólida para el header */
-#header::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: #fff;
-    /* fondo blanco sólido */
-    z-index: 0;
-    /* debajo de la diagonal */
-}
-
-/* Header transparente */
-
-#header.header-transparent .right img {
-    filter: none;
-}
-
-/* Botones en hero */
-#header.header-transparent .navbar .getstarted {
-    background: var(--color-accent6);
-    color: #fff;
-    border: none;
-}
-
-#header.header-transparent .navbar .getstarted:hover {
-    background: var(--color-accent1);
-    color: #fff;
-}
-
-/* Header con scroll */
-#header.header-scrolled {
-    background: #fff;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
-}
-
-#header.header-scrolled .header-top {
-    background: #ffffff00;
-}
-
-/* Diagonal más visible al hacer scroll */
-#header.header-scrolled::before {
-    opacity: 1;
-    filter: drop-shadow(0 2px 10px rgba(26, 71, 137, 0.3));
-}
-
-/* Logo con fondo al hacer scroll */
-#header.header-scrolled .right {
-    position: relative;
-    z-index: 2;
-    background: #145da0;
-    border-radius: 8px;
-    padding: 5px 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-#header.header-scrolled .right img {
-    filter: none;
-}
-
-/* Carrusel de categorías */
-.header-bottom {
-    background-color: #fff;
-}
 
 #categoriasCarousel .btn {
     white-space: nowrap;
@@ -2562,9 +2369,6 @@ section {
 }
 
 /* Asegurar que el header no se superponga con el contenido */
-body {
-    scroll-behavior: smooth;
-}
 
 /* Transiciones suaves entre secciones */
 section {
@@ -2577,9 +2381,7 @@ section {
 }
 
 /* Estilos para mejorar la transición del scroll */
-html {
-    scroll-behavior: smooth;
-}
+
 
 /* Ajustar el padding del main para mejor transición */
 #main {
