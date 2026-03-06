@@ -1,30 +1,5 @@
 <!-- Floating XP Button -->
 <style>
-    :root {
-        --color-primary: #1a4789;
-        --color-secondary: #39a6cb;
-        --color-accent1: #63becf;
-        --color-accent2: #055c9d;
-        --color-accent3: #2197bd;
-        --color-success: #28a745;
-        --color-warning: #ffc107;
-        --color-danger: #dc3545;
-        --color-info: #17a2b8;
-
-        --gradient-primary: linear-gradient(135deg, #1a4789 0%, #055c9d 100%);
-        --gradient-secondary: linear-gradient(135deg, #39a6cb 0%, #63becf 100%);
-        --gradient-gold: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-        --gradient-silver: linear-gradient(135deg, #C0C0C0 0%, #A9A9A9 100%);
-        --gradient-bronze: linear-gradient(135deg, #CD7F32 0%, #8B4513 100%);
-
-        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
-        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
-        --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
-        --shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.2);
-
-        --border-radius: 12px;
-        --border-radius-sm: 8px;
-    }
 
     .floating-xp-container .floating-xp-button {
         position: fixed;
@@ -484,10 +459,10 @@
                 </div>
 
                 <div class="mt-4">
-                    <a href="{{ route('perfil.xp') }}" class="btn btn-primary w-100">
+                    {{-- <a href="{{ route('') }}" class="btn btn-primary w-100">
                         <i class="fas fa-chart-line me-2"></i>
                         Ver progreso completo
-                    </a>
+                    </a> --}}
                 </div>
             </div>
         </div>

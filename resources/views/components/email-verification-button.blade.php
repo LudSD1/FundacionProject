@@ -1,4 +1,4 @@
-@props([
+ @props([
     'text' => 'Verificar Email',
     'class' => 'btn btn-primary',
     'icon' => 'bi-envelope-check',

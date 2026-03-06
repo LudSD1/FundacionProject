@@ -190,12 +190,33 @@ class MenuController extends Controller
             'totalInscritos',
         ))->with('metodosPago', $metodosPago);
     }
-    public function ListaDeCursos()
+    public function ListaDeCursos(Request $request)
     {
+        $search = $request->input('search');
+        $tipo   = $request->input('tipo');
+        $estado = $request->input('estado'); // activo | finalizado | proximo
+        $hoy    = now()->toDateString();
 
-        $cursos = Cursos::whereNull('deleted_at')->get();
-        $inscritos = Inscritos::all();
-        return view('ListaDeCursos')->with('cursos', $cursos)->with('inscritos', $inscritos);
+        $cursos = Cursos::whereNull('deleted_at')
+            ->when($search, fn($q, $s) =>
+                $q->where('nombreCurso', 'like', "%$s%")
+                  ->orWhereHas('docente', fn($d) =>
+                      $d->where('name',      'like', "%$s%")
+                        ->orWhere('lastname1', 'like', "%$s%")
+                  )
+            )
+            ->when($tipo, fn($q) => $q->where('tipo', $tipo))
+            ->when($estado == 'activo',     fn($q) => $q->where('fecha_ini', '<=', $hoy)
+                                                         ->where('fecha_fin', '>=', $hoy))
+            ->when($estado == 'finalizado', fn($q) => $q->where('fecha_fin', '<', $hoy))
+            ->when($estado == 'proximo',    fn($q) => $q->where('fecha_ini', '>', $hoy))
+            ->paginate(10);
+
+        $inscritos = auth()->user()->hasRole('Estudiante')
+            ? Inscritos::where('estudiante_id', auth()->id())->with('cursos')->get()
+            : collect();
+
+        return view('ListaDeCursos', compact('cursos', 'inscritos'));
     }
 
     public function ListaDeCursosEliminados()
@@ -341,25 +362,43 @@ class MenuController extends Controller
         ]);
     }
 
-    public function ListaDocentes(Request $request)
+    public function ListaUsuarios(Request $request)
     {
         $search = $request->input('search');
+        $role   = $request->input('role'); // Administrador | Docente | Estudiante | null
 
-        $docentes = User::role('Docente')
-            ->when($search, function ($query, $search) {
-                return $query->where('name', 'like', "%$search%")
-                    ->orWhere('lastname1', 'like', "%$search%")
-                    ->orWhere('lastname2', 'like', "%$search%")
-                    ->orWhere('email', 'like', "%$search%")
-                    ->orWhere('Celular', 'like', "%$search%");
-            })
+        $usuarios = User::query()
+            ->when($role, fn($q) => $q->role($role))          // filtro Spatie
+            ->when(!$role, fn($q) => $q->whereHas('roles'))   // solo usuarios con algún rol
+            ->when($search, fn($q, $s) =>
+                $q->where('name',      'like', "%$s%")
+                  ->orWhere('lastname1', 'like', "%$s%")
+                  ->orWhere('lastname2', 'like', "%$s%")
+                  ->orWhere('email',     'like', "%$s%")
+                  ->orWhere('Celular',   'like', "%$s%")
+            )
             ->paginate(10);
-        return view('Administrador.ListadeDocentes')->with('docentes', $docentes);
+
+        return view('Administrador.ListaUsuarios', compact('usuarios'));
     }
-    public function ListaDocentesEliminados()
+    public function ListaUsuariosEliminados(Request $request)
     {
-        $docente = User::role('Docente')->onlyTrashed()->get();
-        return view('Administrador.ListadeDocentesEliminados')->with('docente', $docente);
+        $role   = $request->input('role');
+        $search = $request->input('search');
+
+        $usuarios = User::onlyTrashed()
+            ->when($role, fn($q) => $q->role($role))
+            ->when(!$role, fn($q) => $q->whereHas('roles'))
+            ->when($search, fn($q, $s) =>
+                $q->where('name',       'like', "%$s%")
+                  ->orWhere('lastname1', 'like', "%$s%")
+                  ->orWhere('lastname2', 'like', "%$s%")
+                  ->orWhere('email',     'like', "%$s%")
+                  ->orWhere('Celular',   'like', "%$s%")
+            )
+            ->paginate(10);
+
+        return view('Administrador.ListaUsuariosEliminados', compact('usuarios'));
     }
 
     public function ListaAportes()
@@ -368,42 +407,12 @@ class MenuController extends Controller
         return view('Administrador.ListadeAportes')->with('aportes', $aportes);
     }
 
-    public function ListaEstudiantes(Request $request)
+
+    public function storeUIndex()
     {
-        $search = $request->input('search');
-
-        $estudiantes = User::role('Estudiante')
-            ->when($search, function ($query, $search) {
-                return $query->where('name', 'like', "%$search%")
-                    ->orWhere('lastname1', 'like', "%$search%")
-                    ->orWhere('lastname2', 'like', "%$search%")
-                    ->orWhere('email', 'like', "%$search%")
-                    ->orWhere('Celular', 'like', "%$search%");
-            })
-            ->paginate(10);
-
-
-        return view('Administrador.ListadeEstudiantes')->with('estudiantes', $estudiantes);
-    }
-    public function ListaEstudiantesEliminados(Request $request)
-    {
-        $estudiantes = User::role('Estudiante')->onlyTrashed()->get();
-
-        return view('Administrador.ListadeEstudiantesEliminados')->with('estudiantes', $estudiantes);
+        return view('Administrador.CrearUsuario');
     }
 
-    public function storeDIndex()
-    {
-        return view('Administrador.CrearDocente');
-    }
-    public function storeETIndex()
-    {
-        return view('Administrador.CrearEstudianteConTutor');
-    }
-    public function storeEIndex()
-    {
-        return view('Administrador.CrearEstudiante');
-    }
     public function ListaCursos()
     {
 

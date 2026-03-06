@@ -6,7 +6,6 @@
 
 
 @section('content')
-
     <div class="back-button-wrapper">
         <a href="{{ route('ListadeCursos') }}" class="btn-back-modern">
             <i class="bi bi-arrow-left-circle-fill"></i>
@@ -68,9 +67,8 @@
                                     Nombre del Curso
                                     <span class="required-badge">*</span>
                                 </label>
-                                <input type="text" name="nombre" class="form-control-modern"
-                                       value="{{ old('nombre') }}"
-                                       placeholder="Ej: Introducción a la Programación" required>
+                                <input type="text" name="nombre" class="form-control-modern" value="{{ old('nombre') }}"
+                                    placeholder="Ej: Introducción a la Programación" required>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -81,8 +79,7 @@
                                     <span class="optional-badge">Opcional</span>
                                 </label>
                                 <input type="text" name="descripcion" class="form-control-modern"
-                                       value="{{ old('descripcion') }}"
-                                       placeholder="Breve descripción del curso">
+                                    value="{{ old('descripcion') }}" placeholder="Breve descripción del curso">
                             </div>
                         </div>
                     </div>
@@ -96,7 +93,7 @@
                                     <span class="required-badge">*</span>
                                 </label>
                                 <input type="date" name="fecha_ini" class="form-control-modern"
-                                       value="{{ old('fecha_ini') }}" required>
+                                    value="{{ old('fecha_ini') }}" required>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -106,7 +103,7 @@
                                     Hora Inicio
                                 </label>
                                 <input type="time" name="hora_ini" class="form-control-modern"
-                                       value="{{ old('hora_ini') }}">
+                                    value="{{ old('hora_ini') }}">
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -117,7 +114,7 @@
                                     <span class="required-badge">*</span>
                                 </label>
                                 <input type="date" name="fecha_fin" class="form-control-modern"
-                                       value="{{ old('fecha_fin') }}" required>
+                                    value="{{ old('fecha_fin') }}" required>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -127,7 +124,7 @@
                                     Hora Fin
                                 </label>
                                 <input type="time" name="hora_fin" class="form-control-modern"
-                                       value="{{ old('hora_fin') }}">
+                                    value="{{ old('hora_fin') }}">
                             </div>
                         </div>
                     </div>
@@ -149,9 +146,8 @@
                                     Formato
                                 </label>
                                 <select name="formato" class="form-select-modern">
-                                    <option value="Presencial" {{ old('formato') == 'Presencial' ? 'selected' : '' }}>🏢 Presencial</option>
-                                    <option value="Virtual" {{ old('formato') == 'Virtual' ? 'selected' : '' }}>💻 Virtual</option>
-                                    <option value="Híbrido" {{ old('formato') == 'Híbrido' ? 'selected' : '' }}>🔄 Híbrido</option>
+                                    <option value="Virtual" {{ old('formato') == 'Virtual' ? 'selected' : '' }}>💻 Virtual
+                                    </option>
                                 </select>
                             </div>
                         </div>
@@ -163,7 +159,8 @@
                                 </label>
                                 <select name="tipo" class="form-select-modern">
                                     <option value="curso" {{ old('tipo') == 'curso' ? 'selected' : '' }}>📚 Curso</option>
-                                    <option value="congreso" {{ old('tipo') == 'congreso' ? 'selected' : '' }}>🎉 Evento</option>
+                                    <option value="congreso" {{ old('tipo') == 'congreso' ? 'selected' : '' }}>🎉 Evento
+                                    </option>
                                 </select>
                             </div>
                         </div>
@@ -177,12 +174,13 @@
                                 <div class="helper-text-modern mb-2">
                                     <i class="bi bi-info-circle me-1"></i>
                                     Si no está registrado,
-                                    <a href="{{ route('CrearDocente') }}" class="helper-link">crear docente aquí</a>
+                                    <a href="{{ route('CrearUsuario') }}" class="helper-link">crear docente aquí</a>
                                 </div>
                                 <select name="docente_id" class="form-select-modern" required>
                                     <option value="">Seleccione un docente</option>
                                     @forelse ($docente as $doc)
-                                        <option value="{{ $doc->id }}" {{ old('docente_id') == $doc->id ? 'selected' : '' }}>
+                                        <option value="{{ $doc->id }}"
+                                            {{ old('docente_id') == $doc->id ? 'selected' : '' }}>
                                             {{ $doc->name }} {{ $doc->lastname1 }} {{ $doc->lastname2 }}
                                         </option>
                                     @empty
@@ -209,14 +207,27 @@
                                     <i class="bi bi-person-check label-icon"></i>
                                     Edad Estudiantes (rango aproximado)
                                 </label>
-                                <select id="edad_id" name="edad_id" class="form-select-modern" onchange="actualizarNiveles()">
+                                <select id="edad_id" name="edad_id" class="form-select-modern"
+                                    onchange="actualizarNiveles()">
                                     <option value="">Seleccione un rango</option>
-                                    <option value="3-5" {{ old('edad_id') == '3-5' ? 'selected' : '' }}>👶 3 a 5 años</option>
-                                    <option value="6-8" {{ old('edad_id') == '6-8' ? 'selected' : '' }}>🧒 6 a 8 años</option>
-                                    <option value="9-12" {{ old('edad_id') == '9-12' ? 'selected' : '' }}>👦 9 a 12 años</option>
-                                    <option value="13-15" {{ old('edad_id') == '13-15' ? 'selected' : '' }}>👨 13 a 15 años</option>
-                                    <option value="16-18" {{ old('edad_id') == '16-18' ? 'selected' : '' }}>🎓 16 a 18 años</option>
-                                    <option value="18+" {{ old('edad_id') == '18+' ? 'selected' : '' }}>👔 18 años o más</option>
+                                    <option value="3-5"
+                                        {{ old('edad_id', $curso->edad_id ?? '') == '3-5' ? 'selected' : '' }}>👶 3 a 5
+                                        años</option>
+                                    <option value="6-8"
+                                        {{ old('edad_id', $curso->edad_id ?? '') == '6-8' ? 'selected' : '' }}>🧒 6 a 8
+                                        años</option>
+                                    <option value="9-12"
+                                        {{ old('edad_id', $curso->edad_id ?? '') == '9-12' ? 'selected' : '' }}>👦 9 a 12
+                                        años</option>
+                                    <option value="13-15"
+                                        {{ old('edad_id', $curso->edad_id ?? '') == '13-15' ? 'selected' : '' }}>👨 13 a 15
+                                        años</option>
+                                    <option value="16-18"
+                                        {{ old('edad_id', $curso->edad_id ?? '') == '16-18' ? 'selected' : '' }}>🎓 16 a 18
+                                        años</option>
+                                    <option value="18+"
+                                        {{ old('edad_id', $curso->edad_id ?? '') == '18+' ? 'selected' : '' }}>👔 18 años o
+                                        más</option>
                                 </select>
                             </div>
                         </div>
@@ -233,6 +244,8 @@
                         </div>
                     </div>
                 </div>
+
+
 
                 <!-- Step 4: Detalles Finales -->
                 <div class="form-step" data-step="4">
@@ -251,8 +264,7 @@
                                     <span class="required-badge">*</span>
                                 </label>
                                 <input type="number" name="duracion" class="form-control-modern"
-                                       value="{{ old('duracion') }}"
-                                       min="1" placeholder="Ej: 40" required>
+                                    value="{{ old('duracion') }}" min="1" placeholder="Ej: 40" required>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -262,8 +274,10 @@
                                     Visibilidad
                                 </label>
                                 <select name="visibilidad" class="form-select-modern">
-                                    <option value="publico" {{ old('visibilidad') == 'publico' ? 'selected' : '' }}>🌐 Público</option>
-                                    <option value="privado" {{ old('visibilidad') == 'privado' ? 'selected' : '' }}>🔒 Privado</option>
+                                    <option value="publico" {{ old('visibilidad') == 'publico' ? 'selected' : '' }}>🌐
+                                        Público</option>
+                                    <option value="privado" {{ old('visibilidad') == 'privado' ? 'selected' : '' }}>🔒
+                                        Privado</option>
                                 </select>
                             </div>
                         </div>
@@ -275,8 +289,7 @@
                                     <span class="required-badge">*</span>
                                 </label>
                                 <input type="number" name="cupos" class="form-control-modern"
-                                       value="{{ old('cupos') }}"
-                                       min="1" placeholder="Ej: 30" required>
+                                    value="{{ old('cupos') }}" min="1" placeholder="Ej: 30" required>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -287,8 +300,8 @@
                                     <span class="required-badge">*</span>
                                 </label>
                                 <input type="number" name="precio" class="form-control-modern"
-                                       value="{{ old('precio') }}"
-                                       step="0.01" min="0" placeholder="Ej: 250.00" required>
+                                    value="{{ old('precio') }}" step="0.01" min="0" placeholder="Ej: 250.00"
+                                    required>
                             </div>
                         </div>
                     </div>
@@ -317,27 +330,59 @@
         let currentStep = 1;
         const totalSteps = 4;
 
-        // Niveles por edad
+        // Niveles por edad (ÚNICO objeto)
         const nivelesPorEdad = {
-            "3-5": ["Preescolar"],
-            "6-8": ["Primaria"],
-            "9-12": ["Primaria", "Secundaria"],
-            "13-15": ["Secundaria", "Media"],
-            "16-18": ["Media"],
-            "18+": ["Superior"]
+            "3-5": [
+                "Preescolar",
+                "Educación Inicial",
+                "Estimulación Temprana"
+            ],
+            "6-8": [
+                "Primaria (1º y 2º)",
+                "Primaria (3º)",
+                "Educación Básica"
+            ],
+            "9-12": [
+                "Primaria (4º a 6º)",
+                "Educación Intermedia",
+                "Pre-adolescentes"
+            ],
+            "13-15": [
+                "Secundaria Básica",
+                "Educación Media (1º-3º)",
+                "Adolescentes"
+            ],
+            "16-18": [
+                "Preparatoria",
+                "Bachillerato",
+                "Educación Media Superior",
+                "Universitario (inicial)"
+            ],
+            "18+": [
+                "Público General",
+                "Adultos",
+                "Profesionales",
+                "Interesados en Salud Mental",
+                "Motivación y Desarrollo Personal",
+                "Cuidado Personal y Bienestar"
+            ]
         };
 
+
+        // Actualizar niveles dinámicamente
         function actualizarNiveles() {
             const edadSeleccionada = document.getElementById("edad_id").value;
             const nivelSelect = document.getElementById("nivel_id");
+
+            if (!nivelSelect) return;
 
             nivelSelect.innerHTML = '<option value="">Seleccione un nivel</option>';
 
             if (edadSeleccionada && nivelesPorEdad[edadSeleccionada]) {
                 nivelesPorEdad[edadSeleccionada].forEach(nivel => {
                     const option = document.createElement("option");
-                    option.value = nivel.toLowerCase();
-                    option.text = nivel;
+                    option.value = nivel;
+                    option.textContent = nivel;
                     nivelSelect.appendChild(option);
                 });
             }
@@ -347,13 +392,13 @@
             const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
             document.getElementById('progressLine').style.width = progress + '%';
 
-            // Update step items
             document.querySelectorAll('.step-item').forEach((item, index) => {
                 const stepNumber = index + 1;
                 item.classList.remove('active', 'completed');
 
                 if (stepNumber === currentStep) {
                     item.classList.add('active');
+                    item.querySelector('.step-circle').textContent = stepNumber;
                 } else if (stepNumber < currentStep) {
                     item.classList.add('completed');
                     item.querySelector('.step-circle').innerHTML = '<i class="bi bi-check-lg"></i>';
@@ -367,7 +412,6 @@
             document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
             document.querySelector(`[data-step="${step}"].form-step`).classList.add('active');
 
-            // Update buttons
             document.getElementById('prevBtn').style.display = step === 1 ? 'none' : 'flex';
             document.getElementById('nextBtn').style.display = step === totalSteps ? 'none' : 'flex';
             document.getElementById('submitBtn').style.display = step === totalSteps ? 'flex' : 'none';
@@ -410,11 +454,13 @@
             if (!validateStep(currentStep)) {
                 e.preventDefault();
             }
-            // Si la validación pasa, el formulario se envía normalmente
         });
 
-        // Initialize
-        showStep(1);
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            showStep(1);
+            actualizarNiveles();
+        });
     </script>
 @endsection
 

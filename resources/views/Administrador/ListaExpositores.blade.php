@@ -11,14 +11,15 @@
                 <div class="row align-items-center g-3">
                     <div class="col-lg-6 col-md-12">
                         <div class="action-buttons-header d-flex align-items-center gap-2">
+
+                            <h5 class="mb-0 text-white d-inline-flex align-items-center">
+                                <i class="bi bi-people-fill me-2"></i>
+                                Lista de expositores
+                            </h5>
                             <button type="button" class="btn btn-modern btn-primary" data-bs-toggle="modal" data-bs-target="#crearExpositorModal" title="Crear nuevo expositor">
                                 <i class="bi bi-person-plus me-2"></i>
                                 <span>Crear Expositor</span>
                             </button>
-                            <h5 class="mb-0 text-muted d-inline-flex align-items-center">
-                                <i class="bi bi-people-fill me-2"></i>
-                                Lista de expositores
-                            </h5>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-12">

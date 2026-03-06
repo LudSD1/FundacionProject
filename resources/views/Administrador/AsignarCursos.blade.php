@@ -9,7 +9,7 @@
     <div class="container py-5">
         <div class="card-modern">
             <div class="card-header-modern">
-                <h2><i class="fas fa-user-graduate me-2"></i>Asignar Cursos a Estudiantes</h2>
+                <h2 class="text-white"><i class="fas fa-user-graduate me-2"></i>Asignar Cursos a Estudiantes</h2>
             </div>
 
             <div class="card-body">

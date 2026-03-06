@@ -26,5 +26,33 @@ h6 {
     color: var(--color-accent5);
 }
 
+/* ===== LOGO APRENDO HOY ===== */
+.logo-aprendo {
+    font-family: "Inter", sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #ffa500;
+    text-decoration: none;
+    letter-spacing: -1px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.logo-aprendo:hover {
+    transform: scale(1.05);
+    color: #ffa500;
+    text-decoration: none;
+}
+
+.logo-h-special {
+    color: white;
+    background: #ffa500;
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin: 0 3px;
+    display: inline-block;
+    font-weight: 900;
+}
+
 
 

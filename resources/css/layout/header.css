@@ -1,3 +1,258 @@
+/* ===== HEADER TOP ===== */
+.header-top {
+    padding: 15px 0;
+    position: relative;
+    z-index: 2;
+    background: transparent;
+}
+
+
+
+/* ===== SECCIONES DEL HEADER DESKTOP ===== */
+.logo-section {
+    flex: 0 0 auto;
+    min-width: 200px;
+}
+
+.search-section {
+    flex: 1;
+    max-width: 400px;
+
+    margin: 0 2rem;
+}
+
+.nav-section {
+    flex: 0 0 auto;
+    min-width: 300px;
+    justify-content: flex-end;
+}
+
+/* ===== BUSCADOR ===== */
+.search-form {
+    width: 100%;
+}
+
+.search-input {
+    border: 2px solid #e9ecef;
+    border-radius: 25px 0 0 25px;
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.search-input:focus {
+    border-color: #ffa500;
+    box-shadow: 0 0 0 0.2rem rgba(255, 165, 0, 0.25);
+    background: white;
+}
+
+.search-btn {
+    border-radius: 0 25px 25px 0;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #ffa500, #ff8c00);
+    border: 2px solid #ffa500;
+    transition: all 0.3s ease;
+}
+
+.search-btn:hover {
+    background: linear-gradient(135deg, #ff8c00, #ffa500);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 165, 0, 0.3);
+}
+
+/* ===== NAVEGACIÓN MEJORADA ===== */
+#navbar ul {
+    gap: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.getstarted {
+    background: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+    white-space: nowrap;
+}
+
+.getstarted:hover {
+    background: #0056b3;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+}
+
+.getstarted:first-child {
+    background: #6c757d;
+}
+
+.getstarted:first-child:hover {
+    background: #545b62;
+}
+
+/* ===== LOGO FUNDACIÓN ===== */
+.logo-fundacion img {
+    height: 50px;
+    transition: transform 0.3s ease;
+}
+
+.logo-fundacion img:hover {
+    transform: scale(1.05);
+}
+
+/* ===== MÓVIL ===== */
+.logo-aprendo-mobile {
+    font-family: "Inter", sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #ffa500;
+    text-decoration: none;
+    letter-spacing: -1px;
+    transition: all 0.3s ease;
+}
+
+.logo-h-special-mobile {
+    color: white;
+    background: #ffa500;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin: 0 2px;
+    display: inline-block;
+    font-weight: 900;
+    font-size: 0.9em;
+}
+
+.logo-fundacion-mobile img {
+    height: 40px;
+}
+
+/* ===== MENÚ MÓVIL ===== */
+.mobile-menu-content {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-search-input {
+    border: 2px solid #e9ecef;
+    border-radius: 20px 0 0 20px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    background: #f8f9fa;
+}
+
+.mobile-search-input:focus {
+    border-color: #ffa500;
+    box-shadow: 0 0 0 0.2rem rgba(255, 165, 0, 0.25);
+    background: white;
+}
+
+.mobile-search-btn {
+    border-radius: 0 20px 20px 0;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #ffa500, #ff8c00);
+    border: 2px solid #ffa500;
+}
+
+.mobile-nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mobile-nav-item {
+    margin-bottom: 0.5rem;
+}
+
+.mobile-nav-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: #f8f9fa;
+    color: #333;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.mobile-nav-link:hover {
+    background: #ffa500;
+    color: white;
+    transform: translateX(5px);
+}
+
+/* ===== RESPONSIVE PARA HEADER LANDING ===== */
+@media (max-width: 1200px) {
+    .search-section {
+        max-width: 300px;
+        margin: 0 1rem;
+    }
+
+    .nav-section {
+        min-width: 250px;
+    }
+}
+
+@media (max-width: 992px) {
+    .logo-aprendo {
+        font-size: 1.8rem;
+    }
+
+    .search-section {
+        max-width: 250px;
+        margin: 0 0.5rem;
+    }
+
+    .nav-section {
+        min-width: 200px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .header-top {
+        padding: 0.75rem 0;
+    }
+
+    .logo-aprendo-mobile {
+        font-size: 1.3rem;
+    }
+
+    .logo-fundacion-mobile img {
+        height: 35px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-aprendo-mobile {
+        font-size: 1.1rem;
+    }
+
+    .logo-h-special-mobile {
+        padding: 3px 6px;
+        font-size: 0.8em;
+    }
+
+    .mobile-menu-content {
+        padding: 1rem;
+    }
+}
+
+/* Mejorar la transición de las secciones */
+.section-bg {
+    transition: all 0.3s ease-in-out;
+}
+
+
 
 #header {
     transition: all 0.3s ease-in-out;
@@ -10,7 +265,7 @@
     top: 0;
     left: 0;
     right: 0;
-    overflow: hidden;
+    /* overflow: hidden; */
     /* Mantiene el contenido dentro del header */
     min-height: 80px;
 }
@@ -107,4 +362,48 @@
 /* Carrusel de categorías */
 .header-bottom {
     background-color: #fff;
+}
+
+
+/* Logo */
+#header   ogo h1 {
+    font-size: 30px;
+    margin: 0;
+    line-height: 1;
+    font-weight: 400;
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 2;
+}
+
+#header .logo h1 a,
+#header .logo h1 a:hover {
+    color: #145da0;
+    text-decoration: none;
+}
+
+#header .logo img {
+    margin: 0;
+    max-height: 40px;
+}
+
+
+.user-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background-color: #145da0;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.user-avatar--sm {
+    width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
 }

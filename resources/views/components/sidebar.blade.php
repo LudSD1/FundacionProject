@@ -3,8 +3,7 @@
         'Administrador' => [
             ['route' => 'Inicio', 'icon' => 'bi bi-house-door-fill', 'text' => 'Inicio'],
             ['route' => 'ListadeCursos', 'icon' => 'bi bi-journal-bookmark-fill', 'text' => 'Lista de Cursos'],
-            ['route' => 'ListaDocentes', 'icon' => 'bi bi-person-video2', 'text' => 'Lista de Docentes'],
-            ['route' => 'ListaEstudiantes', 'icon' => 'bi bi-people-fill', 'text' => 'Lista de Estudiantes'],
+            ['route' => 'ListaUsuarios', 'icon' => 'bi bi-person-video2', 'text' => 'Lista de Usuarios'],
             ['route' => 'ListaExpositores', 'icon' => 'bi bi-person-video3', 'text' => 'Lista de Expositores'],
             ['route' => 'categorias.index', 'icon' => 'bi bi-tag-fill', 'text' => 'Lista de Categorías'],
             ['route' => 'aportesLista', 'icon' => 'bi bi-wallet-fill', 'text' => 'Lista de Pagos'],

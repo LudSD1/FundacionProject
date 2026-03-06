@@ -1,0 +1,400 @@
+/* Sección de autenticación */
+.auth-wrapper {
+    min-height: 100vh;
+    position: relative;
+    padding: 80px 20px;
+}
+
+.auth-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+}
+
+.auth-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 30px 30px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 1;
+    max-width: 500px;
+    width: 100%;
+    margin: 0 auto;
+    margin-top: 50px;
+}
+
+.auth-card-header h2 {
+    color: #1a1a1a;
+    font-size: 1.75rem;
+}
+
+.auth-card-header p {
+    font-size: 0.95rem;
+}
+
+/* Inputs mejorados - Tamaños reducidos */
+.auth-form .form-control,
+.auth-form .form-select,
+.auth-form .form-control-lg,
+.auth-form .form-select-lg {
+    padding: 0.6rem 0.9rem;
+    font-size: 0.95rem;
+    min-height: 42px;
+    border: 1px solid #dee2e6;
+    border-radius: 0.4rem;
+}
+
+.auth-form .input-group-text {
+    padding: 0.75rem 1rem;
+    min-width: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+    color: #495057;
+    font-size: 1rem;
+}
+
+/* Override bg-light class for better visibility */
+.auth-form .input-group-text.bg-light {
+    background-color: #f8f9fa !important;
+    color: #495057 !important;
+}
+
+/* Mejorar visibilidad de iconos - Tamaños reducidos */
+.auth-form .input-group-text i {
+    color: #495057 !important;
+    font-size: 0.95rem;
+}
+
+.auth-form .input-group .btn i {
+    color: #495057 !important;
+    font-size: 0.95rem;
+}
+
+/* Solucionar bordes superpuestos */
+.auth-form .input-group-text.border-end-0 {
+    border-right: 0;
+}
+
+.auth-form .form-control.border-start-0 {
+    border-left: 0;
+}
+
+.auth-form .form-control.border-end-0 {
+    border-right: 0;
+}
+
+/* Botón de toggle password - Mejorado */
+.auth-form .input-group .btn {
+    min-height: 45px;
+    padding: 0.75rem 1rem;
+    border: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+    color: #495057;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.auth-form .input-group .btn:hover {
+    background-color: #e9ecef !important;
+    border-color: #adb5bd;
+    color: #212529 !important;
+}
+
+/* Override btn-outline-secondary class */
+.auth-form .input-group .btn.btn-outline-secondary {
+    background-color: #f8f9fa;
+    color: #495057;
+    border-color: #dee2e6;
+}
+
+.auth-form .input-group .btn.btn-outline-secondary:hover {
+    background-color: #e9ecef;
+    color: #212529;
+    border-color: #adb5bd;
+}
+
+/* Eliminar padding-start en inputs con iconos */
+.auth-form .form-control.ps-0 {
+    padding-left: 0.5rem !important;
+}
+
+/* Espaciado entre campos - Aumentado */
+.auth-form .mb-3 {
+    margin-bottom: 1.5rem !important;
+}
+
+.auth-form .mb-4 {
+    margin-bottom: 2rem !important;
+}
+
+.auth-form .mb-5 {
+    margin-bottom: 4rem !important;
+    /* Más espacio después de filas de campos */
+}
+
+.auth-form .row.g-4 {
+    --bs-gutter-x: 1.5rem;
+    --bs-gutter-y: 2rem;
+}
+
+/* Labels más espaciados - Aumentado */
+.auth-form .form-label {
+    margin-bottom: 1rem !important;
+    /* Más espacio entre label e input */
+    font-size: 0.9rem;
+}
+
+/* Input group con mejor borde unificado */
+.auth-form .input-group {
+    border-radius: 0.5rem;
+    border: 1px solid #dee2e6;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.auth-form .input-group:focus-within {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    border-color: #86b7fe;
+}
+
+.auth-form .input-group .form-control:focus,
+.auth-form .input-group .form-select:focus {
+    box-shadow: none;
+    border-color: transparent;
+}
+
+/* Asegurar que los inputs ocupen el ancho completo */
+.auth-form .input-group .form-control,
+.auth-form .input-group .form-select {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Mejorar visibilidad específica para inputs de apellidos y contraseñas */
+.auth-form .row .col-md-4 .input-group,
+.auth-form .row .col-md-6 .input-group {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+/* Mejor espaciado para inputs en tarjeta más ancha */
+.auth-form .row.g-4 {
+    --bs-gutter-x: 1.5rem;
+    /* Espacio horizontal natural */
+    --bs-gutter-y: 2rem;
+    /* Espacio vertical adecuado */
+}
+
+.auth-form .row.g-5 {
+    --bs-gutter-x: 2rem;
+    /* Más espacio horizontal entre columnas */
+    --bs-gutter-y: 3rem;
+    /* Espacio vertical generoso pero razonable */
+}
+
+/* Espaciado mejorado para inputs individuales */
+.auth-form .mb-3 {
+    margin-bottom: 1.5rem !important;
+    /* Espacio natural entre campos */
+}
+
+.auth-form .mb-4 {
+    margin-bottom: 2rem !important;
+    /* Espacio generoso pero no excesivo */
+}
+
+.auth-form .mb-5 {
+    margin-bottom: 2.5rem !important;
+    /* Espacio para separar secciones */
+}
+
+/* Mejor distribución de los inputs de tres columnas */
+.auth-form .row .col-md-4 {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+
+/* Mejor distribución de los inputs de dos columnas */
+.auth-form .row .col-md-6 {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+
+.auth-form .row .col-md-4 .input-group:focus-within,
+.auth-form .row .col-md-6 .input-group:focus-within {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    border-color: #86b7fe;
+}
+
+/* Asegurar que los inputs dentro de las columnas tengan buen contraste */
+.auth-form .row .col-md-4 .form-control,
+.auth-form .row .col-md-6 .form-control {
+    background-color: #fff !important;
+    color: #212529 !important;
+    border-color: transparent !important;
+}
+
+.auth-form .row .col-md-4 .form-control:focus,
+.auth-form .row .col-md-6 .form-control:focus {
+    background-color: #fff !important;
+    color: #212529 !important;
+    box-shadow: none !important;
+}
+
+.auth-form .form-control:focus,
+.auth-form .form-select:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    border-color: #86b7fe;
+}
+
+.auth-form .form-label {
+    margin-bottom: 12px;
+    color: #2c3e50;
+}
+
+/* Botón de login - Tamaño reducido */
+.btn-auth {
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    letter-spacing: 0.3px;
+    padding: 0.75rem 1.5rem;
+}
+
+/* Tamaño extra grande para inputs - Ajustado */
+.input-group-xl>.form-control,
+.input-group-xl>.form-select,
+.form-control-xl,
+.form-select-xl {
+    padding: 1rem 1.25rem;
+    font-size: 1.05rem;
+    min-height: 60px;
+    border-radius: 0.5rem;
+}
+
+.input-group-xl>.input-group-text {
+    padding: 1rem 1.25rem;
+    font-size: 1.1rem;
+    min-height: 60px;
+}
+
+.input-group-xl {
+    border-radius: 0.5rem;
+}
+
+/* Margen extra grande */
+.mb-6 {
+    margin-bottom: 5rem !important;
+}
+
+.btn-auth:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(13, 110, 253, 0.4);
+}
+
+/* Toggle password button - Ajustado */
+#togglePassword,
+#togglePasswordConfirmation {
+    padding: 1rem 1.25rem;
+    min-height: 60px;
+    min-width: 50px;
+}
+
+.auth-form .mb-4 {
+    margin-bottom: 2rem !important;
+    /* Más espacio entre campos */
+}
+
+.auth-form .row.g-4 {
+    --bs-gutter-x: 1.5rem;
+    /* Más espacio horizontal entre columnas */
+    --bs-gutter-y: 1.5rem;
+    /* Más espacio vertical */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .auth-card {
+        padding: 50px 30px;
+        /* Más espacio interior en móviles */
+        max-width: 100%;
+    }
+
+    /* Ajustar espaciado en móviles */
+    .auth-form .row.g-4 {
+        --bs-gutter-x: 1rem;
+        --bs-gutter-y: 2rem;
+        /* Espacio vertical natural en móviles */
+    }
+
+    .auth-form .row.g-5 {
+        --bs-gutter-x: 1rem;
+        --bs-gutter-y: 2.5rem;
+        /* Espacio vertical adecuado en móviles */
+    }
+
+    .auth-form .mb-4 {
+        margin-bottom: 2rem !important;
+    }
+}
+
+.auth-card-header h2 {
+    font-size: 1.6rem;
+}
+
+.auth-form .form-control,
+.auth-form .form-select,
+.auth-form .form-control-lg,
+.auth-form .form-select-lg {
+    padding: 0.9rem 1rem;
+    font-size: 1rem;
+    min-height: 52px;
+}
+
+.auth-form .input-group-text,
+#togglePassword,
+#togglePasswordConfirmation {
+    padding: 0.75rem 0.875rem;
+    min-width: 48px;
+}
+
+@media (max-width: 576px) {
+    .auth-card {
+        padding: 24px 18px;
+    }
+
+    .auth-card-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .auth-form .form-control,
+    .auth-form .form-select,
+    .auth-form .form-control-lg,
+    .auth-form .form-select-lg {
+        font-size: 0.98rem;
+        padding: 0.85rem 0.95rem;
+        min-height: 48px;
+    }
+
+    .btn-auth {
+        font-size: 1.1rem;
+        padding: 18px 25px !important;
+    }
+
+    .auth-form .input-group-text,
+    #togglePassword,
+    #togglePasswordConfirmation {
+        padding: 0.7rem 0.8rem;
+        min-width: 45px;
+    }
+}

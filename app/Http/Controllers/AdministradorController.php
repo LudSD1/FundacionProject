@@ -3,31 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Events\CursoEvent;
-use App\Events\DocenteEvent;
-use App\Events\EstudianteEvent;
 use App\Events\UsuarioEvent;
 use App\Mail\CredencialesAcceso;
-use App\Mail\NuevoUsuarioRegistrado;
 use App\Models\atributosDocente;
 use App\Models\Cursos;
-use App\Models\Docente;
-use App\Models\Estudiante;
 use App\Models\TutorRepresentanteLegal;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
-use App\Services\TwilioService;
-
 use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\Mail;
-use App\Mail\TestMail;
-use App\Models\Horario;
 use App\Services\AdminLogger;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Validation\Rule;
 
 class AdministradorController extends Controller
 {
@@ -73,7 +61,7 @@ class AdministradorController extends Controller
         }
     }
 
-    public function storeEstudiante(Request $request)
+    public function storeUsuario(Request $request)
     {
 
         $request->validate([
@@ -127,11 +115,28 @@ class AdministradorController extends Controller
 
 
         $user->save();
+
+        switch ($request->role) {
+            case 'Estudiante':
+                $user->assignRole('Estudiante');
+                break;
+            case 'Docente':
+                $user->assignRole('Docente');
+                break;
+            case 'Administrador':
+                $user->assignRole('Administrador');
+                break;
+            default:
+                $user->assignRole('Estudiante'); // Asignar rol por defecto si no se especifica
+                break;
+        }
+
         $user->assignRole('Estudiante');
+
         $user->sendEmailVerificationNotification();
 
         // Log de actividad del administrador
-        Log::channel('admin')->info('Estudiante creado por administrador', [
+        Log::channel('admin')->info($request->role.'creado por administrador', [
             'admin_id' => auth()->id(),
             'admin_name' => auth()->user()->name ?? 'Sistema',
             'action' => 'create_student',
@@ -149,198 +154,9 @@ class AdministradorController extends Controller
 
         return redirect()->route('ListaEstudiantes')->with('success', 'Editado exitosamente!');
 
-        // }
-
-
-
-
-
-
 
     }
 
-    public function storeDocente(Request $request)
-    {
-
-
-        $request->validate([
-            'name' => 'required',
-            'lastname1' => 'required',
-            'lastname2' => 'required',
-            'CI' => 'required|unique:users,CI',
-            'Celular' => 'required|integer',
-            'email' => 'required|unique:users,email',
-            'fechadenac' => 'required|date|before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
-        ], [
-            'name.required' => 'El nombre es obligatorio.',
-            'lastname1.required' => 'El primer apellido es obligatorio.',
-            'lastname2.required' => 'El segundo apellido es obligatorio.',
-            'CI.required' => 'El campo de identificación es obligatorio.',
-            'CI.unique' => 'Esta identificación ya está en uso.',
-            'Celular.required' => 'El número de celular es obligatorio.',
-            'Celular.integer' => 'Debe ser un numero valido.',
-            'email.required' => 'El correo electrónico es obligatorio.',
-            'email.unique' => 'Este correo electrónico ya está en uso.',
-            'fechadenac.required' => 'La fecha de nacimiento es obligatoria.',
-            'fechadenac.date' => 'La fecha de nacimiento debe ser una fecha válida.',
-            'fechadenac.before_or_equal' => 'Debes ser mayor de 18 años para registrarte.',
-        ]);
-
-
-
-
-        $user = new User();
-        $user->name = $request->name;
-        $user->lastname1 = $request->lastname1;
-        $user->lastname2 = $request->lastname2;
-        $user->CI = $request->CI;
-        $user->Celular = $request->Celular;
-        $user->email = $request->email;
-        $orgDate = $request->fechadenac;
-        $newDate = date("Y-m-d", strtotime($orgDate));
-
-
-        $user->fechadenac = $newDate;
-        $user->CiudadReside = $request->CiudadReside;
-        $user->PaisReside = $request->PaisReside;
-        $passwordPlain = substr($request->name, 0, 1) . substr($request->lastname1, 0, 1) . substr($request->lastname2, 0, 1) . $request->CI;
-        $user->password = bcrypt($passwordPlain);
-
-        try {
-            Mail::to($user->email)->send(new CredencialesAcceso($user, $passwordPlain));
-        } catch (\Exception $e) {
-            // Puedes loggear el error si falla el envío pero no interrumpir el flujo
-            Log::error('Error enviando credenciales: ' . $e->getMessage());
-        }
-
-        $user->save();
-        $user->assignRole('Docente');
-        $user->sendEmailVerificationNotification();
-
-        $atributosDocentes = new atributosDocente();
-
-        $atributosDocentes->formacion = "";
-        $atributosDocentes->Especializacion = "";
-        $atributosDocentes->ExperienciaL = "";
-        $atributosDocentes->docente_id = User::latest('id')->first()->id;
-        $atributosDocentes->save();
-
-        // Log de actividad del administrador
-        Log::channel('admin')->info('Docente creado por administrador', [
-            'admin_id' => auth()->id(),
-            'admin_name' => auth()->user()->name ?? 'Sistema',
-            'action' => 'create_teacher',
-            'teacher_data' => [
-                'name' => $request->name,
-                'lastname1' => $request->lastname1,
-                'lastname2' => $request->lastname2,
-                'email' => $request->email,
-                'CI' => $request->CI,
-                'celular' => $request->Celular
-            ],
-            'timestamp' => now(),
-            'ip' => request()->ip()
-        ]);
-
-        return redirect()->route('ListaDocentes')->with('success', 'Docente registrado exitosamente!');
-    }
-
-    public function storeEstudianteMenor(Request $request)
-    {
-
-
-        $request->validate([
-            'name' => 'required',
-            'lastname1' => 'required',
-            'lastname2' => 'required',
-            'CI' => 'required|unique:users,CI',
-            'nombreT' => 'required',
-            'appT' => 'required',
-            'apmT' => 'required',
-            'CIT' => 'required',
-            'CelularT' => 'required|integer',
-            'fechadenac' => 'required|date|before_or_equal:' . now()->subYears(5)->format('Y-m-d'),
-
-        ], [
-            'name.required' => 'El nombre es obligatorio.',
-            'lastname1.required' => 'El primer apellido es obligatorio.',
-            'lastname2.required' => 'El segundo apellido es obligatorio.',
-            'CI.required' => 'El campo de identificación es obligatorio.',
-            'CI.unique' => 'Esta identificación ya está en uso.',
-            'nombreT.required' => 'El nombre del tutor es obligatorio.',
-            'appT.required' => 'El primer apellido del tutor es obligatorio.',
-            'apmT.required' => 'El segundo apellido del tutor es obligatorio.',
-            'CIT.required' => 'La identificación del tutor es obligatoria.',
-            'CelularT.required' => 'El número de celular del tutor es obligatorio.',
-            'fechadenac.required' => 'La fecha de nacimiento es obligatoria.',
-            'fechadenac.date' => 'La fecha de nacimiento debe ser una fecha válida.',
-            'fechadenac.before_or_equal' => 'El estudiante debe tener al menos 10 años.',
-        ]);
-
-
-        $user = new User();
-
-        $user->name = $request->name;
-        $user->lastname1 = $request->lastname1;
-        $user->lastname2 = $request->lastname2;
-        $user->Celular = $request->CelularT;
-        $user->email = substr($request->nombreT, 0, 1) . substr($request->appT, 0, 1) . substr($request->appM, 0, 1) . $request->CIT . '@fundvida.com';
-        $user->CI = $request->CI;
-        $orgDate = $request->fechadenac;
-
-
-
-        $newDate = date("Y-m-d", strtotime($orgDate));
-
-        $user->fechadenac = $newDate;
-        $user->CiudadReside = $request->CiudadReside;
-        $user->PaisReside = $request->PaisReside;
-        $user->password = bcrypt(substr($request->nombreT, 0, 1) . substr($request->appT, 0, 1) . substr($request->appM, 0, 1) . $request->CIT);
-
-        $estudiante = $user;
-
-
-
-        $tutor = new TutorRepresentanteLegal();
-
-        $tutor->nombreTutor = $request->nombreT;
-        $tutor->appaternoTutor = $request->appT;
-        $tutor->apmaternoTutor = $request->apmT;
-        $tutor->CI = $request->CIT;
-        $tutor->Direccion = "";
-        $tutor->Celular = $request->CelularT;
-        $tutor->CorreoElectronicoTutor = $request->email;
-        $tutor->estudiante_id = User::latest('id')->first()->id;
-
-
-        // event(new EstudianteEvent($estudiante, $tutor, 'registro'));
-        $user->save();
-        $tutor->save();
-
-        $user->assignRole('Estudiante');
-
-        // Log de actividad del administrador
-        Log::channel('admin')->info('Estudiante menor creado por administrador', [
-            'admin_id' => auth()->id(),
-            'admin_name' => auth()->user()->name ?? 'Sistema',
-            'action' => 'create_minor_student',
-            'student_data' => [
-                'name' => $request->name,
-                'lastname1' => $request->lastname1,
-                'lastname2' => $request->lastname2,
-                'CI' => $request->CI,
-                'tutor_name' => $request->nombreT,
-                'tutor_lastname1' => $request->appT,
-                'tutor_lastname2' => $request->apmT,
-                'tutor_CI' => $request->CIT,
-                'tutor_celular' => $request->CelularT
-            ],
-            'timestamp' => now(),
-            'ip' => request()->ip()
-        ]);
-
-        return redirect()->route('ListaEstudiantes')->with('success', 'Estudiante registrado exitosamente!');
-    }
 
     public function storeCurso(Request $request)
     {

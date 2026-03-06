@@ -12,9 +12,17 @@ use Carbon\Carbon;
 use App\Mail\ReciboPagoMail;
 use Illuminate\Support\Facades\Mail;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Services\SiatSimulationService;
+use App\Models\Factura;
 
 class AportesController extends Controller
 {
+    protected $siatService;
+
+    public function __construct(SiatSimulationService $siatService)
+    {
+        $this->siatService = $siatService;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -62,8 +70,15 @@ class AportesController extends Controller
             \Log::error('Error enviando email de recibo: ' . $e->getMessage());
         }
 
+        // Generar Factura SIAT (Simulación)
+        try {
+            $this->siatService->emitirFactura($aporte);
+        } catch (\Exception $e) {
+            \Log::error('Error generando factura simulada: ' . $e->getMessage());
+        }
+
         // Generar y mostrar el recibo
-        return back()->with('success', 'Recibo generado y enviado por correo electrónico.');
+        return back()->with('success', 'Recibo y Factura generados y enviado por correo electrónico.');
     }
 
     public function generarRecibo($id)
@@ -528,6 +543,13 @@ class AportesController extends Controller
         // Solo si ya terminó de pagar
         if ($pago->restante_a_pagar == 0) {
             $this->cambiarEstadoIns($pago->estudiante_id, $pago->cursos_id);
+
+            // Generar Factura SIAT (Simulación)
+            try {
+                $this->siatService->emitirFactura($pago);
+            } catch (\Exception $e) {
+                \Log::error('Error generando factura simulada en actualización: ' . $e->getMessage());
+            }
         }
 
         return redirect()->back()->with('success', 'Pago registrado exitosamente');
@@ -560,5 +582,42 @@ class AportesController extends Controller
 
         // Retorna la vista del recibo (ajusta el nombre de la vista si es necesario)
         return view('aportes.recibo', compact('aporte'));
+    }
+
+    public function verFactura($id)
+    {
+        try {
+            $id = is_numeric($id) ? $id : decrypt($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+
+        $aporte = Aportes::findOrFail($id);
+
+        // Ensure invoice exists or generate it if paid
+        $factura = Factura::where('aporte_id', $aporte->id)->first();
+
+        if (!$factura && $aporte->restante_a_pagar == 0) {
+            // Lazily generate if missing but paid
+            $factura = $this->siatService->emitirFactura($aporte);
+        }
+
+        if (!$factura) {
+            return back()->with('error', 'La factura no está disponible (pago no completado o error).');
+        }
+
+        // Validate access
+        if (auth()->user()->id !== $aporte->estudiante_id && !auth()->user()->hasRole('Administrador')) {
+            abort(403, 'No tienes permiso para ver esta factura.');
+        }
+
+        // Generate QR for the Invoice (SIAT link simulation)
+        // In real SIAT: https://pilotosiat.impuestos.gob.bo/consulta/QR?nit=...&cuf=...&numero=...&t=...
+        $qrData = "https://siat.impuestos.gob.bo/consulta/QR?nit={$factura->nit_emisor}&cuf={$factura->cuf}&numero={$factura->numero_factura}&t=1";
+
+        $qrSvg = QrCode::format('svg')->size(150)->generate($qrData);
+        $qrCodeBase64 = base64_encode($qrSvg);
+
+        return view('aportes.factura_siat', compact('factura', 'aporte', 'qrCodeBase64'));
     }
 }

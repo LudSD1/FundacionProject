@@ -29,12 +29,66 @@
                         <ul class="d-flex align-items-center mb-0 me-4">
                             @auth
                                 <li><a class="getstarted scrollto" href="{{ route('Inicio') }}">Mi aprendizaje</a></li>
+
+                                {{-- Dropdown de usuario --}}
+                                <li class="nav-item dropdown ms-3">
+                                    <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 text-dark fw-semibold"
+                                        href="#" id="userDropdown" role="button" data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+                                        <div class="user-avatar">
+                                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                        </div>
+                                        {{ Auth::user()->name }}
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow border-0"
+                                        aria-labelledby="userDropdown">
+                                        <li>
+                                            <div class="dropdown-header d-flex align-items-center gap-2 py-2">
+                                                <div class="user-avatar user-avatar--sm">
+                                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                                </div>
+                                                <div>
+                                                    <div class="fw-semibold">{{ Auth::user()->name }}</div>
+                                                    <div class="text-muted small">{{ Auth::user()->email }}</div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item d-flex align-items-center gap-2"
+                                                href="{{ route('perfil', Auth::user()->id ) }}">
+                                                <i class="bi bi-person-circle"></i> Mi perfil
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item d-flex align-items-center gap-2"
+                                                href="{{ route('Inicio') }}">
+                                                <i class="bi bi-book"></i> Mi aprendizaje
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li>
+                                            <form method="POST" action="{{ route('logout') }}">
+                                                @csrf
+                                                <button type="submit"
+                                                    class="dropdown-item d-flex align-items-center gap-2 text-danger">
+                                                    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </li>
                             @else
                                 </li>
                                 @if (Route::is('login'))
                                     <li><a class="getstarted scrollto" href="{{ route('signin') }}">Crear cuenta</a></li>
                                 @else
-                                    <li><a class="getstarted scrollto" href="{{ route('login.signin') }}">Iniciar Sesión</a>
+                                    <li><a class="getstarted scrollto" href="{{ route('login.signin') }}">Iniciar
+                                            Sesión</a>
                                 @endif
                             @endauth
                         </ul>

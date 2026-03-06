@@ -236,6 +236,7 @@ Route::group(['middleware' => ['auth']], function () {
             ->name('cursos.calificaciones');
 
         Route::get('/recibo/{id}', [AportesController::class, 'generarRecibo'])->name('recibo.generar');
+        Route::get('/factura-siat/{id}', [AportesController::class, 'verFactura'])->name('factura.siat');
     });
     Route::get('/recibo/verificar/{codigo}', [AportesController::class, 'verificarReciboPorCodigo'])
         ->name('recibo.verificar');

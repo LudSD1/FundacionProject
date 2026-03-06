@@ -10,16 +10,13 @@
     <meta content="" name="keywords">
     <link href="{{ asset('assets/img/Acceder.png') }}" rel="icon">
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="{{ asset('assets2/vendor/aos/aos.css') }}" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ asset('assets2/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets2/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets2/vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets2/vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link href="{{ asset('assets2/css/style.css') }}" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/driver.js@latest/dist/driver.js.iife.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@latest/dist/driver.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lite-youtube-embed@0.2.0/src/lite-yt-embed.css">
     <script src="https://cdn.jsdelivr.net/npm/lite-youtube-embed@0.2.0/src/lite-yt-embed.js" defer></script>
 
 </head>
@@ -51,7 +48,7 @@
     @include('components.footer')
 
 
-    @role('estudiante') 
+    @role('estudiante')
     @include('components.achievements')
     @endrole
 
@@ -61,15 +58,12 @@
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center md-5"><i
             class="bi bi-arrow-up-short"></i></a>
 
-    <!-- Vendor JS Files -->
-    <script src="{{ asset('assets2/vendor/aos/aos.js') }}"></script>
-    <script src="{{ asset('assets2/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('assets2/vendor/glightbox/js/glightbox.min.js') }}"></script>
-    <script src="{{ asset('assets2/vendor/swiper/swiper-bundle.min.js') }}"></script>
-    <script src="{{ asset('assets2/vendor/php-email-form/validate.js') }}"></script>
 
 
     <!-- Template Main JS File -->
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="{{ asset('assets2/js/main.js') }}"></script>
 
     <script>
