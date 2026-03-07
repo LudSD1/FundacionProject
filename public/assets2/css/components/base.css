@@ -1,0 +1,63 @@
+#congress-list,.page-cursos {
+	background: linear-gradient(135deg, #f8f9fa 0, #e9ecef 100%);
+}
+
+#collaborators,#features {
+	background: linear-gradient(135deg, #f8f9fa 0, #e9ecef 50%, #f0f8ff 100%);
+}
+
+.course-image,.course-instructor-avatar,.course-list-image,.hero-carousel-image,.hero-youtube-thumbnail {
+	object-fit: cover;
+}
+
+@media screen and (max-width: 768px) {
+	[data-aos-delay] {
+		transition-delay: 0 !important;
+	}
+}
+
+.page-cursos {
+	min-height: 100vh;
+}
+
+#main {
+	position: relative;
+	z-index: 2;
+	background: #fff;
+}
+
+.bg-light {
+	background-color: #f8f9fa !important;
+    transition: 0.3s ease-in-out;
+}
+
+.py-5 {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+    transition: 0.3s ease-in-out;
+}
+
+section {
+    transition: 0.3s ease-in-out;
+}
+
+.container {
+    transition: 0.3s ease-in-out;
+}
+
+.courses-listing-container {
+	padding: 60px 0;
+	background: linear-gradient(180deg, #f8f9fa 0, #fff 100%);
+	min-height: 100vh;
+}
+
+.header {
+	background: #fff;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+	.courses-listing-container {
+		padding: 40px 0;
+	}
+}

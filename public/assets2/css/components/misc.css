@@ -1,0 +1,107 @@
+/* Generic Buttons */
+.btn-primary {
+	background: var(--gradient-primary);
+	border: none;
+	border-radius: 8px;
+	font-weight: 500;
+	padding: 0.5rem 1rem;
+	transition: 0.3s;
+}
+.btn-primary:hover {
+	background: var(--color-primary);
+    transform: translateY(-1px);
+}
+.btn-outline-primary {
+	color: var(--color-primary);
+	border-radius: 8px;
+	font-weight: 500;
+	transition: 0.3s;
+    border-color: var(--color-primary);
+}
+.btn-outline-primary:hover {
+	background-color: var(--color-primary);
+    color: #fff;
+    transform: translateY(-1px);
+}
+.btn-success {
+    background: linear-gradient(135deg, #28a745 0, #20c997 100%);
+	border: none;
+    transition: 0.3s;
+}
+.btn-success:hover {
+    background: linear-gradient(135deg, #218838 0, #1ea080 100%);
+    transform: translateY(-2px);
+}
+.btn-link {
+	border: none;
+	background: 0 0;
+	color: #47536e;
+	transition: color 0.3s;
+}
+.btn-link:hover {
+	color: #145da0;
+}
+.btn-auth {
+	padding: 0.75rem 2rem;
+	font-weight: 600;
+	font-size: 1rem;
+}
+
+/* Generic Form Controls */
+.form-control:focus {
+	border-color: var(--bs-primary);
+	box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+.input-spaced {
+	padding: 0.75rem 1rem;
+	font-size: 1rem;
+}
+.input-group-text {
+	padding: 0.75rem 1rem;
+	background-color: #f8f9fa !important;
+}
+
+/* Logos & Containers */
+.logo-container {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+.logo-container img {
+	max-height: 35px;
+	width: auto;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+	width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+	background: #f1f1f1;
+	border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+	background: #145da0;
+	border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+	background: #1e7bd8;
+}
+
+/* Miscellaneous Helpers */
+.backdrop-blur {
+    backdrop-filter: blur(10px);
+}
+.object-fit-cover {
+    object-fit: cover;
+}
+
+@media (max-width: 767.98px) {
+	.logo-container {
+		gap: 0.5rem;
+	}
+	.logo-container img {
+		max-height: 30px;
+	}
+}

@@ -1,0 +1,371 @@
+#hero {
+	z-index: 1;
+	background: var(--gradient-primary);
+	color: #fff;
+	min-height: 80vh;
+	position: relative;
+	overflow: hidden;
+	background-color: #1a4789;
+	background-image: url("https://www.transparenttextures.com/patterns/inspiration-geometry.png");
+}
+#hero::before {
+	opacity: 0.9;
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="rgba(255,255,255,0.05)" points="0,1000 1000,0 1000,1000"/></svg>')0 0 / cover;
+    transition: 0.3s ease-in-out;
+}
+#hero h1 {
+	font-size: 3rem;
+	font-weight: 800;
+	line-height: 1.2;
+	margin-bottom: 2rem;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+	color: #fff !important;
+    transition: 0.3s ease-in-out;
+}
+#hero h2 {
+    transition: 0.3s ease-in-out;
+}
+#hero .download-btn {
+	background: var(--gradient-orange);
+	color: #fff;
+	padding: 15px 30px;
+	border-radius: 25px;
+	text-decoration: none;
+	font-weight: 600;
+	font-size: 1.1rem;
+	transition: 0.3s;
+	box-shadow: 0 4px 15px rgba(255, 165, 0, 0.3);
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+}
+#hero .download-btn:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 8px 25px rgba(255, 165, 0, 0.4);
+	color: #fff;
+}
+#hero .hero-img img {
+	filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
+	transition: 0.3s ease-in-out;
+}
+#hero .hero-img img:hover {
+	transform: scale(1.05);
+}
+
+.course-hero {
+	padding: 80px 0 60px;
+	background: linear-gradient(135deg,rgba(26, 71, 137, 0.03) 0,rgba(57, 166, 203, 0.03) 100%);
+	position: relative;
+	overflow: hidden;
+}
+.course-hero::before {
+	top: -50%;
+	right: -20%;
+	width: 800px;
+	height: 800px;
+	background: radial-gradient(circle,rgba(57, 166, 203, 0.1) 0,transparent 70%);
+    border-radius: 50%;
+	position: absolute;
+	pointer-events: none;
+	content: "";
+}
+.course-hero::after {
+	bottom: -40%;
+	left: -15%;
+	width: 600px;
+	height: 600px;
+	background: radial-gradient(circle,rgba(26, 71, 137, 0.08) 0,transparent 70%);
+    border-radius: 50%;
+	position: absolute;
+	pointer-events: none;
+	content: "";
+}
+.course-hero h3 {
+	color: var(--color-primary);
+	line-height: 1.3;
+	position: relative;
+	display: inline-block;
+    font-weight: 800;
+	font-size: 2rem;
+	margin-bottom: 0.5rem;
+}
+.course-hero h3::after {
+	content: "";
+	position: absolute;
+	bottom: -8px;
+	left: 0;
+	width: 60px;
+	height: 4px;
+	background: var(--gradient-orange);
+	border-radius: 2px;
+}
+.course-hero h2 {
+	color: var(--color-accent2);
+	margin-bottom: 1.5rem;
+	line-height: 1.6;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+#course-detail-hero {
+	position: relative;
+	padding: 80px 0 60px;
+	background: linear-gradient(135deg, #667eea 0, #764ba2 100%);
+	overflow: hidden;
+	margin-top: 0;
+}
+#course-detail-hero::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(20, 93, 160, 0.95);
+	z-index: 0;
+}
+#course-detail-hero::after {
+	content: "";
+	position: absolute;
+	top: -50%;
+	right: -20%;
+	width: 600px;
+	height: 600px;
+	background: radial-gradient(circle,rgba(255, 255, 255, 0.1) 0,transparent 70%);
+	border-radius: 50%;
+	z-index: 0;
+}
+
+.search-hero-section {
+	min-height: 600px;
+	background-color: #1a4789;
+	background-image: url("https://www.transparenttextures.com/patterns/inspiration-geometry.png");
+	background-attachment: fixed;
+	position: relative;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	padding: 80px 0;
+	margin-top: 50px;
+}
+.search-hero-section::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-image: radial-gradient(circle,rgba(255, 255, 255, 0.1) 1px,transparent 1px);
+	background-size: 30px 30px;
+	opacity: 0.3;
+	pointer-events: none;
+}
+.search-hero-section::after {
+	content: "";
+	position: absolute;
+	width: 400px;
+	height: 400px;
+	border-radius: 50%;
+	background: radial-gradient(circle,rgba(99, 190, 207, 0.2) 0,transparent 70%);
+	top: -100px;
+	right: -100px;
+	animation: 8s ease-in-out infinite float;
+}
+.search-hero-title {
+	font-size: 3.5rem;
+	font-weight: 800;
+	color: #fff;
+	margin-bottom: 1.5rem;
+	text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.3);
+	letter-spacing: -0.5px;
+	line-height: 1.2;
+}
+.search-hero-subtitle {
+	font-size: 1.25rem;
+	color: rgba(255, 255, 255, 0.95);
+	margin-bottom: 3rem;
+	font-weight: 300;
+	line-height: 1.6;
+	text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.2);
+}
+.search-hero-form {
+	background: rgba(255, 255, 255, 0.98);
+	border-radius: 20px;
+	padding: 2rem;
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+	transition: transform 0.3s;
+    backdrop-filter: blur(10px);
+    animation: 1s ease-out 0.4s both fadeInUp;
+}
+.search-hero-form:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+}
+
+.hero-youtube-container {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	min-height: 400px;
+	background: #000;
+	overflow: hidden;
+}
+.hero-youtube-preview {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	min-height: 400px;
+	cursor: pointer;
+	transition: opacity 0.3s;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.hero-youtube-preview.hidden {
+	opacity: 0;
+	pointer-events: none;
+}
+.hero-youtube-thumbnail {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	transition: transform 0.5s;
+}
+.hero-youtube-preview:hover .hero-youtube-thumbnail {
+    transform: scale(1.05);
+}
+.hero-youtube-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(to bottom,rgba(0, 0, 0, 0.3) 0,rgba(0, 0, 0, 0.5) 100%);
+	transition: background 0.3s;
+}
+.hero-youtube-preview:hover .hero-youtube-overlay {
+	background: linear-gradient(to bottom,rgba(0, 0, 0, 0.1) 0,rgba(0, 0, 0, 0.3) 100%);
+}
+.hero-youtube-play-btn {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background: 0 0;
+	border: none;
+	cursor: pointer;
+	z-index: 10;
+	transition: 0.3s;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+}
+.hero-youtube-play-btn svg {
+	width: 80px;
+	height: 56px;
+	filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+	transition: 0.3s;
+}
+.hero-play-bg {
+	fill: var(--color-primary);
+	transition: fill 0.3s;
+}
+.hero-play-icon {
+	fill: #fff;
+}
+.hero-youtube-play-btn:hover svg {
+	transform: scale(1.15);
+}
+.hero-youtube-play-btn:hover .hero-play-bg {
+	fill: var(--orange-accent);
+}
+.hero-play-text {
+	color: #fff;
+	font-size: 1rem;
+	font-weight: 600;
+	text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+	opacity: 0;
+	transition: opacity 0.3s;
+}
+.hero-youtube-player {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 5;
+    width: 100%;
+	height: 100%;
+	min-height: 400px;
+}
+.hero-youtube-player iframe {
+	border: none;
+	background: #000;
+    width: 100%;
+	height: 100%;
+	min-height: 400px;
+}
+
+@media (max-width: 992px) {
+	.search-hero-title {
+		font-size: 2.5rem;
+	}
+	.search-hero-subtitle {
+		font-size: 1.1rem;
+	}
+	.search-hero-form {
+		padding: 1.5rem;
+	}
+    .hero-carousel-image,.hero-carousel-inner,.hero-carousel-item,.hero-course-carousel,.hero-youtube-container,.hero-youtube-player,.hero-youtube-preview {
+		min-height: 350px;
+	}
+}
+@media (max-width: 768px) {
+    .search-hero-section {
+		min-height: 500px;
+		padding: 60px 0;
+		background-attachment: scroll;
+	}
+	.search-hero-title {
+		font-size: 2rem;
+	}
+	.search-hero-subtitle {
+		font-size: 1rem;
+		margin-bottom: 2rem;
+	}
+    .search-hero-form {
+		padding: 1.25rem;
+		border-radius: 15px;
+	}
+	#hero h1 {
+		font-size: 2.2rem;
+	}
+    .hero-carousel-image,.hero-carousel-inner,.hero-carousel-item,.hero-course-carousel,.hero-youtube-container,.hero-youtube-player,.hero-youtube-preview {
+		min-height: 300px;
+	}
+    .hero-youtube-play-btn svg {
+		width: 60px;
+		height: 42px;
+	}
+}
+@media (max-width: 576px) {
+    .hero-carousel-image,.hero-carousel-inner,.hero-carousel-item,.hero-course-carousel,.hero-youtube-container,.hero-youtube-player,.hero-youtube-preview {
+		min-height: 250px;
+	}
+    .hero-youtube-play-btn svg {
+		width: 50px;
+		height: 35px;
+	}
+	.search-hero-title {
+		font-size: 1.75rem;
+	}
+}

@@ -1,0 +1,293 @@
+/* ============================================================
+   CARD SYSTEM — Consolidated & Improved
+   Variables requeridas en :root del proyecto:
+   --color-primary, --color-secondary, --color-accent1,
+   --color-accent3, --orange-accent,
+   --border-radius, --border-radius-md,
+   --shadow-sm, --shadow-md, --shadow-lg,
+   --border, --radius
+   ============================================================ */
+
+/* ── Tokens locales ─────────────────────────────────────────── */
+:root {
+  --card-transition:    0.25s ease;
+  --card-animation:     0.5s fadeInUp both;
+  --card-lift-sm:       translateY(-2px);
+  --card-lift-md:       translateY(-5px);
+  --card-bg:            #fff;
+  --card-border-subtle: rgba(26, 71, 137, 0.08);
+  --card-shadow-hover:  0 15px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* ── 1. Card base (Bootstrap override) ──────────────────────── */
+.card {
+  background: var(--card-bg);
+  transition: transform var(--card-transition),
+              box-shadow var(--card-transition);
+  animation: var(--card-animation);
+}
+.card:hover {
+  transform: var(--card-lift-md);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+}
+.card-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+.card-header h4 {
+  color: #2c3e50;
+  margin: 0;
+}
+.card-body {
+  padding: 2rem;
+  background: var(--card-bg);
+}
+
+/* Columnas internas con hover sutil */
+.card-body .row > [class*="col-"] {
+  transition: background var(--card-transition);
+  padding: 0.5rem;
+  border-radius: 8px;
+}
+.card-body .row > [class*="col-"]:hover {
+  background: rgba(255, 165, 0, 0.05);
+}
+
+/* ── 2. Card moderna (fondo primario) ───────────────────────── */
+.card-modern {
+  background: var(--color-primary);
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(26, 71, 137, 0.12);
+  margin-bottom: 1rem;
+}
+.card-header-modern {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(22, 51, 94, 0.08);
+  background: linear-gradient(
+    135deg,
+    rgba(26, 71, 137, 0.03) 0%,
+    rgba(57, 166, 203, 0.03) 100%
+  );
+}
+
+/* ── 3. Info card (bloque de información detallada) ─────────── */
+.info-card-modern {
+  background: var(--card-bg);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 6px 25px rgba(26, 71, 137, 0.1);
+}
+.info-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;                /* gap por si hay wrap en móvil */
+  padding: 1.75rem 2rem;
+  background: linear-gradient(
+    135deg,
+    rgba(26, 71, 137, 0.05) 0%,
+    rgba(99, 190, 207, 0.05) 100%
+  );
+  border-bottom: 2px solid var(--card-border-subtle);
+}
+.info-card-body {
+  padding: 2rem;
+}
+
+/* ── 4. Info card (tarjeta compacta con ícono) ──────────────── */
+.info-card {
+  background: var(--card-bg);
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  border: 2px solid transparent;
+  transition: transform var(--card-transition),
+              box-shadow var(--card-transition),
+              border-color var(--card-transition);
+  animation: var(--card-animation);
+}
+.info-card:hover {
+  transform: var(--card-lift-md);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  border-color: var(--color-accent1);
+}
+
+/* Ícono */
+.info-card-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  flex-shrink: 0;           /* evita que se comprima en flex */
+}
+.info-card-icon.primary {
+  background: rgba(26, 71, 137, 0.1);
+  color: var(--color-primary);
+}
+.info-card-icon.accent {
+  background: rgba(33, 151, 189, 0.1);
+  color: var(--color-accent3);
+}
+.info-card-icon.orange {
+  background: rgba(255, 165, 0, 0.1);
+  color: var(--orange-accent);
+}
+
+.info-card h5 {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-primary);
+}
+
+/* Campos de info */
+.info-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.info-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.info-label i {
+  color: var(--color-secondary);
+}
+.info-value {
+  padding: 0.875rem 1.25rem;
+  background: linear-gradient(
+    135deg,
+    rgba(26, 71, 137, 0.03) 0%,
+    rgba(99, 190, 207, 0.03) 100%
+  );
+  border-radius: 12px;
+  color: #333;
+  font-weight: 500;
+  border-left: 3px solid var(--color-secondary);
+}
+
+/* ── 5. Cards de contenido ──────────────────────────────────── */
+
+/* Curso */
+.course-card {
+  background: var(--card-bg);
+  border: none;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  transition: transform var(--card-transition),
+              box-shadow var(--card-transition);
+}
+.course-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: var(--card-lift-sm);
+}
+
+/* Docente */
+.teacher-card {
+  background: var(--card-bg);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+  transition: transform var(--card-transition),
+              box-shadow var(--card-transition);
+  animation: var(--card-animation);
+}
+.teacher-card:hover {
+  transform: var(--card-lift-md);
+  box-shadow: var(--card-shadow-hover);
+}
+
+/* Expositor */
+.expositor-card {
+  border: none;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: transform var(--card-transition),
+              box-shadow var(--card-transition);
+}
+.expositor-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: var(--card-lift-sm);
+}
+.expositor-card img {
+  transition: transform 0.4s ease;
+  display: block;           /* elimina espacio inferior inline */
+  width: 100%;
+}
+.expositor-card:hover img {
+  transform: scale(1.05);
+}
+
+/* Recurso */
+.resource-card {
+  background: var(--card-bg);
+  border: 1px solid #e9ecef;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--card-transition),
+              box-shadow var(--card-transition),
+              border-color var(--card-transition);
+}
+.resource-card:hover {
+  border-color: var(--color-secondary);
+  box-shadow: var(--shadow-md);
+  transform: var(--card-lift-sm);
+}
+
+/* ── 6. Cards de formulario / sistema ───────────────────────── */
+
+.form-card-modern {
+  background: var(--card-bg);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(26, 71, 137, 0.12);
+}
+
+.create-user-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  animation: 0.45s cubic-bezier(0.4, 0, 0.2, 1) both cardIn;
+}
+
+.ec-card {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  border: 1.5px solid #d1dce8;
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1rem;
+  }
+  .info-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .info-card-body {
+    padding: 1.5rem;
+  }
+  .card-header-modern {
+    padding: 1.5rem;
+  }
+}

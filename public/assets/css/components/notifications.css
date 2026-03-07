@@ -1,0 +1,97 @@
+.notification-count {
+	font-size: 0.7rem;
+	padding: 0.25em 0.6em;
+	border-radius: 20px;
+	background: var(--gradient-orange);
+	color: #fff;
+	font-weight: 600;
+	box-shadow: 0 2px 8px rgba(255, 165, 0, 0.4);
+	animation: 3s infinite badge-bounce;
+}
+.notification-row {
+	transition: 0.3s;
+	border-left: 4px solid transparent;
+	animation: 0.5s ease-out slideInRight;
+}
+.notification-row:hover {
+	background: linear-gradient(90deg,rgba(26, 71, 137, 0.03) 0,transparent 100%);
+	border-left-color: var(--color-secondary);
+	transform: translateX(4px);
+}
+.notification-row.fade-out {
+	opacity: 0;
+	transform: translateX(100px);
+}
+.notification-unread {
+	background: linear-gradient(90deg,rgba(255, 165, 0, 0.05) 0,transparent 100%);
+}
+.notification-unread:hover {
+	background: linear-gradient(90deg,rgba(255, 165, 0, 0.08) 0,transparent 100%);
+	border-left-color: var(--orange-accent);
+}
+.notification-content {
+	display: flex;
+	align-items: flex-start;
+	gap: 1rem;
+}
+.notification-icon-wrapper {
+	width: 40px;
+	height: 40px;
+	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--gradient-secondary);
+	flex-shrink: 0;
+}
+.notification-icon {
+	font-size: 1.2rem;
+	color: #fff;
+}
+.notification-message {
+	font-weight: 500;
+	color: #333;
+	margin-bottom: 0.25rem;
+}
+.notification-details {
+	color: #6c757d;
+	display: block;
+	font-size: 0.85rem;
+}
+.notification-time {
+	color: #6c757d;
+	font-size: 0.9rem;
+	display: flex;
+	align-items: center;
+}
+.notification-text {
+	flex: 1;
+}
+.notifications-wrapper {
+	animation: 0.5s ease-out fadeInUp;
+}
+.badge-unread {
+	background: var(--gradient-orange);
+	color: #fff;
+	box-shadow: 0 2px 8px rgba(255, 165, 0, 0.3);
+	animation: 2s infinite pulse-badge;
+}
+.badge-modern {
+	padding: 0.5rem 1rem;
+	border-radius: 20px;
+	font-size: 0.8rem;
+	font-weight: 600;
+	display: inline-flex;
+	align-items: center;
+	transition: 0.3s;
+}
+.badge-read {
+	background: linear-gradient(135deg, #6c757d 0, #5a6268 100%);
+	color: #fff;
+}
+@media (max-width: 768px) {
+	.notification-content {
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+}

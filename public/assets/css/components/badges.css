@@ -1,0 +1,117 @@
+.badge {
+	padding: 0.5em 1em;
+	border-radius: 20px;
+	font-weight: 500;
+	transition: 0.3s;
+}
+.badge.bg-primary {
+	background: var(--gradient-primary);
+    font-size: 0.85rem;
+	font-weight: 600;
+	letter-spacing: 0.5px;
+}
+.badge.bg-light {
+	background: #f8f9fa !important;
+	color: #6c757d !important;
+	font-weight: 500;
+}
+.badge.bg-danger {
+	background: linear-gradient(135deg, #dc3545 0, #c82333 100%);
+}
+.badge.bg-success {
+	background: var(--gradient-secondary);
+}
+.badge i.fa-lock {
+	font-size: 0.75rem;
+}
+.date-badge,.format-badge {
+	align-items: center;
+	font-weight: 500;
+	display: inline-flex;
+	padding: 0.5rem 0.875rem;
+	border-radius: 10px;
+	font-size: 0.85rem;
+}
+.date-badge {
+	background: linear-gradient(135deg,rgba(26, 71, 137, 0.08) 0,rgba(99, 190, 207, 0.08) 100%);
+	color: var(--color-primary);
+}
+.format-badge {
+	background: var(--gradient-secondary);
+	color: #fff;
+}
+.type-badge {
+	display: inline-flex;
+	align-items: center;
+	padding: 0.5rem 0.875rem;
+	border-radius: 10px;
+	font-size: 0.85rem;
+	font-weight: 600;
+	color: #fff;
+}
+.type-curso {
+	background: var(--gradient-primary);
+}
+.type-congreso {
+	background: var(--gradient-orange);
+}
+.status-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.6rem 1.2rem;
+	border-radius: 10px;
+	font-weight: 600;
+	font-size: 0.95rem;
+}
+.status-badge.active {
+	background: linear-gradient(135deg, #28a745 0, #20c997 100%);
+	color: #fff;
+}
+.status-badge.inactive {
+	background: linear-gradient(135deg, #6c757d 0, #495057 100%);
+	color: #fff;
+}
+.status-badge.certified {
+    background: var(--gradient-primary);
+	color: #fff;
+}
+.readonly-badge {
+	display: inline-flex;
+	align-items: center;
+	padding: 0.5rem 1rem;
+	background: linear-gradient(135deg, #6c757d 0, #5a6268 100%);
+	color: #fff;
+	border-radius: 20px;
+	font-size: 0.85rem;
+	font-weight: 500;
+}
+.ec-role-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	font-size: 0.75rem;
+	font-weight: 600;
+	padding: 0.25rem 0.65rem;
+	border-radius: 99px;
+	background: rgba(26, 71, 137, 0.08);
+	color: var(--color-primary);
+	border: 1px solid rgba(26, 71, 137, 0.2);
+}
+.required-badge,.optional-badge {
+	color: #fff;
+	padding: 0.15rem 0.5rem;
+	border-radius: 12px;
+	font-size: 0.7rem;
+	margin-left: auto;
+	font-weight: 600;
+}
+.required-badge {
+	background: #ff4757;
+}
+.optional-badge {
+	background: #95afc0;
+}
+.bg-gradient-primary {
+	background: linear-gradient(135deg, orange 0, #ff8c00 100%) !important;
+}

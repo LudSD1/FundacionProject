@@ -1,0 +1,144 @@
+/* ============================================================
+   TABLE SYSTEM — Consolidated & Improved
+   Variables requeridas en :root del proyecto:
+   --color-primary, --color-accent3, --color-accent4
+   ============================================================ */
+
+/* ── Tokens locales (overrideable) ─────────────────────────── */
+:root {
+  --tbl-primary:        var(--color-primary, #1a4789);
+  --tbl-accent:         var(--color-accent3, #2197bd);
+  --tbl-accent-dark:    var(--color-accent4, #2f89a8);
+  --tbl-radius:         16px;
+  --tbl-shadow:         0 10px 30px rgba(26, 71, 137, 0.12);
+  --tbl-row-hover-bg:   rgba(26, 71, 137, 0.04);
+  --tbl-border-subtle:  rgba(26, 71, 137, 0.08);
+  --tbl-head-bg-start:  rgba(26, 71, 137, 0.05);
+  --tbl-head-bg-end:    rgba(99, 190, 207, 0.05);
+  --tbl-cell-pad:       1rem;
+  --tbl-head-size:      0.8rem;
+  --tbl-transition:     0.25s ease;
+}
+
+/* ── Contenedor ─────────────────────────────────────────────── */
+.table-container-modern {
+  background: #fff;
+  border-radius: var(--tbl-radius);
+  box-shadow: var(--tbl-shadow);
+  max-height: 600px;
+  overflow: auto;          /* un solo overflow cubre ambos ejes */
+  position: relative;
+}
+
+/* ── Scrollbar personalizado ────────────────────────────────── */
+.table-container-modern::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.table-container-modern::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+.table-container-modern::-webkit-scrollbar-thumb {
+  background: var(--tbl-accent);
+  border-radius: 10px;
+  transition: background var(--tbl-transition);
+}
+.table-container-modern::-webkit-scrollbar-thumb:hover {
+  background: var(--tbl-accent-dark);
+}
+
+/* ── Base tabla ─────────────────────────────────────────────── */
+.table-modern,
+.notifications-table {
+  margin: 0;
+  width: 100%;
+  border-collapse: collapse;  /* elimina gaps entre celdas */
+}
+
+/* ── Cabecera sticky ────────────────────────────────────────── */
+.table-modern thead,
+.notifications-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fff;
+  /* Sombra sutil al hacer scroll */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* ── Celdas de cabecera ─────────────────────────────────────── */
+.table-modern thead th,
+.notifications-table thead th {
+  padding: var(--tbl-cell-pad);
+  font-weight: 600;
+  color: var(--tbl-primary);
+  font-size: var(--tbl-head-size);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  vertical-align: middle;
+  background: linear-gradient(
+    135deg,
+    var(--tbl-head-bg-start) 0%,
+    var(--tbl-head-bg-end) 100%
+  );
+  border-bottom: 1px solid var(--tbl-border-subtle);
+}
+
+/* ── Celdas de cuerpo ───────────────────────────────────────── */
+.table-modern td,
+.notifications-table tbody td {
+  padding: var(--tbl-cell-pad);
+  vertical-align: middle;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--tbl-border-subtle);
+}
+
+/* ── Hover en filas (con borde izquierdo animado) ───────────── */
+.table-modern tbody tr,
+.notifications-table tbody tr {
+  border-left: 3px solid transparent;
+  transition:
+    background var(--tbl-transition),
+    border-color var(--tbl-transition),
+    transform var(--tbl-transition);
+}
+
+.table-modern tbody tr:hover,
+.notifications-table tbody tr:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(26, 71, 137, 0.05) 0%,
+    transparent 100%
+  );
+  border-left-color: var(--tbl-primary);
+  transform: translateX(4px);
+}
+
+/* ── Helpers reutilizables ──────────────────────────────────── */
+.th-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--tbl-primary);
+  font-weight: 600;
+}
+
+.row-number {
+  display: inline-block;
+  background: #f8f9fa;
+  color: #6c757d;
+  border-radius: 8px;
+  padding: 0.2rem 0.5rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;  /* números alineados */
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  :root {
+    --tbl-cell-pad: 0.75rem 0.5rem;
+    --tbl-head-size: 0.7rem;
+  }
+}

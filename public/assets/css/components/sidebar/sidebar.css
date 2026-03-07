@@ -1,0 +1,449 @@
+/* ============================================
+   SIDEBAR — CSS Optimizado
+   ============================================ */
+
+/* ── Base ─────────────────────────────────── */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: var(--sidebar-width);
+    background: var(--gradient-primary);
+    color: white;
+    transition: var(--sidebar-transition);
+    z-index: 1030;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 1.5rem 0;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-menu {
+    flex: 1;
+    padding: 0;
+    min-height: 0;
+}
+
+/* ── Nav links ────────────────────────────── */
+.sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    padding: 0.875rem 1.5rem;
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+    margin: 0.25rem 0.75rem;
+    border-radius: 0.5rem;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border-left-color: var(--orange-accent);
+}
+
+.sidebar .nav-link:hover {
+    transform: translateX(5px);
+}
+
+.sidebar .nav-link.active {
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar .nav-link i {
+    font-size: 1.25rem;
+    width: 30px;
+    min-width: 30px;
+    text-align: center;
+    margin-right: 1rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.sidebar .nav-link:hover i,
+.sidebar .nav-link.active i {
+    color: var(--orange-accent);
+    transform: scale(1.1);
+}
+
+/* ── User Profile ─────────────────────────── */
+.sidebar .user-profile {
+    padding: 1rem 1.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.sidebar .user-avatar {
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.sidebar .user-profile:hover .user-avatar {
+    border-color: var(--orange-accent);
+    transform: scale(1.05);
+}
+
+.sidebar .dropdown-toggle::after {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* ── Sidebar Toggler ──────────────────────── */
+.sidebar-toggler {
+    display: flex;
+    align-items: center;
+    width: calc(100% - 3rem);
+    margin: 0 1.5rem 1rem;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 0.5rem;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.sidebar-toggler:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--color-secondary);
+}
+
+.sidebar-toggler i {
+    font-size: 1.25rem;
+    transition: transform 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    min-width: 24px;
+    flex-shrink: 0;
+}
+
+/* ── Collapsed State ──────────────────────── */
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed-width);
+}
+
+/* ✅ Selector agrupado: evita repetir margin: 0 en 3 bloques separados */
+.sidebar.collapsed .user-name,
+.sidebar.collapsed .notification-btn span,
+.sidebar.collapsed .nav-link span,
+.sidebar.collapsed .sidebar-toggler span {
+    display: none !important;
+}
+
+.sidebar.collapsed .nav-link {
+    justify-content: center;
+    padding: 0.875rem 0;
+    margin: 0.25rem 0.5rem;
+}
+
+/* ✅ Selector agrupado para margin: 0 en estado colapsado */
+.sidebar.collapsed .nav-link i,
+.sidebar.collapsed .notification-btn i,
+.sidebar.collapsed .sidebar-toggler i {
+    margin: 0 !important;
+}
+
+.sidebar.collapsed .notification-btn {
+    justify-content: center;
+    margin: 0 0.5rem;
+}
+
+.sidebar.collapsed .notification-btn .badge {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+}
+
+.sidebar.collapsed .sidebar-toggler {
+    justify-content: center;
+    margin: 0 0.5rem 1rem;
+}
+
+.sidebar.collapsed .user-profile {
+    padding: 1rem 0.5rem;
+    text-align: center;
+}
+
+.sidebar.collapsed .user-profile .dropdown-toggle {
+    justify-content: center;
+}
+
+/* ── Notification Button ──────────────────── */
+.notification-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: calc(100% - 3rem);
+    margin: 0 1.5rem;
+    padding: 0.875rem 1.25rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 0.5rem;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.notification-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--orange-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.notification-btn i {
+    font-size: 1.25rem;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    min-width: 24px;
+}
+
+.notification-btn .badge {
+    background: var(--gradient-orange) !important;
+    font-weight: 600;
+    padding: 0.35em 0.65em;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50%       { transform: scale(1.1); }
+}
+
+/* ── Dropdown Menus ───────────────────────── */
+
+/*
+ * Solución: el sidebar tiene overflow:hidden para el scroll,
+ * pero los dropdowns necesitan salir de él.
+ * Usamos position:fixed calculado al momento del click (JS),
+ * pero con getBoundingClientRect() en el momento exacto del show,
+ * no en resize/scroll posteriores — eso evita el desplazamiento.
+ *
+ * En móvil usamos position:fixed anclado a coordenadas seguras via CSS.
+ */
+.sidebar .dropdown {
+    position: relative;
+}
+
+.sidebar .dropdown-menu {
+    background: white;
+    border: none;
+    border-radius: 0.75rem;
+    margin-top: 0.25rem;
+    position: fixed !important;
+    z-index: 1055 !important;
+    min-width: 260px;
+    max-width: 320px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    /* Bootstrap no debe mover con transform en desktop */
+    transform: none;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    /* Evitar parpadeo al posicionar */
+    visibility: hidden;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease, visibility 0.15s ease;
+}
+
+.sidebar .dropdown-menu.show {
+    display: block !important;
+    visibility: visible;
+    pointer-events: auto;
+    opacity: 1;
+}
+
+.sidebar .dropdown-item {
+    padding: 0.75rem 1.25rem;
+    color: var(--color-primary);
+    transition: all 0.2s ease;
+}
+
+.sidebar .dropdown-item:hover {
+    background: var(--gradient-secondary);
+    color: white;
+}
+
+.sidebar .dropdown-item i {
+    color: var(--color-secondary);
+    transition: color 0.2s ease;
+}
+
+.sidebar .dropdown-item:hover i {
+    color: white;
+}
+
+/* Notificación no leída */
+.sidebar .dropdown-item.bg-light {
+    background: linear-gradient(90deg, rgba(255, 165, 0, 0.1), rgba(255, 165, 0, 0.05)) !important;
+}
+
+.notification-view-all {
+    display: block;
+    padding: 0.875rem;
+    text-align: center;
+    color: var(--color-primary);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.notification-view-all:hover {
+    background: var(--gradient-secondary);
+    color: white;
+}
+
+/* ── Layout Wrapper ───────────────────────── */
+.layout-wrapper {
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+}
+
+.main-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    margin-left: var(--sidebar-width);
+    transition: var(--sidebar-transition);
+    min-height: 100vh;
+    width: calc(100% - var(--sidebar-width));
+}
+
+.layout-wrapper.sidebar-collapsed .main-content-wrapper {
+    margin-left: var(--sidebar-collapsed-width);
+    width: calc(100% - var(--sidebar-collapsed-width));
+}
+
+/* ── Ripple Animations ────────────────────── */
+.sidebar .nav-link,
+.sidebar .notification-btn,
+.sidebar .sidebar-toggler {
+    position: relative;
+    overflow: hidden;
+}
+
+.sidebar .nav-link::before,
+.sidebar .notification-btn::before,
+.sidebar .sidebar-toggler::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.sidebar .nav-link:hover::before,
+.sidebar .notification-btn:hover::before,
+.sidebar .sidebar-toggler:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* ── Footer ───────────────────────────────── */
+.sidebar .mt-auto {
+    margin-top: auto;
+    padding-top: 1rem;
+}
+
+.sidebar .mt-auto p {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.8rem;
+}
+
+/* ── Mobile ───────────────────────────────── */
+.mobile-toggle {
+    display: none;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1040;
+    width: 45px;
+    height: 45px;
+    background: var(--gradient-primary);
+    border: none;
+    border-radius: 0.5rem;
+    color: white;
+    font-size: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.mobile-toggle:hover {
+    background: var(--gradient-secondary);
+    transform: scale(1.05);
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;                          /* ✅ shorthand de top/right/bottom/left: 0 */
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1025;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.show {
+    display: block;
+    opacity: 1;
+}
+
+@media (max-width: 991px) {
+    .mobile-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.show {
+        transform: translateX(0);
+    }
+
+    .sidebar.collapsed {
+        width: var(--sidebar-width);
+    }
+
+    /* Móvil: centrado en pantalla, nunca cortado por la izquierda */
+    .sidebar .dropdown-menu {
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) !important;
+        max-width: calc(100vw - 2rem) !important;
+        min-width: min(300px, calc(100vw - 2rem)) !important;
+    }
+
+    .main-content-wrapper {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+}
+
+/* ── Dark mode ────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+    .sidebar {
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+    }
+}

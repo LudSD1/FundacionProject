@@ -1,0 +1,25 @@
+.pagination-wrapper {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-top: 2rem;
+	padding: 1.5rem;
+	background: linear-gradient(135deg,rgba(26, 71, 137, 0.03) 0,rgba(99, 190, 207, 0.03) 100%);
+	border-radius: 16px;
+}
+.pagination-info {
+	color: #6c757d;
+	font-size: 0.9rem;
+	display: flex;
+	align-items: center;
+}
+.pagination-info strong {
+	color: var(--color-primary);
+}
+@media (max-width: 768px) {
+	.pagination-wrapper {
+		flex-direction: column;
+		gap: 1rem;
+		text-align: center;
+	}
+}
