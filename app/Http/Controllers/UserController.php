@@ -91,14 +91,17 @@ class UserController extends Controller
 
     public function UserProfile()
     {
+        $usuario = Auth::user();
+        $atributosD = atributosDocente::where('docente_id', $usuario->id)->get();
+        $trabajos = DocentesTrabajos::where('docente_id', $usuario->id)->get();
+        $tutor = TutorRepresentanteLegal::where('estudiante_id', $usuario->id)->get();
 
-
-        $atributosD = atributosDocente::where('docente_id', Auth::user()->id)->get();
-        $trabajos = DocentesTrabajos::where('docente_id', Auth::user()->id)->get();
-        $tutor = TutorRepresentanteLegal::where('estudiante_id', Auth::user()->id)->get();
-
-
-        return view('MiPerfilUsuario')->with('atributosD', $atributosD)->with('tutor', $tutor)->with('trabajos', $trabajos);
+        return view('PerfilUsuario', [
+            'usuario' => $usuario,
+            'atributosD' => $atributosD,
+            'tutor' => $tutor,
+            'trabajos' => $trabajos
+        ]);
     }
 
     public function UserProfileEdit(Request $request)

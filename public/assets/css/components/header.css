@@ -1,58 +1,448 @@
-.header-clean {
-	background: linear-gradient(145deg, transparent 70%, #1a4789 30%);
-	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-	transition: 0.3s;
+
+#header {
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1020;
+    padding: 0;
+    min-height: 80px;
+    background: transparent;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease-in-out,
+                box-shadow 0.3s ease-in-out;
 }
-.logo-aprendo {
-	font-family: Inter, sans-serif;
-	font-size: 1.8rem;
-	font-weight: 800;
-	letter-spacing: -1px;
-	transition: transform 0.3s;
-	white-space: nowrap;
-	display: inline-block;
-    color: orange;
-	text-decoration: none;
+
+/* Capa blanca de fondo — debajo de todo */
+#header::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    z-index: 0;
 }
-.logo-aprendo:hover {
-	transform: scale(1.05);
-    color: orange;
-	text-decoration: none;
+
+/* Diagonal azul — encima del fondo blanco, debajo del contenido */
+#header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;          /* FIX: eliminado width:100% redundante (left+right lo cubren) */
+    right: 0;
+    height: 100%;
+    background: linear-gradient(145deg, transparent 70%, #1a4789 30%);
+    z-index: 1;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out, filter 0.3s ease-in-out;
 }
-.logo-h-special {
-	color: #fff;
-	background: orange;
-	padding: 4px 8px;
-	border-radius: 6px;
-	margin: 0 2px;
-	display: inline-block;
-	font-weight: 900;
+
+/* Todo el contenido directo encima de diagonal y fondo */
+#header > * {
+    position: relative;
+    z-index: 2;
 }
-.logo-fundacion-wrapper {
-	transition: 0.4s;
-	opacity: 1;
-	transform: scale(1);
+
+/* ── Header con scroll ── */
+#header.header-scrolled {
+    background: #fff;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
 }
-.logo-fundacion-img {
-	height: 50px;
-	width: auto;
-	transition: 0.4s;
+
+#header.header-scrolled .header-top {
+    background: transparent;           /* FIX: #ffffff00 → transparent */
 }
-.logo-fundacion-wrapper.minimized {
-	opacity: 0;
-	transform: scale(0.7) translateX(20px);
-	pointer-events: none;
+
+#header.header-scrolled::before {
+    opacity: 1;
+    filter: drop-shadow(0 2px 10px rgba(26, 71, 137, 0.3));
 }
-@media (max-width: 768px) {
-	.logo-aprendo {
-		font-size: 1.4rem;
-	}
-	.logo-fundacion-img {
-		height: 40px;
-	}
+
+#header.header-scrolled .right {
+    position: relative;
+    z-index: 2;
+    background: #145da0;
+    border-radius: 8px;
+    padding: 5px 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
-@media (max-width: 576px) {
-	.logo-fundacion-wrapper {
-		display: none;
-	}
+
+#header.header-scrolled .right img {
+    filter: none;
 }
+
+/* ── Header transparente (sobre hero) ── */
+#header.header-transparent .right img {
+    filter: none;
+}
+
+#header.header-transparent .navbar .getstarted {
+    background: var(--color-accent6);
+    color: #fff;
+    border: none;
+}
+
+#header.header-transparent .navbar .getstarted:hover {
+    background: var(--color-accent1);
+    color: #fff;
+}
+
+/* ===== HEADER TOP ===== */
+.header-top {
+    padding: 15px 0;
+    position: relative;
+    z-index: 2;
+    background: transparent;
+}
+
+/* ===== HEADER BOTTOM (categorías) ===== */
+.header-bottom {
+    background-color: #fff;
+}
+
+/* ===== LOGO ===== */
+/* FIX: "  ogo" → ".logo" — el typo hacía que estos estilos nunca aplicaran */
+#header .logo h1 {
+    font-size: 30px;
+    margin: 0;
+    line-height: 1;
+    font-weight: 400;
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 2;
+}
+
+#header .logo h1 a,
+#header .logo h1 a:hover {
+    color: #145da0;
+    text-decoration: none;
+}
+
+#header .logo img {
+    margin: 0;
+    max-height: 40px;
+}
+
+/* ===== SECCIONES DEL HEADER DESKTOP ===== */
+.logo-section {
+    flex: 0 0 auto;
+    min-width: 200px;
+}
+
+.search-section {
+    flex: 1;
+    max-width: 400px;
+    margin: 0 2rem;
+}
+
+.nav-section {
+    flex: 0 0 auto;
+    min-width: 300px;
+    justify-content: flex-end;
+}
+
+/* ===== BUSCADOR ===== */
+.search-form {
+    width: 100%;
+}
+
+.search-input {
+    border: 2px solid #e9ecef;
+    border-radius: 25px 0 0 25px;
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    background: #f8f9fa;
+    transition: border-color 0.3s ease,
+                box-shadow 0.3s ease,
+                background-color 0.3s ease; /* FIX: all → específico */
+}
+
+.search-input:focus {
+    border-color: #ffa500;
+    box-shadow: 0 0 0 0.2rem rgba(255, 165, 0, 0.25);
+    background: #fff;
+}
+
+.search-btn {
+    border-radius: 0 25px 25px 0;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #ffa500, #ff8c00);
+    border: 2px solid #ffa500;
+    transition: background 0.3s ease,
+                transform 0.3s ease,
+                box-shadow 0.3s ease;       /* FIX: all → específico */
+}
+
+.search-btn:hover {
+    background: linear-gradient(135deg, #ff8c00, #ffa500);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 165, 0, 0.3);
+}
+
+/* ===== NAVEGACIÓN ===== */
+#navbar ul {
+    gap: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.getstarted {
+    background: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+    transition: background-color 0.3s ease,
+                transform 0.3s ease,
+                box-shadow 0.3s ease;       /* FIX: all → específico */
+}
+
+.getstarted:hover {
+    background: #0056b3;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+}
+
+.getstarted:first-child       { background: #6c757d; }
+.getstarted:first-child:hover { background: #545b62; }
+
+/* ===== LOGO FUNDACIÓN ===== */
+.logo-fundacion img {
+    height: 50px;
+    transition: transform 0.3s ease;
+}
+
+.logo-fundacion img:hover {
+    transform: scale(1.05);
+}
+
+/* ===== LOGO MÓVIL ===== */
+.logo-aprendo-mobile {
+    font-family: "Inter", sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #ffa500;
+    text-decoration: none;
+    letter-spacing: -1px;
+    transition: color 0.3s ease;       /* FIX: all → color */
+}
+
+.logo-h-special-mobile {
+    color: #fff;
+    background: #ffa500;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin: 0 2px;
+    display: inline-block;
+    font-weight: 900;
+    font-size: 0.9em;
+}
+
+.logo-fundacion-mobile img {
+    height: 40px;
+}
+
+/* ===== MENÚ MÓVIL ===== */
+.mobile-menu-content {
+    background: #fff;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-search-input {
+    border: 2px solid #e9ecef;
+    border-radius: 20px 0 0 20px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    background: #f8f9fa;
+    transition: border-color 0.3s ease,
+                box-shadow 0.3s ease,
+                background-color 0.3s ease;
+}
+
+.mobile-search-input:focus {
+    border-color: #ffa500;
+    box-shadow: 0 0 0 0.2rem rgba(255, 165, 0, 0.25);
+    background: #fff;
+}
+
+.mobile-search-btn {
+    border-radius: 0 20px 20px 0;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #ffa500, #ff8c00);
+    border: 2px solid #ffa500;
+}
+
+.mobile-nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mobile-nav-item {
+    margin-bottom: 0.5rem;
+}
+
+.mobile-nav-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: #f8f9fa;
+    color: #333;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 500;
+    transition: background-color 0.3s ease,
+                color 0.3s ease,
+                transform 0.3s ease;        /* FIX: all → específico */
+}
+
+.mobile-nav-link:hover {
+    background: #ffa500;
+    color: #fff;
+    transform: translateX(5px);
+}
+
+/* ===== USER AVATAR ===== */
+.user-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background-color: #145da0;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.user-avatar--sm {
+    width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1200px) {
+    .search-section {
+        max-width: 300px;
+        margin: 0 1rem;
+    }
+
+    .nav-section { min-width: 250px; }
+}
+
+@media (max-width: 992px) {
+    .logo-aprendo   { font-size: 1.8rem; }
+
+    .search-section {
+        max-width: 250px;
+        margin: 0 0.5rem;
+    }
+
+    .nav-section { min-width: 200px; }
+}
+
+@media (max-width: 767.98px) {
+    .header-top            { padding: 0.75rem 0; }
+    .logo-aprendo-mobile   { font-size: 1.3rem; }
+    .logo-fundacion-mobile img { height: 35px; }
+}
+
+@media (max-width: 480px) {
+    .logo-aprendo-mobile   { font-size: 1.1rem; }
+
+    .logo-h-special-mobile {
+        padding: 3px 6px;
+        font-size: 0.8em;
+    }
+
+    .mobile-menu-content { padding: 1rem; }
+}
+/* ============================================================
+   HEADER MÓVIL — FIX logo fundación en pantallas ~380px
+   ============================================================ */
+
+/* Contenedor principal móvil — evita que flex desborde */
+.d-md-none .d-flex.align-items-center.justify-content-between {
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+}
+
+/* Lado izquierdo: logo texto + hamburguesa */
+.d-md-none .d-flex.align-items-center:first-child {
+    flex: 1 1 auto;
+    min-width: 0;          /* permite que el texto se comprima si es necesario */
+    overflow: hidden;
+}
+
+/* Logo texto — se comprimen las letras en pantallas pequeñas */
+.logo-aprendo-mobile {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Lado derecho: logo fundación — no crece, no encoge, tamaño fijo */
+.logo-fundacion-mobile {
+    flex: 0 0 auto;
+}
+
+.logo-fundacion-mobile img {
+    height: 40px;
+    width: auto;
+    display: block;
+}
+
+/* ── 480px: ajuste suave ── */
+@media (max-width: 480px) {
+    .logo-aprendo-mobile        { font-size: 1.1rem; }
+    .logo-h-special-mobile      { padding: 3px 6px; font-size: 0.8em; }
+    .logo-fundacion-mobile img  { height: 36px; }
+    .mobile-menu-content        { padding: 1rem; }
+}
+
+/* ── 380px: ajuste más agresivo ── */
+@media (max-width: 390px) {
+    .logo-aprendo-mobile        { font-size: 0.95rem; letter-spacing: -0.5px; }
+    .logo-h-special-mobile      { padding: 2px 5px; font-size: 0.75em; margin: 0 1px; }
+    .logo-fundacion-mobile img  { height: 30px; }
+
+    /* Botón hamburguesa — reduce padding para ganar espacio */
+    .d-md-none .btn.btn-link    { padding: 4px 6px; }
+}
+
+@media (max-width: 767.98px) {
+
+    /* La diagonal cubre desde el 50% hacia la derecha en móvil
+       en lugar del 70%, ajustando la proporción al ancho reducido */
+    #header::before {
+        background: linear-gradient(145deg, transparent 55%, #1a4789 45%);
+    }
+
+    /* El logo de fundación necesita z-index explícito para
+       quedar sobre la diagonal (z-index:1 del ::before) */
+    .logo-fundacion-mobile {
+        position: relative;
+        z-index: 3;
+    }
+}
+
+/* ── Móvil pequeño ~390px: ajustar aún más ── */
+@media (max-width: 390px) {
+    #header::before {
+        background: linear-gradient(145deg, transparent 45%, #1a4789 35%);
+    }
+}
+

@@ -9,7 +9,11 @@
 @section('content')
 <div class="container-fluid mt-4">
     <!-- Header con título y botón crear -->
-    <div class="row align-items-center mb-4">
+
+    <!-- Barra de búsqueda moderna -->
+    <div class="card-modern mb-4">
+        <div class="card-body">
+                <div class="row align-items-center mb-4">
         <div class="col-md-8">
             <h2 class="mb-0">
                 <i class="fas fa-folder me-2 text-primary"></i>
@@ -25,9 +29,6 @@
         </div>
     </div>
 
-    <!-- Barra de búsqueda moderna -->
-    <div class="card-modern mb-4">
-        <div class="card-body">
             <form action="{{ route('categorias.index') }}" method="GET" class="row g-3 align-items-center">
                 <input type="hidden" name="tab" value="{{ request('tab', 'activas') }}">
                 <div class="col-md-8">
@@ -50,9 +51,6 @@
                                 Limpiar
                             </a>
                         @endif
-                        <button type="button" class="btn-modern btn-create" data-bs-toggle="modal" data-bs-target="#crearCategoriaModal">
-                            <i class="fas fa-plus"></i><span class="ms-1">Nueva</span>
-                        </button>
                     </div>
                 </div>
             </form>

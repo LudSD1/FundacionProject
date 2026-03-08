@@ -12,6 +12,7 @@
 @import url(components/registration.css);
 @import url(components/calendar.css);
 @import url(components/stats.css);
+@import url(components/listacursos.css);
 
 /* Miscellaneous */
 @import url(components/misc.css);

@@ -1,12 +1,4 @@
-/* ============================================================
-   HEADER — CSS REFACTORIZADO
-   Fixes: typo #header logo, transition:all → específico,
-   fondo blanco consolidado en ::after, #ffffff00 → transparent,
-   left+width redundantes en ::before.
-   Diseño: diagonal y logo preservados íntegramente.
-   ============================================================ */
 
-/* ===== HEADER PRINCIPAL ===== */
 #header {
     position: fixed;
     top: 0;
@@ -104,6 +96,35 @@
     z-index: 2;
     background: transparent;
 }
+
+/* ===== LOGO APRENDO HOY ===== */
+.logo-aprendo {
+    font-family: "Inter", sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #ffa500;
+    text-decoration: none;
+    letter-spacing: -1px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.logo-aprendo:hover {
+    transform: scale(1.05);
+    color: #ffa500;
+    text-decoration: none;
+}
+
+.logo-h-special {
+    color: white;
+    background: #ffa500;
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin: 0 3px;
+    display: inline-block;
+    font-weight: 900;
+}
+
 
 /* ===== HEADER BOTTOM (categorías) ===== */
 .header-bottom {

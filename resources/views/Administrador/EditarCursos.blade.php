@@ -3,6 +3,7 @@
 @section('titulo', 'Editar Curso')
 
 @section('content')
+
     <div class="ec-wrapper">
     <div class="container" style="max-width:880px">
 

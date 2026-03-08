@@ -1,97 +1,202 @@
+/* ═══════════════════════════════════════════════════════
+   NOTIFICATIONS – Aprendo Hoy  |  notifications.css
+═══════════════════════════════════════════════════════ */
+
+/* ── Wrapper ────────────────────────────────────────── */
+.notifications-wrapper {
+    animation: fadeInUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Badge contador (campana del header) ────────────── */
 .notification-count {
-	font-size: 0.7rem;
-	padding: 0.25em 0.6em;
-	border-radius: 20px;
-	background: var(--gradient-orange);
-	color: #fff;
-	font-weight: 600;
-	box-shadow: 0 2px 8px rgba(255, 165, 0, 0.4);
-	animation: 3s infinite badge-bounce;
+    font-size: 0.68rem;
+    padding: 0.2em 0.55em;
+    border-radius: 20px;
+    background: var(--gradient-orange, linear-gradient(135deg, #FF6B00, #FF8C35));
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(255, 107, 0, 0.38);
+    animation: badgePulse 2.5s ease-in-out infinite;
+    line-height: 1;
 }
+@keyframes badgePulse {
+    0%, 100% { transform: scale(1);    box-shadow: 0 2px 8px  rgba(255, 107, 0, 0.38); }
+    50%       { transform: scale(1.12); box-shadow: 0 4px 14px rgba(255, 107, 0, 0.55); }
+}
+
+/* ── Table rows ─────────────────────────────────────── */
 .notification-row {
-	transition: 0.3s;
-	border-left: 4px solid transparent;
-	animation: 0.5s ease-out slideInRight;
+    transition: background 0.25s ease, border-left-color 0.25s ease, transform 0.25s ease;
+    border-left: 3px solid transparent;
+    animation: slideInRow 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+@keyframes slideInRow {
+    from { opacity: 0; transform: translateX(-10px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+/* Stagger: las primeras 8 filas entran escalonadas */
+.notification-row:nth-child(1) { animation-delay: .03s; }
+.notification-row:nth-child(2) { animation-delay: .06s; }
+.notification-row:nth-child(3) { animation-delay: .09s; }
+.notification-row:nth-child(4) { animation-delay: .12s; }
+.notification-row:nth-child(5) { animation-delay: .15s; }
+.notification-row:nth-child(6) { animation-delay: .18s; }
+.notification-row:nth-child(7) { animation-delay: .21s; }
+.notification-row:nth-child(8) { animation-delay: .24s; }
+
 .notification-row:hover {
-	background: linear-gradient(90deg,rgba(26, 71, 137, 0.03) 0,transparent 100%);
-	border-left-color: var(--color-secondary);
-	transform: translateX(4px);
+    background: linear-gradient(90deg, rgba(26, 71, 137, 0.04) 0%, transparent 100%);
+    border-left-color: var(--color-secondary, #63BECF);
+    transform: translateX(3px);
 }
-.notification-row.fade-out {
-	opacity: 0;
-	transform: translateX(100px);
-}
+
+/* Unread */
 .notification-unread {
-	background: linear-gradient(90deg,rgba(255, 165, 0, 0.05) 0,transparent 100%);
+    background: linear-gradient(90deg, rgba(255, 107, 0, 0.045) 0%, transparent 100%);
+    border-left-color: rgba(255, 107, 0, 0.35);
 }
 .notification-unread:hover {
-	background: linear-gradient(90deg,rgba(255, 165, 0, 0.08) 0,transparent 100%);
-	border-left-color: var(--orange-accent);
+    background: linear-gradient(90deg, rgba(255, 107, 0, 0.07) 0%, transparent 100%);
+    border-left-color: var(--orange-accent, #FF6B00);
 }
+
+/* Read */
+.notification-read {
+    opacity: 0.75;
+}
+.notification-read:hover {
+    opacity: 1;
+}
+
+/* Fade-out (al eliminar con JS) */
+.notification-row.fade-out {
+    opacity: 0;
+    transform: translateX(60px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+}
+
+/* ── Notification cell content ──────────────────────── */
 .notification-content {
-	display: flex;
-	align-items: flex-start;
-	gap: 1rem;
-}
-.notification-icon-wrapper {
-	width: 40px;
-	height: 40px;
-	border-radius: 12px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: var(--gradient-secondary);
-	flex-shrink: 0;
-}
-.notification-icon {
-	font-size: 1.2rem;
-	color: #fff;
-}
-.notification-message {
-	font-weight: 500;
-	color: #333;
-	margin-bottom: 0.25rem;
-}
-.notification-details {
-	color: #6c757d;
-	display: block;
-	font-size: 0.85rem;
-}
-.notification-time {
-	color: #6c757d;
-	font-size: 0.9rem;
-	display: flex;
-	align-items: center;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
 }
 .notification-text {
-	flex: 1;
+    flex: 1;
+    min-width: 0;
 }
-.notifications-wrapper {
-	animation: 0.5s ease-out fadeInUp;
+.notification-message {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #1a1a2e;
+    margin-bottom: 3px;
+    line-height: 1.4;
+    /* Truncar si es muy largo */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
-.badge-unread {
-	background: var(--gradient-orange);
-	color: #fff;
-	box-shadow: 0 2px 8px rgba(255, 165, 0, 0.3);
-	animation: 2s infinite pulse-badge;
+.notification-details {
+    display: block;
+    font-size: 0.82rem;
+    color: #6B7280;
+    margin-top: 2px;
+    font-style: italic;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
+
+/* ── Icon wrapper ───────────────────────────────────── */
+.notification-icon-wrapper {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gradient-secondary, linear-gradient(135deg, #63BECF, #39A6CB));
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(57, 166, 203, 0.22);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.notification-row:hover .notification-icon-wrapper {
+    transform: scale(1.08);
+    box-shadow: 0 4px 14px rgba(57, 166, 203, 0.35);
+}
+.notification-icon {
+    font-size: 1.1rem;
+    color: #fff;
+}
+
+/* ── Timestamp ──────────────────────────────────────── */
+.notification-time {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.85rem;
+    color: #6B7280;
+    white-space: nowrap;
+}
+
+/* ── Badges ─────────────────────────────────────────── */
 .badge-modern {
-	padding: 0.5rem 1rem;
-	border-radius: 20px;
-	font-size: 0.8rem;
-	font-weight: 600;
-	display: inline-flex;
-	align-items: center;
-	transition: 0.3s;
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    transition: opacity 0.2s, transform 0.2s;
+    line-height: 1;
+    white-space: nowrap;
+}
+.badge-modern:hover { opacity: 0.88; transform: scale(0.97); }
+
+.badge-unread {
+    background: var(--gradient-orange, linear-gradient(135deg, #FF6B00, #FF8C35));
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(255, 107, 0, 0.28);
+    animation: badgePulse 2.5s ease-in-out infinite;
 }
 .badge-read {
-	background: linear-gradient(135deg, #6c757d 0, #5a6268 100%);
-	color: #fff;
+    background: #F3F4F6;
+    color: #6B7280;
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    /* sin animación — ya fue leído */
 }
+
+/* ── Action buttons row ─────────────────────────────── */
+.btn-group-modern {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+/* Heredado de tus clases btn-action-modern existentes —
+   solo añadimos colores específicos para estas variantes */
+.btn-action-view:hover  { background: rgba(13, 45, 107, 0.08); color: #0D2D6B; }
+.btn-action-check:hover { background: rgba(34, 197, 94, 0.12);  color: #16a34a; }
+.btn-action-delete:hover{ background: rgba(239, 68, 68, 0.10);  color: #dc2626; }
+
+/* ── Responsive ─────────────────────────────────────── */
 @media (max-width: 768px) {
-	.notification-content {
-		flex-direction: column;
-		gap: 0.75rem;
-	}
+    .notification-content {
+        flex-direction: column;
+        gap: 8px;
+    }
+    .notification-icon-wrapper {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+    }
+    .notification-icon { font-size: 0.95rem; }
+    .notification-message { font-size: 0.85rem; }
+    .badge-modern { padding: 3px 10px; font-size: 0.74rem; }
 }

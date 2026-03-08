@@ -5,6 +5,9 @@
 
 @section('content')
     <div class="container my-4">
+        <h2>
+            Lista de Usuarios
+        </h2>
         <div class="card card-modern">
             <div class="card-header-modern">
                 <div class="row align-items-center g-3">

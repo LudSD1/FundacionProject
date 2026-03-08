@@ -8,7 +8,7 @@
         <div class="col-12">
             <div class="card-modern">
                 <div class="card-header-modern d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0">
+                    <h4 class="mb-0 text-white">
                         <i class="fas fa-database me-2"></i>
                         Gestión de Backups de Base de Datos
                     </h4>

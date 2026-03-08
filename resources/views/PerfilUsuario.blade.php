@@ -1,179 +1,203 @@
 @section('titulo')
-
-Perfil {{$usuario->name}} {{$usuario->lastname1}} {{$usuario->lastname2}}
-
+    Perfil {{ $usuario->name }} {{ $usuario->lastname1 }} {{ $usuario->lastname2 }}
 @endsection
 
+@section('content')
+<div class="container py-5 profile-container-modern">
+    <div class="row g-4">
 
+        {{-- ═══ COLUMNA IZQUIERDA ═══════════════════════════ --}}
+        <div class="col-lg-4">
+            <div class="profile-card-modern">
 
+                {{-- Cover --}}
+                <div class="profile-cover-section"></div>
 
-<style>
-    input[type="file"] {
-        /* Ocultar el campo de entrada */
-        position: absolute;
-        clip: rect(0, 0, 0, 0);
-        pointer-events: none;
-    }
+                {{-- Avatar --}}
+                <div class="avatar-container">
+                    @php
+                        $avatarUrl   = $usuario->avatar
+                            ? asset('storage/' . $usuario->avatar)
+                            : asset('./assets/img/user.png');
+                        $isOwnProfile = auth()->user()->id === $usuario->id;
+                        $isAdmin      = auth()->user()->hasRole('Administrador');
+                    @endphp
 
-    /* Estilo personalizado para el botón de carga de archivo */
-    .custom-file-upload {
-        border: 1px solid #ccc;
-        display: inline-block;
-        padding: 6px 12px;
-        cursor: pointer;
-        background-color: #f7f7f7;
-    }
-</style>
+                    <div class="avatar-container-modern {{ $isOwnProfile ? 'cursor-pointer' : '' }}">
+                        <img id="avatar"
+                             src="{{ $avatarUrl }}"
+                             class="avatar-image-modern"
+                             @if($isOwnProfile)
+                                 data-bs-toggle="modal"
+                                 data-bs-target="#avatarModal"
+                                 title="Cambiar imagen de perfil"
+                             @endif
+                             alt="Avatar de {{ $usuario->name }}">
 
-@section('contentup')
-
-
-<div class="container py-5">
-    <div class="row">
-        <!-- Columna de perfil (izquierda) -->
-        <div class="col-lg-4 mb-4">
-            <div class="card-modern">
-                <div class="card-header-modern text-center">
-                    <h4 class="card-title-modern mb-0">Perfil de Usuario</h4>
-                </div>
-
-                <div class="text-center position-relative avatar-container">
-                    <!-- Overlay de fondo para la imagen de perfil -->
-                    <div class="profile-header-cover bg-gradient-info" style="height: 100px;"></div>
-
-                    <!-- Avatar -->
-                    <div class="profile-avatar-wrapper">
-                        @php
-                            $avatarUrl = $usuario->avatar
-                                ? asset('storage/' . $usuario->avatar)
-                                : asset('./assets/img/user.png');
-                        @endphp
-
-                        <img id="avatar" src="{{ $avatarUrl }}"
-                            class="profile-avatar rounded-circle border border-white shadow"
-                            data-toggle="modal" data-target="#avatarModal"
-                            alt="Avatar del usuario" title="Cambiar imagen de perfil">
+                        @if($isOwnProfile)
+                            <div class="avatar-edit-indicator">
+                                <i class="bi bi-camera-fill"></i>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
-                <div class="card-body text-center pt-5 mt-3">
-                    <h3 class="font-weight-bold">
+                {{-- Info --}}
+                <div class="profile-info-section">
+                    <h3 class="profile-user-name">
                         {{ $usuario->name }} {{ $usuario->lastname1 }}
                     </h3>
 
-                    <div class="text-bg-secondary rounded mb-3">
-                        {{ $usuario->roles->pluck('name')[0] }}
+                    <span class="profile-role-badge">
+                        <i class="bi bi-shield-check"></i>
+                        {{ $usuario->roles->pluck('name')[0] ?? 'Sin rol' }}
+                    </span>
+
+                    {{-- Contact --}}
+                    <div class="profile-contact-info">
+                        <div class="contact-item">
+                            <i class="bi bi-geo-alt-fill"></i>
+                            <span>{{ $usuario->CiudadReside }}, {{ $usuario->PaisReside }}</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="bi bi-telephone-fill"></i>
+                            <span>{{ $usuario->Celular }}</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="bi bi-envelope-fill"></i>
+                            <span>{{ $usuario->email }}</span>
+                        </div>
                     </div>
 
-                    <div class="text-muted mb-3">
-                        <i class="fas fa-map-marker-alt mr-2"></i>
-                        {{ $usuario->CiudadReside }}, {{ $usuario->PaisReside }}
-                    </div>
+                    {{-- Actions --}}
+                    @if ($isAdmin || $isOwnProfile)
+                        <div class="profile-actions">
+                            @if($isOwnProfile)
+                                <a href="{{ route('EditarperfilIndex', [encrypt($usuario->id)]) }}"
+                                   class="btn-profile-action btn-primary-action">
+                                    <i class="bi bi-pencil-square"></i>
+                                    <span>Editar Perfil</span>
+                                </a>
+                            @else
+                                <a href="{{ route('EditarperfilUser', [encrypt($usuario->id)]) }}"
+                                   class="btn-profile-action btn-primary-action">
+                                    <i class="bi bi-pencil-square"></i>
+                                    <span>Editar Usuario</span>
+                                </a>
+                            @endif
 
-                    <div class="text-muted mb-3">
-                        <i class="fas fa-phone mr-2"></i>
-                        {{ $usuario->Celular }}
-                    </div>
-
-                    <div class="text-muted">
-                        <i class="fas fa-envelope mr-2"></i>
-                        {{ $usuario->email }}
-                    </div>
-
-                    <!-- Botones de acción -->
-                    @if (auth()->user()->hasRole('Administrador') )
-                    <div class="mt-4">
-                        <a href="{{ route('EditarperfilUser', [encrypt($usuario->id)]) }}" class="btn-modern btn-primary-custom w-100">
-                            <i class="fas fa-user-edit mr-1"></i><span class="ms-1">Editar Perfil</span>
-                        </a>
-                    </div>
-                    <div class="mt-3">
-                        <a href="{{ route('CambiarContrasena', [encrypt($usuario->id)]) }}" class="btn-modern btn-accent-custom w-100">
-                            <i class="fas fa-key mr-1"></i><span class="ms-1">Cambiar Contraseña</span>
-                        </a>
-                    </div>
+                            <a href="{{ route('CambiarContrasena', [encrypt($usuario->id)]) }}"
+                               class="btn-profile-action btn-secondary-action">
+                                <i class="bi bi-key-fill"></i>
+                                <span>Cambiar Contraseña</span>
+                            </a>
+                        </div>
                     @endif
 
-                    @if (auth()->user()->hasRole('Administrador') || $usuario->hasRole('Docente'))
-                        <div class="mt-4 p-3 border-top">
-                            <h5 class="mb-3">Documento CV</h5>
+                    {{-- CV --}}
+                    @if ($isAdmin || $usuario->hasRole('Docente'))
+                        <div class="cv-section">
+                            <div class="cv-header">
+                                <i class="bi bi-file-earmark-text-fill"></i>
+                                <h5>Documento CV</h5>
+                            </div>
+
                             @if ($usuario->cv_file == '')
-                                <div class="alert alert-warning py-2">
-                                    <i class="fas fa-exclamation-triangle mr-2"></i>
-                                    No se ha cargado hoja de vida
+                                <div class="cv-alert">
+                                    <i class="bi bi-exclamation-triangle-fill"></i>
+                                    <span>No se ha cargado hoja de vida</span>
                                 </div>
                             @else
-                                <a href="{{ asset('storage/' . $usuario->cv_file) }}" class="btn-modern btn-accent-custom w-100">
-                                    <i class="fas fa-file-pdf mr-1"></i><span class="ms-1">Ver Hoja de Vida</span>
+                                <a href="{{ asset('storage/' . $usuario->cv_file) }}"
+                                   class="btn-cv-view" target="_blank">
+                                    <i class="bi bi-file-pdf-fill"></i>
+                                    <span>Ver Hoja de Vida</span>
                                 </a>
                             @endif
                         </div>
                     @endif
+
                 </div>
             </div>
         </div>
 
-        <!-- Columna de información (derecha) -->
+        {{-- ═══ COLUMNA DERECHA ══════════════════════════════ --}}
         <div class="col-lg-8">
-            @yield('content')
 
-            <!-- Sección de datos personales -->
-            <div class="card-modern mb-4">
-                <div class="card-header-modern d-flex justify-content-between align-items-center">
-                    <h4 class="card-title-modern mb-0">Información Personal</h4>
-                    <span class="badge bg-light text-muted">
-                        <i class="fas fa-lock mr-1"></i> Solo lectura
+            {{-- Información Personal --}}
+            <div class="info-card-modern">
+                <div class="info-card-header">
+                    <div class="info-card-title-wrapper">
+                        <i class="bi bi-person-lines-fill"></i>
+                        <h4>Información Personal</h4>
+                    </div>
+                    <span class="readonly-badge">
+                        <i class="bi bi-lock-fill me-1"></i>Solo lectura
                     </span>
                 </div>
-
-                <div class="card-body p-4">
-                    <div class="row mb-4">
+                <div class="info-card-body">
+                    <div class="row g-3">
                         <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="small text-muted">Nombre</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text bg-light"><i class="fas fa-user"></i></span>
-                                    </div>
-                                    <input type="text" class="form-control-modern" value="{{ $usuario->name }}" readonly>
-                                </div>
+                            <div class="info-field">
+                                <label class="info-label">
+                                    <i class="bi bi-person-fill"></i> Nombre
+                                </label>
+                                <div class="info-value">{{ $usuario->name }}</div>
                             </div>
                         </div>
-
                         <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="small text-muted">Correo Electrónico</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text bg-light"><i class="fas fa-envelope"></i></span>
-                                    </div>
-                                    <input type="email" class="form-control-modern" value="{{ $usuario->email }}" readonly>
-                                </div>
+                            <div class="info-field">
+                                <label class="info-label">
+                                    <i class="bi bi-envelope-fill"></i> Correo Electrónico
+                                </label>
+                                <div class="info-value">{{ $usuario->email }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-field">
+                                <label class="info-label">
+                                    <i class="bi bi-person-badge-fill"></i> Apellido Paterno
+                                </label>
+                                <div class="info-value">{{ $usuario->lastname1 }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-field">
+                                <label class="info-label">
+                                    <i class="bi bi-person-badge"></i> Apellido Materno
+                                </label>
+                                <div class="info-value">{{ $usuario->lastname2 }}</div>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <div class="row">
+            {{-- Información de Contacto --}}
+            <div class="info-card-modern mt-4">
+                <div class="info-card-header">
+                    <div class="info-card-title-wrapper">
+                        <i class="bi bi-telephone-fill"></i>
+                        <h4>Información de Contacto</h4>
+                    </div>
+                </div>
+                <div class="info-card-body">
+                    <div class="row g-3">
                         <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="small text-muted">Apellido Paterno</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text bg-light"><i class="fas fa-user-tag"></i></span>
-                                    </div>
-                                    <input type="text" class="form-control-modern" value="{{ $usuario->lastname1 }}" readonly>
-                                </div>
+                            <div class="info-field">
+                                <label class="info-label">
+                                    <i class="bi bi-phone-fill"></i> Teléfono Celular
+                                </label>
+                                <div class="info-value">{{ $usuario->Celular }}</div>
                             </div>
                         </div>
-
                         <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="small text-muted">Apellido Materno</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text bg-light"><i class="fas fa-user-tag"></i></span>
-                                    </div>
-                                    <input type="text" class="form-control-modern" value="{{ $usuario->lastname2 }}" readonly>
+                            <div class="info-field">
+                                <label class="info-label">
+                                    <i class="bi bi-geo-alt-fill"></i> Ubicación
+                                </label>
+                                <div class="info-value">
+                                    {{ $usuario->CiudadReside }}, {{ $usuario->PaisReside }}
                                 </div>
                             </div>
                         </div>
@@ -181,232 +205,221 @@ Perfil {{$usuario->name}} {{$usuario->lastname1}} {{$usuario->lastname2}}
                 </div>
             </div>
 
-            <!-- Sección de contacto -->
-            <div class="card-modern">
-                <div class="card-header-modern">
-                    <h4 class="card-title-modern mb-0">Información de Contacto</h4>
-                </div>
-
-                <div class="card-body p-4">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="small text-muted">Teléfono Celular</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text bg-light"><i class="fas fa-phone"></i></span>
-                                    </div>
-                                    <input type="text" class="form-control-modern" value="{{ $usuario->Celular }}" readonly>
-                                </div>
+            {{-- Tutor --}}
+            @if (count($tutor) > 0)
+                @foreach($tutor as $t)
+                    <div class="info-card-modern mt-4">
+                        <div class="info-card-header">
+                            <div class="info-card-title-wrapper">
+                                <i class="bi bi-person-heart"></i>
+                                <h4>Datos del Tutor / Representante</h4>
                             </div>
                         </div>
-
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="small text-muted">Ubicación</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text bg-light"><i class="fas fa-map-marker-alt"></i></span>
+                        <div class="info-card-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="info-field">
+                                        <label class="info-label">Nombre Completo</label>
+                                        <div class="info-value">
+                                            {{ $t->nombreTutor }} {{ $t->appaternoTutor }} {{ $t->apmaternoTutor }}
+                                        </div>
                                     </div>
-                                    <input type="text" class="form-control-modern"
-                                           value="{{ $usuario->CiudadReside }}, {{ $usuario->PaisReside }}" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-field">
+                                        <label class="info-label">Cédula de Identidad</label>
+                                        <div class="info-value">{{ $t->CI }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="info-field">
+                                        <label class="info-label">Dirección</label>
+                                        <div class="info-value">{{ $t->Direccion }}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                @endforeach
+            @endif
 
-<!-- Modal para cambiar la foto -->
-<div class="modal fade" id="avatarModal" tabindex="-1" role="dialog" aria-labelledby="avatarModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="avatarModalLabel">
-                    <i class="fas fa-camera mr-2"></i>Actualizar Foto de Perfil
-                </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-                    <span aria-hidden="true">&times;</span>
+            {{-- Datos Profesionales (Docente) --}}
+            @if ($usuario->hasRole('Docente') && count($atributosD) > 0)
+                <div class="info-card-modern mt-4">
+                    <div class="info-card-header">
+                        <div class="info-card-title-wrapper">
+                            <i class="bi bi-mortarboard-fill"></i>
+                            <h4>Formación y Experiencia</h4>
+                        </div>
+                    </div>
+                    <div class="info-card-body">
+                        @foreach ($atributosD as $at)
+                            <div class="row g-3 mb-4 pb-3" style="border-bottom:1px solid rgba(0,0,0,0.07);">
+                                <div class="col-md-4">
+                                    <div class="info-field">
+                                        <label class="info-label">Formación</label>
+                                        <div class="info-value">{{ $at->formacion }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="info-field">
+                                        <label class="info-label">Especialización</label>
+                                        <div class="info-value">{{ $at->Especializacion }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="info-field">
+                                        <label class="info-label">Experiencia</label>
+                                        <div class="info-value">{{ $at->ExperienciaL }} años</div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+
+                        @if(count($trabajos) > 0)
+                            <div class="section-mini-title mt-2">
+                                <i class="bi bi-briefcase-fill"></i> Historial Laboral
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Empresa</th>
+                                            <th>Cargo</th>
+                                            <th>Periodo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($trabajos as $tr)
+                                            <tr>
+                                                <td>{{ $tr->empresa }}</td>
+                                                <td>{{ $tr->cargo }}</td>
+                                                <td>
+                                                    {{ \Carbon\Carbon::parse($tr->fecha_inicio)->format('d/m/Y') }} –
+                                                    {{ $tr->fecha_fin
+                                                        ? \Carbon\Carbon::parse($tr->fecha_fin)->format('d/m/Y')
+                                                        : 'Actualidad' }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endif
+
+            @yield('extra_content')
+
+        </div>{{-- /col-lg-8 --}}
+    </div>{{-- /row --}}
+</div>{{-- /container --}}
+
+
+{{-- ═══ MODAL AVATAR (solo perfil propio) ════════════════ --}}
+@if($isOwnProfile)
+<div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:420px;">
+        <div class="modal-content modal-modern">
+
+            <div class="modal-header-avatar">
+                <div class="modal-title-wrapper">
+                    <i class="bi bi-camera-fill modal-icon-avatar"></i>
+                    <h5 class="modal-title" id="avatarModalLabel">Actualizar Foto de Perfil</h5>
+                </div>
+                <button type="button" class="btn-close-avatar" data-bs-dismiss="modal" aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
                 </button>
             </div>
 
-            <div class="modal-body">
-                <!-- Vista previa de la imagen -->
-                <div class="text-center mb-4">
-                    <img id="preview" class="rounded-circle border shadow"
-                        src="{{ $avatarUrl }}" width="150" height="150">
-
+            <div class="modal-body-avatar">
+                <div class="preview-section">
+                    <div class="preview-container-avatar">
+                        <img id="preview" src="{{ $avatarUrl }}" alt="Preview">
+                        <div class="preview-overlay-avatar">
+                            <i class="bi bi-camera fa-2x"></i>
+                        </div>
+                    </div>
+                    <p class="preview-hint">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Haga clic en el botón para seleccionar una imagen
+                    </p>
                 </div>
 
+                <form method="POST" action="{{ route('avatar') }}" enctype="multipart/form-data" id="uploadForm">
+                    @csrf
+                    <input type="hidden" name="id" value="{{ $usuario->id }}">
+
+                    <div class="upload-section">
+                        <input type="file" class="upload-input" id="avatarInput" name="avatar" accept="image/*">
+                        <label class="upload-label" for="avatarInput">
+                            <i class="bi bi-cloud-upload me-2"></i>
+                            Seleccionar Imagen
+                        </label>
+                        <div class="upload-hint">
+                            <i class="bi bi-lightbulb me-1"></i>
+                            Imágenes cuadradas de al menos 200×200 píxeles
+                        </div>
+                    </div>
+
+                    <div class="modal-actions-avatar">
+                        <button type="button" class="btn-modal-action btn-cancel" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle me-2"></i> Cancelar
+                        </button>
+                        <button type="submit" class="btn-modal-action btn-upload">
+                            <i class="bi bi-upload me-2"></i> Subir Imagen
+                        </button>
+                    </div>
+                </form>
             </div>
+
         </div>
     </div>
 </div>
 
-<!-- Estilos adicionales -->
-<style>
-    .avatar-container {
-        margin-top: -50px;
-    }
-
-    .profile-avatar-wrapper {
-        position: absolute;
-        top: 30px;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-
-    .profile-avatar {
-        width: 120px;
-        height: 120px;
-        object-fit: cover;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-
-    .profile-avatar:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-    }
-
-    .profile-header-cover {
-        border-top-left-radius: calc(0.3rem - 1px);
-        border-top-right-radius: calc(0.3rem - 1px);
-    }
-</style>
-
-<!-- Script para vista previa -->
 <script>
-    document.getElementById('avatarInput').addEventListener('change', function(event) {
-        const file = event.target.files[0];
-        if (file) {
-            if (!file.type.startsWith('image/')) {
-                alert('Por favor, selecciona una imagen válida.');
-                return;
-            }
+document.addEventListener('DOMContentLoaded', function () {
+    const avatarInput = document.getElementById('avatarInput');
+    const previewImg  = document.getElementById('preview');
+    const avatarImg   = document.getElementById('avatar');
+    const uploadForm  = document.getElementById('uploadForm');
 
-            // Actualizar el nombre del archivo en el label
-            const fileName = file.name;
-            const label = document.querySelector('label.custom-file-label');
-            label.textContent = fileName.length > 25 ? fileName.substring(0, 22) + '...' : fileName;
+    avatarInput?.addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (!file) return;
 
-            // Mostrar la vista previa de la imagen
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('preview').src = e.target.result;
-            };
-            reader.readAsDataURL(file);
+        if (file.size > 5 * 1024 * 1024) {
+            Swal.fire({ icon:'error', title:'Error', text:'La imagen no debe superar los 5 MB.', confirmButtonText:'Entendido' });
+            this.value = ''; return;
         }
+        if (!file.type.startsWith('image/')) {
+            Swal.fire({ icon:'error', title:'Error', text:'Selecciona una imagen válida (JPG, PNG, GIF).', confirmButtonText:'Entendido' });
+            this.value = ''; return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = e => {
+            if (previewImg) previewImg.src = e.target.result;
+            if (avatarImg)  avatarImg.src  = e.target.result;
+        };
+        reader.readAsDataURL(file);
     });
+
+    uploadForm?.addEventListener('submit', function (e) {
+        e.preventDefault();
+        Swal.fire({ title:'Subiendo imagen…', text:'Por favor espere…', allowOutsideClick:false, showConfirmButton:false, didOpen:()=>Swal.showLoading() });
+
+        fetch(this.action, { method:'POST', body:new FormData(this) })
+            .then(r => r.ok ? r.text().then(t => { try { return JSON.parse(t); } catch { return { success:true }; } }) : Promise.reject())
+            .then(() => Swal.fire({ icon:'success', title:'¡Éxito!', text:'Imagen actualizada correctamente.', showConfirmButton:false, timer:1500 }).then(() => location.reload()))
+            .catch(() => Swal.fire({ icon:'error', title:'Error', text:'Hubo un problema al subir la imagen. Intenta de nuevo.', confirmButtonText:'Entendido' }));
+    });
+});
 </script>
+@endif
+
 @endsection
 
 
-
-
-<script>
-    function resizeAndSubmit() {
-        const fileInput = document.getElementById('avatarInput');
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-
-        const file = fileInput.files[0];
-        const reader = new FileReader();
-
-        reader.onload = function(event) {
-            const img = new Image();
-            img.onload = function() {
-                const MAX_WIDTH = 512;
-                const MAX_HEIGHT = 512;
-                let width = img.width;
-                let height = img.height;
-
-                if (width > height) {
-                    if (width > MAX_WIDTH) {
-                        height *= MAX_WIDTH / width;
-                        width = MAX_WIDTH;
-                    }
-                } else {
-                    if (height > MAX_HEIGHT) {
-                        width *= MAX_HEIGHT / height;
-                        height = MAX_HEIGHT;
-                    }
-                }
-
-                canvas.width = width;
-                canvas.height = height;
-
-                ctx.drawImage(img, 0, 0, width, height);
-                const resizedImageData = canvas.toDataURL('image/jpeg');
-
-                // Crear un nuevo FormData y agregar la imagen redimensionada
-                const formData = new FormData(document.getElementById('uploadForm'));
-                const resizedImageBlob = dataURItoBlob(resizedImageData);
-                formData.set('avatar', resizedImageBlob, 'avatar.jpg');
-
-                // Enviar el formulario al servidor
-                fetch('tu/ruta/de/envio', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => {
-                        // Manejar la respuesta del servidor
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-            };
-
-            img.src = event.target.result;
-        };
-
-        reader.readAsDataURL(file);
-    }
-
-    function dataURItoBlob(dataURI) {
-        const byteString = atob(dataURI.split(',')[1]);
-        const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-        const ab = new ArrayBuffer(byteString.length);
-        const ia = new Uint8Array(ab);
-
-        for (let i = 0; i < byteString.length; i++) {
-            ia[i] = byteString.charCodeAt(i);
-        }
-
-        return new Blob([ab], {
-            type: mimeString
-        });
-    }
-</script>
-
-<script>
-    document.getElementById('avatarInput').addEventListener('change', function() {
-        var file = this.files[0];
-        if (file) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('avatar').src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    document.getElementById('avatarForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the form from submitting normally
-
-        // You can add your code here to save the avatar, for example, sending it to a server via AJAX.
-        // Here's a simple example:
-        var avatarDataUrl = document.getElementById('avatar').src;
-        console.log('Avatar data URL:', avatarDataUrl);
-    });
-</script>
-
-
-  @include('layout')
-
-
-
-
+@include('layout')

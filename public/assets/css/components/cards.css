@@ -1,14 +1,4 @@
-/* ============================================================
-   CARD SYSTEM — Consolidated & Improved
-   Variables requeridas en :root del proyecto:
-   --color-primary, --color-secondary, --color-accent1,
-   --color-accent3, --orange-accent,
-   --border-radius, --border-radius-md,
-   --shadow-sm, --shadow-md, --shadow-lg,
-   --border, --radius
-   ============================================================ */
 
-/* ── Tokens locales ─────────────────────────────────────────── */
 :root {
   --card-transition:    0.25s ease;
   --card-animation:     0.5s fadeInUp both;

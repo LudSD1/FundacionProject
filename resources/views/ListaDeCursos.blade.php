@@ -6,9 +6,11 @@
 
 @section('content')
 <div class="container my-4">
+    <h2>
+        Lista de Cursos
+    </h2>
     <div class="card card-modern">
-
-        {{-- ── Header ── --}}
+            {{-- ── Header ── --}}
         <div class="card-header-modern">
             <div class="row align-items-center g-3">
 

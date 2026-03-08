@@ -9,7 +9,7 @@
                         data-aos="fade-up">
                         <div>
                             <!-- Título del curso -->
-                            <h3>
+                            <h3 class="text-white">
                                 @if ($cursos->tipo == 'curso')
                                     {{ $cursos->nombreCurso }}
                                 @elseif ($cursos->tipo == 'congreso')
