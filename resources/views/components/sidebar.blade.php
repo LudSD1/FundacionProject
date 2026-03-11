@@ -116,11 +116,15 @@
                 <li><hr class="dropdown-divider my-0"></li>
 
                 <li>
-                    <a class="dropdown-item py-2 text-danger" href="{{ route('logout') }}"
-                        onclick="return confirm('¿Estás seguro de que deseas cerrar sesión?')">
-                        <i class="bi bi-box-arrow-right me-2"></i>
-                        <span>Cerrar Sesión</span>
-                    </a>
+                    <a class="dropdown-item py-2 text-danger" href="#"
+                    onclick="event.preventDefault(); cerrarSesion();">
+                    <i class="bi bi-box-arrow-right me-2"></i>
+                    <span>Cerrar Sesión</span>
+                </a>
+
+                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
+                     @csrf
+                 </form>
                 </li>
             </ul>
         </div>
@@ -492,4 +496,24 @@ const Sidebar = (() => {
 })();
 
 document.addEventListener('DOMContentLoaded', Sidebar.init);
+
+
+function cerrarSesion() {
+    Swal.fire({
+        title: '¿Cerrar sesión?',
+        text: "Tu sesión actual se cerrará.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, cerrar sesión',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('logout-form').submit();
+        }
+    });
+}
+
+
 </script>

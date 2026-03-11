@@ -6,26 +6,17 @@ use App\Models\Asistencia;
 use App\Models\Boletin;
 use App\Models\Cursos;
 use App\Models\Cursos_Horario;
-use App\Models\EdadDirigida;
-use App\Models\Evaluaciones;
 use App\Models\Foro;
 use App\Models\Horario;
 use App\Models\Inscritos;
-use App\Models\Nivel;
 use App\Models\NotaEntrega;
-use App\Models\NotaEvaluacion;
 use App\Models\Recursos;
-use App\Models\Tareas;
-use App\Models\Temas;
-use App\Models\TareasEntrega;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\Auth;
-use App\Charts\BartChart;
 use App\Events\CursoEvent;
 use App\Helpers\TextHelper;
 use App\Models\Categoria;
@@ -35,8 +26,6 @@ use App\Models\Tema;
 use App\Models\TipoActividad;
 use App\Models\TipoEvaluacion;
 use App\Services\QrTokenService;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Models\Actividad;
 use App\Exports\CursoReporteExport;
@@ -44,7 +33,6 @@ use App\Models\Subtema;
 use App\Services\AdminLogger;
 use App\Services\YouTubeEmbedService;
 use Maatwebsite\Excel\Facades\Excel;
-
 class CursosController extends Controller
 {
     /**

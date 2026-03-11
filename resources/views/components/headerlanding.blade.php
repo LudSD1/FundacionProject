@@ -1,181 +1,208 @@
-    <header id="header" class="fixed-top header-transparent">
-        <div class="header-top py-3">
-            <div class="container">
-                <!-- Desktop Layout -->
-                <div class="d-none d-md-flex align-items-center justify-content-between">
-                    <!-- Logo APRENDO HOY -->
-                    <div class="logo-section">
-                        <a href="{{ route('home') }}" class="logo-aprendo">
-                            APRENDO <span class="logo-h-special">H</span>OY
-                        </a>
-                    </div>
+<header id="header" class="fixed-top">
 
-                    <!-- Buscador centrado -->
-                    <div class="search-section">
-                        <form action="{{ route('lista.cursos.congresos') }}" method="GET" class="search-form">
+    <div class="header-top">
+        <div class="container">
+
+            {{-- ══ DESKTOP ══ --}}
+            <div class="d-none d-md-flex align-items-center justify-content-between gap-3">
+
+                {{-- Logo --}}
+                <div class="hd-logo-wrap">
+                    <a href="{{ route('home') }}" class="hd-logo">
+                        APRENDO <span class="hd-logo-h">H</span>OY
+                    </a>
+                </div>
+
+                {{-- Buscador --}}
+                <div class="hd-search-wrap">
+                    <form action="{{ route('lista.cursos.congresos') }}" method="GET" class="hd-search-form">
+                        <div class="input-group">
+                            <input type="text" name="search" placeholder="Buscar cursos, eventos..."
+                                class="form-control hd-search-input" value="{{ request('search') }}">
+                            <button type="submit" class="hd-search-btn">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                {{-- Nav + logo fundación --}}
+                <div class="hd-nav-wrap d-flex align-items-center gap-3">
+                    <nav>
+                        <ul class="hd-nav-list">
+                            @auth
+                                <li>
+                                    <a class="hd-btn hd-btn-ghost" href="{{ route('Inicio') }}">
+                                        <i class="bi bi-book me-1"></i>Mi aprendizaje
+                                    </a>
+                                </li>
+                                {{-- Dropdown usuario --}}
+                                <li class="dropdown">
+                                    <a class="hd-user-toggle" href="#" id="userDropdown" role="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        <div class="hd-avatar">
+                                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                        </div>
+                                        <span class="hd-user-name">{{ Auth::user()->name }}</span>
+                                        <i class="bi bi-chevron-down hd-chevron"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end hd-dropdown" aria-labelledby="userDropdown">
+                                        {{-- Cabecera dropdown --}}
+                                        <li>
+                                            <div class="hd-dd-header">
+                                                <div class="hd-avatar hd-avatar-sm">
+                                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                                </div>
+                                                <div>
+                                                    <div class="hd-dd-name">{{ Auth::user()->name }}</div>
+                                                    <div class="hd-dd-email">{{ Auth::user()->email }}</div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider my-1">
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item hd-dd-item"
+                                                href="{{ route('perfil', Auth::user()->id) }}">
+                                                <i class="bi bi-person-circle"></i> Mi perfil
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item hd-dd-item" href="{{ route('Inicio') }}">
+                                                <i class="bi bi-book"></i> Mi aprendizaje
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider my-1">
+                                        </li>
+                                        <li>
+                                            <form method="POST" action="{{ route('logout') }}">
+                                                @csrf
+                                                <button type="submit" class="dropdown-item hd-dd-item hd-dd-danger">
+                                                    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </li>
+                            @else
+                                {{-- FIX: </li> suelto eliminado, lógica corregida --}}
+                                @if (Route::is('login'))
+                                    <li>
+                                        <a class="hd-btn hd-btn-ghost" href="{{ route('signin') }}">
+                                            <i class="bi bi-person-plus me-1"></i>Crear cuenta
+                                        </a>
+                                    </li>
+                                @else
+                                    <li>
+                                        <a class="hd-btn hd-btn-ghost" href="{{ route('login.signin') }}">
+                                            <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="hd-btn hd-btn-primary" href="{{ route('signin') }}">
+                                            <i class="bi bi-person-plus me-1"></i>Crear cuenta
+                                        </a>
+                                    </li>
+                                @endif
+                            @endauth
+                        </ul>
+                    </nav>
+
+                    {{-- Logo fundación --}}
+                    <a href="{{ route('home') }}" class="hd-logo-fund">
+                        <img src="{{ asset('assets/img/logof.png') }}" alt="Logo Fundación">
+                    </a>
+                </div>
+            </div>
+
+            {{-- ══ MOBILE ══ --}}
+            <div class="d-md-none">
+                <div class="hd-mobile-bar">
+                    {{-- Izquierda: logo + hamburguesa --}}
+                    <div class="hd-mobile-left">
+                        <a href="{{ route('home') }}" class="hd-logo hd-logo-sm">
+                            APRENDO <span class="hd-logo-h">H</span>OY
+                        </a>
+                        <button class="hd-hamburger" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#mobileMenu" aria-controls="mobileMenu" aria-expanded="false">
+                            <i class="bi bi-list"></i>
+                        </button>
+                    </div>
+                    {{-- Derecha: logo fundación --}}
+                    <a href="{{ route('home') }}" class="hd-logo-fund hd-logo-fund-sm">
+                        <img src="{{ asset('assets/img/logof.png') }}" alt="Logo Fundación">
+                    </a>
+                </div>
+
+                {{-- Menú colapsable --}}
+                <div class="collapse" id="mobileMenu">
+                    <div class="hd-mobile-menu">
+                        {{-- Búsqueda --}}
+                        <form action="{{ route('lista.cursos.congresos') }}" method="GET" class="mb-3">
                             <div class="input-group">
                                 <input type="text" name="search" placeholder="Buscar cursos, eventos..."
-                                    class="form-control search-input" value="{{ request('search') }}">
-                                <button type="submit" class="btn btn-primary search-btn">
+                                    class="form-control hd-search-input" value="{{ request('search') }}">
+                                <button type="submit" class="hd-search-btn">
                                     <i class="bi bi-search"></i>
                                 </button>
                             </div>
                         </form>
-                    </div>
 
-                    <!-- Navegación y logo fundación -->
-                    <div class="nav-section d-flex align-items-center">
-                        <nav id="navbar" class="navbar">
-                            <ul class="d-flex align-items-center mb-0 me-4">
-                                @auth
-                                    <li><a class="getstarted scrollto" href="{{ route('Inicio') }}">Mi aprendizaje</a></li>
-
-                                    {{-- Dropdown de usuario --}}
-                                    <li class="nav-item dropdown ms-3">
-                                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 text-dark fw-semibold"
-                                            href="#" id="userDropdown" role="button" data-bs-toggle="dropdown"
-                                            aria-expanded="false">
-                                            <div class="user-avatar">
-                                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                                            </div>
-                                            {{ Auth::user()->name }}
-                                        </a>
-                                        <ul class="dropdown-menu dropdown-menu-end shadow border-0"
-                                            aria-labelledby="userDropdown">
-                                            <li>
-                                                <div class="dropdown-header d-flex align-items-center gap-2 py-2">
-                                                    <div class="user-avatar user-avatar--sm">
-                                                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                                                    </div>
-                                                    <div>
-                                                        <div class="fw-semibold">{{ Auth::user()->name }}</div>
-                                                        <div class="text-muted small">{{ Auth::user()->email }}</div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <hr class="dropdown-divider">
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-2"
-                                                    href="{{ route('perfil', Auth::user()->id ) }}">
-                                                    <i class="bi bi-person-circle"></i> Mi perfil
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-2"
-                                                    href="{{ route('Inicio') }}">
-                                                    <i class="bi bi-book"></i> Mi aprendizaje
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <hr class="dropdown-divider">
-                                            </li>
-                                            <li>
-                                                <form method="POST" action="{{ route('logout') }}">
-                                                    @csrf
-                                                    <button type="submit"
-                                                        class="dropdown-item d-flex align-items-center gap-2 text-danger">
-                                                        <i class="bi bi-box-arrow-right"></i> Cerrar sesión
-                                                    </button>
-                                                </form>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                @else
-                                    </li>
-                                    @if (Route::is('login'))
-                                        <li><a class="getstarted scrollto" href="{{ route('signin') }}">Crear cuenta</a></li>
-                                    @else
-                                        <li><a class="getstarted scrollto" href="{{ route('login.signin') }}">Iniciar
-                                                Sesión</a>
-                                    @endif
-                                @endauth
-                            </ul>
-                        </nav>
-
-                        <div class="logo-fundacion">
-                            <img src="{{ asset('assets/img/logof.png') }}" alt="Logo Fundación" class="img-fluid">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Mobile Layout -->
-                <div class="d-md-none">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <!-- Logo APRENDO HOY y botón hamburguesa -->
-                        <div class="d-flex align-items-center">
-                            <a href="{{ route('home') }}" class="logo-aprendo-mobile">
-                                APRENDO <span class="logo-h-special-mobile">H</span>OY
-                            </a>
-                            <button class="btn btn-link p-2 ms-2" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#mobileMenu" aria-controls="mobileMenu" aria-expanded="false">
-                                <i class="bi bi-list" style="font-size: 1.5rem; color: #FFA500;"></i>
-                            </button>
-                        </div>
-
-                        <!-- Logo fundación -->
-                        <div class="logo-fundacion-mobile">
-                            <img src="{{ asset('assets/img/logof.png') }}" alt="Logo Fundación" class="img-fluid">
-                        </div>
-                    </div>
-
-                    <!-- Menú móvil colapsable -->
-                    <div class="collapse" id="mobileMenu">
-                        <div class="mobile-menu-content">
-                            <!-- Búsqueda móvil -->
-                            <div class="mobile-search mb-4">
-                                <form action="{{ route('lista.cursos.congresos') }}" method="GET">
-                                    <div class="input-group">
-                                        <input type="text" name="search" placeholder="Buscar cursos, eventos..."
-                                            class="form-control mobile-search-input" value="{{ request('search') }}">
-                                        <button type="submit" class="btn btn-primary mobile-search-btn">
-                                            <i class="bi bi-search"></i>
+                        {{-- Nav móvil --}}
+                        <ul class="hd-mobile-nav">
+                            @auth
+                                <li>
+                                    <a class="hd-mobile-link" href="{{ route('Inicio') }}">
+                                        <i class="bi bi-house-door"></i> Mi aprendizaje
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="hd-mobile-link" href="{{ route('perfil', Auth::user()->id) }}">
+                                        <i class="bi bi-person-circle"></i> Mi perfil
+                                    </a>
+                                </li>
+                                <li>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="hd-mobile-link hd-mobile-link-danger w-100">
+                                            <i class="bi bi-box-arrow-right"></i> Cerrar sesión
                                         </button>
-                                    </div>
-                                </form>
-                            </div>
-
-                            <!-- Navegación móvil -->
-                            <nav class="mobile-nav">
-                                <ul class="mobile-nav-list">
-                                    @auth
-                                        <li class="mobile-nav-item">
-                                            <a class="mobile-nav-link" href="{{ route('Inicio') }}">
-                                                <i class="bi bi-house-door me-2"></i>Mi aprendizaje
-                                            </a>
-                                        </li>
-                                    @else
-                                        <li class="mobile-nav-item">
-                                            <a class="mobile-nav-link" href="{{ route('login.signin') }}">
-                                                <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
-                                            </a>
-                                        </li>
-                                        <li class="mobile-nav-item">
-                                            <a class="mobile-nav-link" href="{{ route('signin') }}">
-                                                <i class="bi bi-person-plus me-2"></i>Crear cuenta
-                                            </a>
-                                        </li>
-                                    @endauth
-                                </ul>
-                            </nav>
-                        </div>
+                                    </form>
+                                </li>
+                            @else
+                                <li>
+                                    <a class="hd-mobile-link" href="{{ route('login.signin') }}">
+                                        <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="hd-mobile-link hd-mobile-link-primary" href="{{ route('signin') }}">
+                                        <i class="bi bi-person-plus"></i> Crear cuenta
+                                    </a>
+                                </li>
+                            @endauth
+                        </ul>
                     </div>
                 </div>
             </div>
+
         </div>
-
-        <hr class="my-0">
-
-
+    </div>
+</header>
 
 
-        <!-- 🔽 CATEGORÍAS PRINCIPALES (CARRUSEL) -->
-        {{-- <div class="header-bottom bg-white py-2 shadow-sm position-relative">
-            <!-- Código del carrusel comentado -->
-        </div> --}}
-
-
-
-
-    </header>
+<script>
+    (function() {
+        const header = document.getElementById('header');
+        if (!header) return;
+        const onScroll = () => {
+            header.classList.toggle('header-scrolled', window.scrollY > 40);
+        };
+        window.addEventListener('scroll', onScroll, {
+            passive: true
+        });
+        onScroll(); // estado inicial
+    })();
+</script>

@@ -1,478 +1,398 @@
 
+/* ══════════════════════════════
+   HEADER BASE
+══════════════════════════════ */
 #header {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+    top: 0; left: 0; right: 0;
     z-index: 1030;
-    padding: 0;
-    min-height: 80px;
+    min-height: var(--hd-h);
+    /* FIX: background en el pseudo para poder animar sin repaint */
     background: transparent;
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease-in-out,
-                box-shadow 0.3s ease-in-out;
+    transition: background-color .3s ease, box-shadow .3s ease;
 }
 
-/* Capa blanca de fondo — debajo de todo */
+/* Fondo blanco base (siempre visible) */
 #header::after {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
     background: #fff;
     z-index: 0;
 }
 
-/* Diagonal azul — encima del fondo blanco, debajo del contenido */
+/* Diagonal azul derecha */
 #header::before {
-    content: "";
+    content: '';
     position: absolute;
-    top: 0;
-    left: 0;          /* FIX: eliminado width:100% redundante (left+right lo cubren) */
-    right: 0;
-    height: 100%;
-    background: linear-gradient(145deg, transparent 70%, #1a4789 30%);
+    inset: 0;
+    background: linear-gradient(145deg, transparent 68%, var(--hd-primary) 32%);
     z-index: 1;
     pointer-events: none;
-    opacity: 1;
-    transition: opacity 0.3s ease-in-out, filter 0.3s ease-in-out;
+    transition: opacity .3s ease;
 }
 
-/* Todo el contenido directo encima de diagonal y fondo */
-#header > * {
-    position: relative;
-    z-index: 2;
-}
+/* Todo el contenido sobre los pseudos */
+#header > * { position: relative; z-index: 2; }
 
-/* ── Header con scroll ── */
+/* ── Scrolled ── */
 #header.header-scrolled {
-    background: #fff;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 25px rgba(0,0,0,.12);
+}
+#header.header-scrolled::after {
+    background: rgba(255,255,255,.97);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
-#header.header-scrolled .header-top {
-    background: transparent;           /* FIX: #ffffff00 → transparent */
-}
-
-#header.header-scrolled::before {
-    opacity: 1;
-    filter: drop-shadow(0 2px 10px rgba(26, 71, 137, 0.3));
-}
-
-#header.header-scrolled .right {
-    position: relative;
-    z-index: 2;
-    background: #145da0;
-    border-radius: 8px;
-    padding: 5px 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-#header.header-scrolled .right img {
-    filter: none;
-}
-
-/* ── Header transparente (sobre hero) ── */
-#header.header-transparent .right img {
-    filter: none;
-}
-
-#header.header-transparent .navbar .getstarted {
-    background: var(--color-accent6);
-    color: #fff;
-    border: none;
-}
-
-#header.header-transparent .navbar .getstarted:hover {
-    background: var(--color-accent1);
-    color: #fff;
-}
-
-/* ===== HEADER TOP ===== */
+/* ══════════════════════════════
+   HEADER TOP
+══════════════════════════════ */
 .header-top {
-    padding: 15px 0;
+    padding: 14px 0;
     position: relative;
     z-index: 2;
-    background: transparent;
 }
 
-/* ===== LOGO APRENDO HOY ===== */
-.logo-aprendo {
-    font-family: "Inter", sans-serif;
-    font-size: 2.2rem;
+/* ══════════════════════════════
+   LOGO
+══════════════════════════════ */
+.hd-logo {
+    font-family: "Inter", "Montserrat", sans-serif;
+    font-size: 2rem;
     font-weight: 800;
-    color: #ffa500;
+    color: var(--hd-orange);
     text-decoration: none;
     letter-spacing: -1px;
-    transition: all 0.3s ease;
     white-space: nowrap;
-}
-
-.logo-aprendo:hover {
-    transform: scale(1.05);
-    color: #ffa500;
-    text-decoration: none;
-}
-
-.logo-h-special {
-    color: white;
-    background: #ffa500;
-    padding: 6px 10px;
-    border-radius: 6px;
-    margin: 0 3px;
+    transition: transform .25s ease;
     display: inline-block;
-    font-weight: 900;
 }
+.hd-logo:hover { transform: scale(1.04); color: var(--hd-orange); text-decoration: none; }
+.hd-logo-sm    { font-size: 1.4rem; }
 
-
-/* ===== HEADER BOTTOM (categorías) ===== */
-.header-bottom {
-    background-color: #fff;
-}
-
-/* ===== LOGO ===== */
-/* FIX: "  ogo" → ".logo" — el typo hacía que estos estilos nunca aplicaran */
-#header .logo h1 {
-    font-size: 30px;
-    margin: 0;
-    line-height: 1;
-    font-weight: 400;
-    letter-spacing: 2px;
-    position: relative;
-    z-index: 2;
-}
-
-#header .logo h1 a,
-#header .logo h1 a:hover {
-    color: #145da0;
-    text-decoration: none;
-}
-
-#header .logo img {
-    margin: 0;
-    max-height: 40px;
-}
-
-/* ===== SECCIONES DEL HEADER DESKTOP ===== */
-.logo-section {
-    flex: 0 0 auto;
-    min-width: 200px;
-}
-
-.search-section {
-    flex: 1;
-    max-width: 400px;
-    margin: 0 2rem;
-}
-
-.nav-section {
-    flex: 0 0 auto;
-    min-width: 300px;
-    justify-content: flex-end;
-}
-
-/* ===== BUSCADOR ===== */
-.search-form {
-    width: 100%;
-}
-
-.search-input {
-    border: 2px solid #e9ecef;
-    border-radius: 25px 0 0 25px;
-    padding: 12px 20px;
-    font-size: 0.95rem;
-    background: #f8f9fa;
-    transition: border-color 0.3s ease,
-                box-shadow 0.3s ease,
-                background-color 0.3s ease; /* FIX: all → específico */
-}
-
-.search-input:focus {
-    border-color: #ffa500;
-    box-shadow: 0 0 0 0.2rem rgba(255, 165, 0, 0.25);
-    background: #fff;
-}
-
-.search-btn {
-    border-radius: 0 25px 25px 0;
-    padding: 12px 20px;
-    background: linear-gradient(135deg, #ffa500, #ff8c00);
-    border: 2px solid #ffa500;
-    transition: background 0.3s ease,
-                transform 0.3s ease,
-                box-shadow 0.3s ease;       /* FIX: all → específico */
-}
-
-.search-btn:hover {
-    background: linear-gradient(135deg, #ff8c00, #ffa500);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(255, 165, 0, 0.3);
-}
-
-/* ===== NAVEGACIÓN ===== */
-#navbar ul {
-    gap: 1rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.getstarted {
-    background: #007bff;
+.hd-logo-h {
     color: #fff;
-    padding: 10px 20px;
-    border-radius: 20px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.9rem;
-    white-space: nowrap;
-    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
-    transition: background-color 0.3s ease,
-                transform 0.3s ease,
-                box-shadow 0.3s ease;       /* FIX: all → específico */
-}
-
-.getstarted:hover {
-    background: #0056b3;
-    color: #fff;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
-}
-
-.getstarted:first-child       { background: #6c757d; }
-.getstarted:first-child:hover { background: #545b62; }
-
-/* ===== LOGO FUNDACIÓN ===== */
-.logo-fundacion img {
-    height: 50px;
-    transition: transform 0.3s ease;
-}
-
-.logo-fundacion img:hover {
-    transform: scale(1.05);
-}
-
-/* ===== LOGO MÓVIL ===== */
-.logo-aprendo-mobile {
-    font-family: "Inter", sans-serif;
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: #ffa500;
-    text-decoration: none;
-    letter-spacing: -1px;
-    transition: color 0.3s ease;       /* FIX: all → color */
-}
-
-.logo-h-special-mobile {
-    color: #fff;
-    background: #ffa500;
-    padding: 4px 8px;
-    border-radius: 4px;
+    background: var(--hd-orange);
+    padding: 4px 9px;
+    border-radius: 6px;
     margin: 0 2px;
     display: inline-block;
     font-weight: 900;
-    font-size: 0.9em;
 }
 
-.logo-fundacion-mobile img {
-    height: 40px;
+.hd-logo-wrap { flex: 0 0 auto; }
+
+/* Logo fundación */
+.hd-logo-fund img {
+    height: 48px;
+    width: auto;
+    display: block;
+    transition: transform .25s ease;
+}
+.hd-logo-fund:hover img { transform: scale(1.05); }
+.hd-logo-fund-sm img    { height: 38px; }
+
+/* ══════════════════════════════
+   BUSCADOR
+══════════════════════════════ */
+.hd-search-wrap {
+    flex: 1;
+    max-width: 420px;
+    margin: 0 1.5rem;
 }
 
-/* ===== MENÚ MÓVIL ===== */
-.mobile-menu-content {
+.hd-search-input {
+    border: 2px solid #e2eaf4;
+    border-right: none;
+    border-radius: 50px 0 0 50px !important;
+    padding: 10px 18px;
+    font-size: .9rem;
+    background: #f4f8fc;
+    color: #0f172a;
+    transition: border-color .25s ease, box-shadow .25s ease, background .25s ease;
+    outline: none;
+    box-shadow: none !important;
+}
+.hd-search-input::placeholder { color: #94a3b8; }
+.hd-search-input:focus {
+    border-color: var(--hd-orange);
     background: #fff;
-    border-radius: 10px;
-    padding: 1.5rem;
-    margin-top: 1rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 0 3px rgba(255,165,0,.15) !important;
 }
 
-.mobile-search-input {
-    border: 2px solid #e9ecef;
-    border-radius: 20px 0 0 20px;
-    padding: 12px 16px;
-    font-size: 0.9rem;
-    background: #f8f9fa;
-    transition: border-color 0.3s ease,
-                box-shadow 0.3s ease,
-                background-color 0.3s ease;
+.hd-search-btn {
+    border-radius: 0 50px 50px 0 !important;
+    padding: 10px 18px;
+    background: linear-gradient(135deg, var(--hd-orange), var(--hd-orange-d));
+    border: 2px solid var(--hd-orange);
+    color: #fff;
+    font-size: .95rem;
+    cursor: pointer;
+    transition: background .25s ease, transform .2s ease, box-shadow .25s ease;
+}
+.hd-search-btn:hover {
+    background: linear-gradient(135deg, var(--hd-orange-d), var(--hd-orange));
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255,165,0,.35);
 }
 
-.mobile-search-input:focus {
-    border-color: #ffa500;
-    box-shadow: 0 0 0 0.2rem rgba(255, 165, 0, 0.25);
-    background: #fff;
-}
+/* ══════════════════════════════
+   NAV DESKTOP
+══════════════════════════════ */
+.hd-nav-wrap   { flex: 0 0 auto; }
 
-.mobile-search-btn {
-    border-radius: 0 20px 20px 0;
-    padding: 12px 16px;
-    background: linear-gradient(135deg, #ffa500, #ff8c00);
-    border: 2px solid #ffa500;
-}
-
-.mobile-nav-list {
+.hd-nav-list {
     list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.mobile-nav-item {
-    margin-bottom: 0.5rem;
-}
-
-.mobile-nav-link {
+    margin: 0; padding: 0;
     display: flex;
     align-items: center;
-    padding: 12px 16px;
-    background: #f8f9fa;
-    color: #333;
+    gap: .6rem;
+}
+
+/* Botón ghost (outline sobre fondo blanco) */
+.hd-btn {
+    display: inline-flex;
+    align-items: center;
+    font-size: .88rem;
+    font-weight: 600;
+    padding: .5rem 1.1rem;
+    border-radius: 50px;
     text-decoration: none;
-    border-radius: 10px;
-    font-weight: 500;
-    transition: background-color 0.3s ease,
-                color 0.3s ease,
-                transform 0.3s ease;        /* FIX: all → específico */
+    transition: all .25s ease;
+    white-space: nowrap;
+}
+.hd-btn-ghost {
+    color: var(--hd-orange);
+    border: 1.5px solid var(--hd-orange);
+    background: transparent;
+}
+.hd-btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: white;
+    color: white;
 }
 
-.mobile-nav-link:hover {
-    background: #ffa500;
+/* Botón sólido (CTA) — usa paleta del proyecto */
+.hd-btn-primary {
     color: #fff;
-    transform: translateX(5px);
+    background: linear-gradient(135deg, var(--hd-primary), var(--hd-primary-l));
+    border: 1.5px solid transparent;
+    box-shadow: 0 4px 12px rgba(20,93,160,.28);
+}
+.hd-btn-primary:hover {
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(20,93,160,.38);
 }
 
-/* ===== USER AVATAR ===== */
-.user-avatar {
-    width: 38px;
-    height: 38px;
+/* ── Dropdown usuario ── */
+.hd-user-toggle {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    text-decoration: none;
+    padding: .3rem .7rem;
+    border-radius: 50px;
+    border: 1.5px solid #d1dce8;
+    background: transparent;
+    transition: all .25s ease;
+    color: #0f172a;
+}
+.hd-user-toggle:hover,
+.hd-user-toggle.show {
+    background: rgba(20,93,160,.06);
+    border-color: var(--hd-primary);
+    color: var(--hd-primary);
+}
+
+.hd-avatar {
+    width: 36px; height: 36px;
     border-radius: 50%;
-    background-color: #145da0;
+    background: linear-gradient(135deg, var(--hd-primary), var(--hd-primary-l));
     color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: .88rem;
     font-weight: 700;
-    font-size: 1rem;
     flex-shrink: 0;
 }
+.hd-avatar-sm { width: 30px; height: 30px; font-size: .75rem; }
 
-.user-avatar--sm {
-    width: 32px;
-    height: 32px;
-    font-size: 0.85rem;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 1200px) {
-    .search-section {
-        max-width: 300px;
-        margin: 0 1rem;
-    }
-
-    .nav-section { min-width: 250px; }
-}
-
-@media (max-width: 992px) {
-    .logo-aprendo   { font-size: 1.8rem; }
-
-    .search-section {
-        max-width: 250px;
-        margin: 0 0.5rem;
-    }
-
-    .nav-section { min-width: 200px; }
-}
-
-@media (max-width: 767.98px) {
-    .header-top            { padding: 0.75rem 0; }
-    .logo-aprendo-mobile   { font-size: 1.3rem; }
-    .logo-fundacion-mobile img { height: 35px; }
-}
-
-@media (max-width: 480px) {
-    .logo-aprendo-mobile   { font-size: 1.1rem; }
-
-    .logo-h-special-mobile {
-        padding: 3px 6px;
-        font-size: 0.8em;
-    }
-
-    .mobile-menu-content { padding: 1rem; }
-}
-/* ============================================================
-   HEADER MÓVIL — FIX logo fundación en pantallas ~380px
-   ============================================================ */
-
-/* Contenedor principal móvil — evita que flex desborde */
-.d-md-none .d-flex.align-items-center.justify-content-between {
-    gap: 0.5rem;
-    flex-wrap: nowrap;
-}
-
-/* Lado izquierdo: logo texto + hamburguesa */
-.d-md-none .d-flex.align-items-center:first-child {
-    flex: 1 1 auto;
-    min-width: 0;          /* permite que el texto se comprima si es necesario */
-    overflow: hidden;
-}
-
-/* Logo texto — se comprimen las letras en pantallas pequeñas */
-.logo-aprendo-mobile {
+.hd-user-name {
+    font-size: .88rem;
+    font-weight: 600;
+    color: #0f172a;
+    max-width: 120px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* Lado derecho: logo fundación — no crece, no encoge, tamaño fijo */
-.logo-fundacion-mobile {
-    flex: 0 0 auto;
+.hd-chevron {
+    font-size: .7rem;
+    color: #94a3b8;
+    transition: transform .2s ease;
+}
+.hd-user-toggle.show .hd-chevron { transform: rotate(180deg); }
+
+/* Dropdown panel */
+.hd-dropdown {
+    min-width: 230px;
+    border: 1.5px solid #e2eaf4;
+    border-radius: 14px;
+    box-shadow: 0 12px 40px rgba(20,93,160,.14);
+    padding: .5rem 0;
+    margin-top: .5rem;
+    overflow: hidden;
 }
 
-.logo-fundacion-mobile img {
-    height: 40px;
-    width: auto;
-    display: block;
+.hd-dd-header {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    padding: .65rem 1rem .5rem;
+}
+.hd-dd-name  { font-size: .88rem; font-weight: 700; color: #0f172a; }
+.hd-dd-email { font-size: .74rem; color: #94a3b8; }
+
+.hd-dd-item {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .55rem 1rem;
+    font-size: .88rem;
+    color: #374151;
+    transition: background .2s ease, color .2s ease;
+}
+.hd-dd-item:hover {
+    background: rgba(20,93,160,.06);
+    color: var(--hd-primary);
+}
+.hd-dd-item i { font-size: .88rem; width: 16px; text-align: center; }
+
+.hd-dd-danger       { color: #dc2626 !important; }
+.hd-dd-danger:hover { background: rgba(220,38,38,.06) !important; color: #dc2626 !important; }
+
+/* ══════════════════════════════
+   MOBILE BAR
+══════════════════════════════ */
+.hd-mobile-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
 }
 
-/* ── 480px: ajuste suave ── */
-@media (max-width: 480px) {
-    .logo-aprendo-mobile        { font-size: 1.1rem; }
-    .logo-h-special-mobile      { padding: 3px 6px; font-size: 0.8em; }
-    .logo-fundacion-mobile img  { height: 36px; }
-    .mobile-menu-content        { padding: 1rem; }
+.hd-mobile-left {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
 }
 
-/* ── 380px: ajuste más agresivo ── */
-@media (max-width: 390px) {
-    .logo-aprendo-mobile        { font-size: 0.95rem; letter-spacing: -0.5px; }
-    .logo-h-special-mobile      { padding: 2px 5px; font-size: 0.75em; margin: 0 1px; }
-    .logo-fundacion-mobile img  { height: 30px; }
+.hd-hamburger {
+    background: none;
+    border: none;
+    padding: 4px 8px;
+    cursor: pointer;
+    color: var(--hd-orange);
+    font-size: 1.6rem;
+    line-height: 1;
+    flex-shrink: 0;
+    transition: transform .2s ease;
+}
+.hd-hamburger:hover { transform: scale(1.1); }
 
-    /* Botón hamburguesa — reduce padding para ganar espacio */
-    .d-md-none .btn.btn-link    { padding: 4px 6px; }
+/* ── Menú colapsable mobile ── */
+.hd-mobile-menu {
+    background: #fff;
+    border-radius: 14px;
+    padding: 1.2rem;
+    margin-top: .75rem;
+    box-shadow: 0 8px 30px rgba(0,0,0,.10);
+    border: 1px solid #e2eaf4;
 }
 
-@media (max-width: 767.98px) {
+.hd-mobile-nav {
+    list-style: none;
+    padding: 0; margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+}
 
-    /* La diagonal cubre desde el 50% hacia la derecha en móvil
-       en lugar del 70%, ajustando la proporción al ancho reducido */
+.hd-mobile-link {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    padding: .7rem 1rem;
+    background: #f4f8fc;
+    color: #374151;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: .9rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition: background .2s ease, color .2s ease, transform .2s ease;
+}
+.hd-mobile-link:hover {
+    background: rgba(20,93,160,.10);
+    color: var(--hd-primary);
+    transform: translateX(4px);
+}
+.hd-mobile-link-primary {
+    background: linear-gradient(135deg, var(--hd-primary), var(--hd-primary-l));
+    color: #fff !important;
+    box-shadow: 0 4px 12px rgba(20,93,160,.25);
+}
+.hd-mobile-link-primary:hover {
+    background: linear-gradient(135deg, var(--hd-primary-l), var(--hd-primary));
+    color: #fff !important;
+    transform: translateX(4px);
+}
+.hd-mobile-link-danger       { color: #dc2626 !important; }
+.hd-mobile-link-danger:hover { background: rgba(220,38,38,.07) !important; color: #dc2626 !important; }
+
+/* ══════════════════════════════
+   RESPONSIVE
+══════════════════════════════ */
+@media (max-width: 1200px) {
+    .hd-search-wrap { max-width: 320px; margin: 0 1rem; }
+}
+
+@media (max-width: 991px) {
+    .hd-logo      { font-size: 1.7rem; }
+    .hd-search-wrap { max-width: 240px; margin: 0 .75rem; }
+    .hd-btn       { font-size: .82rem; padding: .45rem .9rem; }
+}
+
+/* FIX mobile: diagonal ajustada al viewport reducido */
+@media (max-width: 767px) {
     #header::before {
-        background: linear-gradient(145deg, transparent 55%, #1a4789 45%);
+        background: linear-gradient(145deg, transparent 52%, var(--hd-primary) 48%);
     }
-
-    /* El logo de fundación necesita z-index explícito para
-       quedar sobre la diagonal (z-index:1 del ::before) */
-    .logo-fundacion-mobile {
+    /* Logo fundación mobile sobre la diagonal */
+    .hd-logo-fund-sm {
         position: relative;
         z-index: 3;
     }
 }
 
-/* ── Móvil pequeño ~390px: ajustar aún más ── */
-@media (max-width: 390px) {
-    #header::before {
-        background: linear-gradient(145deg, transparent 45%, #1a4789 35%);
-    }
+@media (max-width: 480px) {
+    .hd-logo-sm          { font-size: 1.15rem; letter-spacing: -.5px; }
+    .hd-logo-h           { padding: 3px 7px; font-size: .85em; margin: 0 1px; }
+    .hd-logo-fund-sm img { height: 32px; }
+    .hd-hamburger        { font-size: 1.4rem; padding: 4px 6px; }
+    .hd-mobile-menu      { padding: 1rem; }
 }
 
+/* ── Scrolled: reforzar contraste del buscador ── */
+#header.header-scrolled .hd-search-input { background: #f4f8fc; }
+#header.header-scrolled .hd-btn-ghost    { border-color: #c5d5e8; }

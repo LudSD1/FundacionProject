@@ -5,232 +5,253 @@
 
 
 @section('main')
-   
 
-    <section id="auth-section" class="auth-wrapper d-flex align-items-center justify-content-center"
-        style="background-image: url('{{ asset('assets/img/bg2.png') }}'); background-size: cover; background-position: center; background-repeat: no-repeat;">
-        <div class="auth-overlay"></div>
-        <div class="container position-relative">
-            <div class="row justify-content-center">
-                <div class="col-12 col-lg-9 col-xl-8">
-                    <div class="auth-card">
-                        @guest
-                            <div class="auth-card-header text-center mb-4">
-                                <h2 class="fw-bold mb-2">Crear Cuenta Nueva</h2>
-                                <p class="text-muted mb-0">Completa el formulario para registrarte</p>
+
+<section id="auth-section" class="rg-wrapper">
+    {{-- Fondo con imagen + overlay --}}
+    <div class="rg-bg" style="background-image: url('{{ asset('assets/img/bg2.png') }}')"></div>
+    <div class="rg-overlay"></div>
+
+    <div class="container rg-container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-9 col-xl-7">
+
+                @guest
+                {{-- ══ CARD PRINCIPAL ══ --}}
+                <div class="rg-card" data-aos="fade-up">
+
+                    {{-- Header --}}
+                    <div class="rg-card-header">
+                        <div class="rg-logo">
+                            APRENDO <span class="rg-logo-h">H</span>OY
+                        </div>
+                        <h2 class="rg-title">Crear cuenta nueva</h2>
+                        <p class="rg-subtitle">Completa los pasos para registrarte</p>
+                    </div>
+
+                    {{-- ── Wizard steps ── --}}
+                    <div class="rg-steps">
+                        <div class="rg-step active" id="step-ind-1">
+                            <div class="rg-step-num">1</div>
+                            <div class="rg-step-info">
+                                <span class="rg-step-label">Datos</span>
+                                <span class="rg-step-sub">Personales</span>
+                            </div>
+                        </div>
+                        <div class="rg-step-line"></div>
+                        <div class="rg-step" id="step-ind-2">
+                            <div class="rg-step-num">2</div>
+                            <div class="rg-step-info">
+                                <span class="rg-step-label">Acceso</span>
+                                <span class="rg-step-sub">Credenciales</span>
+                            </div>
+                        </div>
+                        <div class="rg-step-line"></div>
+                        <div class="rg-step" id="step-ind-3">
+                            <div class="rg-step-num">3</div>
+                            <div class="rg-step-info">
+                                <span class="rg-step-label">Revisar</span>
+                                <span class="rg-step-sub">Confirmación</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Progreso --}}
+                    <div class="rg-progress"><div class="rg-progress-bar" id="rgProgressBar" style="width:33%"></div></div>
+
+                    {{-- Errores --}}
+                    @if($errors->any())
+                    <div class="rg-alert-error">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <ul class="mb-0 ps-3">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
+
+                    {{-- ══ FORMULARIO ══ --}}
+                    <form action="{{ route('registrarse') }}" method="POST" id="registerForm">
+                        @csrf
+
+                        {{-- ─── PASO 1: Datos personales ─── --}}
+                        <div class="rg-panel active" id="rg-panel-1">
+                            <div class="rg-panel-header">
+                                <div class="rg-panel-icon"><i class="bi bi-person-fill"></i></div>
+                                <div>
+                                    <div class="rg-panel-title">Datos Personales</div>
+                                    <div class="rg-panel-sub">Ingresa tu nombre completo y país</div>
+                                </div>
                             </div>
 
-                            <!-- Indicador de progreso -->
-                            <div class="registration-progress mb-4">
-                                <div class="progress-steps">
-                                    <div class="step active" data-step="1">
-                                        <div class="step-number">1</div>
-                                        <div class="step-label">Datos Personales</div>
+                            <div class="rg-field">
+                                <label class="rg-label"><i class="bi bi-person"></i> Nombre <span class="rg-req">*</span></label>
+                                <div class="rg-input-wrap">
+                                    <i class="bi bi-person rg-input-icon"></i>
+                                    <input type="text" name="name" class="rg-input"
+                                           value="{{ old('name') }}" placeholder="Tu nombre" required>
+                                </div>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="rg-field mb-0">
+                                        <label class="rg-label"><i class="bi bi-person-badge"></i> Apellido Paterno <span class="rg-req">*</span></label>
+                                        <div class="rg-input-wrap">
+                                            <i class="bi bi-person-badge rg-input-icon"></i>
+                                            <input type="text" name="lastname1" class="rg-input"
+                                                   value="{{ old('lastname1') }}" placeholder="Apellido paterno" required>
+                                        </div>
                                     </div>
-                                    <div class="step" data-step="2">
-                                        <div class="step-number">2</div>
-                                        <div class="step-label">Credenciales</div>
-                                    </div>
-                                    <div class="step" data-step="3">
-                                        <div class="step-number">3</div>
-                                        <div class="step-label">Confirmación</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="rg-field mb-0">
+                                        <label class="rg-label"><i class="bi bi-person-badge-fill"></i> Apellido Materno <span class="rg-req">*</span></label>
+                                        <div class="rg-input-wrap">
+                                            <i class="bi bi-person-badge-fill rg-input-icon"></i>
+                                            <input type="text" name="lastname2" class="rg-input"
+                                                   value="{{ old('lastname2') }}" placeholder="Apellido materno" required>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            @if ($errors->any())
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    <ul class="list-unstyled mb-0">
-                                        @foreach ($errors->all() as $error)
-                                            <li class="mb-2"><i class="fas fa-exclamation-circle me-2"></i>{{ $error }}
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                        aria-label="Close"></button>
-                                </div>
-                            @endif
-
-                            <form action="{{ route('registrarse') }}" method="post" id="registerForm" class="auth-form">
-                                @csrf
-
-                                <!-- Paso 1: Datos Personales -->
-                                <div class="registration-step active" data-step="1">
-                                    <h5 class="mb-4 text-primary fw-bold">
-                                        <i class="bi bi-person-circle me-2"></i>Datos Personales
-                                    </h5>
-
-                                    <div class="mb-3">
-                                        <div class="col-md-12">
-                                            <label for="name" class="form-label fw-semibold m-2">Nombre</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text bg-light">
-                                                    <i class="bi bi-person"></i>
-                                                </span>
-                                                <input type="text" class="form-control input-spaced" id="name"
-                                                    name="name" value="{{ old('name') }}" placeholder="Tu nombre" required>
-                                            </div>
-                                        </div>
-                                        <br>
-
-                                        <div class="col-md-12">
-                                            <label for="lastname1" class="form-label fw-semibold m-2">Apellido Paterno</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text bg-light">
-                                                    <i class="bi bi-person-badge"></i>
-                                                </span>
-                                                <input type="text" class="form-control input-spaced" id="lastname1"
-                                                    name="lastname1" value="{{ old('lastname1') }}" placeholder="Apellido Paterno"
-                                                    required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <label for="lastname2" class="form-label fw-semibold m-2">Apellido Materno</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text bg-light">
-                                                    <i class="bi bi-person-badge-fill"></i>
-                                                </span>
-                                                <input type="text" class="form-control input-spaced" id="lastname2"
-                                                    name="lastname2" value="{{ old('lastname2') }}" placeholder="Apellido Materno"
-                                                    required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="country" class="form-label fw-semibold mb-2">País</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-light">
-                                                <i class="bi bi-globe"></i>
-                                            </span>
-                                            <select class="form-select input-spaced" id="country" name="country" required>
-                                                <option value="">Selecciona tu país</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="d-flex justify-content-end mt-4">
-                                        <button type="button" class="btn btn-primary btn-next" data-next="2">
-                                            Siguiente <i class="bi bi-arrow-right ms-2"></i>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- Paso 2: Credenciales -->
-                                <div class="registration-step" data-step="2">
-                                    <h5 class="mb-4 text-primary fw-bold">
-                                        <i class="bi bi-shield-lock me-2"></i>Credenciales de Acceso
-                                    </h5>
-
-                                    <div class="mb-3">
-                                        <label for="email" class="form-label fw-semibold m-2">Correo electrónico</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-light">
-                                                <i class="bi bi-envelope"></i>
-                                            </span>
-                                            <input type="email" class="form-control input-spaced" id="email"
-                                                name="email" value="{{ old('email') }}" placeholder="tu@correo.com"
-                                                required>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <div class="col-md-12">
-                                            <label for="password" class="form-label fw-semibold m-2">Contraseña</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text bg-light">
-                                                    <i class="bi bi-lock"></i>
-                                                </span>
-                                                <input type="password" class="form-control input-spaced" id="password"
-                                                    name="password" placeholder="••••••••" required>
-                                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                                                    <i class="bi bi-eye"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <label for="password_confirmation" class="form-label fw-semibold mb-2">Confirmar
-                                                Contraseña</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text bg-light">
-                                                    <i class="bi bi-lock-fill"></i>
-                                                </span>
-                                                <input type="password" class="form-control input-spaced"
-                                                    id="password_confirmation" name="password_confirmation"
-                                                    placeholder="••••••••" required>
-                                                <button class="btn btn-outline-secondary" type="button"
-                                                    id="togglePasswordConfirmation">
-                                                    <i class="bi bi-eye"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="d-flex justify-content-between mt-4">
-                                        <button type="button" class="btn btn-outline-secondary btn-prev" data-prev="1">
-                                            <i class="bi bi-arrow-left me-2"></i>Anterior
-                                        </button>
-                                        <button type="button" class="btn btn-primary btn-next" data-next="3">
-                                            Siguiente <i class="bi bi-arrow-right ms-2"></i>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- Paso 3: Confirmación -->
-                                <div class="registration-step" data-step="3">
-                                    <h5 class="mb-4 text-primary fw-bold">
-                                        <i class="bi bi-check-circle me-2"></i>Confirmación
-                                    </h5>
-
-                                    <div class="alert alert-info mb-4">
-                                        <h6 class="alert-heading mb-3">Revisa tus datos:</h6>
-                                        <div id="review-data" class="small">
-                                            <!-- Se llenará con JavaScript -->
-                                        </div>
-                                    </div>
-
-                                    <!-- reCAPTCHA -->
-                                    <div class="d-flex justify-content-center mb-4">
-                                        <div class="g-recaptcha" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}"></div>
-                                    </div>
-
-                                    <div class="d-flex justify-content-between mt-4">
-                                        <button type="button" class="btn btn-outline-secondary btn-prev" data-prev="2">
-                                            <i class="bi bi-arrow-left me-2"></i>Anterior
-                                        </button>
-                                        <button type="submit" class="btn btn-primary btn-auth">
-                                            <i class="bi bi-person-plus-fill me-2"></i>Crear Cuenta
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-
-                            <div class="text-center mt-5">
-                                <p class="text-muted mb-0 fs-6">¿Ya tienes una cuenta?
-                                    <a href="{{ route('login.signin') }}"
-                                        class="text-decoration-none text-primary fw-semibold">
-                                        Inicia sesión aquí
-                                    </a>
-                                </p>
-                            </div>
-                        @else
-                            <!-- Usuario autenticado -->
-                            <div class="alert alert-info border-0 shadow-sm py-4">
-                                <div class="text-center">
-                                    <i class="bi bi-check-circle-fill text-success mb-3" style="font-size: 3rem;"></i>
-                                    <h5 class="mb-2">¡Ya has iniciado sesión!</h5>
-                                    <p class="mb-3">Sesión activa como <strong>{{ Auth::user()->name }}</strong></p>
-                                    <a href="{{ route('home') }}" class="btn btn-primary px-4 py-2">
-                                        <i class="bi bi-house-door me-2"></i>Ir al inicio
-                                    </a>
+                            <div class="rg-field">
+                                <label class="rg-label"><i class="bi bi-globe"></i> País <span class="rg-req">*</span></label>
+                                <div class="rg-input-wrap">
+                                    <i class="bi bi-globe rg-input-icon"></i>
+                                    <select name="country" id="country" class="rg-select" required>
+                                        <option value="">Selecciona tu país</option>
+                                    </select>
                                 </div>
                             </div>
-                        @endguest
+
+                            <div class="rg-nav-btns">
+                                <span></span>
+                                <button type="button" class="rg-btn rg-btn-next" onclick="rgGoStep(2)">
+                                    Siguiente <i class="bi bi-arrow-right ms-1"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        {{-- ─── PASO 2: Credenciales ─── --}}
+                        <div class="rg-panel" id="rg-panel-2">
+                            <div class="rg-panel-header">
+                                <div class="rg-panel-icon"><i class="bi bi-shield-lock-fill"></i></div>
+                                <div>
+                                    <div class="rg-panel-title">Credenciales de Acceso</div>
+                                    <div class="rg-panel-sub">Configura tu correo y contraseña</div>
+                                </div>
+                            </div>
+
+                            <div class="rg-field">
+                                <label class="rg-label"><i class="bi bi-envelope"></i> Correo electrónico <span class="rg-req">*</span></label>
+                                <div class="rg-input-wrap">
+                                    <i class="bi bi-envelope rg-input-icon"></i>
+                                    <input type="email" name="email" class="rg-input"
+                                           value="{{ old('email') }}" placeholder="tu@correo.com" required>
+                                </div>
+                            </div>
+
+                            <div class="rg-field">
+                                <label class="rg-label"><i class="bi bi-lock"></i> Contraseña <span class="rg-req">*</span></label>
+                                <div class="rg-input-wrap">
+                                    <i class="bi bi-lock rg-input-icon"></i>
+                                    <input type="password" name="password" id="password"
+                                           class="rg-input rg-input-pwd" placeholder="Mínimo 8 caracteres" required>
+                                    <button type="button" class="rg-eye-btn" onclick="rgTogglePwd('password', this)">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                {{-- Fortaleza de contraseña --}}
+                                <div class="rg-pwd-strength mt-2">
+                                    <div class="rg-pwd-bar" id="pwdBar"></div>
+                                </div>
+                                <div class="rg-pwd-label" id="pwdLabel"></div>
+                            </div>
+
+                            <div class="rg-field">
+                                <label class="rg-label"><i class="bi bi-lock-fill"></i> Confirmar Contraseña <span class="rg-req">*</span></label>
+                                <div class="rg-input-wrap">
+                                    <i class="bi bi-lock-fill rg-input-icon"></i>
+                                    <input type="password" name="password_confirmation" id="password_confirmation"
+                                           class="rg-input rg-input-pwd" placeholder="Repite tu contraseña" required>
+                                    <button type="button" class="rg-eye-btn" onclick="rgTogglePwd('password_confirmation', this)">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="rg-match-msg" id="pwdMatch"></div>
+                            </div>
+
+                            <div class="rg-nav-btns">
+                                <button type="button" class="rg-btn rg-btn-prev" onclick="rgGoStep(1)">
+                                    <i class="bi bi-arrow-left me-1"></i> Anterior
+                                </button>
+                                <button type="button" class="rg-btn rg-btn-next" onclick="rgGoStep(3)">
+                                    Siguiente <i class="bi bi-arrow-right ms-1"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        {{-- ─── PASO 3: Confirmación ─── --}}
+                        <div class="rg-panel" id="rg-panel-3">
+                            <div class="rg-panel-header">
+                                <div class="rg-panel-icon"><i class="bi bi-check2-circle"></i></div>
+                                <div>
+                                    <div class="rg-panel-title">Confirmar Registro</div>
+                                    <div class="rg-panel-sub">Revisa tus datos antes de continuar</div>
+                                </div>
+                            </div>
+
+                            {{-- Resumen --}}
+                            <div class="rg-review" id="rgReview">
+                                {{-- Se llena con JS --}}
+                            </div>
+
+                            {{-- reCAPTCHA --}}
+                            <div class="rg-recaptcha">
+                                <div class="g-recaptcha" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}"></div>
+                            </div>
+
+                            <div class="rg-nav-btns">
+                                <button type="button" class="rg-btn rg-btn-prev" onclick="rgGoStep(2)">
+                                    <i class="bi bi-arrow-left me-1"></i> Anterior
+                                </button>
+                                <button type="submit" class="rg-btn rg-btn-submit">
+                                    <i class="bi bi-person-plus-fill me-1"></i> Crear Cuenta
+                                </button>
+                            </div>
+                        </div>
+
+                    </form>
+
+                    {{-- Link a login --}}
+                    <div class="rg-footer-link">
+                        ¿Ya tienes cuenta?
+                        <a href="{{ route('login.signin') }}">Inicia sesión aquí</a>
+                    </div>
+
+                </div>{{-- fin rg-card --}}
+
+                @else
+                {{-- ══ YA AUTENTICADO ══ --}}
+                <div class="rg-card rg-card-auth" data-aos="fade-up">
+                    <div class="text-center py-3">
+                        <div class="rg-auth-icon"><i class="bi bi-check-circle-fill"></i></div>
+                        <h4 class="rg-auth-title">¡Ya has iniciado sesión!</h4>
+                        <p class="rg-auth-sub">Sesión activa como <strong>{{ Auth::user()->name }}</strong></p>
+                        <a href="{{ route('home') }}" class="rg-btn rg-btn-next mt-2">
+                            <i class="bi bi-house-door me-1"></i> Ir al inicio
+                        </a>
                     </div>
                 </div>
+                @endguest
+
             </div>
         </div>
-    </section>
+    </div>
+</section>
 @endsection
 
 @include('layoutlanding')
@@ -486,3 +507,208 @@
 
     });
 </script>
+
+
+<script>
+    // ── Wizard ──────────────────────────────────────────
+    let rgCur = 1;
+    const RG_TOTAL = 3;
+    const rgProgress = [33, 66, 100];
+
+    function rgGoStep(n) {
+        // Validar antes de avanzar
+        if (n > rgCur && !rgValidateStep(rgCur)) return;
+
+        // Saliente
+        document.getElementById('rg-panel-' + rgCur)?.classList.remove('active');
+        const indPrev = document.getElementById('step-ind-' + rgCur);
+        indPrev?.classList.remove('active');
+        if (n > rgCur) {
+            indPrev?.classList.add('done');
+            indPrev?.querySelector('.rg-step-num') &&
+                (indPrev.querySelector('.rg-step-num').innerHTML = '<i class="bi bi-check-lg"></i>');
+            // Línea
+            const lines = document.querySelectorAll('.rg-step-line');
+            if (lines[rgCur - 1]) lines[rgCur - 1].classList.add('done');
+        } else {
+            // Retrocede: quitar done del actual
+            indPrev?.classList.remove('done');
+            const num = indPrev?.querySelector('.rg-step-num');
+            if (num) num.textContent = rgCur;
+            const lines = document.querySelectorAll('.rg-step-line');
+            if (lines[n - 1]) lines[n - 1].classList.remove('done');
+        }
+
+        rgCur = n;
+
+        // Entrante
+        document.getElementById('rg-panel-' + rgCur)?.classList.add('active');
+        const indNext = document.getElementById('step-ind-' + rgCur);
+        indNext?.classList.add('active');
+        indNext?.classList.remove('done');
+        const num = indNext?.querySelector('.rg-step-num');
+        if (num && !num.querySelector('i')) num.textContent = rgCur;
+
+        // Progress bar
+        document.getElementById('rgProgressBar').style.width = rgProgress[rgCur - 1] + '%';
+
+        // Si llega al paso 3, llenar resumen
+        if (rgCur === 3) rgBuildReview();
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ── Validación por paso ──────────────────────────────
+    function rgValidateStep(step) {
+        if (step === 1) {
+            const name = document.querySelector('[name="name"]')?.value.trim();
+            const l1   = document.querySelector('[name="lastname1"]')?.value.trim();
+            const l2   = document.querySelector('[name="lastname2"]')?.value.trim();
+            const ctr  = document.getElementById('country')?.value;
+            if (!name || !l1 || !l2 || !ctr) {
+                rgShowToast('Completa todos los campos del paso 1.');
+                return false;
+            }
+        }
+        if (step === 2) {
+            const email = document.querySelector('[name="email"]')?.value.trim();
+            const pwd   = document.getElementById('password')?.value;
+            const conf  = document.getElementById('password_confirmation')?.value;
+            if (!email || !pwd || !conf) {
+                rgShowToast('Completa todos los campos del paso 2.');
+                return false;
+            }
+            if (pwd !== conf) {
+                rgShowToast('Las contraseñas no coinciden.');
+                return false;
+            }
+            if (pwd.length < 8) {
+                rgShowToast('La contraseña debe tener al menos 8 caracteres.');
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // ── Toast de error ──────────────────────────────────
+    function rgShowToast(msg) {
+        let t = document.getElementById('rgToast');
+        if (!t) {
+            t = document.createElement('div');
+            t.id = 'rgToast';
+            t.style.cssText = 'position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);' +
+                'background:#dc2626;color:#fff;padding:.65rem 1.4rem;border-radius:50px;' +
+                'font-size:.85rem;font-weight:600;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.2);' +
+                'transition:opacity .3s ease';
+            document.body.appendChild(t);
+        }
+        t.textContent = msg;
+        t.style.opacity = '1';
+        clearTimeout(t._timer);
+        t._timer = setTimeout(() => t.style.opacity = '0', 3000);
+    }
+
+    // ── Resumen paso 3 ──────────────────────────────────
+    function rgBuildReview() {
+        const data = [
+            { icon: 'bi-person',        key: 'Nombre',    val: document.querySelector('[name="name"]')?.value },
+            { icon: 'bi-person-badge',  key: 'Ap. Paterno', val: document.querySelector('[name="lastname1"]')?.value },
+            { icon: 'bi-person-badge-fill', key: 'Ap. Materno', val: document.querySelector('[name="lastname2"]')?.value },
+            { icon: 'bi-globe',         key: 'País',      val: document.getElementById('country')?.options[document.getElementById('country')?.selectedIndex]?.text },
+            { icon: 'bi-envelope',      key: 'Correo',    val: document.querySelector('[name="email"]')?.value },
+            { icon: 'bi-lock',          key: 'Contraseña', val: '••••••••' },
+        ];
+        const box = document.getElementById('rgReview');
+        if (!box) return;
+        box.innerHTML = data.map(d => `
+            <div class="rg-review-row">
+                <div class="rg-review-icon"><i class="bi ${d.icon}"></i></div>
+                <span class="rg-review-key">${d.key}</span>
+                <span class="rg-review-val">${d.val || '—'}</span>
+            </div>`).join('');
+    }
+
+    // ── Ver/ocultar contraseña ───────────────────────────
+    function rgTogglePwd(id, btn) {
+        const input = document.getElementById(id);
+        if (!input) return;
+        const isText = input.type === 'text';
+        input.type = isText ? 'password' : 'text';
+        btn.querySelector('i').className = isText ? 'bi bi-eye' : 'bi bi-eye-slash';
+    }
+
+    // ── Fortaleza de contraseña ──────────────────────────
+    document.getElementById('password')?.addEventListener('input', function () {
+        const v = this.value;
+        let score = 0;
+        if (v.length >= 8)              score++;
+        if (/[A-Z]/.test(v))            score++;
+        if (/[0-9]/.test(v))            score++;
+        if (/[^A-Za-z0-9]/.test(v))     score++;
+
+        const bar   = document.getElementById('pwdBar');
+        const label = document.getElementById('pwdLabel');
+        const map   = [
+            { pct: '0%',   bg: '',          txt: '' },
+            { pct: '25%',  bg: '#dc2626',   txt: '🔴 Muy débil',  col: '#dc2626' },
+            { pct: '50%',  bg: '#f97316',   txt: '🟠 Débil',      col: '#f97316' },
+            { pct: '75%',  bg: '#eab308',   txt: '🟡 Regular',    col: '#eab308' },
+            { pct: '100%', bg: '#16a34a',   txt: '🟢 Fuerte',     col: '#16a34a' },
+        ];
+        if (bar && map[score]) {
+            bar.style.width      = map[score].pct;
+            bar.style.background = map[score].bg;
+        }
+        if (label && map[score]) {
+            label.textContent  = map[score].txt;
+            label.style.color  = map[score].col || '';
+        }
+    });
+
+    // ── Confirmar coincidencia contraseñas ───────────────
+    document.getElementById('password_confirmation')?.addEventListener('input', function () {
+        const pwd  = document.getElementById('password')?.value;
+        const msg  = document.getElementById('pwdMatch');
+        if (!msg) return;
+        if (!this.value) { msg.textContent = ''; return; }
+        if (this.value === pwd) {
+            msg.textContent = '✅ Las contraseñas coinciden';
+            msg.style.color = '#16a34a';
+        } else {
+            msg.textContent = '❌ Las contraseñas no coinciden';
+            msg.style.color = '#dc2626';
+        }
+    });
+
+    // ── Lista de países ──────────────────────────────────
+    (async function loadCountries() {
+        const sel = document.getElementById('country');
+        if (!sel) return;
+        try {
+            const res  = await fetch('https://restcountries.com/v3.1/all?fields=name,cca2');
+            const list = await res.json();
+            list.sort((a, b) => a.name.common.localeCompare(b.name.common));
+
+            // Bolivia primero
+            const bo = list.find(c => c.cca2 === 'BO');
+            if (bo) {
+                const opt = new Option(bo.name.common, bo.name.common);
+                opt.selected = true;
+                sel.add(opt);
+                const sep = document.createElement('option');
+                sep.disabled = true;
+                sep.textContent = '──────────';
+                sel.add(sep);
+            }
+            list.forEach(c => {
+                if (c.cca2 !== 'BO') sel.add(new Option(c.name.common, c.name.common));
+            });
+        } catch {
+            // Fallback: opciones básicas
+            ['Bolivia','Argentina','Brasil','Chile','Colombia','Ecuador',
+             'México','Paraguay','Perú','Uruguay','Venezuela'].forEach(p => {
+                sel.add(new Option(p, p));
+            });
+        }
+    })();
+    </script>

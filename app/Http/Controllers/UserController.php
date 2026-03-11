@@ -20,7 +20,9 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Events\EstudianteEvent;
 use App\Events\UsuarioRegistrado;
+use App\Services\AdminLogger;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -28,27 +30,37 @@ class UserController extends Controller
 
     public function authenticate(Request $request)
     {
-        $maxAttempts = 5; // Número máximo de intentos permitidos
-        $decayMinutes = 1; // Tiempo de bloqueo en minutos
+        $maxAttempts = 5;
+        $decayMinutes = 1;
 
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
 
-        $key = 'login-attempts:' . $request->ip(); // Clave única para el usuario por IP
+        $key = 'login-attempts:' . $request->ip();
 
         if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
             $seconds = RateLimiter::availableIn($key);
-
             throw ValidationException::withMessages([
                 'email' => "Has excedido el número de intentos. Inténtalo nuevamente en {$seconds} segundos.",
             ]);
         }
 
         if (Auth::attempt($credentials)) {
-            RateLimiter::clear($key); // Resetea los intentos si el inicio de sesión es exitoso
-            event(new UsuarioEvent(auth()->user(), 'login'));
+            // --- CORRECCIÓN AQUÍ: Definir el usuario ---
+            $user = Auth::user();
+
+            RateLimiter::clear($key);
+
+            AdminLogger::info('Usuario inicio sesión', [
+                // Agregué espacios entre comillas para que el nombre no salga pegado
+                'nombre_completo' => "{$user->name} {$user->lastname1} {$user->lastname2}",
+                'email' => $user->email,
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+
             return redirect()->intended('/Inicio');
         }
 
@@ -56,7 +68,7 @@ class UserController extends Controller
         RateLimiter::hit($key, $decayMinutes * 60);
 
         return back()->withErrors([
-            'email' => 'Las credenciales proporcionadas no coinciden con nuestros registros.',
+            'email' => 'Parece que algo no coincide. ¿Podrías revisar tu correo y contraseña?',
         ])->onlyInput('email');
     }
 
@@ -65,12 +77,27 @@ class UserController extends Controller
     {
         return response()->json(Auth::user());
     }
-    public function logout()
+    public function logout(Request $request)
     {
+        $user = auth()->user();
+
+
+        AdminLogger::info('Usuario cerró sesión', [
+            'user_id' => $user->name .'' . $user->lastname1 .'' . $user->lastname2 ?? null,
+            'email' => $user->email ?? null,
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         auth()->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
         return redirect()->route('login.signin');
     }
+
+
 
     public function Profile($id)
     {

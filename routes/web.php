@@ -145,7 +145,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/EditarPerfil/{id}', [UserController::class, 'UserProfileEdit'])->name('EditarperfilPost');
 
     //Rutas Sesion
-    Route::get('/logout', [UserController::class, 'logout'])->name('logout');
+    Route::post('/logout', [UserController::class, 'logout'])->name('logout');
     Route::get('/Inicio', [MenuController::class, 'index'])->name('Inicio');
 
 
