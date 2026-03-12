@@ -61,7 +61,7 @@
 @endif
 
 @if (auth()->user()->hasRole('Docente') || auth()->user()->hasRole('Estudiante'))
-    @include('FundacionPlantillaUsu.index')
+    @include('estudiante.index')
 @endif
 
 

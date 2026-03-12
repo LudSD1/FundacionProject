@@ -280,11 +280,12 @@
 /* Main Auth Navbar Container */
 .auth-navbar {
     position: fixed;
-    top: 6rem;
+    top: 0;
     left: 0;
     right: 0;
     z-index: 1030;
     background: rgba(255, 255, 255, 0.98);
+    transition: top 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     border-bottom: 1px solid rgba(26, 71, 137, 0.1);
@@ -862,6 +863,69 @@
     100% {
         transform: rotate(360deg);
     }
+}
+
+.auth-user-toggle:hover .auth-user-avatar-letter {
+    transform: rotate(360deg);
+}
+
+/* ── FIX 3: logout button hereda estilos del menu-item correctamente ── */
+.auth-user-menu-item.logout {
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    width: 100%;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+/* ── FIX 4: badge nunca se sale del botón ── */
+.auth-nav-link {
+    /* FIX: position relative para que el badge absolute se ancle aquí */
+    position: relative;
+}
+.auth-notification-badge {
+    /* FIX: valores ajustados para no salirse en mobile */
+    top: 6px;
+    right: 6px;
+    min-width: 18px;
+    text-align: center;
+}
+
+/* ── FIX 5: el dropdown en mobile no necesita position:static
+   porque el contenedor ya está en el flujo normal ── */
+@media (max-width: 991px) {
+    .auth-navbar {
+        /* En mobile el auth-navbar va arriba del todo */
+        top: 0 !important;
+    }
+
+    /* Contenido mobile con scroll suave */
+    .auth-navbar-content {
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Dropdown en mobile: se muestra como bloque inline */
+    .auth-dropdown-menu,
+    .auth-user-menu {
+        border-radius: 10px;
+        margin-top: .4rem;
+        border: 1px solid #e9ecef;
+    }
+}
+
+/* ── FIX 6: scrolled state ── */
+.auth-navbar.an-scrolled {
+    box-shadow: 0 6px 30px rgba(0,0,0,0.14);
+    background: rgba(255,255,255,0.99);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+/* ── FIX 7: toggler icon cambia cuando el menú está abierto ── */
+.auth-navbar-toggler[aria-expanded="true"] .auth-navbar-toggler-icon::before {
+    content: "\F659"; /* bi-x-lg */
 }
 
 

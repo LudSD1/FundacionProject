@@ -14,7 +14,7 @@
 @endsection
 
 @section('content')
-    <div class="container py-5">
+    <div class="container py-5" style="margin-top: 10%;">
         <div class=" justify-content-center">
             <div class="col-12">
                 <!-- Card Container -->
@@ -158,7 +158,7 @@
     </style>
 @endsection
 
-@include('FundacionPlantillaUsu.index')
+@include('estudiante.index')
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>

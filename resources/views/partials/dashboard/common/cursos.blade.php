@@ -212,953 +212,470 @@
         }
     });
 </script>
-<style>
-    .dashboard-courses {
-        background: linear-gradient(135deg, #f8fafc 0%, #e9ecef 100%);
-        min-height: 100vh;
-    }
 
-    /* Header Mejorado */
-    .dashboard-header-enhanced {
-        background: var(--gradient-primary);
-        color: white;
-        padding: 3rem 0;
-        position: relative;
-        overflow: hidden;
-    }
 
-    .dashboard-header-enhanced::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
-        opacity: 0.1;
-    }
-
-    .dashboard-title-wrapper {
-        position: relative;
-        z-index: 2;
-    }
-
-    .dashboard-title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .dashboard-subtitle {
-        font-size: 1.1rem;
-        opacity: 0.9;
-        margin-bottom: 0;
-    }
-
-    .dashboard-controls-enhanced {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border-radius: var(--border-radius);
-        padding: 1.5rem;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .search-box-enhanced {
-        position: relative;
-        flex: 1;
-    }
-
-    .search-box-enhanced i {
-        position: absolute;
-        left: 1rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--color-primary);
-    }
-
-    .search-box-enhanced input {
-        padding-left: 2.5rem;
-        border: none;
-        border-radius: var(--border-radius-sm);
-        background: white;
-        height: 48px;
-    }
-
-    .filters-group-enhanced {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-    }
-
-    .select-wrapper-enhanced {
-        position: relative;
-        min-width: 160px;
-    }
-
-    .select-wrapper-enhanced select {
-        padding-right: 2.5rem;
-        border: none;
-        border-radius: var(--border-radius-sm);
-        background: white;
-        height: 48px;
-        cursor: pointer;
-    }
-
-    .select-icon-enhanced {
-        position: absolute;
-        right: 1rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--color-primary);
-        pointer-events: none;
-    }
-
-    .view-controls-enhanced {
-        display: flex;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: var(--border-radius-sm);
-        padding: 4px;
-    }
-
-    .view-btn-enhanced {
-        background: none;
-        border: none;
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: var(--border-radius-sm);
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-
-    .view-btn-enhanced.active {
-        background: rgba(255, 255, 255, 0.3);
-        backdrop-filter: blur(10px);
-    }
-
-    /* Tabs Mejorados */
-    .course-tabs-enhanced {
-        background: white;
-        border-radius: var(--border-radius);
-        padding: 1rem;
-        margin-bottom: 2rem;
-        box-shadow: var(--shadow-sm);
-        border: none;
-    }
-
-    .course-tabs-enhanced .nav-link {
-        border: none;
-        border-radius: var(--border-radius-sm);
-        padding: 1rem 1.5rem;
-        margin: 0 0.25rem;
-        color: var(--color-muted);
-        font-weight: 600;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .course-tabs-enhanced .nav-link::before {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        width: 0;
-        height: 3px;
-        background: var(--color-primary);
-        transition: all 0.3s ease;
-        transform: translateX(-50%);
-    }
-
-    .course-tabs-enhanced .nav-link.active {
-        color: var(--color-primary);
-        background: rgba(57, 166, 203, 0.1);
-    }
-
-    .course-tabs-enhanced .nav-link.active::before {
-        width: 100%;
-    }
-
-    .course-tabs-enhanced .nav-link .badge {
-        font-size: 0.7rem;
-        padding: 0.25rem 0.5rem;
-    }
-
-    /* Cards de Cursos Mejoradas */
-    .course-grid-enhanced {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .course-list-enhanced {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .course-card-enhanced {
-        background: white;
-        border-radius: var(--border-radius);
-        overflow: hidden;
-        box-shadow: var(--shadow-sm);
-        transition: all 0.3s ease;
-        border: 1px solid #e9ecef;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .course-card-enhanced:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-lg);
-    }
-
-    .course-card-enhanced.list-view {
-        flex-direction: row;
-        height: auto;
-    }
-
-    .course-card-enhanced.list-view .course-image-enhanced {
-        width: 200px;
-        height: 150px;
-        flex-shrink: 0;
-    }
-
-    .course-card-enhanced.list-view .course-content-enhanced {
-        flex: 1;
-    }
-
-    .course-image-enhanced {
-        position: relative;
-        height: 200px;
-        overflow: hidden;
-    }
-
-    .course-image-enhanced img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.3s ease;
-    }
-
-    .course-card-enhanced:hover .course-image-enhanced img {
-        transform: scale(1.05);
-    }
-
-    .course-badge-enhanced {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        backdrop-filter: blur(10px);
-    }
-
-    .course-badge-enhanced.completed {
-        background: rgba(40, 167, 69, 0.9);
-        color: white;
-    }
-
-    .course-badge-enhanced.teacher {
-        background: rgba(57, 166, 203, 0.9);
-        color: white;
-    }
-
-    .course-badge-enhanced.congress {
-        background: rgba(255, 193, 7, 0.9);
-        color: #212529;
-    }
-
-    .course-content-enhanced {
-        padding: 1.5rem;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .course-title-enhanced {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--color-primary);
-        margin-bottom: 1rem;
-        line-height: 1.4;
-    }
-
-    .course-meta-enhanced {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 1rem;
-        flex-wrap: wrap;
-    }
-
-    .course-meta-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: var(--color-muted);
-        font-size: 0.875rem;
-    }
-
-    .progress-section-enhanced {
-        margin-bottom: 1.5rem;
-    }
-
-    .progress-header {
-        display: flex;
-        justify-content: between;
-        align-items: center;
-        margin-bottom: 0.5rem;
-    }
-
-    .progress-label {
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: var(--color-primary);
-    }
-
-    .progress-value {
-        font-size: 0.875rem;
-        font-weight: 700;
-        color: var(--color-success);
-    }
-
-    .progress-bar-enhanced {
-        height: 6px;
-        border-radius: 10px;
-        background: #e9ecef;
-        overflow: hidden;
-    }
-
-    .progress-fill {
-        height: 100%;
-        border-radius: 10px;
-        background: var(--gradient-success);
-        transition: width 1s ease-in-out;
-    }
-
-    .course-actions-enhanced {
-        margin-top: auto;
-    }
-
-    .btn-course-action {
-        width: 100%;
-        border: none;
-        border-radius: var(--border-radius-sm);
-        padding: 0.75rem 1rem;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-    }
-
-    .btn-course-action:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
-    }
-
-    .btn-course-primary {
-        background: var(--gradient-primary);
-        color: white;
-    }
-
-    .btn-course-success {
-        background: var(--gradient-success);
-        color: white;
-    }
-
-    .btn-course-warning {
-        background: var(--gradient-warning);
-        color: white;
-    }
-
-    /* Estados Especiales */
-    .payment-status {
-        background: rgba(255, 193, 7, 0.1);
-        border: 1px solid rgba(255, 193, 7, 0.3);
-        border-radius: var(--border-radius-sm);
-        padding: 0.5rem;
-        text-align: center;
-        font-size: 0.8rem;
-        color: var(--color-warning);
-    }
-
-    /* Estado Vacío Mejorado */
-    .empty-state-enhanced {
-        text-align: center;
-        padding: 4rem 2rem;
-        background: white;
-        border-radius: var(--border-radius);
-        box-shadow: var(--shadow-sm);
-        margin: 2rem 0;
-    }
-
-    .empty-state-icon {
-        font-size: 4rem;
-        color: var(--color-secondary);
-        opacity: 0.5;
-        margin-bottom: 1.5rem;
-    }
-
-    .empty-state-enhanced h3 {
-        color: var(--color-primary);
-        margin-bottom: 1rem;
-    }
-
-    .empty-state-enhanced p {
-        color: var(--color-muted);
-        margin-bottom: 2rem;
-        font-size: 1.1rem;
-    }
-
-    /* Alertas Mejoradas */
-    .alert-enhanced {
-        border: none;
-        border-radius: var(--border-radius);
-        padding: 1.5rem;
-        margin: 1rem 0;
-    }
-
-    .alert-info-enhanced {
-        background: rgba(23, 162, 184, 0.1);
-        color: var(--color-info);
-        border-left: 4px solid var(--color-info);
-    }
-
-    /* No Results */
-    .no-results-enhanced {
-        text-align: center;
-        padding: 3rem 2rem;
-        background: white;
-        border-radius: var(--border-radius);
-        box-shadow: var(--shadow-sm);
-        margin: 2rem 0;
-    }
-
-    .no-results-enhanced i {
-        font-size: 3rem;
-        color: var(--color-muted);
-        margin-bottom: 1rem;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .dashboard-title {
-            font-size: 2rem;
-        }
-
-        .filters-group-enhanced {
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .course-grid-enhanced {
-            grid-template-columns: 1fr;
-        }
-
-        .course-card-enhanced.list-view {
-            flex-direction: column;
-        }
-
-        .course-card-enhanced.list-view .course-image-enhanced {
-            width: 100%;
-            height: 200px;
-        }
-
-        .course-tabs-enhanced .nav-link {
-            padding: 0.75rem 1rem;
-            font-size: 0.9rem;
-        }
-    }
-
-    /* Animaciones */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .course-card-enhanced {
-        animation: fadeInUp 0.5s ease forwards;
-    }
-
-    .course-card-enhanced:nth-child(even) {
-        animation-delay: 0.1s;
-    }
-
-    .course-card-enhanced:nth-child(odd) {
-        animation-delay: 0.2s;
-    }
-</style>
-
-<div class="dashboard-courses">
-    <!-- Header Mejorado -->
-    <div class="dashboard-header-enhanced">
+<div class="dc-wrap" style="margin-top: 8%">
+    <div class="dc-header">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6">
-                    <div class="dashboard-title-wrapper ">
-                        <h2 class="dashboard-title text-white">
-                            <i class="fas fa-graduation-cap me-3"></i>
+            <div class="row align-items-center g-4">
+
+                {{-- Título --}}
+                <div class="col-lg-5">
+                    <div class="dc-header-text">
+                        <div class="dc-header-eyebrow">
+                            <i class="bi bi-mortarboard-fill"></i>
+                            {{ $userRole === 'Estudiante' ? 'Panel del Estudiante' : 'Panel del Docente' }}
+                        </div>
+                        <h2 class="dc-title">
                             {{ $userRole === 'Estudiante' ? 'Mis Cursos' : 'Cursos que Impartes' }}
                         </h2>
-                        <p class="dashboard-subtitle">
-                            {{ $userRole === 'Estudiante' ? 'Gestiona y continúa con tu aprendizaje' : 'Administra los cursos que impartes' }}
+                        <p class="dc-subtitle">
+                            {{ $userRole === 'Estudiante'
+                                ? 'Gestiona y continúa tu aprendizaje desde aquí'
+                                : 'Administra el contenido y los estudiantes de tus cursos' }}
                         </p>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <div class="dashboard-controls-enhanced">
-                        <div class="filters-group-enhanced">
-                            <div class="search-box-enhanced">
-                                <i class="fas fa-search"></i>
-                                <input type="search" id="courseSearch" placeholder="Buscar curso..."
-                                    class="form-control">
-                            </div>
-                            <div class="select-wrapper-enhanced">
-                                <select class="form-select" id="courseFilter">
-                                    <option value="all">Todos los cursos</option>
-                                    <option value="activos">En progreso</option>
-                                    <option value="completados">Completados</option>
-                                    <option value="congresos">Congresos</option>
+
+                {{-- Controles --}}
+                <div class="col-lg-7">
+                    <div class="dc-controls">
+                        {{-- Buscador --}}
+                        <div class="dc-search">
+                            <i class="bi bi-search dc-search-icon"></i>
+                            <input type="search" id="dcSearch" placeholder="Buscar curso o congreso..."
+                                class="dc-search-input" autocomplete="off">
+                        </div>
+
+                        <div class="dc-controls-row">
+                            {{-- Filtro --}}
+                            <div class="dc-select-wrap">
+                                <select id="dcFilter" class="dc-select">
+                                    <option value="all">Todos</option>
+                                    <option value="activo">En progreso</option>
+                                    <option value="completado">Completados</option>
+                                    <option value="congreso">Congresos</option>
+                                    <option value="curso">Solo cursos</option>
                                 </select>
-                                <span class="select-icon-enhanced"><i class="fas fa-chevron-down"></i></span>
+                                <i class="bi bi-chevron-down dc-select-icon"></i>
                             </div>
-                            <div class="view-controls-enhanced">
-                                <button id="btnGrid" class="view-btn-enhanced active" title="Vista de cuadrícula">
-                                    <i class="fas fa-th-large"></i>
+
+                            {{-- Toggle vista --}}
+                            <div class="dc-view-toggle">
+                                <button id="dcBtnGrid" class="dc-view-btn active" title="Vista cuadrícula">
+                                    <i class="bi bi-grid-3x3-gap-fill"></i>
                                 </button>
-                                <button id="btnList" class="view-btn-enhanced" title="Vista de lista">
-                                    <i class="fas fa-list"></i>
+                                <button id="dcBtnList" class="dc-view-btn" title="Vista lista">
+                                    <i class="bi bi-list-ul"></i>
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
-    </div>
+    </div>{{-- /dc-header --}}
 
-    <div class="container py-5">
+
+    <div class="container dc-body">
+
+        {{-- ╔═══════════════════════════════════════╗
+             ║  ESTADO VACÍO                         ║
+             ╚═══════════════════════════════════════╝ --}}
         @if ($hasNoCourses)
-            <!-- Estado Vacío Mejorado -->
-            <div class="empty-state-enhanced">
-                <div class="empty-state-icon">
-                    <i class="fas fa-book-open"></i>
+            <div class="dc-empty">
+                <div class="dc-empty-icon">
+                    <i class="bi bi-journal-bookmark"></i>
                 </div>
-                <h3>No tienes cursos {{ $userRole === 'Estudiante' ? 'inscritos' : 'asignados' }}</h3>
-                <p>
+                <h3 class="dc-empty-title">
+                    No tienes cursos {{ $userRole === 'Estudiante' ? 'inscritos' : 'asignados' }}
+                </h3>
+                <p class="dc-empty-sub">
                     @if ($userRole === 'Estudiante')
-                        Explora nuestro catálogo y comienza tu viaje de aprendizaje
+                        Explora nuestro catálogo y empieza tu viaje de aprendizaje
                     @else
                         Contacta con el administrador para comenzar a impartir cursos
                     @endif
                 </p>
                 @if ($userRole === 'Estudiante')
-                    <a href="{{ route('lista.cursos.congresos') }}" class="btn btn-primary btn-lg">
-                        <i class="fas fa-search me-2"></i> Explorar Cursos
+                    <a href="{{ route('lista.cursos.congresos') }}" class="dc-btn dc-btn-primary">
+                        <i class="bi bi-search me-2"></i>Explorar Cursos
                     </a>
                 @endif
             </div>
         @else
-            @if ($userRole === 'Estudiante')
-                <!-- Tabs Mejorados para Estudiantes -->
-                <ul class="nav course-tabs-enhanced" id="courseTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="cursos-tab" data-bs-toggle="tab" data-bs-target="#cursos"
-                            type="button" role="tab" aria-controls="cursos" aria-selected="true">
-                            <i class="fas fa-book me-2"></i> Cursos
-                            <span
-                                class="badge bg-primary ms-2">{{ $inscritos->where('cursos.tipo', '!=', 'congreso')->count() }}</span>
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="congresos-tab" data-bs-toggle="tab" data-bs-target="#congresos"
-                            type="button" role="tab" aria-controls="congresos" aria-selected="false">
-                            <i class="fas fa-calendar-alt me-2"></i> Congresos
-                            <span
-                                class="badge bg-warning ms-2">{{ $inscritos->where('cursos.tipo', 'congreso')->count() }}</span>
-                        </button>
-                    </li>
-                </ul>
+            {{-- ╔═══════════════════════════════════════╗
+             ║  TABS                                 ║
+             ╚═══════════════════════════════════════╝ --}}
+            @php
+                $tabPrefix = $userRole === 'Estudiante' ? 'est' : 'doc';
+            @endphp
 
-                <div class="tab-content" id="courseTabsContent">
-                    <!-- Tab Cursos -->
-                    <div class="tab-pane fade show active" id="cursos" role="tabpanel">
-                        <div class="course-grid-enhanced" id="cursosContainer">
+            <ul class="dc-tabs nav" id="dcTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="dc-tab-btn nav-link active" data-bs-toggle="tab"
+                        data-bs-target="#{{ $tabPrefix }}-cursos" type="button" role="tab">
+                        <i class="bi bi-book me-2"></i>
+                        {{ $userRole === 'Estudiante' ? 'Cursos' : 'Mis Cursos' }}
+                        <span class="dc-tab-badge dc-badge-blue">
+                            @if ($userRole === 'Estudiante')
+                                {{ $inscritos->where('cursos.tipo', '!=', 'congreso')->count() }}
+                            @else
+                                {{ $cursos->where('tipo', '!=', 'congreso')->where('docente_id', auth()->user()->id)->count() }}
+                            @endif
+                        </span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="dc-tab-btn nav-link" data-bs-toggle="tab"
+                        data-bs-target="#{{ $tabPrefix }}-congresos" type="button" role="tab">
+                        <i class="bi bi-calendar-event me-2"></i>Congresos
+                        <span class="dc-tab-badge dc-badge-orange">
+                            @if ($userRole === 'Estudiante')
+                                {{ $inscritos->where('cursos.tipo', 'congreso')->count() }}
+                            @else
+                                {{ $cursos->where('tipo', 'congreso')->where('docente_id', auth()->user()->id)->count() }}
+                            @endif
+                        </span>
+                    </button>
+                </li>
+            </ul>
+
+            {{-- ╔═══════════════════════════════════════╗
+             ║  TAB CONTENT                          ║
+             ╚═══════════════════════════════════════╝ --}}
+            <div class="tab-content">
+
+                {{-- ── ESTUDIANTE: TAB CURSOS ── --}}
+                @if ($userRole === 'Estudiante')
+                    <div class="tab-pane fade show active" id="est-cursos" role="tabpanel">
+                        <div class="dc-grid" id="dcGrid">
                             @php
-                                $cursosRegulares = $inscritos->filter(function ($inscrito) {
-                                    return auth()->user()->id == $inscrito->estudiante_id &&
-                                        $inscrito->cursos &&
-                                        !$inscrito->cursos->deleted_at &&
-                                        $inscrito->cursos->tipo != 'congreso';
-                                });
+                                $cursosRegulares = $inscritos->filter(
+                                    fn($i) => auth()->user()->id == $i->estudiante_id &&
+                                        $i->cursos &&
+                                        !$i->cursos->deleted_at &&
+                                        $i->cursos->tipo != 'congreso',
+                                );
                             @endphp
 
-                            @if ($cursosRegulares->count() > 0)
-                                @foreach ($cursosRegulares as $inscrito)
-                                    <div class="course-card-enhanced" data-progress="{{ $inscrito->progreso ?? 0 }}"
-                                        data-type="curso" data-title="{{ strtolower($inscrito->cursos->nombreCurso) }}"
-                                        data-status="{{ ($inscrito->progreso ?? 0) == 100 ? 'completado' : 'activo' }}">
+                            @forelse($cursosRegulares as $inscrito)
+                                @php
+                                    $progreso = $inscrito->progreso ?? 0;
+                                    $completado = $progreso == 100;
+                                    $imgPath = $inscrito->cursos->imagen;
+                                    $imgSrc =
+                                        $imgPath && \Storage::exists($imgPath)
+                                            ? asset('storage/' . $imgPath)
+                                            : asset('assets/img/course-default.jpg');
+                                @endphp
+                                <div class="dc-card" data-title="{{ strtolower($inscrito->cursos->nombreCurso) }}"
+                                    data-type="curso" data-status="{{ $completado ? 'completado' : 'activo' }}">
 
-                                        <div class="course-image-enhanced">
-                                            @php
-                                                $imagenRuta = $inscrito->cursos->imagen;
-                                                $imagenExiste =
-                                                    $imagenRuta &&
-                                                    \Illuminate\Support\Facades\Storage::exists($imagenRuta);
-                                            @endphp
-                                            <img src="{{ $imagenExiste ? asset('storage/' . $imagenRuta) : asset('assets/img/course-default.jpg') }}"
-                                                alt="{{ $inscrito->cursos->nombreCurso }}" loading="lazy">
+                                    <div class="dc-card-img">
+                                        <img src="{{ $imgSrc }}" alt="{{ $inscrito->cursos->nombreCurso }}"
+                                            loading="lazy">
+                                        @if ($completado)
+                                            <div class="dc-badge dc-badge-green">
+                                                <i class="bi bi-check-circle-fill me-1"></i>Completado
+                                            </div>
+                                        @else
+                                            <div class="dc-badge dc-badge-blue">
+                                                <i class="bi bi-play-circle me-1"></i>En progreso
+                                            </div>
+                                        @endif
+                                    </div>
 
-                                            @if (($inscrito->progreso ?? 0) == 100)
-                                                <div class="course-badge-enhanced completed">
-                                                    <i class="fas fa-check-circle me-1"></i> Completado
-                                                </div>
-                                            @endif
+                                    <div class="dc-card-body">
+                                        <h3 class="dc-card-title">{{ $inscrito->cursos->nombreCurso }}</h3>
+
+                                        <div class="dc-meta">
+                                            <span class="dc-meta-item">
+                                                <i class="bi bi-calendar3"></i>
+                                                {{ $inscrito->created_at->format('d/m/Y') }}
+                                            </span>
+                                            <span class="dc-meta-item">
+                                                <i class="bi bi-clock"></i>
+                                                {{ $inscrito->cursos->duracion ?? 'N/A' }} horas
+                                            </span>
                                         </div>
 
-                                        <div class="course-content-enhanced">
-                                            <h3 class="course-title-enhanced">{{ $inscrito->cursos->nombreCurso }}</h3>
-
-                                            <div class="course-meta-enhanced">
-                                                <span class="course-meta-item">
-                                                    <i class="fas fa-calendar me-1"></i>
-                                                    {{ $inscrito->created_at->format('d/m/Y') }}
-                                                </span>
-                                                <span class="course-meta-item">
-                                                    <i class="fas fa-clock me-1"></i>
-                                                    {{ $inscrito->cursos->duracion ?? 'N/A' }} horas
-                                                </span>
-                                            </div>
-
-                                            @if (isset($inscrito->progreso))
-                                                <div class="progress-section-enhanced">
-                                                    <div class="progress-header">
-                                                        <span class="progress-label">Tu progreso</span>
-                                                        <span class="progress-value">{{ $inscrito->progreso }}%</span>
-                                                    </div>
-                                                    <div class="progress-bar-enhanced">
-                                                        <div class="progress-fill"
-                                                            style="width: {{ $inscrito->progreso }}%"></div>
-                                                    </div>
+                                        @if (isset($inscrito->progreso))
+                                            <div class="dc-progress">
+                                                <div class="dc-progress-header">
+                                                    <span class="dc-progress-label">Tu progreso</span>
+                                                    <span class="dc-progress-val">{{ $progreso }}%</span>
                                                 </div>
-                                            @endif
+                                                <div class="dc-progress-track">
+                                                    <div class="dc-progress-fill" style="width:{{ $progreso }}%"
+                                                        data-width="{{ $progreso }}"></div>
+                                                </div>
+                                            </div>
+                                        @endif
 
-                                            <div class="course-actions-enhanced">
-
-
-                                                @if ($inscrito->pago_completado)
-                                                    {{-- @dd($inscrito->cursos->codigoCurso) --}}
-                                                    <a href="{{ route('Curso', $inscrito->cursos->codigoCurso) }}"
-                                                        class="btn-course-action btn-course-primary">
-                                                        <i class="fas fa-play-circle me-2"></i>
-                                                        Continuar Curso
-                                                    </a>
-                                                @else
-                                                    <button type="button"
-                                                        class="btn-course-action btn-course-warning"
-                                                        data-bs-toggle="modal" data-bs-target="#pagoModal"
-                                                        data-inscrito-id="{{ $inscrito->id }}"
-                                                        data-curso-id="{{ $inscrito->cursos->id }}"
-                                                        data-curso-nombre="{{ $inscrito->cursos->nombreCurso }}">
-                                                        <i class="fas fa-credit-card me-2"></i>
-                                                        Completar Pago
-                                                    </button>
-
-                                                    @if ($inscrito->created_at->diffInDays(now()) < 2)
-                                                        <div class="payment-status mt-2">
-                                                            <i class="fas fa-hourglass-half me-1"></i>
-                                                            Pago en revisión
-                                                        </div>
-                                                    @endif
+                                        <div class="dc-card-actions">
+                                            @if ($inscrito->pago_completado)
+                                                <a href="{{ route('Curso', $inscrito->cursos->codigoCurso) }}"
+                                                    class="dc-btn dc-btn-primary">
+                                                    <i class="bi bi-play-circle-fill me-2"></i>Continuar Curso
+                                                </a>
+                                            @else
+                                                <button type="button" class="dc-btn dc-btn-warning"
+                                                    data-bs-toggle="modal" data-bs-target="#pagoModal"
+                                                    data-inscrito-id="{{ $inscrito->id }}"
+                                                    data-curso-id="{{ $inscrito->cursos->id }}"
+                                                    data-curso-nombre="{{ $inscrito->cursos->nombreCurso }}">
+                                                    <i class="bi bi-credit-card-2-front me-2"></i>Completar Pago
+                                                </button>
+                                                @if ($inscrito->created_at->diffInDays(now()) < 2)
+                                                    <div class="dc-payment-status mt-2">
+                                                        <i class="bi bi-hourglass-split me-1"></i>Pago en revisión
+                                                    </div>
                                                 @endif
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            @else
-                                <div class="alert-enhanced alert-info-enhanced">
-                                    <i class="fas fa-info-circle me-2"></i>
-                                    <strong>No tienes cursos inscritos aún</strong> -
-                                    <a href="{{ route('lista.cursos.congresos') }}" class="alert-link">Explora
-                                        nuestro catálogo</a>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-
-                    <!-- Tab Congresos -->
-                    <div class="tab-pane fade" id="congresos" role="tabpanel">
-                        <div class="course-grid-enhanced" id="congresosContainer">
-                            @php
-                                $congresos = $inscritos->filter(function ($inscrito) {
-                                    return auth()->user()->id == $inscrito->estudiante_id &&
-                                        $inscrito->cursos &&
-                                        !$inscrito->cursos->deleted_at &&
-                                        $inscrito->cursos->tipo == 'congreso';
-                                });
-                            @endphp
-
-                            @if ($congresos->count() > 0)
-                                @foreach ($congresos as $inscrito)
-                                    <div class="course-card-enhanced" data-progress="{{ $inscrito->progreso ?? 0 }}"
-                                        data-type="congreso"
-                                        data-title="{{ strtolower($inscrito->cursos->nombreCurso) }}"
-                                        data-status="{{ ($inscrito->progreso ?? 0) == 100 ? 'completado' : 'activo' }}">
-
-                                        <div class="course-image-enhanced">
-                                            @php
-                                                $imagenRuta = $inscrito->cursos->imagen;
-                                                $imagenExiste =
-                                                    $imagenRuta &&
-                                                    \Illuminate\Support\Facades\Storage::exists($imagenRuta);
-                                            @endphp
-                                            <img src="{{ $imagenExiste ? asset('storage/' . $imagenRuta) : asset('assets/img/course-default.jpg') }}"
-                                                alt="{{ $inscrito->cursos->nombreCurso }}" loading="lazy">
-
-                                            <div class="course-badge-enhanced congress">
-                                                <i class="fas fa-calendar-star me-1"></i> Congreso
-                                            </div>
-                                        </div>
-
-                                        <div class="course-content-enhanced">
-                                            <h3 class="course-title-enhanced">{{ $inscrito->cursos->nombreCurso }}
-                                            </h3>
-
-                                            <div class="course-meta-enhanced">
-                                                <span class="course-meta-item">
-                                                    <i class="fas fa-calendar me-1"></i>
-                                                    {{ $inscrito->created_at->format('d/m/Y') }}
-                                                </span>
-                                                <span class="course-meta-item">
-                                                    <i class="fas fa-gift me-1"></i>
-                                                    Gratuito
-                                                </span>
-                                            </div>
-
-                                            @if (isset($inscrito->progreso))
-                                                <div class="progress-section-enhanced">
-                                                    <div class="progress-header">
-                                                        <span class="progress-label">Tu progreso</span>
-                                                        <span class="progress-value">{{ $inscrito->progreso }}%</span>
-                                                    </div>
-                                                    <div class="progress-bar-enhanced">
-                                                        <div class="progress-fill"
-                                                            style="width: {{ $inscrito->progreso }}%"></div>
-                                                    </div>
-                                                </div>
                                             @endif
-
-                                            <div class="course-actions-enhanced">
-                                                <a href="{{ $inscrito->cursos->url }}"
-                                                    class="btn-course-action btn-course-success">
-                                                    <i class="fas fa-door-open me-2"></i>
-                                                    Acceder al Congreso
-                                                </a>
-                                            </div>
                                         </div>
                                     </div>
-                                @endforeach
-                            @else
-                                <div class="alert-enhanced alert-info-enhanced">
-                                    <i class="fas fa-info-circle me-2"></i>
-                                    <strong>No tienes congresos inscritos aún</strong> -
-                                    <a href="{{ route('lista.cursos.congresos') }}" class="alert-link">Descubre
-                                        nuestros eventos</a>
                                 </div>
-                            @endif
+                            @empty
+                                <div class="dc-alert">
+                                    <i class="bi bi-info-circle-fill me-2"></i>
+                                    <strong>No tienes cursos inscritos aún</strong> —
+                                    <a href="{{ route('lista.cursos.congresos') }}">Explora nuestro catálogo</a>
+                                </div>
+                            @endforelse
                         </div>
                     </div>
-                </div>
-            @else
-                <!-- Tabs Mejorados para Docentes -->
-                <ul class="nav course-tabs-enhanced" id="teacherCourseTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="teacher-cursos-tab" data-bs-toggle="tab"
-                            data-bs-target="#teacher-cursos" type="button" role="tab"
-                            aria-controls="teacher-cursos" aria-selected="true">
-                            <i class="fas fa-book me-2"></i> Mis Cursos
-                            <span
-                                class="badge bg-primary ms-2">{{ $cursos->where('tipo', '!=', 'congreso')->where('docente_id', auth()->user()->id)->count() }}</span>
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="teacher-congresos-tab" data-bs-toggle="tab"
-                            data-bs-target="#teacher-congresos" type="button" role="tab"
-                            aria-controls="teacher-congresos" aria-selected="false">
-                            <i class="fas fa-calendar-alt me-2"></i> Mis Congresos
-                            <span
-                                class="badge bg-warning ms-2">{{ $cursos->where('tipo', 'congreso')->where('docente_id', auth()->user()->id)->count() }}</span>
-                        </button>
-                    </li>
-                </ul>
 
-                <div class="tab-content" id="teacherCourseTabsContent">
-                    <!-- Tab Cursos Regulares -->
-                    <div class="tab-pane fade show active" id="teacher-cursos" role="tabpanel">
-                        <div class="course-grid-enhanced" id="teacherCursosContainer">
+                    {{-- ── ESTUDIANTE: TAB CONGRESOS ── --}}
+                    <div class="tab-pane fade" id="est-congresos" role="tabpanel">
+                        <div class="dc-grid">
                             @php
-                                $cursosRegulares = $cursos->filter(function ($curso) {
-                                    return auth()->user()->id == $curso->docente_id && $curso->tipo != 'congreso';
-                                });
+                                $congresos = $inscritos->filter(
+                                    fn($i) => auth()->user()->id == $i->estudiante_id &&
+                                        $i->cursos &&
+                                        !$i->cursos->deleted_at &&
+                                        $i->cursos->tipo == 'congreso',
+                                );
                             @endphp
 
-                            @if ($cursosRegulares->count() > 0)
-                                @foreach ($cursosRegulares as $curso)
-                                    <div class="course-card-enhanced course-item"
-                                        data-title="{{ strtolower($curso->nombreCurso) }}" data-type="curso"
-                                        data-status="activo">
+                            @forelse($congresos as $inscrito)
+                                @php
+                                    $imgPath = $inscrito->cursos->imagen;
+                                    $imgSrc =
+                                        $imgPath && \Storage::exists($imgPath)
+                                            ? asset('storage/' . $imgPath)
+                                            : asset('assets/img/course-default.jpg');
+                                @endphp
+                                <div class="dc-card" data-title="{{ strtolower($inscrito->cursos->nombreCurso) }}"
+                                    data-type="congreso" data-status="activo">
 
-                                        <div class="course-image-enhanced">
-                                            <img src="{{ $curso->imagen ? asset('storage/' . $curso->imagen) : asset('./assets/img/course-default.jpg') }}"
-                                                alt="{{ $curso->nombreCurso }}" loading="lazy">
-                                            <div class="course-badge-enhanced teacher">
-                                                <i class="fas fa-chalkboard-teacher me-1"></i> Docente
-                                            </div>
-                                        </div>
-
-                                        <div class="course-content-enhanced">
-                                            <h3 class="course-title-enhanced">{{ $curso->nombreCurso }}</h3>
-
-                                            <div class="course-meta-enhanced">
-                                                <span class="course-meta-item">
-                                                    <i class="fas fa-users me-1"></i>
-                                                    {{ $curso->inscritos->count() ?? 0 }} estudiantes
-                                                </span>
-                                                <span class="course-meta-item">
-                                                    <i class="fas fa-clock me-1"></i>
-                                                    {{ $curso->duracion ?? 'N/A' }} horas
-                                                </span>
-                                            </div>
-
-                                            <div class="progress-section-enhanced">
-                                                <div class="progress-header">
-                                                    <span class="progress-label">Participación</span>
-                                                    <span class="progress-value">{{ $curso->inscritos->count() ?? 0 }}
-                                                        estudiantes</span>
-                                                </div>
-                                                <div class="progress-bar-enhanced">
-                                                    <div class="progress-fill"
-                                                        style="width: {{ min(($curso->inscritos->count() / 50) * 100, 100) }}%">
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="course-actions-enhanced">
-                                                <a href="{{ route('Curso', $curso->codigoCurso) }}"
-                                                    class="btn-course-action btn-course-primary">
-                                                    <i class="fas fa-cogs me-2"></i>
-                                                    Gestionar Curso
-                                                </a>
-                                            </div>
+                                    <div class="dc-card-img">
+                                        <img src="{{ $imgSrc }}" alt="{{ $inscrito->cursos->nombreCurso }}"
+                                            loading="lazy">
+                                        <div class="dc-badge dc-badge-orange">
+                                            <i class="bi bi-calendar-star me-1"></i>Congreso
                                         </div>
                                     </div>
-                                @endforeach
-                            @else
-                                <div class="alert-enhanced alert-info-enhanced">
-                                    <i class="fas fa-info-circle me-2"></i>
+
+                                    <div class="dc-card-body">
+                                        <h3 class="dc-card-title">{{ $inscrito->cursos->nombreCurso }}</h3>
+
+                                        <div class="dc-meta">
+                                            <span class="dc-meta-item">
+                                                <i class="bi bi-calendar3"></i>
+                                                {{ $inscrito->created_at->format('d/m/Y') }}
+                                            </span>
+                                            <span class="dc-meta-item">
+                                                <i class="bi bi-gift"></i>Gratuito
+                                            </span>
+                                        </div>
+
+                                        @if (isset($inscrito->progreso))
+                                            <div class="dc-progress">
+                                                <div class="dc-progress-header">
+                                                    <span class="dc-progress-label">Tu progreso</span>
+                                                    <span class="dc-progress-val">{{ $inscrito->progreso }}%</span>
+                                                </div>
+                                                <div class="dc-progress-track">
+                                                    <div class="dc-progress-fill"
+                                                        style="width:{{ $inscrito->progreso }}%"
+                                                        data-width="{{ $inscrito->progreso }}"></div>
+                                                </div>
+                                            </div>
+                                        @endif
+
+                                        <div class="dc-card-actions">
+                                            <a href="{{ $inscrito->cursos->url }}" class="dc-btn dc-btn-success">
+                                                <i class="bi bi-door-open-fill me-2"></i>Acceder al Congreso
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="dc-alert">
+                                    <i class="bi bi-info-circle-fill me-2"></i>
+                                    <strong>No tienes congresos inscritos</strong> —
+                                    <a href="{{ route('lista.cursos.congresos') }}">Descubre nuestros eventos</a>
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
+                @else
+                    {{-- ══ DOCENTE ══ --}}
+
+                    {{-- ── DOCENTE: TAB CURSOS ── --}}
+                    <div class="tab-pane fade show active" id="doc-cursos" role="tabpanel">
+                        <div class="dc-grid">
+                            @php
+                                $cursosDocente = $cursos->filter(
+                                    fn($c) => auth()->user()->id == $c->docente_id && $c->tipo != 'congreso',
+                                );
+                            @endphp
+
+                            @forelse($cursosDocente as $curso)
+                                @php
+                                    $total = $curso->inscritos->count();
+                                    $pct = min(($total / 50) * 100, 100);
+                                    $imgSrc = $curso->imagen
+                                        ? asset('storage/' . $curso->imagen)
+                                        : asset('assets/img/course-default.jpg');
+                                @endphp
+                                <div class="dc-card" data-title="{{ strtolower($curso->nombreCurso) }}"
+                                    data-type="curso" data-status="activo">
+
+                                    <div class="dc-card-img">
+                                        <img src="{{ $imgSrc }}" alt="{{ $curso->nombreCurso }}"
+                                            loading="lazy">
+                                        <div class="dc-badge dc-badge-blue">
+                                            <i class="bi bi-person-video3 me-1"></i>Docente
+                                        </div>
+                                    </div>
+
+                                    <div class="dc-card-body">
+                                        <h3 class="dc-card-title">{{ $curso->nombreCurso }}</h3>
+
+                                        <div class="dc-meta">
+                                            <span class="dc-meta-item">
+                                                <i class="bi bi-people-fill"></i>{{ $total }} estudiantes
+                                            </span>
+                                            <span class="dc-meta-item">
+                                                <i class="bi bi-clock"></i>{{ $curso->duracion ?? 'N/A' }} horas
+                                            </span>
+                                        </div>
+
+                                        <div class="dc-progress">
+                                            <div class="dc-progress-header">
+                                                <span class="dc-progress-label">Participación</span>
+                                                <span class="dc-progress-val">{{ $total }} alumnos</span>
+                                            </div>
+                                            <div class="dc-progress-track">
+                                                <div class="dc-progress-fill" style="width:{{ $pct }}%"
+                                                    data-width="{{ $pct }}"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="dc-card-actions">
+                                            <a href="{{ route('Curso', $curso->codigoCurso) }}"
+                                                class="dc-btn dc-btn-primary">
+                                                <i class="bi bi-gear-fill me-2"></i>Gestionar Curso
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="dc-alert">
+                                    <i class="bi bi-info-circle-fill me-2"></i>
                                     <strong>No tienes cursos regulares asignados</strong>
                                 </div>
-                            @endif
+                            @endforelse
                         </div>
                     </div>
 
-                    <!-- Tab Congresos -->
-                    <div class="tab-pane fade" id="teacher-congresos" role="tabpanel">
-                        <div class="course-grid-enhanced" id="teacherCongresosContainer">
+                    {{-- ── DOCENTE: TAB CONGRESOS ── --}}
+                    <div class="tab-pane fade" id="doc-congresos" role="tabpanel">
+                        <div class="dc-grid">
                             @php
-                                $congresosDocente = $cursos->filter(function ($curso) {
-                                    return auth()->user()->id == $curso->docente_id && $curso->tipo == 'congreso';
-                                });
+                                $congresosDocente = $cursos->filter(
+                                    fn($c) => auth()->user()->id == $c->docente_id && $c->tipo == 'congreso',
+                                );
                             @endphp
 
-                            @if ($congresosDocente->count() > 0)
-                                @foreach ($congresosDocente as $curso)
-                                    <div class="course-card-enhanced course-item"
-                                        data-title="{{ strtolower($curso->nombreCurso) }}" data-type="congreso"
-                                        data-status="activo">
+                            @forelse($congresosDocente as $curso)
+                                @php
+                                    $total = $curso->inscritos->count();
+                                    $pct = min(($total / 100) * 100, 100);
+                                    $imgSrc = $curso->imagen
+                                        ? asset('storage/' . $curso->imagen)
+                                        : asset('assets/img/course-default.jpg');
+                                @endphp
+                                <div class="dc-card" data-title="{{ strtolower($curso->nombreCurso) }}"
+                                    data-type="congreso" data-status="activo">
 
-                                        <div class="course-image-enhanced">
-                                            <img src="{{ $curso->imagen ? asset('storage/' . $curso->imagen) : asset('./assets/img/course-default.jpg') }}"
-                                                alt="{{ $curso->nombreCurso }}" loading="lazy">
-                                            <div class="course-badge-enhanced congress">
-                                                <i class="fas fa-calendar-alt me-1"></i> Congreso
-                                            </div>
-                                        </div>
-
-                                        <div class="course-content-enhanced">
-                                            <h3 class="course-title-enhanced">{{ $curso->nombreCurso }}</h3>
-
-                                            <div class="course-meta-enhanced">
-                                                <span class="course-meta-item">
-                                                    <i class="fas fa-users me-1"></i>
-                                                    {{ $curso->inscritos->count() ?? 0 }} participantes
-                                                </span>
-                                                <span class="course-meta-item">
-                                                    <i class="fas fa-calendar me-1"></i>
-                                                    {{ $curso->duracion ?? 'N/A' }} horas
-                                                </span>
-                                            </div>
-
-                                            <div class="progress-section-enhanced">
-                                                <div class="progress-header">
-                                                    <span class="progress-label">Asistentes</span>
-                                                    <span
-                                                        class="progress-value">{{ $curso->inscritos->count() ?? 0 }}</span>
-                                                </div>
-                                                <div class="progress-bar-enhanced">
-                                                    <div class="progress-fill"
-                                                        style="width: {{ min(($curso->inscritos->count() / 100) * 100, 100) }}%">
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="course-actions-enhanced">
-                                                <a href="{{ route('Curso', encrypt($curso->id)) }}"
-                                                    class="btn-course-action btn-course-success">
-                                                    <i class="fas fa-cogs me-2"></i>
-                                                    Gestionar Congreso
-                                                </a>
-                                            </div>
+                                    <div class="dc-card-img">
+                                        <img src="{{ $imgSrc }}" alt="{{ $curso->nombreCurso }}"
+                                            loading="lazy">
+                                        <div class="dc-badge dc-badge-orange">
+                                            <i class="bi bi-calendar-event me-1"></i>Congreso
                                         </div>
                                     </div>
-                                @endforeach
-                            @else
-                                <div class="alert-enhanced alert-info-enhanced">
-                                    <i class="fas fa-info-circle me-2"></i>
+
+                                    <div class="dc-card-body">
+                                        <h3 class="dc-card-title">{{ $curso->nombreCurso }}</h3>
+
+                                        <div class="dc-meta">
+                                            <span class="dc-meta-item">
+                                                <i class="bi bi-people-fill"></i>{{ $total }} participantes
+                                            </span>
+                                            <span class="dc-meta-item">
+                                                <i class="bi bi-clock"></i>{{ $curso->duracion ?? 'N/A' }} horas
+                                            </span>
+                                        </div>
+
+                                        <div class="dc-progress">
+                                            <div class="dc-progress-header">
+                                                <span class="dc-progress-label">Asistentes</span>
+                                                <span class="dc-progress-val">{{ $total }}</span>
+                                            </div>
+                                            <div class="dc-progress-track">
+                                                <div class="dc-progress-fill" style="width:{{ $pct }}%"
+                                                    data-width="{{ $pct }}"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="dc-card-actions">
+                                            <a href="{{ route('Curso', encrypt($curso->id)) }}"
+                                                class="dc-btn dc-btn-success">
+                                                <i class="bi bi-gear-fill me-2"></i>Gestionar Congreso
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="dc-alert">
+                                    <i class="bi bi-info-circle-fill me-2"></i>
                                     <strong>No tienes congresos asignados</strong>
                                 </div>
-                            @endif
+                            @endforelse
                         </div>
                     </div>
-                </div>
-            @endif
-        @endif
 
-        <!-- No Results Message Mejorado -->
-        <div id="noResults" class="no-results-enhanced" style="display: none;">
-            <i class="fas fa-search"></i>
-            <h5>No se encontraron cursos</h5>
-            <p class="text-muted">Intenta con otros términos de búsqueda o filtros diferentes</p>
-            <button class="btn btn-outline-primary mt-2" onclick="clearSearch()">
-                <i class="fas fa-times me-2"></i>
-                Limpiar búsqueda
-            </button>
-        </div>
-    </div>
-</div>
+                @endif
+            </div>{{-- /tab-content --}}
+
+            {{-- Sin resultados de búsqueda --}}
+            <div id="dcNoResults" class="dc-no-results" style="display:none">
+                <i class="bi bi-search"></i>
+                <h5>No se encontraron cursos</h5>
+                <p>Intenta con otros términos o filtros</p>
+                <button class="dc-btn dc-btn-outline" onclick="dcClearSearch()">
+                    <i class="bi bi-x-circle me-2"></i>Limpiar búsqueda
+                </button>
+            </div>
+
+        @endif
+    </div>{{-- /container --}}
+</div>{{-- /dc-wrap --}}
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -1322,4 +839,102 @@
         // Inicializar tabs de docentes
         initializeTabs('teacherCourseTabs', 'teacherCourseTabsContent');
     });
+</script>
+
+<script>
+    (function() {
+
+        /* ── 1. Animar barras de progreso al cargar ── */
+        function animateProgressBars() {
+            document.querySelectorAll('.dc-progress-fill').forEach(bar => {
+                const target = bar.getAttribute('data-width') || '0';
+                // Pequeño delay para que la transición CSS se vea
+                requestAnimationFrame(() => {
+                    setTimeout(() => {
+                        bar.style.width = target + '%';
+                    }, 80);
+                });
+            });
+        }
+        animateProgressBars();
+
+        // Re-animar al cambiar de tab (Bootstrap reinicia el display)
+        document.querySelectorAll('[data-bs-toggle="tab"]').forEach(btn => {
+            btn.addEventListener('shown.bs.tab', animateProgressBars);
+        });
+
+        /* ── 2. Toggle vista grid / lista ── */
+        const btnGrid = document.getElementById('dcBtnGrid');
+        const btnList = document.getElementById('dcBtnList');
+
+        function setView(mode) {
+            document.querySelectorAll('.dc-grid').forEach(g => {
+                g.classList.toggle('list-mode', mode === 'list');
+            });
+            btnGrid?.classList.toggle('active', mode === 'grid');
+            btnList?.classList.toggle('active', mode === 'list');
+            localStorage.setItem('dc_view', mode);
+        }
+
+        btnGrid?.addEventListener('click', () => setView('grid'));
+        btnList?.addEventListener('click', () => setView('list'));
+
+        // Restaurar preferencia guardada
+        const savedView = localStorage.getItem('dc_view');
+        if (savedView) setView(savedView);
+
+        /* ── 3. Búsqueda + Filtro ── */
+        const search = document.getElementById('dcSearch');
+        const filter = document.getElementById('dcFilter');
+        const noResults = document.getElementById('dcNoResults');
+
+        function applyFilters() {
+            const q = (search?.value || '').toLowerCase().trim();
+            const sel = filter?.value || 'all';
+
+            let visible = 0;
+
+            document.querySelectorAll('.dc-card').forEach(card => {
+                const title = card.getAttribute('data-title') || '';
+                const type = card.getAttribute('data-type') || '';
+                const status = card.getAttribute('data-status') || '';
+
+                const matchQ = !q || title.includes(q);
+                const matchF = sel === 'all' ||
+                    (sel === 'activo' && status === 'activo') ||
+                    (sel === 'completado' && status === 'completado') ||
+                    (sel === 'congreso' && type === 'congreso') ||
+                    (sel === 'curso' && type === 'curso');
+
+                const show = matchQ && matchF;
+                card.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+
+            if (noResults) noResults.style.display = visible === 0 ? 'block' : 'none';
+        }
+
+        search?.addEventListener('input', applyFilters);
+        filter?.addEventListener('change', applyFilters);
+
+        /* ── 4. Limpiar búsqueda (llamado desde onclick) ── */
+        window.dcClearSearch = function() {
+            if (search) search.value = '';
+            if (filter) filter.value = 'all';
+            applyFilters();
+        };
+
+        /* ── 5. Modal de pago: poblar datos ── */
+        document.addEventListener('show.bs.modal', function(e) {
+            if (e.target.id !== 'pagoModal') return;
+            const btn = e.relatedTarget;
+            if (!btn) return;
+            const modal = e.target;
+            const nombre = btn.getAttribute('data-curso-nombre') || '';
+            const el = modal.querySelector('#modalCursoNombre');
+            if (el) el.textContent = nombre;
+            // Puedes agregar más campos aquí si el modal los necesita
+        });
+
+    })();
 </script>

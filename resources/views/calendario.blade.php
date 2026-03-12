@@ -1,4 +1,4 @@
-@extends('FundacionPlantillaUsu.index')
+@extends('estudiante.index')
 
 @section('content')
 
@@ -17,37 +17,37 @@
             --color-warning: #ffc107;
             --color-danger: #dc3545;
             --color-info: #17a2b8;
-            
+
             --gradient-primary: linear-gradient(135deg, #1a4789 0%, #055c9d 100%);
             --gradient-secondary: linear-gradient(135deg, #39a6cb 0%, #63becf 100%);
-            
+
             --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
             --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
             --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
-            
+
             --border-radius: 12px;
             --border-radius-sm: 8px;
         }
-        
+
         .calendario-container {
             background: #f8fafc;
             min-height: 100vh;
         }
-        
+
         .card-modern {
             border: none;
             border-radius: var(--border-radius);
             box-shadow: var(--shadow-md);
             background: white;
         }
-        
+
         .card-header-modern {
             background: var(--gradient-primary);
             color: white;
             border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
             padding: 1.5rem;
         }
-        
+
         .stats-card {
             background: white;
             border-radius: var(--border-radius-sm);
@@ -56,30 +56,30 @@
             border-left: 4px solid;
             transition: transform 0.2s ease;
         }
-        
+
         .stats-card:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-md);
         }
-        
+
         .stats-card.total { border-left-color: var(--color-primary); }
         .stats-card.entregadas { border-left-color: var(--color-success); }
         .stats-card.pendientes { border-left-color: var(--color-warning); }
         .stats-card.proximas { border-left-color: var(--color-danger); }
-        
+
         .fc-toolbar {
             padding: 1rem 1.5rem;
             background: white;
             border-bottom: 1px solid #e9ecef;
             margin: 0 !important;
         }
-        
+
         .fc .fc-toolbar-title {
             font-size: 1.5rem;
             font-weight: 600;
             color: white;
         }
-        
+
         .fc .fc-button {
             background: var(--color-primary);
             border: none;
@@ -87,42 +87,42 @@
             font-weight: 500;
             padding: 0.5rem 1rem;
         }
-        
+
         .fc .fc-button:hover {
             background: var(--color-accent2);
         }
-        
+
         .fc .fc-button-primary:not(:disabled).fc-button-active {
             background: var(--color-accent2);
         }
-        
+
         .fc .fc-daygrid-day-number {
             color: var(--color-primary);
             font-weight: 600;
         }
-        
+
         .fc .fc-day-today {
             background: rgba(57, 166, 203, 0.1) !important;
         }
-        
+
         .evento-popover {
             max-width: 300px;
         }
-        
+
         .filter-badge {
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        
+
         .filter-badge.active {
             box-shadow: 0 0 0 2px var(--color-primary);
         }
-        
+
         .empty-state {
             padding: 4rem 2rem;
             text-align: center;
         }
-        
+
         .empty-state i {
             font-size: 4rem;
             color: var(--color-secondary);
@@ -332,7 +332,7 @@
             // Configuración del calendario
             var calendarEl = document.getElementById('calendar');
             var eventos = @json($eventos);
-            
+
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 locale: 'es',
@@ -357,7 +357,7 @@
                     if (info.event.extendedProps.descripcion) {
                         info.el.setAttribute('title', info.event.extendedProps.descripcion);
                     }
-                    
+
                     // Icono según tipo
                     const icon = obtenerIconoTipo(info.event.extendedProps.tipo);
                     if (icon) {
@@ -388,14 +388,14 @@
 
         function mostrarDetallesEvento(evento) {
             const props = evento.extendedProps;
-            
+
             document.getElementById('eventoModalTitle').textContent = evento.title;
             document.getElementById('eventoCurso').textContent = props.curso;
             document.getElementById('eventoTipo').textContent = props.tipo;
             document.getElementById('eventoEstado').innerHTML = obtenerBadgeEstado(props.estado, props.urgente);
             document.getElementById('eventoFecha').textContent = evento.start.toLocaleDateString('es-ES');
             document.getElementById('eventoDescripcion').textContent = props.descripcion || 'Sin descripción';
-            
+
             // Configurar botón de acción
             const btnAccion = document.getElementById('eventoAccionBtn');
             if (props.entregada) {
@@ -405,7 +405,7 @@
                 btnAccion.innerHTML = '<i class="fas fa-external-link-alt me-1"></i>Ver Actividad';
                 btnAccion.className = 'btn btn-primary';
             }
-            
+
             const modal = new bootstrap.Modal(document.getElementById('eventoModal'));
             modal.show();
         }
@@ -415,12 +415,12 @@
                 'entregada': 'bg-success',
                 'pendiente': urgente ? 'bg-danger' : 'bg-warning'
             };
-            
+
             const textos = {
                 'entregada': 'Entregada',
                 'pendiente': urgente ? 'Urgente' : 'Pendiente'
             };
-            
+
             return `<span class="badge ${clases[estado]}">${textos[estado]}</span>`;
         }
 
@@ -438,22 +438,22 @@
 
         function configurarFiltros(calendar, eventosOriginales) {
             const filtros = document.querySelectorAll('.filter-badge');
-            
+
             filtros.forEach(filtro => {
                 filtro.addEventListener('click', function() {
                     const tipoFiltro = this.getAttribute('data-filter');
-                    
+
                     // Actualizar badges activos
                     filtros.forEach(f => f.classList.remove('active'));
                     this.classList.add('active');
-                    
+
                     // Aplicar filtro
                     let eventosFiltrados = eventosOriginales;
-                    
+
                     if (tipoFiltro !== 'all') {
                         eventosFiltrados = eventosOriginales.filter(evento => {
                             const props = evento.extendedProps;
-                            
+
                             switch(tipoFiltro) {
                                 case 'entregada':
                                     return props.entregada;
@@ -466,7 +466,7 @@
                             }
                         });
                     }
-                    
+
                     calendar.removeAllEvents();
                     calendar.addEventSource(eventosFiltrados);
                 });
@@ -477,8 +477,8 @@
             // Exportar calendario
             window.exportarCalendario = function() {
                 calendar.getData().then(function(data) {
-                    const blob = new Blob([JSON.stringify(data, null, 2)], { 
-                        type: 'application/json' 
+                    const blob = new Blob([JSON.stringify(data, null, 2)], {
+                        type: 'application/json'
                     });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
@@ -495,15 +495,15 @@
             window.syncCalendario = function() {
                 const boton = event.target;
                 const originalHTML = boton.innerHTML;
-                
+
                 boton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Sincronizando...';
                 boton.disabled = true;
-                
+
                 setTimeout(() => {
                     calendar.refetchEvents();
                     boton.innerHTML = originalHTML;
                     boton.disabled = false;
-                    
+
                     // Mostrar notificación
                     mostrarNotificacion('Calendario sincronizado correctamente', 'success');
                 }, 1000);
@@ -515,6 +515,6 @@
             alert(mensaje); // Reemplazar con tu sistema de notificaciones
         }
     </script>
- 
+
 
 @endsection

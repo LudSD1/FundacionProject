@@ -1,7 +1,7 @@
-@extends('FundacionPlantillaUsu.index')
+@extends('estudiante.index')
 
 @section('content')
-<div class="container py-4">
+<div class="container py-4 " style="margin-top: 12%">
     <div class="row">
         <div class="col-12 mb-4">
             <h3 class="text-primary">
