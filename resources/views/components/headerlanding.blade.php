@@ -384,7 +384,7 @@
             item.addEventListener('click', function() {
                 this.classList.remove('unread');
             });
-        });
+        });  
 
     })();
 </script>

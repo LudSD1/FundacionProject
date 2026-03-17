@@ -10,6 +10,28 @@
 	--color-accent5: #145da0;
 	--color-accent6: #2a81c2;
 	--orange-accent: #ffa500;
+    --cc-blue:      #145da0;
+    --cc-blue-l:    #2a81c2;
+    --cc-orange:    #ffa500;
+    --cc-orange-d:  #e59400;
+    --cc-green:     #16a34a;
+    --cc-green-l:   #22c55e;
+    --cc-red:       #dc2626;
+    --cc-radius:    12px;
+    --cc-radius-sm: 8px;
+    --cc-shadow:    0 2px 10px rgba(0,0,0,.07);
+    --cc-shadow-md: 0 6px 24px rgba(0,0,0,.11);
+    --cc-sb-width:  270px;
+    --ch-blue:      #145da0;
+    --ch-blue-l:    #2a81c2;
+    --ch-orange:    #ffa500;
+    --ch-orange-d:  #e59400;
+    --ch-green:     #16a34a;
+    --ch-radius:    14px;
+    --ch-radius-sm: 9px;
+    --ch-shadow:    0 2px 10px rgba(0,0,0,.07);
+    --ch-shadow-md: 0 6px 24px rgba(0,0,0,.11);
+
 	--gradient-primary: linear-gradient(135deg, #1a4789 0%, #055c9d 100%);
 	--gradient-secondary: linear-gradient(135deg, #39a6cb 0%, #63becf 100%);
 	--gradient-accent: linear-gradient(135deg, #2197bd 0%, #2a81c2 100%);

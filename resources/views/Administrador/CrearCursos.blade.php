@@ -145,7 +145,7 @@
                                     <i class="bi bi-laptop label-icon"></i>
                                     Formato
                                 </label>
-                                <select name="formato" class="form-select-modern">
+                                <select name="formato" class="form-select-modern"> 
                                     <option value="Virtual" {{ old('formato') == 'Virtual' ? 'selected' : '' }}>💻 Virtual
                                     </option>
                                 </select>

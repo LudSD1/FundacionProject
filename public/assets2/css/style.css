@@ -17,3 +17,6 @@
 
 /* Miscellaneous */
 @import url(components/misc.css);
+
+/* Page-specific */
+@import url(components/cursos.css);
