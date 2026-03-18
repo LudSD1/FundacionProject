@@ -1015,17 +1015,20 @@
 .cc-modal-header {
     display: flex;
     align-items: center;
-    gap: .7rem;
-    padding: 1.1rem 1.3rem;
+    gap: .6rem;
+    padding: .85rem 1.1rem;
     background: linear-gradient(135deg, #0d2244, var(--cc-blue));
     color: #fff;
     border-bottom: none;
 }
 .cc-modal-header .btn-close { filter: invert(1); }
-.cc-modal-icon  { width: 34px; height: 34px; border-radius: var(--cc-radius-sm); background: rgba(255,255,255,.15); display: flex; align-items: center; justify-content: center; font-size: .95rem; flex-shrink: 0; }
-.cc-modal-title { font-size: .98rem; font-weight: 700; margin: 0; }
-.cc-modal-header small { opacity: .7; font-size: .76rem; }
-.cc-modal-footer { padding: .9rem 1.3rem; background: #f8fafc; border-top: 1px solid #e8f0f8; display: flex; justify-content: flex-end; gap: .6rem; }
+.cc-modal-icon  { width: 30px; height: 30px; border-radius: var(--cc-radius-sm); background: rgba(255,255,255,.15); display: flex; align-items: center; justify-content: center; font-size: .88rem; flex-shrink: 0; }
+.cc-modal-title { font-size: .92rem; font-weight: 700; margin: 0; }
+.cc-modal-header small { opacity: .7; font-size: .72rem; }
+.cc-modal-footer { padding: .75rem 1.1rem; background: #f8fafc; border-top: 1px solid #e8f0f8; display: flex; justify-content: flex-end; gap: .5rem; }
+.cc-modal .cc-field { margin-bottom: .65rem; }
+.cc-modal .cc-label { font-size: .78rem; margin-bottom: .25rem; }
+.cc-modal .cc-textarea { min-height: 70px; }
 
 /* Búsqueda modal */
 .cc-modal-search      { position: relative; margin-bottom: 1rem; }

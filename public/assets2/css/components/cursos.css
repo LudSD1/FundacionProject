@@ -1,9 +1,4 @@
-/* ═══════════════════════════════════════════════════════
-   CURSO DETALLE — Layout compacto
-   cursos.css
-═══════════════════════════════════════════════════════ */
 
-/* ── 1. Badges inline (estado, tipo, modalidad) ──────── */
 .course-meta-badges {
   display: flex;
   flex-wrap: wrap;

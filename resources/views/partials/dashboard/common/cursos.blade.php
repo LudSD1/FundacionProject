@@ -214,7 +214,7 @@
 </script>
 
 
-<div class="dc-wrap" style="margin-top: 8%">
+<div class="dc-wrap" >
     <div class="dc-header">
         <div class="container">
             <div class="row align-items-center g-4">
@@ -342,9 +342,6 @@
                 </li>
             </ul>
 
-            {{-- ╔═══════════════════════════════════════╗
-             ║  TAB CONTENT                          ║
-             ╚═══════════════════════════════════════╝ --}}
             <div class="tab-content">
 
                 {{-- ── ESTUDIANTE: TAB CURSOS ── --}}

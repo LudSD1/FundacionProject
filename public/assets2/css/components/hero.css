@@ -1,11 +1,4 @@
-/* ═══════════════════════════════════════════════════════
-   HERO – Aprendo Hoy  |  hero.css
-   Cubre: #hero (landing), .course-hero (detalle),
-          .search-hero-section (lista cursos),
-          reproductor YouTube embebido
-═══════════════════════════════════════════════════════ */
 
-/* ── Tokens locales ─────────────────────────────────── */
 :root {
   --hero-bg:          #1a4789;
   --hero-accent:      rgba(57, 166, 203, 0.10);
@@ -15,7 +8,6 @@
   --hero-media-min-h: 400px;
 }
 
-/* ── Keyframes ──────────────────────────────────────── */
 @keyframes heroFloat {
   0%, 100% { transform: translateY(0); }
   50%       { transform: translateY(-18px); }
@@ -29,9 +21,6 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ══════════════════════════════════════════════════════
-   1. #hero — landing principal
-══════════════════════════════════════════════════════ */
 #hero {
   position: relative;
   overflow: hidden;
@@ -147,10 +136,7 @@
   margin-bottom: 1.5rem;
 }
 
-/* ══════════════════════════════════════════════════════
-   3. .search-hero-section — lista de cursos
-      ⚠ Separado de #hero para no colisionar
-══════════════════════════════════════════════════════ */
+
 .search-hero-section {
   position: relative;
   min-height: 460px;

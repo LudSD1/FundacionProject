@@ -1,203 +1,212 @@
-@section('title')
-    <div class="container-fluid bg-light py-4">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-12">
-                    <h1 class="h2 mb-0 text-primary fw-bold">
-                        <i class="bi bi-credit-card-2-front me-2"></i>
-                        Pagos
-                    </h1>
-                </div>
-            </div>
-        </div>
-    </div>
-@endsection
+@extends('estudiante.index')
+
+@section('title', 'Pagos — Historial de Aportes')
 
 @section('content')
-    <div class="container py-5" style="margin-top: 10%;">
-        <div class=" justify-content-center">
-            <div class="col-12">
-                <!-- Card Container -->
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white border-0 py-3">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <h2 class="h5 mb-0 text-primary fw-bold">
-                                Historial de Aportes
-                            </h2>
-                            <!-- Aquí puedes agregar botones adicionales si son necesarios -->
-                        </div>
+
+<div class="pag-wrap">
+    <div class="container pag-container">
+        <div class="pag-hero">
+            <div class="pag-hero-overlay"></div>
+            <div class="pag-hero-body">
+                <div>
+                    <div class="pag-hero-eyebrow">
+                        <i class="bi bi-credit-card-2-front"></i> Mi Cuenta
                     </div>
-
-                    <div class="card-body p-0">
-                        @if (session('success'))
-                            <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
-                                {{ session('success') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                    aria-label="Close"></button>
-                            </div>
-                        @endif
-
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
-                                <thead class="bg-light">
-                                    <tr>
-                                        <th class="px-4 py-3 text-dark">Estudiante</th>
-                                        <th class="px-4 py-3 text-dark">Monto</th>
-                                        <th class="px-4 py-3 text-dark">Descripción</th>
-                                        <th class="px-4 py-3 text-dark text-center">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($aportes as $aporte)
-                                        @if ($aporte->estudiante_id == auth()->user()->id)
-                                            <tr>
-                                                <td class="px-4 py-3">
-                                                    <div class="d-flex align-items-center">
-                                                        <div
-                                                            class="avatar-circle bg-primary bg-opacity-10 text-primary me-3">
-                                                            <i class="bi bi-person text-white "></i>
-                                                        </div>
-                                                        <span>{{ $aporte->datosEstudiante }}</span>
-                                                    </div>
-                                                </td>
-                                                <td class="px-4 py-3">
-                                                    {{ number_format($aporte->monto, 2) }} Bs.
-                                                </td>
-                                                <td class="px-4 py-3 text-muted">
-                                                    {{ $aporte->DescripcionDelPago }}
-                                                </td>
-                                                <td class="px-4 py-3 text-center">
-                                                    <a href="{{ route('recibo.generar', encrypt($aporte->id)) }}"
-                                                        target="_blank"
-                                                        class="btn btn-light btn-sm px-3 py-2 rounded-pill hover-primary">
-                                                        <i class="bi bi-file-earmark-text me-2"></i>
-                                                        Ver Recibo
-                                                    </a>
-                                                    <a href="{{ route('factura.siat', encrypt($aporte->id)) }}"
-                                                        target="_blank"
-                                                        class="btn btn-outline-primary btn-sm px-3 py-2 rounded-pill ms-2">
-                                                        <i class="bi bi-receipt me-2"></i>
-                                                        Ver Factura
-                                                    </a>
-
-                                                </td>
-                                            </tr>
-                                        @endif
-                                    @empty
-                                        <tr>
-                                            <td colspan="4" class="text-center py-5">
-                                                <div class="d-flex flex-column align-items-center">
-                                                    <i class="bi bi-inbox text-muted mb-3" style="font-size: 2rem;"></i>
-                                                    <p class="text-muted mb-0">Aún no se ha realizado ningún pago.</p>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Paginación -->
-                    @if ($aportes->hasPages())
-                        <div class="card-footer bg-white border-0 py-3">
-                            <div class="d-flex justify-content-end">
-                                {{ $aportes->links() }}
-                            </div>
-                        </div>
-                    @endif
+                    <h2 class="pag-hero-title">Historial de Pagos</h2>
+                    <p class="pag-hero-sub">Consulta y descarga tus recibos y facturas</p>
+                </div>
+                @php
+                    $totalAportes = $aportes->where('estudiante_id', auth()->user()->id)->count();
+                @endphp
+                <div class="pag-hero-count">
+                    <span class="pag-hero-count-num">{{ $totalAportes }}</span>
+                    <span class="pag-hero-count-lbl">
+                        pago{{ $totalAportes !== 1 ? 's' : '' }} registrado{{ $totalAportes !== 1 ? 's' : '' }}
+                    </span>
                 </div>
             </div>
         </div>
+
+        @if(session('success'))
+        <div class="pag-alert-success" role="alert" id="pagFlashAlert">
+            <i class="bi bi-check-circle-fill pag-alert-icon"></i>
+            <span>{{ session('success') }}</span>
+            <button type="button" class="pag-alert-close" onclick="document.getElementById('pagFlashAlert').remove()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        @endif
+
+        <div class="pag-card">
+
+            <div class="pag-card-header">
+                <div class="pag-card-header-left">
+                    <div class="pag-card-header-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <div>
+                        <h3 class="pag-card-title">Historial de Aportes</h3>
+                        <p class="pag-card-sub">Todos tus pagos realizados</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pag-table-wrap">
+                <table class="pag-table">
+                    <thead>
+                        <tr>
+                            <th>Estudiante</th>
+                            <th>Monto</th>
+                            <th>Descripción</th>
+                            <th class="pag-th-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($aportes as $aporte)
+                        @if($aporte->estudiante_id == auth()->user()->id)
+
+                        <tr class="pag-row">
+                            {{-- Estudiante --}}
+                            <td class="pag-td">
+                                <div class="pag-student">
+                                    <div class="pag-avatar">
+                                        {{ strtoupper(substr($aporte->datosEstudiante ?? 'E', 0, 1)) }}
+                                    </div>
+                                    <span class="pag-student-name">{{ $aporte->datosEstudiante }}</span>
+                                </div>
+                            </td>
+
+                            {{-- Monto --}}
+                            <td class="pag-td">
+                                <span class="pag-monto">
+                                    {{ number_format($aporte->monto, 2) }}
+                                    <span class="pag-monto-cur">Bs.</span>
+                                </span>
+                            </td>
+
+                            {{-- Descripción --}}
+                            <td class="pag-td">
+                                <span class="pag-desc">{{ $aporte->DescripcionDelPago }}</span>
+                            </td>
+
+                            {{-- Acciones --}}
+                            <td class="pag-td pag-td-actions">
+                                <a href="{{ route('recibo.generar', encrypt($aporte->id)) }}"
+                                   target="_blank"
+                                   class="cc-btn cc-btn-sm pag-btn-recibo">
+                                    <i class="bi bi-file-earmark-text me-1"></i>Recibo
+                                </a>
+                                <a href="{{ route('factura.siat', encrypt($aporte->id)) }}"
+                                   target="_blank"
+                                   class="cc-btn cc-btn-sm pag-btn-factura">
+                                    <i class="bi bi-receipt me-1"></i>Factura
+                                </a>
+                            </td>
+                        </tr>
+
+                        @endif
+                        @empty
+
+                        {{-- Estado vacío --}}
+                        <tr>
+                            <td colspan="4" class="pag-empty-td">
+                                <div class="pag-empty">
+                                    <div class="pag-empty-icon"><i class="bi bi-inbox"></i></div>
+                                    <h5 class="pag-empty-title">Sin pagos registrados</h5>
+                                    <p class="pag-empty-sub">Aún no se ha realizado ningún pago.</p>
+                                </div>
+                            </td>
+                        </tr>
+
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            {{-- Paginación --}}
+            @if($aportes->hasPages())
+            <div class="pag-pagination-wrap">
+                {{ $aportes->links() }}
+            </div>
+            @endif
+
+        </div>{{-- /pag-card --}}
     </div>
+</div>
 
-    <style>
-        .avatar-circle {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .hover-primary {
-            transition: all 0.3s ease;
-        }
-
-        .hover-primary:hover {
-            background-color: var(--secondary-color) !important;
-            color: white !important;
-        }
-
-        .table> :not(caption)>*>* {
-            border-bottom-width: 1px;
-            border-bottom-color: rgba(0, 0, 0, 0.05);
-        }
-
-        .pagination {
-            margin-bottom: 0;
-        }
-
-        .page-link {
-            color: var(--primary-color);
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.5rem;
-            margin: 0 0.2rem;
-        }
-
-        .page-link:hover {
-            color: var(--secondary-color);
-            background-color: #f8f9fa;
-        }
-
-        .page-item.active .page-link {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-    </style>
 @endsection
 
-@include('estudiante.index')
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.reenviar-recibo').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                const aporteId = this.getAttribute('data-id');
-                Swal.fire({
-                    title: '¿Reenviar recibo?',
-                    text: 'Se enviará el recibo al correo registrado.',
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sí, reenviar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
+    (function () {
+        document.addEventListener('DOMContentLoaded', function () {
+
+            /* ── Reenviar recibo (si aplica) ── */
+            document.querySelectorAll('.reenviar-recibo').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    const aporteId = this.getAttribute('data-id');
+
+                    Swal.fire({
+                        title            : '¿Reenviar recibo?',
+                        text             : 'Se enviará el recibo al correo registrado.',
+                        icon             : 'question',
+                        showCancelButton : true,
+                        confirmButtonText: 'Sí, reenviar',
+                        cancelButtonText : 'Cancelar',
+                        // FIX 12: colores del sistema
+                        confirmButtonColor: '#145da0',
+                        cancelButtonColor : '#94a3b8',
+                    }).then(result => {
+                        if (!result.isConfirmed) return;
+
                         fetch(`/aportes/${aporteId}/reenviar-recibo`, {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                    'Accept': 'application/json'
-                                }
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    Swal.fire('¡Enviado!', data.message, 'success');
-                                } else {
-                                    Swal.fire('Error', data.message ||
-                                        'No se pudo enviar el recibo.', 'error');
-                                }
-                            })
-                            .catch(() => {
-                                Swal.fire('Error', 'Ocurrió un error inesperado.',
-                                    'error');
+                            method : 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                                'Accept'      : 'application/json',
+                            },
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire({
+                                    icon             : 'success',
+                                    title            : '¡Enviado!',
+                                    text             : data.message,
+                                    confirmButtonColor: '#145da0',
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon             : 'error',
+                                    title            : 'Error',
+                                    text             : data.message || 'No se pudo enviar el recibo.',
+                                    confirmButtonColor: '#145da0',
+                                });
+                            }
+                        })
+                        .catch(() => {
+                            Swal.fire({
+                                icon             : 'error',
+                                title            : 'Error',
+                                text             : 'Ocurrió un error inesperado.',
+                                confirmButtonColor: '#145da0',
                             });
-                    }
+                        });
+                    });
                 });
             });
+
+            /* ── Auto-dismiss flash alert después de 4s ── */
+            const flash = document.getElementById('pagFlashAlert');
+            if (flash) {
+                setTimeout(() => {
+                    flash.style.transition = 'opacity .4s ease';
+                    flash.style.opacity    = '0';
+                    setTimeout(() => flash.remove(), 400);
+                }, 4000);
+            }
+
         });
-    });
-</script>
+    })();
+    </script>

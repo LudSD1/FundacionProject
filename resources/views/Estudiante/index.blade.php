@@ -3,7 +3,7 @@
 
 <!--Container-->
 @section('main')
-@yield('content')
+    @yield('content')
 @endsection
 
 @include('layoutlanding')

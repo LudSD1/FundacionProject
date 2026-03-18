@@ -1,293 +1,3 @@
-/* ============================================================
-   AUTH — CSS REFACTORIZADO
-   Cambios: variables CSS, sin duplicados, sin !important innecesarios,
-   especificidad reducida, valores consolidados.
-   ============================================================ */
-
-/* ── Variables ── */
-:root {
-  --auth-border:        #dee2e6;
-  --auth-bg-input:      #f8f9fa;
-  --auth-bg-hover:      #e9ecef;
-  --auth-text-muted:    #495057;
-  --auth-text-dark:     #212529;
-  --auth-focus-ring:    rgba(13, 110, 253, 0.15);
-  --auth-focus-border:  #86b7fe;
-  --auth-radius:        0.5rem;
-  --auth-input-height:  52px;
-  --auth-input-pad:     0.9rem 1rem;
-  --auth-input-size:    1rem;
-}
-
-/* ============================================================
-   Wrapper y overlay
-   ============================================================ */
-.auth-wrapper {
-  min-height: 100vh;
-  position: relative;
-  padding: 80px 20px;
-}
-
-.auth-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
-}
-
-/* ============================================================
-   Tarjeta
-   ============================================================ */
-.auth-card {
-  background: #fff;
-  border-radius: 20px;
-  padding: 30px;                             /* FIX: 30px 30px → 30px */
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-  position: relative;
-  z-index: 1;
-  max-width: 500px;
-  width: 100%;
-  margin: 50px auto 0;                       /* FIX: unificado */
-}
-
-.auth-card-header h2 {
-  color: #1a1a1a;
-  font-size: 1.6rem;                         /* FIX: consolidado (antes 1.75 → 1.6 al final) */
-}
-
-.auth-card-header p {
-  font-size: 0.95rem;
-}
-
-/* ============================================================
-   Formulario — inputs y selects
-   ============================================================ */
-.auth-form .form-control,
-.auth-form .form-select,
-.auth-form .form-control-lg,
-.auth-form .form-select-lg {
-  padding: var(--auth-input-pad);
-  font-size: var(--auth-input-size);
-  min-height: var(--auth-input-height);
-  border: 1px solid var(--auth-border);
-  border-radius: 0.4rem;
-  background-color: #fff;
-  color: var(--auth-text-dark);
-}
-
-.auth-form .form-control:focus,
-.auth-form .form-select:focus {
-  box-shadow: 0 0 0 0.25rem var(--auth-focus-ring);
-  border-color: var(--auth-focus-border);
-  background-color: #fff;
-  color: var(--auth-text-dark);
-}
-
-/* ── Labels ── */
-.auth-form .form-label {
-  margin-bottom: 0.75rem;
-  font-size: 0.9rem;
-  color: #2c3e50;
-}
-
-/* ── Espaciado entre campos ── */
-/* FIX: eliminadas las 2-3 redefiniciones duplicadas */
-.auth-form .mb-3 { margin-bottom: 1.5rem; }
-.auth-form .mb-4 { margin-bottom: 2rem; }
-.auth-form .mb-5 { margin-bottom: 2.5rem; }
-.auth-form .mb-6 { margin-bottom: 5rem; }
-
-/* ── Grid gutters ── */
-/* FIX: una sola definición por clase */
-.auth-form .row.g-4 {
-  --bs-gutter-x: 1.5rem;
-  --bs-gutter-y: 1.5rem;
-}
-
-.auth-form .row.g-5 {
-  --bs-gutter-x: 2rem;
-  --bs-gutter-y: 3rem;
-}
-
-/* ── Padding de columnas ── */
-.auth-form .row .col-md-4,
-.auth-form .row .col-md-6 {
-  padding-inline: 0.75rem;                   /* shorthand de padding-left + padding-right */
-}
-
-/* ============================================================
-   Input group — borde unificado
-   ============================================================ */
-.auth-form .input-group {
-  border: 1px solid var(--auth-border);
-  border-radius: var(--auth-radius);
-  background-color: #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  transition: box-shadow 0.2s, border-color 0.2s;
-}
-
-.auth-form .input-group:focus-within {
-  box-shadow: 0 0 0 0.25rem var(--auth-focus-ring);
-  border-color: var(--auth-focus-border);
-}
-
-/* Cuando el input está dentro del grupo, el foco lo maneja el grupo */
-.auth-form .input-group .form-control:focus,
-.auth-form .input-group .form-select:focus {
-  box-shadow: none;
-  border-color: transparent;
-}
-
-/* Borders internos para unir elementos del grupo */
-.auth-form .input-group-text.border-end-0 { border-right: 0; }
-.auth-form .form-control.border-start-0   { border-left: 0; }
-.auth-form .form-control.border-end-0     { border-right: 0; }
-
-/* Inputs ocupan el ancho disponible */
-.auth-form .input-group .form-control,
-.auth-form .input-group .form-select {
-  flex: 1;
-  min-width: 0;
-}
-
-/* ── Input group text (icono izquierdo) ── */
-.auth-form .input-group-text {
-  padding: 0.75rem 1rem;
-  min-width: 45px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--auth-border);
-  background-color: var(--auth-bg-input);
-  color: var(--auth-text-muted);
-  font-size: 1rem;
-}
-
-.auth-form .input-group-text i,
-.auth-form .input-group .btn i {
-  color: var(--auth-text-muted);
-  font-size: 0.95rem;
-}
-
-/* ── Botón toggle password ── */
-.auth-form .input-group .btn,
-#togglePassword,
-#togglePasswordConfirmation {
-  min-height: var(--auth-input-height);
-  padding: 0.75rem 0.875rem;
-  min-width: 48px;
-  border: 1px solid var(--auth-border);
-  background-color: var(--auth-bg-input);
-  color: var(--auth-text-muted);
-  font-size: 1rem;
-  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
-}
-
-/* FIX: se elimina la doble regla btn + btn-outline-secondary con los mismos valores */
-.auth-form .input-group .btn:hover,
-#togglePassword:hover,
-#togglePasswordConfirmation:hover {
-  background-color: var(--auth-bg-hover);
-  border-color: #adb5bd;
-  color: var(--auth-text-dark);
-}
-
-/* ── ps-0 override ── */
-.auth-form .form-control.ps-0 {
-  padding-left: 0.5rem;
-}
-
-/* ============================================================
-   Input group XL (búsqueda u otros usos grandes)
-   ============================================================ */
-.input-group-xl > .form-control,
-.input-group-xl > .form-select,
-.form-control-xl,
-.form-select-xl {
-  padding: 1rem 1.25rem;
-  font-size: 1.05rem;
-  min-height: 60px;
-  border-radius: var(--auth-radius);
-}
-
-.input-group-xl > .input-group-text {
-  padding: 1rem 1.25rem;
-  font-size: 1.1rem;
-  min-height: 60px;
-}
-
-.input-group-xl {
-  border-radius: var(--auth-radius);
-}
-
-/* ============================================================
-   Botón principal
-   ============================================================ */
-.btn-auth {
-  font-size: 1rem;
-  border-radius: var(--auth-radius);
-  padding: 0.75rem 1.5rem;
-  letter-spacing: 0.3px;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.btn-auth:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(13, 110, 253, 0.4);
-}
-
-/* ============================================================
-   Responsive
-   ============================================================ */
-@media (max-width: 768px) {
-  .auth-card {
-    padding: 40px 28px;
-    max-width: 100%;
-  }
-
-  .auth-form .row.g-4 {
-    --bs-gutter-x: 1rem;
-    --bs-gutter-y: 2rem;
-  }
-
-  .auth-form .row.g-5 {
-    --bs-gutter-x: 1rem;
-    --bs-gutter-y: 2.5rem;
-  }
-}
-
-@media (max-width: 576px) {
-  .auth-card {
-    padding: 24px 18px;
-  }
-
-  .auth-card-header h2 {
-    font-size: 1.5rem;
-  }
-
-  .auth-form .form-control,
-  .auth-form .form-select,
-  .auth-form .form-control-lg,
-  .auth-form .form-select-lg {
-    font-size: 0.98rem;
-    padding: 0.85rem 0.95rem;
-    min-height: 48px;
-  }
-
-  .btn-auth {
-    font-size: 1.1rem;
-    padding: 18px 25px;                      /* FIX: sin !important */
-  }
-
-  .auth-form .input-group-text,
-  #togglePassword,
-  #togglePasswordConfirmation {
-    padding: 0.7rem 0.8rem;
-    min-width: 45px;
-  }
-}
-
 
 
 :root {
@@ -721,4 +431,324 @@
     .rg-title { font-size: 1.25rem; }
     .rg-nav-btns { flex-direction: column; gap: .7rem; }
     .rg-btn { width: 100%; justify-content: center; }
+}
+
+
+
+/*
+ * ═══════════════════════════════════════════════════════════════
+ * AUTH LOGIN — CSS PUENTE
+ * Mapea las clases auth-* del login al sistema rg-* del registro.
+ *
+ * NO modifica el HTML del login ni del registro.
+ * Solo añade aliases para que ambas vistas compartan
+ * la misma apariencia sin duplicar reglas.
+ *
+ * Incluir en el layout DESPUÉS del CSS principal:
+ *   <link rel="stylesheet" href="{{ asset('css/auth-bridge.css') }}">
+ * ═══════════════════════════════════════════════════════════════
+ */
+
+/* ══════════════════════════════════
+   VARIABLES — definidas aquí para
+   que auth-* las use aunque no estén
+   en :root del sistema principal
+══════════════════════════════════ */
+:root {
+    --auth-primary:      #145da0;
+    --auth-primary-l:    #2a81c2;
+    --auth-orange:       #ffa500;
+    --auth-orange-d:     #e59400;
+    --auth-radius:       10px;
+    --auth-border:       #d1dce8;
+    --auth-focus-border: #2a81c2;
+    --auth-focus-ring:   rgba(42, 129, 194, 0.14);
+    --auth-bg-input:     #f4f8fc;
+    --auth-bg-hover:     #e8f0f8;
+    --auth-text-dark:    #0f172a;
+    --auth-text-muted:   #94a3b8;
+    --auth-input-pad:    0.62rem 0.9rem 0.62rem 0.9rem;
+    --auth-input-size:   0.88rem;
+    --auth-input-height: 44px;
+}
+
+
+/* ══════════════════════════════════
+   WRAPPER + OVERLAY
+   auth-wrapper  →  rg-wrapper logic
+══════════════════════════════════ */
+.auth-wrapper {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 0 60px;
+    overflow: hidden;
+}
+
+.auth-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(13,35,80,0.82) 0%, rgba(20,93,160,0.72) 100%);
+    z-index: 0;
+    /* FIX: el blur añade profundidad como en rg-overlay */
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+}
+
+/* El container debe estar sobre el overlay */
+.auth-wrapper .container { position: relative; z-index: 1; }
+
+
+/* ══════════════════════════════════
+   CARD  →  rg-card
+══════════════════════════════════ */
+.auth-card {
+    background: #fff;
+    border-radius: 20px;                          /* = --rg-radius */
+    padding: 2.2rem 2.4rem 2rem;
+    box-shadow: 0 20px 60px rgba(20, 93, 160, 0.18); /* = --rg-shadow */
+    position: relative;
+    z-index: 1;
+    /* FIX Safari border-radius */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
+
+.auth-card-header { text-align: center; margin-bottom: 1.8rem; }
+
+.auth-card-header h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: .3rem;
+    letter-spacing: -.02em;
+}
+
+.auth-card-header p {
+    font-size: .88rem;
+    color: #94a3b8;
+    margin: 0;
+}
+
+
+/* ══════════════════════════════════
+   FORM INPUTS  →  rg-input estilo
+══════════════════════════════════ */
+.auth-form .form-control,
+.auth-form .form-select {
+    padding: .62rem .9rem;
+    font-size: .88rem;
+    min-height: var(--auth-input-height);
+    border: 1.5px solid var(--auth-border);
+    border-radius: var(--auth-radius);
+    background: #fff;
+    color: var(--auth-text-dark);
+    outline: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,.05);
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.auth-form .form-control::placeholder { color: var(--auth-text-muted); }
+
+.auth-form .form-control:focus,
+.auth-form .form-select:focus {
+    border-color: var(--auth-focus-border);
+    box-shadow: 0 0 0 3px var(--auth-focus-ring);
+    background: #fff;
+    color: var(--auth-text-dark);
+}
+
+.auth-form .form-control:hover:not(:focus),
+.auth-form .form-select:hover:not(:focus) {
+    border-color: #a8bdd4;
+}
+
+/* Labels */
+.auth-form .form-label {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    font-size: .8rem;
+    font-weight: 700;
+    color: var(--auth-text-dark);
+    margin-bottom: .35rem;
+}
+
+
+/* ══════════════════════════════════
+   INPUT GROUP  →  estilo rg-input-wrap
+══════════════════════════════════ */
+.auth-form .input-group {
+    border: 1.5px solid var(--auth-border);
+    border-radius: var(--auth-radius);
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,.05);
+    transition: border-color .2s ease, box-shadow .2s ease;
+    overflow: hidden;
+}
+
+.auth-form .input-group:focus-within {
+    border-color: var(--auth-focus-border);
+    box-shadow: 0 0 0 3px var(--auth-focus-ring);
+}
+
+/* Quitar bordes individuales dentro del grupo */
+.auth-form .input-group .form-control,
+.auth-form .input-group .form-select {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+}
+
+.auth-form .input-group .form-control:focus,
+.auth-form .input-group .form-select:focus {
+    border: none;
+    box-shadow: none;
+}
+
+/* Icono izquierdo */
+.auth-form .input-group-text {
+    background: var(--auth-bg-input);
+    border: none;
+    color: var(--auth-text-muted);
+    font-size: .88rem;
+    padding: 0 .9rem;
+    min-width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Botón toggle password */
+.auth-form .input-group .btn,
+#togglePassword,
+#togglePasswordConfirmation {
+    background: var(--auth-bg-input);
+    border: none;
+    color: var(--auth-text-muted);
+    font-size: .88rem;
+    padding: 0 .9rem;
+    min-height: var(--auth-input-height);
+    transition: color .2s ease, background .2s ease;
+}
+
+.auth-form .input-group .btn:hover,
+#togglePassword:hover,
+#togglePasswordConfirmation:hover {
+    background: var(--auth-bg-hover);
+    color: var(--auth-primary);
+}
+
+
+/* ══════════════════════════════════
+   BOTÓN SUBMIT  →  rg-btn-next / rg-btn-submit
+══════════════════════════════════ */
+.btn-auth {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+    padding: .7rem 1.5rem;
+    border-radius: 50px;
+    font-size: .9rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    width: 100%;
+    transition: all .25s ease;
+    letter-spacing: .01em;
+
+    /* Gradiente azul = rg-btn-next */
+    background: linear-gradient(135deg, var(--auth-primary), var(--auth-primary-l));
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(20, 93, 160, 0.30);
+}
+
+.btn-auth:hover {
+    box-shadow: 0 6px 18px rgba(20, 93, 160, 0.40);
+    transform: translateY(-2px);
+    color: #fff;
+}
+
+/* btn-primary genérico dentro de auth → mismo gradiente */
+.auth-card .btn-primary,
+.auth-wrapper .btn-primary {
+    background: linear-gradient(135deg, var(--auth-primary), var(--auth-primary-l));
+    border: none;
+    border-radius: 50px;
+    font-weight: 700;
+    box-shadow: 0 4px 14px rgba(20, 93, 160, 0.28);
+    transition: all .25s ease;
+}
+.auth-card .btn-primary:hover,
+.auth-wrapper .btn-primary:hover {
+    box-shadow: 0 6px 18px rgba(20, 93, 160, 0.38);
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #0f4a85, var(--auth-primary));
+}
+
+
+/* ══════════════════════════════════
+   LINK OLVIDÉ CONTRASEÑA
+══════════════════════════════════ */
+.auth-form .text-primary {
+    color: var(--auth-primary) !important;
+    font-weight: 700;
+    transition: color .2s ease;
+}
+.auth-form .text-primary:hover { color: var(--auth-primary-l) !important; }
+
+
+/* ══════════════════════════════════
+   ESTADO: YA AUTENTICADO
+   alert alert-info  →  rg-card estilo
+══════════════════════════════════ */
+.auth-card .alert-info {
+    background: rgba(20, 93, 160, 0.06);
+    border: 1.5px solid rgba(20, 93, 160, 0.15);
+    border-radius: var(--auth-radius);
+    color: #0f172a;
+}
+
+.auth-card .alert-info .bi-check-circle-fill {
+    color: #16a34a;
+}
+
+/* Ícono grande en el estado autenticado */
+.auth-card .alert-info [style*="font-size: 3rem"] {
+    /* FIX: quitar style inline — aplicar via clase si es posible,
+       aquí lo sobreescribimos por si acaso */
+    font-size: 3rem;
+}
+
+
+/* ══════════════════════════════════
+   ERRORES BLADE ($errors)
+   Mismo estilo que rg-alert-error
+══════════════════════════════════ */
+.auth-form ~ .alert-danger,
+.auth-card .alert-danger {
+    background: rgba(220, 38, 38, 0.07);
+    border: 1.5px solid rgba(220, 38, 38, 0.20);
+    border-radius: var(--auth-radius);
+    color: #dc2626;
+    font-size: .85rem;
+    padding: .85rem 1rem;
+}
+
+
+/* ══════════════════════════════════
+   RESPONSIVE  (un solo bloque limpio)
+══════════════════════════════════ */
+@media (max-width: 767px) {
+    .auth-wrapper { padding: 90px 0 40px; }
+    .auth-card    { padding: 1.6rem 1.4rem 1.5rem; }
+}
+
+@media (max-width: 480px) {
+    .auth-card               { padding: 1.3rem 1rem 1.2rem; }
+    .auth-card-header h2     { font-size: 1.25rem; }
+    .btn-auth                { font-size: .88rem; padding: .65rem 1.2rem; }
 }

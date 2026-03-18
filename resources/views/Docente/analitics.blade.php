@@ -1,196 +1,184 @@
+
 @extends('estudiante.index')
 
 @section('content')
-<div class="container py-4 " style="margin-top: 12%">
-    <div class="row">
-        <div class="col-12 mb-4">
-            <h3 class="text-primary">
-                <i class="bi bi-journal-text me-2"></i>Mis Cursos Asignados
-            </h3>
-            <p class="text-muted">Gestiona y visualiza los cursos donde eres docente</p>
-        </div>
-    </div>
 
-    <div class="row g-4">
-        @forelse ($cursos2 as $curso)
-            @if (auth()->user()->id == $curso->docente_id)
-                @php
-                    $estadisticas = $curso->obtenerEstadisticasProgreso();
-                @endphp
-                <div class="col-12 col-md-6 col-xl-4">
-                    <div class="card h-100 shadow-sm border-0 hover-zoom position-relative overflow-hidden">
-                        <!-- Indicador de estado -->
-                        <div class="position-absolute top-0 end-0 m-3">
-                            <span class="badge bg-{{ $curso->estado == 'activo' ? 'success' : 'warning' }} rounded-pill">
-                                <i class="bi bi-circle-fill me-1 small"></i>
-                                {{ ucfirst($curso->estado ?? 'En proceso') }}
-                            </span>
-                        </div>
 
-                        <div class="card-body p-4">
-                            <div class="d-flex align-items-center mb-3">
-                                <!-- Icono del curso con fondo dinámico -->
-                                <div class="course-icon me-3">
-                                    <i class="bi bi-journal-text display-6 text-primary"></i>
-                                </div>
 
-                                <div class="flex-grow-1">
-                                    <h5 class="card-title mb-1 text-dark">{{ $curso->nombreCurso }}</h5>
-                                    <p class="card-text text-muted mb-0">
-                                        <i class="bi bi-person-video3 me-1"></i>
-                                        Docente: {{ auth()->user()->name }}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <!-- Estadísticas del curso -->
-                            <div class="row g-2 mb-3">
-                                <div class="col-6">
-                                    <div class="p-2 rounded bg-light">
-                                        <div class="d-flex align-items-center">
-                                            <i class="bi bi-people text-primary me-2"></i>
-                                            <div>
-                                                <span class="d-block">{{ $estadisticas['estudiantes_total'] }} Estudiantes</span>
-                                                <small class="text-muted">
-                                                    {{ $estadisticas['estudiantes_completados'] }} completados
-                                                </small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="p-2 rounded bg-light">
-                                        <div class="d-flex align-items-center">
-                                            <i class="bi bi-calendar-event text-primary me-2"></i>
-                                            <div>
-                                                <span class="d-block">{{ $curso->fecha_fin ? \Carbon\Carbon::parse($curso->fecha_fin)->format('d/m/Y') : 'Sin fecha' }}</span>
-                                                <small class="text-muted">Fecha límite</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Estado de los estudiantes -->
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <small class="text-muted">Estado de estudiantes</small>
-                                <div>
-                                        <span class="badge bg-success me-1" title="Completados">
-                                            {{ $estadisticas['estudiantes_completados'] }}
-                                        </span>
-                                        <span class="badge bg-primary me-1" title="En progreso">
-                                            {{ $estadisticas['estudiantes_en_progreso'] }}
-                                        </span>
-                                        <span class="badge bg-secondary" title="Sin iniciar">
-                                            {{ $estadisticas['estudiantes_sin_iniciar'] }}
-                                        </span>
-                                    </div>
-                                </div>
-                                </div>
-
-                            <!-- Barra de progreso -->
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between mb-1">
-                                    <small class="text-muted">Progreso general del curso</small>
-                                    <small class="text-primary">{{ $estadisticas['porcentaje_total'] }}%</small>
-                                </div>
-                                <div class="progress" style="height: 6px;">
-                                    <div class="progress-bar bg-primary" role="progressbar"
-                                         style="width: {{ $estadisticas['porcentaje_total'] }}%"
-                                         aria-valuenow="{{ $estadisticas['porcentaje_total'] }}"
-                                         aria-valuemin="0"
-                                         aria-valuemax="100">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Botón de acción -->
-                            <a href="{{ route('rfc', encrypt($curso->id)) }}" class="btn btn-primary w-100">
-                                <i class="bi bi-eye me-2"></i>Ver Detalles
-                            </a>
-                        </div>
+<div class="sm-wrap">
+    <div class="container sm-container">
+        <div class="sm-hero">
+            <div class="sm-hero-overlay"></div>
+            <div class="sm-hero-body">
+                <div>
+                    <div class="sm-hero-eyebrow">
+                        <i class="bi bi-person-video3"></i> Panel Docente
                     </div>
+                    <h2 class="sm-hero-title">Mis Cursos Asignados</h2>
+                    <p class="sm-hero-sub">Gestiona y visualiza los cursos donde eres docente</p>
                 </div>
-            @endif
-        @empty
-            <div class="col-12">
-                <div class="alert alert-info d-flex align-items-center">
-                    <i class="bi bi-info-circle-fill fs-4 me-3"></i>
-                    <div>
-                        <h5 class="mb-1">No hay cursos asignados</h5>
-                        <p class="mb-0">Actualmente no tienes ningún curso asignado como docente.</p>
-                    </div>
+                {{-- Totales rápidos --}}
+                @php
+                    $totalCursos = $cursos2->where('docente_id', auth()->user()->id)->count();
+                @endphp
+                <div class="sm-hero-count">
+                    <span class="sm-hero-count-num">{{ $totalCursos }}</span>
+                    <span class="sm-hero-count-lbl">
+                        curso{{ $totalCursos !== 1 ? 's' : '' }} asignado{{ $totalCursos !== 1 ? 's' : '' }}
+                    </span>
                 </div>
             </div>
-        @endforelse
+        </div>
+
+        {{-- ╔══════════════════════════════════════╗
+             ║  GRID DE CURSOS                     ║
+             ╚══════════════════════════════════════╝ --}}
+        <div class="sm-grid">
+
+            @forelse($cursos2 as $curso)
+            @if(auth()->user()->id == $curso->docente_id)
+            @php
+                $est      = $curso->obtenerEstadisticasProgreso();
+                $pct      = $est['porcentaje_total'] ?? 0;
+                $activo   = strtolower($curso->estado ?? '') === 'activo';
+                $fechaFin = $curso->fecha_fin
+                    ? \Carbon\Carbon::parse($curso->fecha_fin)->format('d/m/Y')
+                    : 'Sin fecha';
+
+                // Color de progreso según porcentaje
+                $pctColor = $pct >= 75 ? 'green' : ($pct >= 40 ? 'blue' : 'orange');
+            @endphp
+
+            <div class="sm-card" data-aos="fade-up">
+
+                {{-- Badge estado --}}
+                <div class="sm-card-status">
+                    <span class="sm-badge {{ $activo ? 'sm-badge--green' : 'sm-badge--orange' }}">
+                        <i class="bi bi-circle-fill sm-badge-dot"></i>
+                        {{ ucfirst($curso->estado ?? 'En proceso') }}
+                    </span>
+                </div>
+
+                {{-- Header de la card --}}
+                <div class="sm-card-head">
+                    <div class="sm-card-icon">
+                        <i class="bi bi-journal-text"></i>
+                    </div>
+                    <div class="sm-card-head-info">
+                        <h5 class="sm-card-title">{{ $curso->nombreCurso }}</h5>
+                        <p class="sm-card-docente">
+                            <i class="bi bi-person-circle me-1"></i>
+                            {{ auth()->user()->name }} {{ auth()->user()->lastname1 }}
+                        </p>
+                    </div>
+                </div>
+
+                {{-- Stats 2 columnas --}}
+                <div class="sm-card-stats">
+                    <div class="sm-stat-box">
+                        <div class="sm-stat-box-icon">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                        <div>
+                            <div class="sm-stat-box-num">{{ $est['estudiantes_total'] }}</div>
+                            <div class="sm-stat-box-lbl">Estudiantes</div>
+                            <div class="sm-stat-box-sub">{{ $est['estudiantes_completados'] }} completados</div>
+                        </div>
+                    </div>
+                    <div class="sm-stat-box">
+                        <div class="sm-stat-box-icon sm-stat-box-icon--orange">
+                            <i class="bi bi-calendar-event-fill"></i>
+                        </div>
+                        <div>
+                            <div class="sm-stat-box-num">{{ $fechaFin }}</div>
+                            <div class="sm-stat-box-lbl">Fecha límite</div>
+                            <div class="sm-stat-box-sub">&nbsp;</div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Estado de estudiantes: pills --}}
+                <div class="sm-card-pills-wrap">
+                    <span class="sm-card-pills-label">Estado de estudiantes</span>
+                    <div class="sm-card-pills">
+                        <span class="sm-pill sm-pill--green"
+                              title="Completados"
+                              data-bs-toggle="tooltip">
+                            <i class="bi bi-check-circle-fill"></i>
+                            {{ $est['estudiantes_completados'] }}
+                        </span>
+                        <span class="sm-pill sm-pill--blue"
+                              title="En progreso"
+                              data-bs-toggle="tooltip">
+                            <i class="bi bi-arrow-repeat"></i>
+                            {{ $est['estudiantes_en_progreso'] }}
+                        </span>
+                        <span class="sm-pill sm-pill--gray"
+                              title="Sin iniciar"
+                              data-bs-toggle="tooltip">
+                            <i class="bi bi-hourglass"></i>
+                            {{ $est['estudiantes_sin_iniciar'] }}
+                        </span>
+                    </div>
+                </div>
+
+                {{-- Barra de progreso --}}
+                <div class="sm-progress-wrap">
+                    <div class="sm-progress-top">
+                        <span class="sm-progress-label">Progreso general</span>
+                        <span class="sm-progress-pct sm-progress-pct--{{ $pctColor }}">{{ $pct }}%</span>
+                    </div>
+                    <div class="sm-progress-track">
+                        <div class="sm-progress-fill sm-progress-fill--{{ $pctColor }}"
+                             data-width="{{ $pct }}"></div>
+                    </div>
+                </div>
+
+                {{-- CTA --}}
+                <a href="{{ route('rfc', encrypt($curso->id)) }}"
+                   class="cc-btn cc-btn-primary sm-card-btn">
+                    <i class="bi bi-eye-fill me-2"></i>Ver Detalles
+                </a>
+
+            </div>
+            @endif
+            @empty
+
+            {{-- Estado vacío --}}
+            <div class="sm-empty">
+                <div class="sm-empty-icon"><i class="bi bi-journal-x"></i></div>
+                <h4 class="sm-empty-title">No hay cursos asignados</h4>
+                <p class="sm-empty-sub">
+                    Actualmente no tienes ningún curso asignado como docente.
+                </p>
+            </div>
+
+            @endforelse
+
+        </div>{{-- /sm-grid --}}
     </div>
 </div>
 
-<style>
-/* Estilos para las tarjetas */
-.hover-zoom {
-    transition: all 0.3s ease;
-}
-
-.hover-zoom:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-}
-
-.course-icon {
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-    background: rgba(var(--bs-primary-rgb), 0.1);
-}
-
-/* Animación para los badges */
-.badge {
-    animation: fadeInRight 0.5s ease-out;
-    cursor: help;
-}
-
-@keyframes fadeInRight {
-    from {
-        opacity: 0;
-        transform: translateX(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-/* Estilos para las estadísticas */
-.bg-light {
-    transition: background-color 0.3s ease;
-}
-
-.bg-light:hover {
-    background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
-}
-
-/* Estilo para el mensaje de no cursos */
-.alert-info {
-    border-left: 4px solid var(--bs-primary);
-}
-</style>
-
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar tooltips para los badges
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-});
-</script>
-@endpush
-
 @endsection
 
+
+<script>
+(function () {
+    document.addEventListener('DOMContentLoaded', function () {
+
+        /* ── 1. Animar barras de progreso ── */
+        document.querySelectorAll('.sm-progress-fill').forEach(bar => {
+            const w = bar.getAttribute('data-width') || '0';
+            requestAnimationFrame(() =>
+                setTimeout(() => { bar.style.width = w + '%'; }, 80)
+            );
+        });
+
+        /* ── 2. Tooltips Bootstrap en pills ── */
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+            new bootstrap.Tooltip(el, { placement: 'top', trigger: 'hover' });
+        });
+
+    });
+})();
+</script>

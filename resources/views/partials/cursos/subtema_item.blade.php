@@ -1,8 +1,6 @@
 <div class="si-wrap">
 
-    {{-- ╔══════════════════════════════════════════╗
-         ║  CABECERA DEL SUBTEMA                   ║
-         ╚══════════════════════════════════════════╝ --}}
+
     <div class="si-header">
 
         {{-- Imagen hero (si existe) --}}
@@ -64,7 +62,6 @@
 
     </div>{{-- /si-header --}}
 
-
     {{-- ╔══════════════════════════════════════════╗
          ║  RECURSOS DE APRENDIZAJE                ║
          ╚══════════════════════════════════════════╝ --}}
@@ -72,7 +69,7 @@
         <div class="si-section-header">
             <div class="si-section-title">
                 <div class="si-section-icon">
-                    <i class="bi bi-folder2-open-fill"></i>
+                    <i class="bi bi-folder-open"></i>
                 </div>
                 <div>
                     <h3 class="si-section-name">Recursos de Aprendizaje</h3>
@@ -392,15 +389,9 @@
 </div>{{-- /si-wrap --}}
 
 
-{{-- ╔══════════════════════════════════════════════════════════╗
-     ║  MODALES — fuera del loop, al final del partial        ║
-     ║  FIX 6: modales de recurso ya no están anidados        ║
-     ║  dentro del @forelse de recursos                       ║
-     ╚══════════════════════════════════════════════════════════╝ --}}
 
-{{-- ── Modal: Editar Subtema ── --}}
 <div class="modal fade" id="modalEditarSubtema-{{ $subtema->id }}" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <form method="POST" action="{{ route('subtemas.update', encrypt($subtema->id)) }}"
             enctype="multipart/form-data">
             @csrf @method('PUT')
@@ -413,10 +404,10 @@
                     </div>
                     <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body p-4">
-                    <div class="row g-3">
-                        <div class="col-md-8">
-                            <div class="cc-field">
+                <div class="modal-body p-3">
+                    <div class="row g-2">
+                        <div class="col-12">
+                            <div class="cc-field mb-2">
                                 <label class="cc-label">Título del Subtema <span class="cc-req">*</span></label>
                                 <div class="cc-input-wrap">
                                     <i class="bi bi-type cc-input-icon"></i>
@@ -424,21 +415,23 @@
                                         value="{{ $subtema->titulo_subtema }}" required>
                                 </div>
                             </div>
-                            <div class="cc-field">
+                        </div>
+                        <div class="col-12">
+                            <div class="cc-field mb-2">
                                 <label class="cc-label">Descripción</label>
-                                <textarea class="cc-input cc-textarea" name="descripcion" rows="4"
-                                    placeholder="Describe el contenido del subtema...">{{ $subtema->descripcion }}</textarea>
+                                <textarea class="cc-input cc-textarea" name="descripcion" rows="3"
+                                    placeholder="Describe el contenido del subtema..." style="min-height:70px">{{ $subtema->descripcion }}</textarea>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="cc-field">
+                        <div class="col-12">
+                            <div class="cc-field mb-0">
                                 <label class="cc-label">Imagen del Subtema</label>
                                 @if ($subtema->imagen)
                                     <img src="{{ asset('storage/' . $subtema->imagen) }}" class="cc-img-preview mb-2"
-                                        alt="Imagen actual">
-                                    <small class="text-muted d-block mb-2">Imagen actual</small>
+                                        alt="Imagen actual" style="max-height:120px;width:auto">
+                                    <small class="text-muted d-block mb-1">Imagen actual</small>
                                 @else
-                                    <div class="cc-img-placeholder mb-2">
+                                    <div class="cc-img-placeholder mb-2" style="padding:.8rem">
                                         <i class="bi bi-image"></i><span>Sin imagen</span>
                                     </div>
                                 @endif
@@ -461,7 +454,7 @@
 
 {{-- ── Modal: Agregar Actividad ── --}}
 <div class="modal fade" id="modalActividad-{{ $subtema->id }}" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <form method="POST" action="{{ route('actividades.store', encrypt($cursos->id)) }}"
             enctype="multipart/form-data">
             @csrf
@@ -475,8 +468,8 @@
                     </div>
                     <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body p-4">
-                    <div class="row g-3">
+                <div class="modal-body p-3">
+                    <div class="row g-2">
                         <div class="col-12">
                             <div class="cc-field">
                                 <label class="cc-label">Título <span class="cc-req">*</span></label>
@@ -520,38 +513,24 @@
                                 <small class="text-muted" style="font-size:.75rem">Máx. 10MB</small>
                             </div>
                         </div>
-                        {{-- Tipos de evaluación --}}
+                        {{-- Tipo de evaluación (único) --}}
                         <div class="col-12">
                             <div class="cc-field">
-                                <label class="cc-label">Tipos de Evaluación <span class="cc-req">*</span></label>
-                                <div class="si-eval-container" id="siEvalCreate-{{ $subtema->id }}">
-                                    <div class="si-eval-row" data-index="0">
-                                        <select name="tipos_evaluacion[0][tipo_evaluacion_id]" class="cc-input"
-                                            required>
-                                            <option value="" disabled selected>Tipo de evaluación</option>
-                                            @foreach ($tiposEvaluaciones as $te)
-                                                <option value="{{ $te->id }}">{{ $te->nombre }}</option>
-                                            @endforeach
-                                        </select>
-                                        <input type="number" name="tipos_evaluacion[0][puntaje_maximo]"
-                                            class="cc-input si-puntaje-input" placeholder="Puntaje" value="100"
-                                            min="1" max="1000" required>
-                                        <select name="tipos_evaluacion[0][es_obligatorio]" class="cc-input" required>
-                                            <option value="1">Obligatorio</option>
-                                            <option value="0">Opcional</option>
-                                        </select>
-                                        <button type="button"
-                                            class="cc-btn cc-btn-sm cc-btn-icon cc-btn-icon--danger si-remove-eval">
-                                            <i class="bi bi-trash3-fill"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <button type="button" class="cc-btn cc-btn-sm cc-btn-outline-edit si-add-eval mt-2"
-                                    data-container="siEvalCreate-{{ $subtema->id }}">
-                                    <i class="bi bi-plus-circle-fill me-1"></i>Agregar tipo
-                                </button>
-                                <div class="si-puntaje-total mt-2">
-                                    Puntaje total: <strong class="si-total-val">100</strong> pts
+                                <label class="cc-label">Tipo de Evaluación <span class="cc-req">*</span></label>
+                                <div class="si-eval-row">
+                                    <select name="tipos_evaluacion[0][tipo_evaluacion_id]" class="cc-input" required>
+                                        <option value="" disabled selected>Tipo de evaluación</option>
+                                        @foreach ($tiposEvaluaciones as $te)
+                                            <option value="{{ $te->id }}">{{ $te->nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                    <input type="number" name="tipos_evaluacion[0][puntaje_maximo]"
+                                        class="cc-input si-puntaje-input" placeholder="Puntaje" value="100"
+                                        min="1" max="1000" required>
+                                    <select name="tipos_evaluacion[0][es_obligatorio]" class="cc-input" required>
+                                        <option value="1">Obligatorio</option>
+                                        <option value="0">Opcional</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -570,7 +549,7 @@
 
 {{-- ── Modal: Agregar Recurso ── --}}
 <div class="modal fade" id="modalRecurso-{{ $subtema->id }}" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <form method="POST" action="{{ route('CrearRecursosSubtemaPost', encrypt($subtema->id)) }}"
             enctype="multipart/form-data" class="si-recurso-form">
             @csrf
@@ -583,8 +562,8 @@
                     </div>
                     <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body p-4">
-                    <div class="row g-3">
+                <div class="modal-body p-3">
+                    <div class="row g-2">
                         <div class="col-md-6">
                             <div class="cc-field">
                                 <label class="cc-label">Título del Recurso <span class="cc-req">*</span></label>
@@ -655,7 +634,7 @@
 
 @foreach ($subtema->recursos as $recurso)
     <div class="modal fade" id="modalEditarRecurso-{{ $recurso->id }}" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <form method="POST" action="{{ route('editarRecursosSubtemaPost', encrypt($recurso->id)) }}"
                 enctype="multipart/form-data">
                 @csrf @method('PUT')
@@ -668,8 +647,8 @@
                         </div>
                         <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal"></button>
                     </div>
-                    <div class="modal-body p-4">
-                        <div class="row g-3">
+                    <div class="modal-body p-3">
+                        <div class="row g-2">
                             <div class="col-md-6">
                                 <div class="cc-field">
                                     <label class="cc-label">Título <span class="cc-req">*</span></label>
@@ -735,7 +714,7 @@
 @foreach ($subtema->actividades as $actividad)
     {{-- Modal editar actividad --}}
     <div class="modal fade" id="modalEditarActividad-{{ $actividad->id }}" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <form method="POST" action="{{ route('actividades.update', encrypt($actividad->id)) }}"
                 enctype="multipart/form-data">
                 @csrf @method('PUT')
@@ -748,8 +727,8 @@
                         </div>
                         <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal"></button>
                     </div>
-                    <div class="modal-body p-4">
-                        <div class="row g-3">
+                    <div class="modal-body p-3">
+                        <div class="row g-2">
                             <div class="col-12">
                                 <div class="cc-field">
                                     <label class="cc-label">Título <span class="cc-req">*</span></label>
@@ -805,78 +784,33 @@
                                     <small class="text-muted" style="font-size:.74rem">Máx. 10MB</small>
                                 </div>
                             </div>
-                            {{-- Tipos de evaluación --}}
+                            {{-- Tipo de evaluación (único) --}}
                             <div class="col-12">
                                 <div class="cc-field">
-                                    <label class="cc-label">Tipos de Evaluación <span class="cc-req">*</span></label>
-                                    <div class="si-eval-container" id="siEvalEdit-{{ $actividad->id }}">
-                                        @if ($actividad->tiposEvaluacion && $actividad->tiposEvaluacion->count() > 0)
-                                            @foreach ($actividad->tiposEvaluacion as $idx => $te)
-                                                <div class="si-eval-row" data-index="{{ $idx }}">
-                                                    <select
-                                                        name="tipos_evaluacion[{{ $idx }}][tipo_evaluacion_id]"
-                                                        class="cc-input" required>
-                                                        <option value="">Tipo...</option>
-                                                        @foreach ($tiposEvaluaciones as $t)
-                                                            <option value="{{ $t->id }}"
-                                                                {{ old("tipos_evaluacion.{$idx}.tipo_evaluacion_id", $te->id) == $t->id ? 'selected' : '' }}>
-                                                                {{ $t->nombre }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                    <input type="number"
-                                                        name="tipos_evaluacion[{{ $idx }}][puntaje_maximo]"
-                                                        class="cc-input si-puntaje-input"
-                                                        value="{{ old("tipos_evaluacion.{$idx}.puntaje_maximo", $te->pivot->puntaje_maximo) }}"
-                                                        min="1" max="1000" placeholder="Pts" required>
-                                                    <select
-                                                        name="tipos_evaluacion[{{ $idx }}][es_obligatorio]"
-                                                        class="cc-input" required>
-                                                        <option value="1"
-                                                            {{ old("tipos_evaluacion.{$idx}.es_obligatorio", $te->pivot->es_obligatorio) == 1 ? 'selected' : '' }}>
-                                                            Obligatorio</option>
-                                                        <option value="0"
-                                                            {{ old("tipos_evaluacion.{$idx}.es_obligatorio", $te->pivot->es_obligatorio) == 0 ? 'selected' : '' }}>
-                                                            Opcional</option>
-                                                    </select>
-                                                    <button type="button"
-                                                        class="cc-btn cc-btn-sm cc-btn-icon cc-btn-icon--danger si-remove-eval">
-                                                        <i class="bi bi-trash3-fill"></i>
-                                                    </button>
-                                                </div>
+                                    <label class="cc-label">Tipo de Evaluación <span class="cc-req">*</span></label>
+                                    @php $te = $actividad->tiposEvaluacion->first(); @endphp
+                                    <div class="si-eval-row">
+                                        <select name="tipos_evaluacion[0][tipo_evaluacion_id]" class="cc-input" required>
+                                            <option value="">Tipo...</option>
+                                            @foreach ($tiposEvaluaciones as $t)
+                                                <option value="{{ $t->id }}"
+                                                    {{ old('tipos_evaluacion.0.tipo_evaluacion_id', $te?->id) == $t->id ? 'selected' : '' }}>
+                                                    {{ $t->nombre }}
+                                                </option>
                                             @endforeach
-                                        @else
-                                            <div class="si-eval-row" data-index="0">
-                                                <select name="tipos_evaluacion[0][tipo_evaluacion_id]"
-                                                    class="cc-input" required>
-                                                    <option value="">Tipo...</option>
-                                                    @foreach ($tiposEvaluaciones as $t)
-                                                        <option value="{{ $t->id }}">{{ $t->nombre }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                                <input type="number" name="tipos_evaluacion[0][puntaje_maximo]"
-                                                    class="cc-input si-puntaje-input" value="100" min="1"
-                                                    max="1000" placeholder="Pts" required>
-                                                <select name="tipos_evaluacion[0][es_obligatorio]" class="cc-input"
-                                                    required>
-                                                    <option value="1">Obligatorio</option>
-                                                    <option value="0">Opcional</option>
-                                                </select>
-                                                <button type="button"
-                                                    class="cc-btn cc-btn-sm cc-btn-icon cc-btn-icon--danger si-remove-eval">
-                                                    <i class="bi bi-trash3-fill"></i>
-                                                </button>
-                                            </div>
-                                        @endif
-                                    </div>
-                                    <button type="button"
-                                        class="cc-btn cc-btn-sm cc-btn-outline-edit si-add-eval mt-2"
-                                        data-container="siEvalEdit-{{ $actividad->id }}">
-                                        <i class="bi bi-plus-circle-fill me-1"></i>Agregar tipo
-                                    </button>
-                                    <div class="si-puntaje-total mt-2">
-                                        Puntaje total: <strong class="si-total-val">0</strong> pts
+                                        </select>
+                                        <input type="number" name="tipos_evaluacion[0][puntaje_maximo]"
+                                            class="cc-input si-puntaje-input"
+                                            value="{{ old('tipos_evaluacion.0.puntaje_maximo', $te?->pivot?->puntaje_maximo ?? 100) }}"
+                                            min="1" max="1000" placeholder="Pts" required>
+                                        <select name="tipos_evaluacion[0][es_obligatorio]" class="cc-input" required>
+                                            <option value="1"
+                                                {{ old('tipos_evaluacion.0.es_obligatorio', $te?->pivot?->es_obligatorio) == 1 ? 'selected' : '' }}>
+                                                Obligatorio</option>
+                                            <option value="0"
+                                                {{ old('tipos_evaluacion.0.es_obligatorio', $te?->pivot?->es_obligatorio) == 0 ? 'selected' : '' }}>
+                                                Opcional</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>

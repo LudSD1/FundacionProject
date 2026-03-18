@@ -5,6 +5,7 @@ html {
 body {
     font-family: "Montserrat", sans-serif;
     color: #585a61;
+    padding-top: var(--body-padding);
 }
 
 input,

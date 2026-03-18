@@ -12,7 +12,7 @@
     };
 </script>
 
-<div class="cv2-wrap" style="margin-top: 8% ">
+<div class="cv2-wrap">
     <div class="container-fluid cv2-container">
 
         {{-- ╔══════════════════════════════════════╗

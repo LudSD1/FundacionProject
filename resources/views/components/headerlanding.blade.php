@@ -28,69 +28,17 @@
                     <nav>
                         <ul class="hd-nav-list">
                             @auth
-                                <li>
-                                    <a class="hd-btn hd-btn-ghost" href="{{ route('Inicio') }}">
-                                        <i class="bi bi-book me-1"></i>Mi aprendizaje
-                                    </a>
-                                </li>
-                                <li class="dropdown">
-                                    <a class="hd-user-toggle" href="#" data-bs-toggle="dropdown"
-                                        aria-expanded="false">
-                                        <div class="hd-avatar">
-                                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                                        </div>
-                                        <span class="hd-user-name">{{ Auth::user()->name }}</span>
-                                        <i class="bi bi-chevron-down hd-chevron"></i>
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end hd-dropdown">
-                                        <li>
-                                            <div class="hd-dd-header">
-                                                <div class="hd-avatar hd-avatar-sm">
-                                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                                                </div>
-                                                <div>
-                                                    <div class="hd-dd-name">{{ Auth::user()->name }}</div>
-                                                    <div class="hd-dd-email">{{ Auth::user()->email }}</div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <hr class="dropdown-divider my-1">
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item hd-dd-item"
-                                                href="{{ route('perfil', Auth::user()->id) }}">
-                                                <i class="bi bi-person-circle"></i> Mi perfil
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item hd-dd-item" href="{{ route('Inicio') }}">
-                                                <i class="bi bi-book"></i> Mi aprendizaje
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <hr class="dropdown-divider my-1">
-                                        </li>
-                                        <li>
-                                            <form method="POST" action="{{ route('logout') }}">
-                                                @csrf
-                                                <button type="submit" class="dropdown-item hd-dd-item hd-dd-danger">
-                                                    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
-                                                </button>
-                                            </form>
-                                        </li>
-                                    </ul>
-                                </li>
+
                             @else
                                 @if (Route::is('login'))
                                     <li>
-                                        <a class="hd-btn hd-btn-ghost" href="{{ route('signin') }}">
+                                        <a class="hd-btn hd-btn-primary" href="{{ route('signin') }}">
                                             <i class="bi bi-person-plus me-1"></i>Crear cuenta
                                         </a>
                                     </li>
                                 @else
                                     <li>
-                                        <a class="hd-btn hd-btn-ghost" href="{{ route('login.signin') }}">
+                                        <a class="hd-btn hd-btn-primary" href="{{ route('login.signin') }}">
                                             <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión
                                         </a>
                                     </li>
@@ -287,9 +235,6 @@
                             <a class="auth-user-menu-item" href="{{ route('Miperfil') }}">
                                 <i class="bi bi-person"></i><span>Mi perfil</span>
                             </a>
-                            <a class="auth-user-menu-item" href="#">
-                                <i class="bi bi-bell"></i><span>Notificaciones</span>
-                            </a>
                             <hr class="auth-user-divider">
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -384,7 +329,7 @@
             item.addEventListener('click', function() {
                 this.classList.remove('unread');
             });
-        });  
+        });
 
     })();
 </script>

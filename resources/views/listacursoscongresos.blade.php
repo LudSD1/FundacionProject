@@ -3,7 +3,7 @@
 
 @section('main')
 
-{{-- ── HERO SECTION ────────────────────────────── --}}
+
 <section class="search-hero-section">
 
     {{-- Decoración de fondo --}}
@@ -393,7 +393,7 @@
         // ── Auto-scroll a resultados si hay búsqueda o filtros ──
         const urlParams = new URLSearchParams(window.location.search);
         const hasFilters = urlParams.has('search') || urlParams.has('type') || urlParams.has('categoria') || urlParams.has('sort');
-        
+
         if (hasFilters) {
             const resultsSection = document.getElementById('courses-results');
             if (resultsSection) {

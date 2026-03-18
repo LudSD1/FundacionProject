@@ -1,5 +1,11 @@
 body {
 	font-family: Montserrat, sans-serif;
+	font-size: 14.5px;
+}
+
+/* En pantallas grandes, reducir un poco más */
+@media (min-width: 1400px) {
+	body { font-size: 14px; }
 }
 .main-content {
 	flex: 1;

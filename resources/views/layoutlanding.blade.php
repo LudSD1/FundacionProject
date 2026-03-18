@@ -23,9 +23,16 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body>
+<style>
+    :root {
+        --body-padding: {{ Auth::check() ? '125px' : '0px' }};
+    }
+</style>
+
+<body >
 
     @include('components.headerlanding')
+
 
     @yield('hero')
     @yield('main')
