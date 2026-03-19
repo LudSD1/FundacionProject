@@ -11,6 +11,7 @@ class CursoImagenController extends Controller
 {
     public function index(Cursos $curso)
     {
+        
 
         return view('Cursos.ImagenesCursos', [
             'curso' => $curso,

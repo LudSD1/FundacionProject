@@ -1,0 +1,316 @@
+
+    :root {
+        /* Paleta del proyecto */
+        --color-primary:   #145da0;
+        --color-primary-l: #2a81c2;
+        --color-secondary: #39a6cb;
+        --color-accent1:   #63becf;
+        --color-accent3:   #2197bd;
+        --orange-accent:   #ffa500;
+        --orange-accent-d: #e59400;
+
+        /* Tokens del módulo */
+        --ach-surface:     #f0f7ff;
+        --ach-surface-2:   #ffffff;
+        --ach-border:      rgba(20, 93, 160, .12);
+        --ach-border-h:    rgba(20, 93, 160, .30);
+        --ach-primary:     var(--color-primary);
+        --ach-primary-l:   var(--color-primary-l);
+        --ach-primary-dim: rgba(20, 93, 160, .10);
+        --ach-accent:      var(--color-accent1);
+        --ach-accent-dim:  rgba(99, 190, 207, .15);
+        --ach-orange:      var(--orange-accent);
+        --ach-orange-dim:  rgba(255, 165, 0, .12);
+        --ach-red:         #e5404f;
+        --ach-red-dim:     rgba(229, 64, 79, .10);
+        --ach-text:        #0f2a45;
+        --ach-muted:       #5a7a99;
+        --ach-radius:      14px;
+        --ach-font-head:   'Syne', sans-serif;
+        --ach-font-body:   'DM Sans', sans-serif;
+    }
+
+    /* ── Wrapper general ─────────────────────────────────── */
+    .ach-module { font-family: var(--ach-font-body); background: var(--ach-surface); padding: 1.5rem; border-radius: var(--ach-radius); }
+
+    /* ── Barra superior ──────────────────────────────────── */
+    .ach-topbar {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .ach-search-wrap {
+        flex: 1 1 260px;
+        position: relative;
+    }
+    .ach-search-wrap .ach-search-ico {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--ach-muted);
+        font-size: .9rem;
+        pointer-events: none;
+    }
+    .ach-search-wrap input {
+        width: 100%;
+        background: var(--ach-surface-2);
+        border: 1px solid var(--ach-border);
+        border-radius: 10px;
+        color: var(--ach-text);
+        font-family: var(--ach-font-body);
+        font-size: .875rem;
+        padding: .65rem 1rem .65rem 2.5rem;
+        transition: border-color .2s, box-shadow .2s;
+        outline: none;
+    }
+    .ach-search-wrap input::placeholder { color: var(--ach-muted); }
+    .ach-search-wrap input:focus {
+        border-color: var(--ach-primary-l);
+        box-shadow: 0 0 0 3px var(--ach-primary-dim);
+    }
+
+    /* ── Botón primario ──────────────────────────────────── */
+    .ach-btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        background: var(--ach-primary);
+        color: #ffffff;
+        border: none;
+        border-radius: 10px;
+        font-family: var(--ach-font-head);
+        font-size: .85rem;
+        font-weight: 700;
+        letter-spacing: .03em;
+        padding: .65rem 1.25rem;
+        cursor: pointer;
+        transition: background .2s, transform .15s, box-shadow .2s;
+        white-space: nowrap;
+    }
+    .ach-btn-primary:hover { background: var(--ach-primary-l); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(20,93,160,.25); }
+    .ach-btn-primary:active { transform: translateY(0); }
+
+    .ach-btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        gap: .4rem;
+        background: transparent;
+        color: var(--ach-muted);
+        border: 1px solid var(--ach-border);
+        border-radius: 10px;
+        font-family: var(--ach-font-body);
+        font-size: .82rem;
+        padding: .6rem 1rem;
+        cursor: pointer;
+        transition: color .2s, border-color .2s;
+    }
+    .ach-btn-ghost:hover { color: var(--ach-primary); border-color: var(--ach-primary-l); }
+
+    /* ── Grid de tarjetas ────────────────────────────────── */
+    .ach-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.25rem;
+    }
+
+    /* ── Tarjeta individual ──────────────────────────────── */
+    .ach-card {
+        background: var(--ach-surface-2);
+        border: 1px solid var(--ach-border);
+        border-radius: var(--ach-radius);
+        display: flex;
+        flex-direction: column;
+        transition: border-color .25s, transform .2s, box-shadow .25s;
+        overflow: hidden;
+        position: relative;
+    }
+    .ach-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, var(--ach-primary-dim) 0%, transparent 60%);
+        opacity: 0;
+        transition: opacity .3s;
+        pointer-events: none;
+        border-radius: inherit;
+    }
+    .ach-card:hover { border-color: var(--ach-border-h); transform: translateY(-3px); box-shadow: 0 12px 32px rgba(20,93,160,.12); }
+    .ach-card:hover::before { opacity: 1; }
+
+    /* Franja lateral de color */
+    .ach-card-stripe {
+        width: 4px;
+        position: absolute;
+        top: 0; left: 0; bottom: 0;
+        background: var(--ach-primary);
+        border-radius: var(--ach-radius) 0 0 var(--ach-radius);
+    }
+    .ach-card-stripe.secret { background: var(--ach-red); }
+
+    /* Cuerpo */
+    .ach-card-body { padding: 1.35rem 1.35rem 1.35rem 1.7rem; flex: 1; display: flex; flex-direction: column; gap: .85rem; }
+
+    /* Encabezado */
+    .ach-card-head { display: flex; align-items: flex-start; gap: .9rem; }
+    .ach-icon-wrap {
+        width: 52px; height: 52px;
+        background: var(--ach-primary-dim);
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.7rem;
+        flex-shrink: 0;
+    }
+    .ach-card-meta { flex: 1; min-width: 0; }
+    .ach-card-title {
+        font-family: var(--ach-font-head);
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--ach-text);
+        margin: 0 0 .2rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .ach-card-users {
+        font-size: .78rem;
+        color: var(--ach-muted);
+    }
+
+    /* Descripción */
+    .ach-card-desc {
+        font-size: .84rem;
+        color: var(--ach-muted);
+        line-height: 1.55;
+        margin: 0;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* Barra de progreso */
+    .ach-progress-label { display: flex; justify-content: space-between; font-size: .75rem; color: var(--ach-muted); margin-bottom: .35rem; }
+    .ach-progress-track {
+        height: 5px;
+        background: var(--ach-border);
+        border-radius: 99px;
+        overflow: hidden;
+    }
+    .ach-progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--color-secondary), var(--color-primary));
+        border-radius: 99px;
+        transition: width .6s ease;
+    }
+
+    /* Footer de la tarjeta */
+    .ach-card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: .75rem;
+        border-top: 1px solid var(--ach-border);
+        margin-top: auto;
+    }
+
+    /* Badges */
+    .ach-badge {
+        font-size: .7rem;
+        font-family: var(--ach-font-head);
+        font-weight: 700;
+        letter-spacing: .04em;
+        border-radius: 6px;
+        padding: .2rem .55rem;
+        display: inline-flex;
+        align-items: center;
+        gap: .25rem;
+    }
+    .ach-badge-xp  { background: var(--ach-orange-dim); color: var(--orange-accent-d); }
+    .ach-badge-pub { background: var(--ach-accent-dim); color: var(--color-accent3);   }
+    .ach-badge-sec { background: var(--ach-red-dim);    color: var(--ach-red);          }
+
+    /* Botones de acción */
+    .ach-actions { display: flex; gap: .3rem; }
+    .ach-action-btn {
+        width: 32px; height: 32px;
+        border: 1px solid var(--ach-border);
+        border-radius: 8px;
+        background: transparent;
+        color: var(--ach-muted);
+        font-size: .82rem;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer;
+        transition: color .2s, border-color .2s, background .2s;
+    }
+    .ach-action-btn:hover     { color: var(--ach-primary);   border-color: var(--ach-primary-l); background: var(--ach-primary-dim); }
+    .ach-action-btn.del:hover { color: var(--ach-red);       border-color: var(--ach-red);       background: var(--ach-red-dim); }
+
+    /* ── Estado vacío / sin resultados ───────────────────── */
+    .ach-empty {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 4rem 1rem;
+        gap: 1rem;
+        color: var(--ach-muted);
+        text-align: center;
+    }
+    .ach-empty i { font-size: 2.5rem; opacity: .4; }
+    .ach-empty p { margin: 0; font-size: .9rem; }
+
+    /* ── Modal ───────────────────────────────────────────── */
+    .ach-modal .modal-content {
+        background: var(--ach-surface-2);
+        border: 1px solid var(--ach-border);
+        border-radius: 16px;
+        font-family: var(--ach-font-body);
+        color: var(--ach-text);
+    }
+    .ach-modal .modal-header {
+        border-bottom: 1px solid var(--ach-border);
+        padding: 1.25rem 1.5rem;
+    }
+    .ach-modal .modal-title {
+        font-family: var(--ach-font-head);
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--ach-text);
+    }
+    .ach-modal .btn-close { filter: invert(1) opacity(.5); }
+    .ach-modal .modal-body  { padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+    .ach-modal .modal-footer { border-top: 1px solid var(--ach-border); padding: 1rem 1.5rem; gap: .6rem; }
+
+    .ach-field { display: flex; flex-direction: column; gap: .4rem; }
+    .ach-field label { font-size: .78rem; font-weight: 500; color: var(--ach-muted); letter-spacing: .04em; text-transform: uppercase; }
+    .ach-field input,
+    .ach-field textarea,
+    .ach-field select {
+        background: var(--ach-surface);
+        border: 1px solid var(--ach-border);
+        border-radius: 10px;
+        color: var(--ach-text);
+        font-family: var(--ach-font-body);
+        font-size: .875rem;
+        padding: .65rem .9rem;
+        outline: none;
+        transition: border-color .2s, box-shadow .2s;
+        width: 100%;
+    }
+    .ach-field input:focus,
+    .ach-field textarea:focus,
+    .ach-field select:focus {
+        border-color: var(--ach-primary-l);
+        box-shadow: 0 0 0 3px var(--ach-primary-dim);
+    }
+    .ach-field select option { background: #f0f7ff; color: var(--ach-text); }
+    .ach-field textarea { resize: vertical; min-height: 80px; }
+
+    .ach-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    /* Switch */
+    .ach-switch-row { display: flex; align-items: center; justify-content: space-between; }
+    .ach-switch-row label { font-size: .85rem; color: var(--ach-text); }

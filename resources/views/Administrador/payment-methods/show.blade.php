@@ -1,22 +1,34 @@
+@extends('layout')
+
 @section('titulo')
     Detalles del Método de Pago
 @endsection
 
 @section('content')
 <div class="container py-5">
-    <div class="card shadow">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h2 class="mb-0"><i class="fas fa-eye me-2"></i>Detalles del Método de Pago</h2>
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+        <div class="card-header d-flex justify-content-between align-items-center py-4"
+             style="background: var(--gradient-primary) !important; border: none;">
+            <div class="d-flex align-items-center">
+                <div class="bg-white bg-opacity-20 rounded-3 p-2 me-3 d-flex align-items-center justify-content-center"
+                     style="width: 48px; height: 48px;">
+                    <i class="fas fa-eye text-white fs-4"></i>
+                </div>
+                <div>
+                    <h4 class="mb-0 text-white fw-bold">Detalles del Método</h4>
+                    <p class="mb-0 text-white text-opacity-75 small">{{ $paymentMethod->name }}</p>
+                </div>
+            </div>
             <div>
-                <a href="{{ route('payment-methods.edit', $paymentMethod) }}" class="btn btn-light me-2">
+                <a href="{{ route('payment-methods.edit', $paymentMethod) }}" class="btn btn-light btn-sm px-3 fw-bold shadow-sm me-2">
                     <i class="fas fa-edit me-1"></i> Editar
                 </a>
-                <a href="{{ route('payment-methods.index') }}" class="btn btn-outline-light">
+                <a href="{{ route('payment-methods.index') }}" class="btn btn-outline-light btn-sm px-3 fw-bold border-2">
                     <i class="fas fa-arrow-left me-1"></i> Volver
                 </a>
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body p-4">
             <div class="row">
                 <div class="col-md-8">
                     <!-- Información básica -->
@@ -257,5 +269,3 @@
 
 <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 @endsection
-
-@extends('layout')

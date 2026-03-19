@@ -1,17 +1,29 @@
+@extends('layout')
+
 @section('titulo')
     Crear Método de Pago
 @endsection
 
 @section('content')
 <div class="container py-5">
-    <div class="card shadow">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h2 class="mb-0"><i class="fas fa-plus me-2"></i>Crear Nuevo Método de Pago</h2>
-            <a href="{{ route('payment-methods.index') }}" class="btn btn-light">
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+        <div class="card-header d-flex justify-content-between align-items-center py-4"
+             style="background: var(--gradient-primary) !important; border: none;">
+            <div class="d-flex align-items-center">
+                <div class="bg-white bg-opacity-20 rounded-3 p-2 me-3 d-flex align-items-center justify-content-center"
+                     style="width: 48px; height: 48px;">
+                    <i class="fas fa-plus-circle text-white fs-4"></i>
+                </div>
+                <div>
+                    <h4 class="mb-0 text-white fw-bold">Crear Método de Pago</h4>
+                    <p class="mb-0 text-white text-opacity-75 small">Agregue una nueva opción para los estudiantes</p>
+                </div>
+            </div>
+            <a href="{{ route('payment-methods.index') }}" class="btn btn-light btn-sm px-3 fw-bold shadow-sm">
                 <i class="fas fa-arrow-left me-1"></i> Volver
             </a>
         </div>
-        <div class="card-body">
+        <div class="card-body p-4">
             @if($errors->any())
                 <div class="alert alert-danger">
                     <h6><i class="fas fa-exclamation-triangle me-2"></i>Por favor corrija los siguientes errores:</h6>
@@ -182,29 +194,30 @@
                 </div>
 
                 <!-- Información adicional -->
-                <div class="card mt-4">
-                    <div class="card-header bg-light">
-                        <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Información Adicional (Opcional)</h6>
+                <div class="card mt-4 border-0 bg-light rounded-3 shadow-none">
+                    <div class="card-header bg-transparent border-0 pt-4 px-4">
+                        <h6 class="mb-0 fw-bold text-primary"><i class="fas fa-info-circle me-2"></i>Información Adicional (Opcional)</h6>
+                        <p class="text-muted small mb-0 mt-1">Agregue campos personalizados (ej: Horario, Sucursal)</p>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body p-4">
                         <div id="additional-info-container">
                             <div class="row additional-info-row">
-                                <div class="col-md-5">
+                                <div class="col-md-5 mb-2 mb-md-0">
                                     <input type="text"
-                                           class="form-control"
+                                           class="form-control rounded-3"
                                            name="additional_info[0][key]"
                                            placeholder="Clave (ej: Horario)"
                                            value="{{ old('additional_info.0.key') }}">
                                 </div>
-                                <div class="col-md-5">
+                                <div class="col-md-5 mb-2 mb-md-0">
                                     <input type="text"
-                                           class="form-control"
+                                           class="form-control rounded-3"
                                            name="additional_info[0][value]"
                                            placeholder="Valor (ej: 8:00 - 18:00)"
                                            value="{{ old('additional_info.0.value') }}">
                                 </div>
                                 <div class="col-md-2">
-                                    <button type="button" class="btn btn-outline-success" onclick="addAdditionalInfo()">
+                                    <button type="button" class="btn btn-success w-100 rounded-3" onclick="addAdditionalInfo()">
                                         <i class="fas fa-plus"></i>
                                     </button>
                                 </div>
@@ -213,11 +226,11 @@
                     </div>
                 </div>
 
-                <div class="mt-4 d-flex justify-content-end">
-                    <a href="{{ route('payment-methods.index') }}" class="btn btn-secondary me-2">
+                <div class="mt-5 d-flex justify-content-end pt-4 border-top">
+                    <a href="{{ route('payment-methods.index') }}" class="btn btn-outline-secondary px-4 me-2 rounded-3">
                         <i class="fas fa-times me-1"></i> Cancelar
                     </a>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary px-4 rounded-3 shadow-sm" style="background: var(--gradient-primary) !important; border: none;">
                         <i class="fas fa-save me-1"></i> Guardar Método
                     </button>
                 </div>
@@ -245,20 +258,20 @@
         const newRow = document.createElement('div');
         newRow.className = 'row additional-info-row mt-2';
         newRow.innerHTML = `
-            <div class="col-md-5">
+            <div class="col-md-5 mb-2 mb-md-0">
                 <input type="text"
-                       class="form-control"
+                       class="form-control rounded-3"
                        name="additional_info[${additionalInfoCounter}][key]"
                        placeholder="Clave">
             </div>
-            <div class="col-md-5">
+            <div class="col-md-5 mb-2 mb-md-0">
                 <input type="text"
-                       class="form-control"
+                       class="form-control rounded-3"
                        name="additional_info[${additionalInfoCounter}][value]"
                        placeholder="Valor">
             </div>
             <div class="col-md-2">
-                <button type="button" class="btn btn-outline-danger" onclick="removeAdditionalInfo(this)">
+                <button type="button" class="btn btn-danger w-100 rounded-3" onclick="removeAdditionalInfo(this)">
                     <i class="fas fa-minus"></i>
                 </button>
             </div>
@@ -274,5 +287,3 @@
 
 <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 @endsection
-
-@extends('layout')

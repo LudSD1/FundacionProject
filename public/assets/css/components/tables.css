@@ -1,144 +1,803 @@
+
+   .tbl-card {
+    background:    #fff;
+    border-radius: 16px;
+    border:        1.5px solid #e2eaf4;
+    box-shadow:    0 4px 24px rgba(20, 93, 160, 0.09);
+    overflow:      hidden;
+    margin-bottom: 1.5rem;
+}
+
+
 /* ============================================================
-   TABLE SYSTEM — Consolidated & Improved
-   Variables requeridas en :root del proyecto:
-   --color-primary, --color-accent3, --color-accent4
+   HERO — CABECERA AZUL
+   Mismo lenguaje visual que dashboard, calendario, sumario
+   ============================================================ */
+.tbl-card-hero {
+    position:   relative;
+    background: linear-gradient(135deg, #0d2244 0%, #145da0 60%, #2a81c2 100%);
+    padding:    1.4rem 1.5rem;
+    overflow:   hidden;
+    /* Desactiva overflow para que el ::after no se corte */
+    display:    flex;
+    align-items: center;
+    justify-content: space-between;
+    gap:        1.2rem;
+    flex-wrap:  wrap;
+}
+
+/* Patrón de puntos decorativo */
+.tbl-card-hero::before {
+    content:             '';
+    position:            absolute;
+    inset:               0;
+    background-image:    radial-gradient(rgba(255,255,255,.07) 1px, transparent 1px);
+    background-size:     22px 22px;
+    pointer-events:      none;
+}
+/* Acento naranja esquina inferior derecha */
+.tbl-card-hero::after {
+    content:       '';
+    position:      absolute;
+    bottom:        -50px;
+    right:         -50px;
+    width:         180px;
+    height:        180px;
+    border-radius: 50%;
+    background:    radial-gradient(circle, rgba(255,165,0,.16), transparent 70%);
+    pointer-events: none;
+}
+
+/* Contenido sobre las capas */
+.tbl-hero-left,
+.tbl-hero-controls { position: relative; z-index: 1; }
+
+
+/* ── Lado izquierdo: eyebrow + título + subtítulo ── */
+.tbl-hero-left { flex: 1; min-width: 0; }
+
+.tbl-hero-eyebrow {
+    display:       inline-flex;
+    align-items:   center;
+    gap:           .4rem;
+    font-size:     .7rem;
+    font-weight:   700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color:         #ffa500;
+    background:    rgba(255,165,0,.12);
+    border:        1px solid rgba(255,165,0,.25);
+    border-radius: 50px;
+    padding:       .22rem .7rem;
+    margin-bottom: .5rem;
+}
+
+.tbl-hero-title {
+    font-size:     1.3rem;
+    font-weight:   800;
+    color:         #fff;
+    margin:        0 0 .2rem;
+    letter-spacing: -.02em;
+    text-shadow:   0 2px 8px rgba(0,0,0,.15);
+    white-space:   nowrap;
+    overflow:      hidden;
+    text-overflow: ellipsis;
+}
+
+.tbl-hero-sub {
+    font-size: .82rem;
+    color:     rgba(255,255,255,.70);
+    margin:    0;
+}
+
+
+/* ── Lado derecho: controles ── */
+.tbl-hero-controls {
+    display:     flex;
+    align-items: center;
+    gap:         .7rem;
+    flex-wrap:   wrap;
+    flex-shrink: 0;
+}
+
+/* Buscador en el hero */
+.tbl-hero-search {
+    position: relative;
+    display:  flex;
+    align-items: center;
+}
+.tbl-hero-search-icon {
+    position:       absolute;
+    left:           .8rem;
+    color:          rgba(255,255,255,.55);
+    font-size:      .82rem;
+    pointer-events: none;
+    z-index:        1;
+}
+.tbl-hero-search-input {
+    padding:       .5rem .85rem .5rem 2.2rem;
+    border:        1.5px solid rgba(255,255,255,.22);
+    border-radius: 50px;
+    background:    rgba(255,255,255,.12);
+    color:         #fff;
+    font-size:     .84rem;
+    outline:       none;
+    width:         220px;
+    backdrop-filter: blur(8px);
+    transition:    border-color .2s ease, background .2s ease, width .3s ease;
+    font-family:   inherit;
+}
+.tbl-hero-search-input::placeholder { color: rgba(255,255,255,.5); }
+.tbl-hero-search-input:focus {
+    border-color: rgba(255,255,255,.5);
+    background:   rgba(255,255,255,.18);
+    width:        260px;
+}
+
+/* Select filtro en el hero */
+.tbl-hero-select-wrap { position: relative; }
+.tbl-hero-select-icon {
+    position:       absolute;
+    left:           .8rem;
+    top:            50%;
+    transform:      translateY(-50%);
+    color:          rgba(255,255,255,.55);
+    font-size:      .78rem;
+    pointer-events: none;
+    z-index:        1;
+}
+.tbl-hero-select {
+    padding:          .5rem 2rem .5rem 2.2rem;
+    border:           1.5px solid rgba(255,255,255,.22);
+    border-radius:    50px;
+    background:       rgba(255,255,255,.12);
+    color:            #fff;
+    font-size:        .82rem;
+    outline:          none;
+    cursor:           pointer;
+    appearance:       none;
+    backdrop-filter:  blur(8px);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(255,255,255,0.6)' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat:   no-repeat;
+    background-position: right .7rem center;
+    transition:       border-color .2s ease, background .2s ease;
+    font-family:      inherit;
+}
+.tbl-hero-select:focus {
+    border-color: rgba(255,255,255,.5);
+    background-color: rgba(255,255,255,.18);
+}
+/* Opciones del select (no se pueden estilizar en todos los browsers) */
+.tbl-hero-select option { background: #145da0; color: #fff; }
+
+/* Botones en el hero */
+.tbl-hero-btn {
+    display:      inline-flex;
+    align-items:  center;
+    gap:          .4rem;
+    padding:      .5rem 1.1rem;
+    border-radius: 50px;
+    font-size:    .82rem;
+    font-weight:  700;
+    cursor:       pointer;
+    border:       none;
+    text-decoration: none;
+    white-space:  nowrap;
+    transition:   all .22s ease;
+    font-family:  inherit;
+    position:     relative;
+    z-index:      1;
+}
+.tbl-hero-btn:hover { transform: translateY(-2px); }
+
+/* Primario: blanco sólido */
+.tbl-hero-btn-primary {
+    background: #fff;
+    color:      #145da0;
+    box-shadow: 0 4px 12px rgba(0,0,0,.15);
+}
+.tbl-hero-btn-primary:hover {
+    background: #f0f7ff;
+    color:      #145da0;
+    box-shadow: 0 6px 18px rgba(0,0,0,.20);
+}
+
+/* Secundario: glass */
+.tbl-hero-btn-glass {
+    background: rgba(255,255,255,.15);
+    color:      #fff;
+    border:     1.5px solid rgba(255,255,255,.28);
+    backdrop-filter: blur(6px);
+}
+.tbl-hero-btn-glass:hover {
+    background: rgba(255,255,255,.25);
+    color:      #fff;
+}
+
+/* Peligro: glass rojo */
+.tbl-hero-btn-danger {
+    background: rgba(220,38,38,.20);
+    color:      #fff;
+    border:     1.5px solid rgba(220,38,38,.30);
+}
+.tbl-hero-btn-danger:hover {
+    background: rgba(220,38,38,.35);
+    color:      #fff;
+}
+
+
+/* ============================================================
+   BARRA DE FILTROS ACTIVOS
+   (debajo del hero, fondo neutro)
+   ============================================================ */
+.tbl-filter-bar {
+    display:         flex;
+    align-items:     center;
+    justify-content: space-between;
+    gap:             .75rem;
+    padding:         .65rem 1.2rem;
+    background:      rgba(20,93,160,.05);
+    border-bottom:   1.5px solid rgba(20,93,160,.08);
+    font-size:       .84rem;
+    color:           #374151;
+    flex-wrap:       wrap;
+}
+.tbl-filter-bar-left {
+    display:     flex;
+    align-items: center;
+    gap:         .4rem;
+    flex-wrap:   wrap;
+}
+.tbl-filter-bar i { color: #145da0; font-size: .8rem; }
+
+.tbl-filter-chip {
+    display:       inline-flex;
+    align-items:   center;
+    gap:           .25rem;
+    padding:       .14rem .55rem;
+    border-radius: 50px;
+    font-size:     .72rem;
+    font-weight:   700;
+    background:    rgba(20,93,160,.10);
+    color:         #145da0;
+}
+.tbl-filter-chip-orange {
+    background: rgba(255,165,0,.12);
+    color:      #d97706;
+}
+
+.tbl-filter-clear {
+    display:         inline-flex;
+    align-items:     center;
+    gap:             .28rem;
+    padding:         .28rem .75rem;
+    border-radius:   50px;
+    font-size:       .75rem;
+    font-weight:     600;
+    background:      #fff;
+    color:           #64748b;
+    border:          1.5px solid #d1dce8;
+    text-decoration: none;
+    transition:      all .18s ease;
+    white-space:     nowrap;
+}
+.tbl-filter-clear:hover {
+    border-color: #dc2626;
+    color:        #dc2626;
+    background:   rgba(220,38,38,.05);
+}
+
+
+/* ============================================================
+   TABLA — el table-container-modern ya está en table.css
+   Solo ajustes de integración con la nueva card
+   ============================================================ */
+.tbl-card .table-container-modern {
+    border-radius: 0;          /* la card ya tiene el radio */
+    box-shadow:    none;       /* la card ya tiene la sombra */
+    max-height:    560px;
+}
+
+/* Separación entre el buscador local y la tabla (si existe) */
+.tbl-card .tbl-local-search {
+    padding: .8rem 1.2rem;
+    border-bottom: 1.5px solid #f0f4f8;
+    background: #f8fafc;
+}
+.tbl-card .tbl-local-search .search-box-table { max-width: 400px; }
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 991px) {
+    .tbl-card-hero      { flex-direction: column; align-items: flex-start; }
+    .tbl-hero-controls  { width: 100%; }
+    .tbl-hero-search-input { width: 100%; }
+    .tbl-hero-search-input:focus { width: 100%; }
+    .tbl-hero-select    { width: 100%; }
+}
+
+@media (max-width: 768px) {
+    .tbl-card-hero      { padding: 1.1rem 1rem; }
+    .tbl-hero-title     { font-size: 1.1rem; }
+    .tbl-hero-controls  { gap: .5rem; }
+    .tbl-hero-btn       { padding: .45rem .9rem; font-size: .78rem; }
+    .tbl-filter-bar     { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 480px) {
+    .tbl-hero-controls  { flex-direction: column; }
+    .tbl-hero-btn       { width: 100%; justify-content: center; }
+    .tbl-hero-search-input,
+    .tbl-hero-select    { width: 100%; }
+}
+/* ============================================================
+   TABLE SYSTEM — Completo
+   resources/css/table.css
+
+   Incluir en el layout:
+     <link rel="stylesheet" href="{{ asset('css/table.css') }}">
    ============================================================ */
 
-/* ── Tokens locales (overrideable) ─────────────────────────── */
+/* ── Tokens ─────────────────────────────────────────────────── */
 :root {
-  --tbl-primary:        var(--color-primary, #1a4789);
-  --tbl-accent:         var(--color-accent3, #2197bd);
-  --tbl-accent-dark:    var(--color-accent4, #2f89a8);
-  --tbl-radius:         16px;
-  --tbl-shadow:         0 10px 30px rgba(26, 71, 137, 0.12);
-  --tbl-row-hover-bg:   rgba(26, 71, 137, 0.04);
-  --tbl-border-subtle:  rgba(26, 71, 137, 0.08);
-  --tbl-head-bg-start:  rgba(26, 71, 137, 0.05);
-  --tbl-head-bg-end:    rgba(99, 190, 207, 0.05);
-  --tbl-cell-pad:       1rem;
-  --tbl-head-size:      0.8rem;
-  --tbl-transition:     0.25s ease;
+    --tbl-primary:       #145da0;
+    --tbl-primary-l:     #2a81c2;
+    --tbl-orange:        #ffa500;
+    --tbl-orange-d:      #e59400;
+    --tbl-green:         #16a34a;
+    --tbl-red:           #dc2626;
+    --tbl-gray:          #64748b;
+
+    --tbl-radius:        14px;
+    --tbl-radius-sm:     8px;
+
+    --tbl-shadow:        0 4px 24px rgba(20, 93, 160, 0.09);
+
+    --tbl-head-bg:       linear-gradient(135deg, #0d2244 0%, #145da0 100%);
+    --tbl-head-color:    #fff;
+    --tbl-head-size:     .74rem;
+
+    --tbl-row-hover:     rgba(20, 93, 160, 0.04);
+    --tbl-border:        rgba(20, 93, 160, 0.08);
+    --tbl-cell-pad:      .9rem 1rem;
+
+    --tbl-transition:    0.22s ease;
 }
 
-/* ── Contenedor ─────────────────────────────────────────────── */
+
+/* ============================================================
+   CONTENEDOR
+   ============================================================ */
 .table-container-modern {
-  background: #fff;
-  border-radius: var(--tbl-radius);
-  box-shadow: var(--tbl-shadow);
-  max-height: 600px;
-  overflow: auto;          /* un solo overflow cubre ambos ejes */
-  position: relative;
+    background:    #fff;
+    border-radius: var(--tbl-radius);
+    box-shadow:    var(--tbl-shadow);
+    overflow:      auto;
+    position:      relative;
+    max-height:    580px;
 }
 
-/* ── Scrollbar personalizado ────────────────────────────────── */
-.table-container-modern::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-.table-container-modern::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-.table-container-modern::-webkit-scrollbar-thumb {
-  background: var(--tbl-accent);
-  border-radius: 10px;
-  transition: background var(--tbl-transition);
-}
-.table-container-modern::-webkit-scrollbar-thumb:hover {
-  background: var(--tbl-accent-dark);
+/* Scrollbar */
+.table-container-modern::-webkit-scrollbar        { width: 5px; height: 5px; }
+.table-container-modern::-webkit-scrollbar-track  { background: #f1f5f9; border-radius: 99px; }
+.table-container-modern::-webkit-scrollbar-thumb  { background: #cbd5e1; border-radius: 99px; }
+.table-container-modern::-webkit-scrollbar-thumb:hover { background: var(--tbl-primary-l); }
+
+/* Cuando está dentro de tbl-card quita sombra/radio duplicados */
+.tbl-card .table-container-modern {
+    border-radius: 0;
+    box-shadow:    none;
+    max-height:    560px;
 }
 
-/* ── Base tabla ─────────────────────────────────────────────── */
-.table-modern,
-.notifications-table {
-  margin: 0;
-  width: 100%;
-  border-collapse: collapse;  /* elimina gaps entre celdas */
+
+/* ============================================================
+   TABLA BASE
+   ============================================================ */
+.table-modern {
+    width:           100%;
+    border-collapse: separate;
+    border-spacing:  0;
+    margin:          0;
+    font-size:       .87rem;
+    color:           #374151;
 }
 
-/* ── Cabecera sticky ────────────────────────────────────────── */
-.table-modern thead,
-.notifications-table thead {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: #fff;
-  /* Sombra sutil al hacer scroll */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+/* ============================================================
+   THEAD — cabecera azul oscuro
+   ============================================================ */
+.table-modern thead {
+    position: sticky;
+    top:      0;
+    z-index:  10;
 }
 
-/* ── Celdas de cabecera ─────────────────────────────────────── */
-.table-modern thead th,
-.notifications-table thead th {
-  padding: var(--tbl-cell-pad);
-  font-weight: 600;
-  color: var(--tbl-primary);
-  font-size: var(--tbl-head-size);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  vertical-align: middle;
-  background: linear-gradient(
-    135deg,
-    var(--tbl-head-bg-start) 0%,
-    var(--tbl-head-bg-end) 100%
-  );
-  border-bottom: 1px solid var(--tbl-border-subtle);
+.table-modern thead tr {
+    background: var(--tbl-head-bg);
 }
 
-/* ── Celdas de cuerpo ───────────────────────────────────────── */
-.table-modern td,
-.notifications-table tbody td {
-  padding: var(--tbl-cell-pad);
-  vertical-align: middle;
-  white-space: nowrap;
-  border-bottom: 1px solid var(--tbl-border-subtle);
+.table-modern thead th {
+    padding:        var(--tbl-cell-pad);
+    font-size:      var(--tbl-head-size);
+    font-weight:    700;
+    color:          var(--tbl-head-color);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    white-space:    nowrap;
+    vertical-align: middle;
+    border:         none;
+
+    /* Separador sutil entre columnas */
+    border-right: 1px solid rgba(255,255,255,.08);
+}
+.table-modern thead th:last-child { border-right: none; }
+
+/* Sombra al hacer scroll */
+.table-modern thead::after {
+    content:    '';
+    display:    block;
+    height:     2px;
+    background: linear-gradient(90deg, var(--tbl-primary), var(--tbl-orange) 60%, var(--tbl-primary-l));
+    position:   absolute;
+    left:       0; right: 0; bottom: 0;
 }
 
-/* ── Hover en filas (con borde izquierdo animado) ───────────── */
-.table-modern tbody tr,
-.notifications-table tbody tr {
-  border-left: 3px solid transparent;
-  transition:
-    background var(--tbl-transition),
-    border-color var(--tbl-transition),
-    transform var(--tbl-transition);
-}
-
-.table-modern tbody tr:hover,
-.notifications-table tbody tr:hover {
-  background: linear-gradient(
-    90deg,
-    rgba(26, 71, 137, 0.05) 0%,
-    transparent 100%
-  );
-  border-left-color: var(--tbl-primary);
-  transform: translateX(4px);
-}
-
-/* ── Helpers reutilizables ──────────────────────────────────── */
+/* th-content helper */
 .th-content {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--tbl-primary);
-  font-weight: 600;
+    display:     inline-flex;
+    align-items: center;
+    gap:         .45rem;
+    color:       inherit;
+    font-weight: 700;
+}
+.th-content i { font-size: .82rem; opacity: .85; }
+
+
+/* ============================================================
+   TBODY — filas
+   ============================================================ */
+.table-modern tbody tr {
+    border-left:  3px solid transparent;
+    transition:
+        background    var(--tbl-transition),
+        border-color  var(--tbl-transition),
+        transform     var(--tbl-transition);
 }
 
+/* Alternado suave */
+.table-modern tbody tr:nth-child(even) {
+    background: rgba(20, 93, 160, 0.02);
+}
+
+/* Hover */
+.table-modern tbody tr:hover {
+    background:   var(--tbl-row-hover);
+    border-left-color: var(--tbl-primary);
+    transform:    translateX(3px);
+}
+
+/* Última fila sin borde inferior */
+.table-modern tbody tr:last-child td { border-bottom: none; }
+
+
+/* ============================================================
+   TD — celdas del cuerpo
+   ============================================================ */
+.table-modern td {
+    padding:        var(--tbl-cell-pad);
+    vertical-align: middle;
+    white-space:    nowrap;
+    border-bottom:  1px solid var(--tbl-border);
+    color:          #374151;
+}
+
+/* Celda de número */
 .row-number {
-  display: inline-block;
-  background: #f8f9fa;
-  color: #6c757d;
-  border-radius: 8px;
-  padding: 0.2rem 0.5rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;  /* números alineados */
+    display:            inline-flex;
+    align-items:        center;
+    justify-content:    center;
+    min-width:          28px;
+    height:             28px;
+    background:         rgba(20, 93, 160, 0.07);
+    color:              var(--tbl-primary);
+    border-radius:      var(--tbl-radius-sm);
+    font-size:          .76rem;
+    font-weight:        700;
+    font-variant-numeric: tabular-nums;
 }
 
-/* ── Responsive ─────────────────────────────────────────────── */
+/* Celda de nombre de curso */
+.course-name-cell {
+    display:     flex;
+    align-items: center;
+    gap:         .55rem;
+    cursor:      pointer;
+    transition:  color var(--tbl-transition);
+    max-width:   240px;
+}
+.course-name-cell:hover .course-name { color: var(--tbl-primary); }
+
+.course-icon {
+    color:       var(--tbl-primary-l);
+    font-size:   1rem;
+    flex-shrink: 0;
+    transition:  transform var(--tbl-transition);
+}
+.course-name-cell:hover .course-icon { transform: scale(1.12); }
+
+.course-name {
+    font-weight:   600;
+    color:         #0f172a;
+    font-size:     .88rem;
+    white-space:   nowrap;
+    overflow:      hidden;
+    text-overflow: ellipsis;
+    transition:    color var(--tbl-transition);
+}
+
+/* Celda de docente / persona */
+.teacher-cell {
+    display:     flex;
+    align-items: center;
+    gap:         .45rem;
+    font-size:   .86rem;
+    color:       #374151;
+}
+.teacher-cell i { color: var(--tbl-primary-l); font-size: .88rem; flex-shrink: 0; }
+
+/* Avatar con inicial */
+.tbl-avatar {
+    width:           32px;
+    height:          32px;
+    border-radius:   50%;
+    background:      linear-gradient(135deg, var(--tbl-primary), var(--tbl-primary-l));
+    color:           #fff;
+    font-size:       .75rem;
+    font-weight:     800;
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    flex-shrink:     0;
+}
+
+/* Badges de fecha */
+.date-badge {
+    display:     inline-flex;
+    align-items: center;
+    gap:         .28rem;
+    font-size:   .76rem;
+    font-weight: 600;
+    padding:     .22rem .65rem;
+    border-radius: 50px;
+    white-space: nowrap;
+}
+.date-start { background: rgba(20, 93, 160, 0.08);  color: var(--tbl-primary); }
+.date-end   { background: rgba(255, 165, 0,  0.10); color: var(--tbl-orange-d); }
+
+/* Badge de formato */
+.format-badge {
+    display:       inline-flex;
+    align-items:   center;
+    gap:           .28rem;
+    font-size:     .76rem;
+    font-weight:   600;
+    padding:       .22rem .65rem;
+    border-radius: 50px;
+    background:    rgba(100, 116, 139, 0.09);
+    color:         var(--tbl-gray);
+    white-space:   nowrap;
+}
+
+/* Badges de tipo */
+.type-badge {
+    display:       inline-flex;
+    align-items:   center;
+    gap:           .28rem;
+    font-size:     .73rem;
+    font-weight:   700;
+    padding:       .24rem .7rem;
+    border-radius: 50px;
+    white-space:   nowrap;
+}
+.type-curso    { background: rgba(20, 93, 160, 0.10);  color: var(--tbl-primary); }
+.type-congreso { background: rgba(255, 165, 0,  0.12); color: var(--tbl-orange-d); }
+.type-evento   { background: rgba(22, 163, 74, 0.10);  color: var(--tbl-green); }
+
+/* Badge de estado genérico */
+.status-badge {
+    display:       inline-flex;
+    align-items:   center;
+    gap:           .28rem;
+    font-size:     .73rem;
+    font-weight:   700;
+    padding:       .24rem .7rem;
+    border-radius: 50px;
+    white-space:   nowrap;
+}
+.status-badge i { font-size: .55rem; }
+
+.status-active   { background: rgba(22, 163, 74, 0.10);  color: var(--tbl-green); }
+.status-inactive { background: rgba(100,116,139, 0.10);  color: var(--tbl-gray); }
+.status-pending  { background: rgba(255, 165, 0,  0.12); color: var(--tbl-orange-d); }
+.status-danger   { background: rgba(220,  38, 38, 0.10); color: var(--tbl-red); }
+
+
+/* ============================================================
+   BOTONES DE ACCIÓN EN CELDA
+   ============================================================ */
+.action-buttons-cell {
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    gap:             .32rem;
+}
+
+.btn-action-modern {
+    width:          32px;
+    height:         32px;
+    border-radius:  50%;
+    display:        inline-flex;
+    align-items:    center;
+    justify-content: center;
+    font-size:      .8rem;
+    border:         none;
+    cursor:         pointer;
+    text-decoration: none;
+    transition:     all var(--tbl-transition);
+    flex-shrink:    0;
+    line-height:    1;
+}
+.btn-action-modern:hover { transform: scale(1.18); }
+
+.btn-edit {
+    background: rgba(20, 93, 160, 0.10);
+    color:      var(--tbl-primary);
+}
+.btn-edit:hover {
+    background: var(--tbl-primary);
+    color:      #fff;
+    box-shadow: 0 4px 10px rgba(20, 93, 160, 0.30);
+}
+
+.btn-delete {
+    background: rgba(220, 38, 38, 0.09);
+    color:      var(--tbl-red);
+}
+.btn-delete:hover {
+    background: var(--tbl-red);
+    color:      #fff;
+    box-shadow: 0 4px 10px rgba(220, 38, 38, 0.28);
+}
+
+.btn-view {
+    background: rgba(22, 163, 74, 0.09);
+    color:      var(--tbl-green);
+}
+.btn-view:hover {
+    background: var(--tbl-green);
+    color:      #fff;
+    box-shadow: 0 4px 10px rgba(22, 163, 74, 0.28);
+}
+
+.btn-download {
+    background: rgba(255, 165, 0, 0.10);
+    color:      var(--tbl-orange-d);
+}
+.btn-download:hover {
+    background: var(--tbl-orange);
+    color:      #fff;
+    box-shadow: 0 4px 10px rgba(255, 165, 0, 0.28);
+}
+
+.btn-info {
+    background: rgba(42, 129, 194, 0.10);
+    color:      var(--tbl-primary-l);
+}
+.btn-info:hover {
+    background: var(--tbl-primary-l);
+    color:      #fff;
+    box-shadow: 0 4px 10px rgba(42, 129, 194, 0.28);
+}
+
+
+/* ============================================================
+   ESTADO VACÍO
+   ============================================================ */
+.empty-state-table {
+    text-align: center;
+    padding:    3.5rem 2rem;
+}
+.empty-icon-table {
+    font-size:     3rem;
+    color:         #c5d0dc;
+    margin-bottom: .75rem;
+    line-height:   1;
+    display:       block;
+}
+.empty-title-table {
+    font-size:     1rem;
+    font-weight:   700;
+    color:         #374151;
+    margin-bottom: .3rem;
+}
+.empty-text-table {
+    font-size:     .85rem;
+    color:         #94a3b8;
+    margin-bottom: 1.1rem;
+}
+
+
+/* ============================================================
+   PAGINACIÓN — estiliza links() de Laravel
+   ============================================================ */
+.tbl-pagination {
+    display:         flex;
+    justify-content: center;
+    padding:         .85rem 0 1rem;
+    border-top:      1.5px solid rgba(20, 93, 160, 0.07);
+    background:      #f8fafc;
+}
+
+.tbl-pagination nav > div:first-child { display: none; }
+
+.tbl-pagination .pagination {
+    display:  flex;
+    flex-wrap: wrap;
+    gap:      .22rem;
+    margin:   0;
+}
+.tbl-pagination .page-item .page-link {
+    border-radius: var(--tbl-radius-sm) !important;
+    border:        1.5px solid #d1dce8 !important;
+    color:         var(--tbl-primary);
+    font-size:     .78rem;
+    font-weight:   600;
+    padding:       .34rem .65rem;
+    background:    #fff;
+    transition:    all var(--tbl-transition);
+    line-height:   1.4;
+}
+.tbl-pagination .page-item .page-link:hover {
+    background:    rgba(20, 93, 160, 0.07);
+    border-color:  var(--tbl-primary) !important;
+    color:         var(--tbl-primary);
+}
+.tbl-pagination .page-item.active .page-link {
+    background:   linear-gradient(135deg, var(--tbl-primary), var(--tbl-primary-l)) !important;
+    border-color: transparent !important;
+    color:        #fff !important;
+    box-shadow:   0 3px 10px rgba(20, 93, 160, 0.25);
+}
+.tbl-pagination .page-item.disabled .page-link {
+    opacity:        .4;
+    pointer-events: none;
+    background:     #f8fafc;
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 @media (max-width: 768px) {
-  :root {
-    --tbl-cell-pad: 0.75rem 0.5rem;
-    --tbl-head-size: 0.7rem;
-  }
+    :root {
+        --tbl-cell-pad:  .7rem .75rem;
+        --tbl-head-size: .68rem;
+    }
+
+    .course-name   { max-width: 140px; }
+    .date-badge,
+    .format-badge,
+    .type-badge,
+    .status-badge  { font-size: .68rem; padding: .18rem .5rem; }
+
+    .btn-action-modern { width: 28px; height: 28px; font-size: .72rem; }
+    .action-buttons-cell { gap: .22rem; }
+}
+
+@media (max-width: 480px) {
+    .tbl-pagination .pagination { gap: .1rem; }
+    .tbl-pagination .page-item .page-link { padding: .3rem .5rem; font-size: .72rem; }
 }

@@ -124,3 +124,162 @@
 		font-size: 0.9rem;
 	}
 }
+
+
+
+.adm-panel {
+    background:    #fff;
+    border-radius: 16px;
+    border:        1.5px solid #e2eaf4;
+    box-shadow:    0 4px 24px rgba(20,93,160,.09);
+    overflow:      hidden;
+    animation:     admFadeIn .35s ease both;
+}
+
+@keyframes admFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ════════════════════
+   HEADER DE TABS
+════════════════════ */
+.adm-tabs-header {
+    display:         flex;
+    align-items:     stretch;
+    justify-content: space-between;
+    gap:             0;
+    border-bottom:   2px solid #e2eaf4;
+    background:      #f8fafc;
+    flex-wrap:       wrap;
+    position:        relative;
+}
+
+/* Línea de acento inferior */
+.adm-tabs-header::after {
+    content:    '';
+    position:   absolute;
+    bottom:     0; left: 0; right: 0;
+    height:     2px;
+    background: linear-gradient(90deg, #145da0, #ffa500 50%, #2a81c2);
+    pointer-events: none;
+}
+
+/* ── Tabs internos ── */
+.adm-tabs-nav {
+    display:     flex;
+    align-items: stretch;
+    list-style:  none;
+    margin:      0;
+    padding:     0;
+    gap:         0;
+    flex-wrap:   wrap;
+}
+
+.adm-tab {
+    display:        inline-flex;
+    align-items:    center;
+    gap:            .45rem;
+    padding:        .85rem 1.2rem;
+    font-size:      .86rem;
+    font-weight:    600;
+    color:          #64748b;
+    background:     transparent;
+    border:         none;
+    border-bottom:  3px solid transparent;
+    cursor:         pointer;
+    white-space:    nowrap;
+    transition:     all .22s ease;
+    font-family:    inherit;
+    position:       relative;
+    margin-bottom:  -2px; /* solapa el borde del header */
+}
+.adm-tab:hover {
+    color:       #145da0;
+    background:  rgba(20,93,160,.04);
+}
+.adm-tab.active {
+    color:        #145da0;
+    background:   #fff;
+    border-bottom-color: #145da0;
+    font-weight:  700;
+}
+
+/* Badge de notificaciones no leídas */
+.adm-notif-badge {
+    display:         inline-flex;
+    align-items:     center;
+    justify-content: center;
+    min-width:       18px;
+    height:          18px;
+    padding:         0 .35rem;
+    border-radius:   50px;
+    font-size:       .65rem;
+    font-weight:     800;
+    background:      linear-gradient(135deg, #ffa500, #e59400);
+    color:           #0f172a;
+    box-shadow:      0 2px 6px rgba(255,165,0,.35);
+    animation:       admPulse 2s infinite;
+}
+@keyframes admPulse {
+    0%,100% { transform: scale(1); }
+    50%     { transform: scale(1.15); }
+}
+
+/* ── Links externos ── */
+.adm-tabs-links {
+    display:     flex;
+    align-items: stretch;
+    gap:         0;
+    margin-left: auto;
+    border-left: 1.5px solid #e2eaf4;
+    flex-wrap:   wrap;
+}
+
+.adm-tab-link {
+    display:        inline-flex;
+    align-items:    center;
+    gap:            .4rem;
+    padding:        .85rem 1rem;
+    font-size:      .82rem;
+    font-weight:    600;
+    color:          #94a3b8;
+    text-decoration: none;
+    border-bottom:  3px solid transparent;
+    white-space:    nowrap;
+    transition:     all .22s ease;
+    margin-bottom:  -2px;
+}
+.adm-tab-link:hover {
+    color:      #145da0;
+    background: rgba(20,93,160,.04);
+}
+.adm-tab-link--active {
+    color:             #ffa500;
+    border-bottom-color: #ffa500;
+    background:        #fff;
+    font-weight:       700;
+}
+
+/* ════════════════════
+   CUERPO DE TABS
+════════════════════ */
+.adm-tabs-body {
+    padding: 1.5rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .adm-tabs-header  { flex-direction: column; }
+    .adm-tabs-links   { border-left: none; border-top: 1.5px solid #e2eaf4; margin-left: 0; }
+    .adm-tab,
+    .adm-tab-link     { padding: .7rem .9rem; font-size: .8rem; }
+    .adm-tabs-body    { padding: 1rem; }
+}
+
+@media (max-width: 480px) {
+    .adm-tabs-nav,
+    .adm-tabs-links   { width: 100%; overflow-x: auto; flex-wrap: nowrap; }
+    .adm-tab,
+    .adm-tab-link     { flex-shrink: 0; }
+}

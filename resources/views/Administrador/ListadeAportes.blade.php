@@ -1,104 +1,133 @@
 @section('titulo', 'Lista de Pagos')
+
 @section('content')
-<div class="card card-modern">
-
-    <div class="container-fluid my-4">
-
-        <div class="row mb-4 align-items-center g-3">
-            <div class="col-md-4 col-lg-3">
-                <a href="{{ route('registrarpagoadmin') }}" class="btn-modern btn-create w-100">
-                    <i class="bi bi-plus-circle"></i>
-                    <span class="ms-1">Registrar Pago</span>
-                </a>
-            </div>
-            <div class="col-md-8 col-lg-9">
-                <div class="search-box-table">
-                    <i class="bi bi-search search-icon-table"></i>
-                    <input type="text" id="searchInput" name="busqueda" class="search-input-table"
-                        placeholder="Buscar por estudiante, monto, fecha…">
-                    <span class="search-indicator"></span>
+<div class="container-fluid py-5">
+    {{-- Estructura tbl-card moderna --}}
+    <div class="tbl-card">
+        {{-- Cabecera con lenguaje visual moderno --}}
+        <div class="tbl-card-hero">
+            <div class="tbl-hero-left">
+                <div class="tbl-hero-eyebrow">
+                    <i class="fas fa-wallet"></i> Tesorería
                 </div>
+                <h2 class="tbl-hero-title">Gestión de Pagos</h2>
+                <p class="tbl-hero-sub">Supervise y confirme los aportes realizados por los estudiantes</p>
+            </div>
+            <div class="tbl-hero-controls">
+                <a href="{{ route('registrarpagoadmin') }}" class="tbl-hero-btn tbl-hero-btn-primary shadow-sm">
+                    <i class="fas fa-plus-circle"></i> Registrar Pago
+                </a>
             </div>
         </div>
 
-        <div class="table-container-modern">
-            <table class="table-modern table table-hover align-middle">
-                <thead>
-                    <tr>
-                        <th style="width:48px">#</th>
-                        <th>Estudiante</th>
-                        <th>Fecha</th>
-                        <th>Monto a Pagar</th>
-                        <th>Monto Cancelado</th>
-                        <th style="width:130px">Documentos</th>
-                        <th style="width:90px">Editar / Elim.</th>
-                        <th style="width:160px"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($aportes as $aporte)
+        <div class="card-body p-4">
+            {{-- Barra de búsqueda --}}
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="search-box-table w-100">
+                        <i class="fas fa-search search-icon-table"></i>
+                        <input type="text" id="searchInput" name="busqueda" class="search-input-table"
+                            placeholder="Buscar por estudiante, monto, curso o fecha…">
+                        <span class="search-indicator"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container-modern">
+                <table class="table-modern">
+                    <thead>
                         <tr>
-                            {{-- # --}}
-                            <td><span class="row-number">#{{ $loop->iteration }}</span></td>
+                            <th style="width:48px"><div class="th-content">#</div></th>
+                            <th><div class="th-content">Estudiante / Curso</div></th>
+                            <th><div class="th-content">Fecha de Registro</div></th>
+                            <th><div class="th-content">Monto Total</div></th>
+                            <th><div class="th-content">Monto Pagado</div></th>
+                            <th class="text-center"><div class="th-content text-center w-100">Documentos</div></th>
+                            <th class="text-center"><div class="th-content text-center w-100">Gestión</div></th>
+                            <th class="text-center"><div class="th-content text-center w-100">Acción</div></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($aportes as $aporte)
+                            <tr>
+                                <td><span class="row-number">#{{ $loop->iteration }}</span></td>
 
-                            {{-- Estudiante --}}
-                            <td>{{ $aporte->datosEstudiante }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary bg-opacity-10 rounded-3 p-2 me-3 text-primary">
+                                            <i class="fas fa-user-graduate"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-dark">{{ $aporte->datosEstudiante }}</div>
+                                            <div class="text-muted small">
+                                                <i class="fas fa-book-open me-1"></i> {{ $aporte->curso->nombreCurso }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
 
-                            {{-- Fecha --}}
-                            <td>
-                                <span class="text-muted" style="font-size:.85rem;">
-                                    {{ \Carbon\Carbon::parse($aporte->created_at)->format('d/m/Y H:i') }}
-                                </span>
-                            </td>
+                                <td>
+                                    <div class="date-badge date-start">
+                                        <i class="fas fa-calendar-alt me-1"></i>
+                                        {{ \Carbon\Carbon::parse($aporte->created_at)->format('d/m/Y') }}
+                                        <span class="text-muted ms-1" style="font-size: 0.7rem;">{{ \Carbon\Carbon::parse($aporte->created_at)->format('H:i') }}</span>
+                                    </div>
+                                </td>
 
-                            {{-- Montos --}}
-                            <td><strong>{{ number_format($aporte->monto_a_pagar, 2) }} Bs.</strong></td>
-                            <td>{{ number_format($aporte->monto_pagado, 2) }} Bs.</td>
+                                <td>
+                                    <span class="badge bg-light text-dark border px-3 py-2 rounded-pill fw-bold">
+                                        {{ number_format($aporte->monto_a_pagar, 2) }} Bs.
+                                    </span>
+                                </td>
 
-                            {{-- Documentos --}}
-                            <td>
-                                <div class="action-buttons-cell">
-                                    <a href="{{ route('descargar.comprobante', basename($aporte->comprobante)) }}"
-                                        class="btn-action-modern" title="Descargar comprobante">
-                                        <i class="bi bi-download"></i>
-                                    </a>
-                                    <a href="{{ route('recibo.generar', encrypt($aporte->id)) }}" target="_blank"
-                                        class="btn-action-modern" title="Ver recibo">
-                                        <i class="bi bi-receipt"></i>
-                                    </a>
-                                    <button type="button" class="btn-action-modern reenviar-email-btn"
+                                <td>
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fw-bold">
+                                        {{ number_format($aporte->monto_pagado, 2) }} Bs.
+                                    </span>
+                                </td>
+
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center gap-1">
+                                        <a href="{{ route('descargar.comprobante', basename($aporte->comprobante)) }}"
+                                            class="btn btn-sm btn-outline-primary rounded-pill px-2" title="Descargar comprobante">
+                                            <i class="fas fa-download"></i>
+                                        </a>
+                                        <a href="{{ route('recibo.generar', encrypt($aporte->id)) }}" target="_blank"
+                                            class="btn btn-sm btn-outline-info rounded-pill px-2" title="Ver recibo">
+                                            <i class="fas fa-file-invoice"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2 reenviar-email-btn"
+                                            data-id="{{ $aporte->id }}"
+                                            data-estudiante="{{ $aporte->user->name }} {{ $aporte->user->lastname1 }}"
+                                            data-email="{{ $aporte->user->email }}" title="Reenviar email">
+                                            <i class="fas fa-envelope"></i>
+                                        </button>
+                                    </div>
+                                </td>
+
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center gap-1">
+                                        <button class="btn btn-sm btn-outline-warning rounded-pill px-2" data-bs-toggle="modal"
+                                            data-bs-target="#editarPagoModal{{ $aporte->id }}" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger rounded-pill px-2 delete-btn" data-id="{{ $aporte->id }}"
+                                            title="Eliminar">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-sm btn-primary rounded-pill px-3 confirm-pago-btn"
+                                        style="background: var(--gradient-primary) !important; border: none;"
                                         data-id="{{ $aporte->id }}"
                                         data-estudiante="{{ $aporte->user->name }} {{ $aporte->user->lastname1 }}"
-                                        data-email="{{ $aporte->user->email }}" title="Reenviar email">
-                                        <i class="bi bi-envelope"></i>
+                                        data-curso="{{ $aporte->curso->nombreCurso }}" title="Confirmar pago">
+                                        <i class="fas fa-check-circle me-1"></i> Confirmar
                                     </button>
-                                </div>
-                            </td>
-
-                            {{-- Editar / Eliminar --}}
-                            <td>
-                                <div class="action-buttons-cell">
-                                    <button class="btn-action-modern btn-edit" data-bs-toggle="modal"
-                                        data-bs-target="#editarPagoModal{{ $aporte->id }}" title="Editar">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </button>
-                                    <button class="btn-action-modern btn-delete delete-btn" data-id="{{ $aporte->id }}"
-                                        title="Eliminar">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-
-                            {{-- Confirmar Pago --}}
-                            <td>
-                                <button type="button" class="btn-modern btn-submit confirm-pago-btn"
-                                    data-id="{{ $aporte->id }}"
-                                    data-estudiante="{{ $aporte->user->name }} {{ $aporte->user->lastname1 }}"
-                                    data-curso="{{ $aporte->curso->nombreCurso }}" title="Confirmar pago">
-                                    <i class="bi bi-check-circle me-1"></i> Confirmar Pago
-                                </button>
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
 
                         <div class="modal fade" id="editarPagoModal{{ $aporte->id }}" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">

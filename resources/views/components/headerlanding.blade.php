@@ -184,7 +184,7 @@
                             @endforelse
                             @if (auth()->user()->notifications->count() > 0)
                                 <div class="auth-dropdown-footer">
-                                    <a href="#" class="auth-view-all-link">
+                                    <a href="{{ route('notificationes') }}" class="auth-view-all-link">
                                         Ver todas <i class="bi bi-arrow-right ms-1"></i>
                                     </a>
                                 </div>

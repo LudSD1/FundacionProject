@@ -4,246 +4,225 @@
 
 
 @section('content')
-<div class="container my-4">
-    <div class="card card-modern">
-        <div class="card-header-modern">
-            <div class="row align-items-center g-3">
-                @if (auth()->user()->hasRole('Administrador'))
-                <div class="col-lg-6 col-md-12">
-                    <div class="action-buttons-header">
-                        <a href="{{ route('CrearCurso') }}" class="btn btn-modern btn-create">
-                            <i class="bi bi-plus-circle-fill me-2"></i>
-                            <span>Crear Curso</span>
-                        </a>
-                        <a href="{{ route('ListadeCursosEliminados') }}" class="btn btn-modern btn-deleted">
-                            <i class="bi bi-trash-fill me-2"></i>
-                            <span>Cursos Eliminados</span>
-                        </a>
+    <div class="container-fluid py-5">
+        {{-- Estructura tbl-card moderna --}}
+        <div class="tbl-card">
+            {{-- Cabecera con lenguaje visual moderno --}}
+            <div class="tbl-card-hero">
+                <div class="tbl-hero-left">
+                    <div class="tbl-hero-eyebrow">
+                        <i class="fas fa-trash-alt"></i> Papelera de Reciclaje
                     </div>
+                    <h2 class="tbl-hero-title">Cursos Eliminados</h2>
+                    <p class="tbl-hero-sub">Gestione y restaure los cursos que han sido retirados del sistema</p>
                 </div>
-                @endif
-                <div class="col-lg-6 col-md-12">
-                    <div class="search-box-table">
-                        <i class="bi bi-search search-icon-table"></i>
-                        <input type="text" class="form-control search-input-table" placeholder="Buscar curso..." id="searchInput">
-                        <div class="search-indicator"></div>
-                    </div>
+                <div class="tbl-hero-controls">
+                    <a href="{{ route('ListaCursos') }}" class="tbl-hero-btn tbl-hero-btn-glass">
+                        <i class="fas fa-book"></i> Ver Cursos Activos
+                    </a>
                 </div>
             </div>
-        </div>
 
-        <div class="table-responsive table-container-modern">
-            @if (auth()->user()->hasRole('Administrador'))
-                <table class="table table-modern align-middle">
-                    <thead>
-                        <tr>
-                            <th width="5%">
-                                <div class="th-content">
-                                    <i class="bi bi-hash"></i>
-                                    <span>Nº</span>
-                                </div>
-                            </th>
-                            <th width="20%">
-                                <div class="th-content">
-                                    <i class="bi bi-book-fill"></i>
-                                    <span>Nombre Curso</span>
-                                </div>
-                            </th>
-                            <th width="15%">
-                                <div class="th-content">
-                                    <i class="bi bi-person-fill"></i>
-                                    <span>Docente</span>
-                                </div>
-                            </th>
-                            <th width="10%">
-                                <div class="th-content">
-                                    <i class="bi bi-calendar-check"></i>
-                                    <span>Fecha Inicio</span>
-                                </div>
-                            </th>
-                            <th width="10%">
-                                <div class="th-content">
-                                    <i class="bi bi-calendar-x"></i>
-                                    <span>Fecha Fin</span>
-                                </div>
-                            </th>
-                            <th width="10%">
-                                <div class="th-content">
-                                    <i class="bi bi-display"></i>
-                                    <span>Formato</span>
-                                </div>
-                            </th>
-                            <th width="10%">
-                                <div class="th-content">
-                                    <i class="bi bi-tags-fill"></i>
-                                    <span>Tipo</span>
-                                </div>
-                            </th>
-                            <th width="20%" class="text-center">
-                                <div class="th-content justify-content-center">
-                                    <i class="bi bi-gear-fill"></i>
-                                    <span>Acciones</span>
-                                </div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($cursos as $curso)
-                            <tr class="curso-row" data-course-id="{{ $curso->id }}">
-                                <td>
-                                    <span class="row-number">{{ $loop->iteration }}</span>
-                                </td>
-                                <td>
-                                    <div class="course-name-cell" data-bs-toggle="modal" data-bs-target="#courseModal{{ $curso->id }}" style="cursor: pointer;">
-                                        <i class="bi bi-journal-bookmark-fill course-icon"></i>
-                                        <span class="course-name">{{ ucfirst(strtolower($curso->nombreCurso)) }}</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="teacher-cell">
-                                        <i class="bi bi-person-badge"></i>
-                                        <span>{{ $curso->docente ? $curso->docente->name . ' ' . $curso->docente->lastname1 . ' ' . $curso->docente->lastname2 : 'N/A' }}</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="date-badge date-start">
-                                        <i class="bi bi-calendar-event me-1"></i>
-                                        {{ $curso->fecha_ini ?? 'N/A' }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="date-badge date-end">
-                                        <i class="bi bi-calendar-event me-1"></i>
-                                        {{ $curso->fecha_fin ?? 'N/A' }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="format-badge">
-                                        <i class="bi bi-laptop me-1"></i>
-                                        {{ $curso->formato ?? 'N/A' }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="type-badge type-{{ strtolower($curso->tipo ?? 'curso') }}">
-                                        <i class="bi bi-{{ $curso->tipo == 'congreso' ? 'calendar-event' : 'mortarboard' }}-fill me-1"></i>
-                                        {{ ucfirst(strtolower($curso->tipo)) ?? 'N/A' }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="action-buttons-cell">
-                                        <a class="btn-action-modern btn-view" href="{{ route('Curso', [encrypt($curso->id)]) }}" data-bs-toggle="tooltip" title="Ver Curso">
-                                            <i class="bi bi-eye-fill"></i>
-                                        </a>
-                                        <a class="btn-action-modern btn-edit" data-bs-toggle="modal" data-bs-target="#courseModal{{ $curso->id }}" title="Detalles">
-                                            <i class="bi bi-info-circle-fill"></i>
-                                        </a>
-                                        <a class="btn-action-modern btn-delete" href="{{ route('restaurarCurso', [encrypt($curso->id)]) }}" data-bs-toggle="tooltip" title="Restaurar">
-                                            <i class="bi bi-check-circle-fill"></i>
-                                        </a>
-                                    </div>
-                                </td>
+            <div class="card-body p-4">
+                {{-- Barra de búsqueda --}}
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="search-box-table w-100">
+                            <i class="fas fa-search search-icon-table"></i>
+                            <input type="text" id="searchInput" class="search-input-table"
+                                placeholder="Buscar curso por nombre, docente o tipo…">
+                            <span class="search-indicator"></span>
+                        </div>
+                    </div>
+                </div>
 
-                                    <!-- Modal moderno para cada curso -->
-                                    <div class="modal fade" id="courseModal{{ $curso->id }}" tabindex="-1" aria-labelledby="courseModalLabel{{ $curso->id }}" aria-hidden="true">
-                                        <div class="modal-dialog modal-lg modal-dialog-centered">
-                                            <div class="modal-content modal-modern">
-                                                <div class="modal-header-course">
-                                                    <div class="modal-title-wrapper">
-                                                        <i class="bi bi-book-half modal-icon-course"></i>
-                                                        <h5 class="modal-title" id="courseModalLabel{{ $curso->id }}">Detalles del Curso</h5>
+                <div class="table-container-modern">
+                    <table class="table-modern">
+                        <thead>
+                            <tr>
+                                <th style="width:48px">
+                                    <div class="th-content">#</div>
+                                </th>
+                                <th>
+                                    <div class="th-content">Información del Curso</div>
+                                </th>
+                                <th>
+                                    <div class="th-content">Docente Responsable</div>
+                                </th>
+                                <th>
+                                    <div class="th-content">Periodo</div>
+                                </th>
+                                <th>
+                                    <div class="th-content">Formato / Tipo</div>
+                                </th>
+                                <th class="text-center">
+                                    <div class="th-content text-center w-100">Acciones</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($cursos as $curso)
+                                <tr class="opacity-75 bg-light">
+                                    <td><span class="row-number">#{{ $loop->iteration }}</span></td>
+
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-secondary bg-opacity-10 rounded-3 p-2 me-3 text-secondary">
+                                                <i class="fas fa-book"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark">
+                                                    {{ ucfirst(strtolower($curso->nombreCurso)) }}</div>
+                                                <code class="text-muted" style="font-size: 0.7rem;">ID:
+                                                    {{ $curso->id }}</code>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div class="teacher-cell">
+                                            <i class="fas fa-user-tie"></i>
+                                            <span>{{ $curso->docente ? $curso->docente->name . ' ' . $curso->docente->lastname1 : 'No asignado' }}</span>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div class="d-flex flex-column gap-1">
+                                            <div class="date-badge date-start">
+                                                <i class="fas fa-calendar-check me-1"></i> {{ $curso->fecha_ini ?? 'N/A' }}
+                                            </div>
+                                            <div class="date-badge date-end">
+                                                <i class="fas fa-calendar-times me-1"></i> {{ $curso->fecha_fin ?? 'N/A' }}
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div class="d-flex flex-column gap-1">
+                                            <span class="format-badge">
+                                                <i class="fas fa- chalkboard-teacher me-1"></i>
+                                                {{ $curso->formato ?? 'N/A' }}
+                                            </span>
+                                            <span class="type-badge type-{{ strtolower($curso->tipo ?? 'curso') }}">
+                                                <i
+                                                    class="fas fa-{{ $curso->tipo == 'congreso' ? 'calendar-day' : 'graduation-cap' }} me-1"></i>
+                                                {{ ucfirst(strtolower($curso->tipo)) ?? 'Curso' }}
+                                            </span>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <button class="btn btn-sm btn-outline-info rounded-pill px-3"
+                                                data-bs-toggle="modal" data-bs-target="#courseModal{{ $curso->id }}"
+                                                title="Detalles">
+                                                <i class="fas fa-info-circle me-1"></i> Detalles
+                                            </button>
+                                            <a href="{{ route('restaurarCurso', [encrypt($curso->id)]) }}"
+                                                class="btn btn-sm btn-outline-success rounded-pill px-3"
+                                                onclick="return confirm('¿Desea restaurar este curso?')" title="Restaurar">
+                                                <i class="fas fa-undo me-1"></i> Restaurar
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                {{-- El modal se mantiene pero actualizado con estilos modernos si es necesario --}}
+                                <div class="modal fade" id="courseModal{{ $curso->id }}" tabindex="-1"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content border-0 rounded-4 shadow overflow-hidden">
+                                            <div class="modal-header border-0 bg-secondary text-white py-3">
+                                                <h5 class="modal-title fw-bold">
+                                                    <i class="fas fa-info-circle me-2"></i> Detalles del Curso (Eliminado)
+                                                </h5>
+                                                <button type="button" class="btn-close btn-close-white"
+                                                    data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body p-4">
+                                                <div class="row g-3">
+                                                    <div class="col-12">
+                                                        <div class="bg-light p-3 rounded-3">
+                                                            <small class="text-muted d-block text-uppercase fw-bold"
+                                                                style="font-size: 0.65rem;">Nombre del Curso</small>
+                                                            <span
+                                                                class="fw-bold text-dark">{{ $curso->nombreCurso }}</span>
+                                                        </div>
                                                     </div>
-                                                    <button type="button" class="btn-close-modern-course" data-bs-dismiss="modal" aria-label="Cerrar">
-                                                        <i class="bi bi-x-lg"></i>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body-course">
-                                                    <div class="course-details-grid">
-                                                        <div class="detail-item">
-                                                            <i class="bi bi-bookmark-star-fill detail-icon"></i>
-                                                            <div class="detail-content">
-                                                                <span class="detail-label">Nombre</span>
-                                                                <span class="detail-value">{{ ucfirst(strtolower($curso->nombreCurso)) }}</span>
-                                                            </div>
+                                                    <div class="col-md-6">
+                                                        <div class="bg-light p-3 rounded-3">
+                                                            <small class="text-muted d-block text-uppercase fw-bold"
+                                                                style="font-size: 0.65rem;">Nivel</small>
+                                                            <span>{{ $curso->nivel ?? 'N/A' }}</span>
                                                         </div>
-                                                        <div class="detail-item">
-                                                            <i class="bi bi-bar-chart-fill detail-icon"></i>
-                                                            <div class="detail-content">
-                                                                <span class="detail-label">Nivel</span>
-                                                                <span class="detail-value">{{ $curso->nivel ? ucfirst(strtolower($curso->nivel)) : 'N/A' }}</span>
-                                                            </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="bg-light p-3 rounded-3">
+                                                            <small class="text-muted d-block text-uppercase fw-bold"
+                                                                style="font-size: 0.65rem;">Formato</small>
+                                                            <span>{{ $curso->formato ?? 'N/A' }}</span>
                                                         </div>
-                                                        <div class="detail-item">
-                                                            <i class="bi bi-person-badge-fill detail-icon"></i>
-                                                            <div class="detail-content">
-                                                                <span class="detail-label">Instructor</span>
-                                                                <span class="detail-value">{{ $curso->docente ? $curso->docente->name . ' ' . $curso->docente->lastname1 . ' ' . $curso->docente->lastname2 : 'N/A' }}</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="detail-item">
-                                                            <i class="bi bi-people-fill detail-icon"></i>
-                                                            <div class="detail-content">
-                                                                <span class="detail-label">Edad Dirigida</span>
-                                                                <span class="detail-value">{{ $curso->edad_dirigida ? ucfirst(strtolower($curso->edad_dirigida)) : 'N/A' }}</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="detail-item">
-                                                            <i class="bi bi-calendar-check-fill detail-icon"></i>
-                                                            <div class="detail-content">
-                                                                <span class="detail-label">Fecha Inicio</span>
-                                                                <span class="detail-value">{{ $curso->fecha_ini ?? 'N/A' }}</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="detail-item">
-                                                            <i class="bi bi-calendar-x-fill detail-icon"></i>
-                                                            <div class="detail-content">
-                                                                <span class="detail-label">Fecha Fin</span>
-                                                                <span class="detail-value">{{ $curso->fecha_fin ?? 'N/A' }}</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="detail-item">
-                                                            <i class="bi bi-display-fill detail-icon"></i>
-                                                            <div class="detail-content">
-                                                                <span class="detail-label">Formato</span>
-                                                                <span class="detail-value">{{ $curso->formato ?? 'N/A' }}</span>
-                                                            </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="bg-light p-3 rounded-3">
+                                                            <small class="text-muted d-block text-uppercase fw-bold"
+                                                                style="font-size: 0.65rem;">Docente</small>
+                                                            <span>{{ $curso->docente ? $curso->docente->name . ' ' . $curso->docente->lastname1 : 'N/A' }}</span>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="modal-footer-course">
-                                                    <button type="button" class="btn btn-modern btn-close-modal" data-bs-dismiss="modal">
-                                                        <i class="bi bi-x-circle me-2"></i>
-                                                        Cerrar
-                                                    </button>
-                                                </div>
+                                            </div>
+                                            <div class="modal-footer border-0 bg-light p-3">
+                                                <button type="button" class="btn btn-secondary rounded-pill px-4"
+                                                    data-bs-dismiss="modal">Cerrar</button>
+                                                <a href="{{ route('restaurarCurso', [encrypt($curso->id)]) }}"
+                                                    class="btn btn-success rounded-pill px-4 fw-bold shadow-sm">
+                                                    <i class="fas fa-undo me-2"></i> Restaurar Ahora
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="10" class="text-center">
-                                    <div class="empty-state-table">
-                                        <div class="empty-icon-table">
-                                            <i class="bi bi-exclamation-triangle"></i>
+                                </div>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="text-center py-5">
+                                        <div class="text-muted">
+                                            <i class="fas fa-check-circle fa-3x mb-3 opacity-25"></i>
+                                            <h5 class="fw-bold">No hay cursos eliminados</h5>
+                                            <p class="small">Todo está en orden. No hay elementos en la papelera.</p>
                                         </div>
-                                        <h5 class="empty-title-table">No hay cursos cerrados</h5>
-                                        <p class="empty-text-table">Puedes crear un nuevo curso cuando lo necesites</p>
-                                        <a href="{{ route('CrearCurso') }}" class="btn btn-modern btn-create">
-                                            <i class="bi bi-plus-circle-fill me-2"></i>
-                                            Crear Curso
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            @endif
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
-</div>
-
+@empty
+    <tr>
+        <td colspan="10" class="text-center">
+            <div class="empty-state-table">
+                <div class="empty-icon-table">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <h5 class="empty-title-table">No hay cursos cerrados</h5>
+                <p class="empty-text-table">Puedes crear un nuevo curso cuando lo necesites</p>
+                <a href="{{ route('CrearCurso') }}" class="btn btn-modern btn-create">
+                    <i class="bi bi-plus-circle-fill me-2"></i>
+                    Crear Curso
+                </a>
+            </div>
+        </td>
+    </tr>
+    @endforelse
+    </tbody>
+    </table>
+    @endif
+    </div>
+    </div>
+    </div>
 @endsection
 
 @if (auth()->user()->hasRole('Docente') || auth()->user()->hasRole('Estudiante'))
@@ -258,20 +237,22 @@
 
 <!-- Scripts para búsqueda y tooltips -->
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Búsqueda en tiempo real
-    const input = document.getElementById('searchInput');
-    if (input) {
-      input.addEventListener('input', function() {
-        const q = input.value.toLowerCase();
-        document.querySelectorAll('tbody tr').forEach(function(row) {
-          row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
-        });
-      });
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Búsqueda en tiempo real
+        const input = document.getElementById('searchInput');
+        if (input) {
+            input.addEventListener('input', function() {
+                const q = input.value.toLowerCase();
+                document.querySelectorAll('tbody tr').forEach(function(row) {
+                    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+                });
+            });
+        }
 
-    // Inicializar tooltips de Bootstrap 5
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.forEach(function (tooltipTriggerEl) { new bootstrap.Tooltip(tooltipTriggerEl); });
-  });
+        // Inicializar tooltips de Bootstrap 5
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.forEach(function(tooltipTriggerEl) {
+            new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
 </script>

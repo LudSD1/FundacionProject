@@ -3,179 +3,156 @@
 @endsection
 
 @section('content')
-<div class="container my-4">
-    <div class="card card-modern">
-        <div class="card-header-modern">
-            <div class="row align-items-center g-3">
-                <div class="col-lg-4 col-md-12">
-                    <div class="action-buttons-header">
-                        <a href="{{ route('ListaUsuarios') }}" class="btn btn-modern btn-create" data-bs-toggle="tooltip" title="Volver a lista de usuarios">
-                            <i class="bi bi-arrow-left me-2"></i>
-                            <span>Volver</span>
-                        </a>
-                    </div>
+<div class="container-fluid py-5">
+    {{-- Estructura tbl-card moderna --}}
+    <div class="tbl-card">
+        {{-- Cabecera con lenguaje visual moderno --}}
+        <div class="tbl-card-hero">
+            <div class="tbl-hero-left">
+                <div class="tbl-hero-eyebrow">
+                    <i class="fas fa-user-slash"></i> Papelera de Usuarios
                 </div>
+                <h2 class="tbl-hero-title">Usuarios Eliminados</h2>
+                <p class="tbl-hero-sub">Recupere cuentas de estudiantes, docentes o administradores retirados</p>
+            </div>
+            <div class="tbl-hero-controls">
+                <a href="{{ route('ListaUsuarios') }}" class="tbl-hero-btn tbl-hero-btn-glass">
+                    <i class="fas fa-users"></i> Lista de Usuarios
+                </a>
+            </div>
+        </div>
 
-                {{-- Filtro de Roles --}}
-                <div class="col-lg-4 col-md-6">
-                    <form action="{{ route('ListaUsuariosEliminados') }}" method="GET" id="roleFilterForm">
-                        <input type="hidden" name="search" value="{{ request('search') }}">
-                        <select name="role" class="form-select search-input-table" onchange="document.getElementById('roleFilterForm').submit()" style="padding-left: 1rem;">
-                            <option value="">🔖 Todos los roles</option>
-                            <option value="Administrador" {{ request('role') == 'Administrador' ? 'selected' : '' }}>🛡️ Administrador</option>
-                            <option value="Docente"        {{ request('role') == 'Docente'        ? 'selected' : '' }}>🎓 Docente</option>
-                            <option value="Estudiante"     {{ request('role') == 'Estudiante'     ? 'selected' : '' }}>📚 Estudiante</option>
-                        </select>
+        <div class="card-body p-4">
+            <!-- Barra de búsqueda y filtros -->
+            <div class="row g-3 mb-4">
+                <div class="col-lg-8">
+                    <form action="{{ route('ListaUsuariosEliminados') }}" method="GET" class="search-box-table w-100">
+                        <input type="hidden" name="role" value="{{ request('role') }}">
+                        <i class="fas fa-search search-icon-table"></i>
+                        <input type="text" name="search" class="search-input-table"
+                               placeholder="Buscar por nombre, correo o celular..."
+                               value="{{ request('search') }}">
+                        @if(request('search'))
+                            <a href="{{ route('ListaUsuariosEliminados', ['role' => request('role')]) }}" class="btn-search-clear">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        @endif
+                        <button type="submit" class="btn-search-icon">
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
                     </form>
                 </div>
-
-                {{-- Buscador --}}
-                <div class="col-lg-4 col-md-6">
-                    <form action="{{ route('ListaUsuariosEliminados') }}" method="GET" class="w-100">
-                        <input type="hidden" name="role" value="{{ request('role') }}">
-                        <div class="search-box-table">
-                            <i class="bi bi-search search-icon-table"></i>
-                            <input type="text"
-                                   class="form-control search-input-table"
-                                   placeholder="Buscar usuario eliminado..."
-                                   name="search"
-                                   value="{{ request('search') }}">
-                            <div class="search-indicator"></div>
+                <div class="col-lg-4">
+                    <form action="{{ route('ListaUsuariosEliminados') }}" method="GET" id="roleFilterForm">
+                        <input type="hidden" name="search" value="{{ request('search') }}">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0 text-muted">
+                                <i class="fas fa-filter"></i>
+                            </span>
+                            <select name="role" class="form-select border-start-0 ps-0" onchange="this.form.submit()">
+                                <option value="">Todos los roles</option>
+                                <option value="Administrador" {{ request('role') == 'Administrador' ? 'selected' : '' }}>Administrador</option>
+                                <option value="Docente"        {{ request('role') == 'Docente'        ? 'selected' : '' }}>Docente</option>
+                                <option value="Estudiante"     {{ request('role') == 'Estudiante'     ? 'selected' : '' }}>Estudiante</option>
+                            </select>
                         </div>
                     </form>
                 </div>
             </div>
-        </div>
-    </div>
 
-    {{-- Alerta de filtros activos --}}
-    @if(request('search') || request('role'))
-        <div class="alert alert-info mt-3 d-flex justify-content-between align-items-center">
-            <span>
-                @if(request('search'))
-                    Búsqueda: <strong>{{ request('search') }}</strong>
-                @endif
-                @if(request('role'))
-                    &nbsp; Rol: <strong class="badge bg-primary">{{ request('role') }}</strong>
-                @endif
-                &nbsp;— <strong>{{ $usuarios->total() }}</strong> resultado(s) encontrado(s)
-            </span>
-            <a href="{{ route('ListaUsuariosEliminados') }}" class="btn btn-sm btn-outline-secondary">
-                <i class="bi bi-x-circle me-1"></i> Limpiar filtros
-            </a>
-        </div>
-    @endif
+            @if(session('success'))
+                <div class="alert alert-success border-0 shadow-sm rounded-4 mb-4">
+                    <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+                </div>
+            @endif
 
-    <div class="table-responsive table-container-modern">
-        <table class="table table-modern align-middle">
-            <thead>
-                <tr>
-                    <th width="5%">
-                        <div class="th-content">
-                            <i class="bi bi-hash"></i><span>Nº</span>
-                        </div>
-                    </th>
-                    <th width="28%">
-                        <div class="th-content">
-                            <i class="bi bi-person-badge"></i><span>Nombre y Apellidos</span>
-                        </div>
-                    </th>
-                    <th width="12%">
-                        <div class="th-content">
-                            <i class="bi bi-shield-fill"></i><span>Rol</span>
-                        </div>
-                    </th>
-                    <th width="15%">
-                        <div class="th-content">
-                            <i class="bi bi-telephone-fill"></i><span>Celular</span>
-                        </div>
-                    </th>
-                    <th width="25%">
-                        <div class="th-content">
-                            <i class="bi bi-envelope-fill"></i><span>Correo</span>
-                        </div>
-                    </th>
-                    <th width="15%" class="text-center">
-                        <div class="th-content justify-content-center">
-                            <i class="bi bi-gear-fill"></i><span>Acciones</span>
-                        </div>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($usuarios as $usuario)
-                    <tr class="curso-row">
-                        <td>
-                            <span class="row-number">{{ $loop->iteration }}</span>
-                        </td>
-                        <td>
-                            <div class="teacher-cell">
-                                <i class="bi bi-person-badge"></i>
-                                <span>{{ $usuario->name }} {{ $usuario->lastname1 }} {{ $usuario->lastname2 }}</span>
-                            </div>
-                        </td>
-                        <td>
-                            @php $rol = $usuario->getRoleNames()->first(); @endphp
-                            @if($rol == 'Administrador')
-                                <span class="badge bg-danger">🛡️ Administrador</span>
-                            @elseif($rol == 'Docente')
-                                <span class="badge bg-success">🎓 Docente</span>
-                            @elseif($rol == 'Estudiante')
-                                <span class="badge bg-primary">📚 Estudiante</span>
-                            @else
-                                <span class="badge bg-secondary">Sin rol</span>
-                            @endif
-                        </td>
-                        <td>
-                            <div class="teacher-cell">
-                                <i class="bi bi-telephone-fill"></i>
-                                <span>+{{ $usuario->Celular }}</span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="teacher-cell">
-                                <i class="bi bi-envelope"></i>
-                                <span>{{ $usuario->email }}</span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="action-buttons-cell">
-                                <a class="btn-action-modern btn-view"
-                                   href="{{ route('perfil', [encrypt($usuario->id)]) }}"
-                                   data-bs-toggle="tooltip" title="Ver perfil">
-                                    <i class="bi bi-eye-fill"></i>
-                                </a>
-                                <a class="btn-action-modern btn-create"
-                                   href="{{ route('restaurarUsuario', [encrypt($usuario->id)]) }}"
-                                   onclick="mostrarAdvertencia(event, '{{ $rol }}')"
-                                   data-bs-toggle="tooltip" title="Restaurar usuario">
-                                    <i class="bi bi-arrow-counterclockwise"></i>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="6" class="text-center">
-                            <div class="empty-state-table">
-                                <div class="empty-icon-table">
-                                    <i class="bi bi-person-check"></i>
-                                </div>
-                                <h5 class="empty-title-table">No hay usuarios eliminados</h5>
-                                <p class="empty-text-table">
-                                    @if(request('role'))
-                                        No se encontraron <strong>{{ request('role') }}s</strong> eliminados.
+            <div class="table-container-modern">
+                <table class="table-modern">
+                    <thead>
+                        <tr>
+                            <th style="width: 48px;"><div class="th-content">#</div></th>
+                            <th><div class="th-content">Usuario</div></th>
+                            <th><div class="th-content">Rol</div></th>
+                            <th><div class="th-content">Contacto</div></th>
+                            <th class="text-center"><div class="th-content text-center w-100">Acciones</div></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($usuarios as $usuario)
+                            <tr class="opacity-75 bg-light">
+                                <td><span class="row-number">{{ $loop->iteration }}</span></td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-secondary bg-opacity-10 rounded-circle p-2 me-3 text-secondary">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-dark">{{ $usuario->name }} {{ $usuario->lastname1 }}</div>
+                                            <div class="text-muted small"><i class="fas fa-envelope me-1"></i>{{ $usuario->email }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    @php $rol = $usuario->getRoleNames()->first(); @endphp
+                                    @if($rol == 'Administrador')
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill">
+                                            <i class="fas fa-shield-alt me-1"></i> Admin
+                                        </span>
+                                    @elseif($rol == 'Docente')
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
+                                            <i class="fas fa-chalkboard-teacher me-1"></i> Docente
+                                        </span>
+                                    @elseif($rol == 'Estudiante')
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill">
+                                            <i class="fas fa-user-graduate me-1"></i> Alumno
+                                        </span>
                                     @else
-                                        No se encontraron registros de usuarios eliminados.
+                                        <span class="badge bg-light text-muted border px-3 py-2 rounded-pill">Sin rol</span>
                                     @endif
-                                </p>
-                            </div>
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column gap-1">
+                                        <div class="small fw-bold text-dark"><i class="fas fa-phone-alt me-1 text-muted"></i> +{{ $usuario->Celular }}</div>
+                                        <div class="date-badge date-start" style="font-size: 0.7rem;">
+                                            <i class="fas fa-calendar-times me-1"></i> Eliminado: {{ $usuario->deleted_at ? $usuario->deleted_at->format('d/m/Y') : 'N/A' }}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a href="{{ route('perfil', [encrypt($usuario->id)]) }}"
+                                           class="btn btn-sm btn-outline-info rounded-pill px-3" title="Ver Perfil">
+                                            <i class="fas fa-eye me-1"></i> Perfil
+                                        </a>
+                                        <a href="{{ route('restaurarUsuario', [encrypt($usuario->id)]) }}"
+                                           class="btn btn-sm btn-outline-success rounded-pill px-3"
+                                           onclick="mostrarAdvertencia(event, '{{ $rol }}')" title="Restaurar">
+                                            <i class="fas fa-undo me-1"></i> Restaurar
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="fas fa-user-check fa-3x mb-3 opacity-25"></i>
+                                        <h5 class="fw-bold">No hay usuarios eliminados</h5>
+                                        <p class="small">La papelera de usuarios está vacía.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4">
+                {{ $usuarios->appends(['search' => request('search'), 'role' => request('role')])->links('custom-pagination') }}
+            </div>
+        </div>
     </div>
+</div>
 
     <div class="d-flex justify-content-center mt-4">
         {{ $usuarios->appends(['search' => request('search'), 'role' => request('role')])->links('custom-pagination') }}

@@ -37,6 +37,10 @@ class ExpositoresController extends Controller
 
         Expositores::create($data);
 
+        if ($request->ajax()) {
+            return response()->json(['success' => 'Expositor agregado correctamente']);
+        }
+
         return back()->with('success', 'Expositor agregado correctamente');
     }
 
@@ -80,6 +84,10 @@ class ExpositoresController extends Controller
         }
 
         $expositor->update($data);
+
+        if ($request->ajax()) {
+            return response()->json(['success' => 'Expositor actualizado correctamente']);
+        }
 
         return back()->with('success', 'Expositor actualizado correctamente');
     }

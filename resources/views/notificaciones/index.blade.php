@@ -1,3 +1,9 @@
+@extends('layout')
+
+@section('titulo', 'Notificaciones')
+
+@section('content')
+
 @php
     $filter = request('filter', 'all');
     $search = request('search');
@@ -15,52 +21,59 @@
     $notifications = $query->latest()->paginate(8);
 @endphp
 
+<div class="tbl-card">
+    {{-- Hero Section --}}
+    <div class="tbl-card-hero">
+        <div class="tbl-card-hero-content">
+            <h1 class="tbl-card-hero-title text-white">
+                <i class="bi bi-bell-fill me-2"></i>Centro de Notificaciones
+            </h1>
+            <p class="tbl-card-hero-subtitle text-white">
+                Gestione sus avisos, alertas y mensajes del sistema en un solo lugar.
+            </p>
+        </div>
 
-<div class="ntf-wrap">
-    <div class="ntf-toolbar">
-        <form method="GET" action="" id="ntfSearchForm" class="ntf-toolbar-search">
-            <input type="hidden" name="filter" value="{{ $filter }}">
-            <div class="tbl-hero-search" style="--search-w: 100%">
-                <i class="bi bi-search tbl-hero-search-icon" style="color:#94a3b8"></i>
-                <input type="text" class="tbl-hero-search-input ntf-search-light" name="search" id="ntfSearchInput"
+        <div class="tbl-card-hero-actions">
+            {{-- Buscador --}}
+            <form method="GET" action="" id="ntfSearchForm" class="tbl-hero-search">
+                <input type="hidden" name="filter" value="{{ $filter }}">
+                <i class="bi bi-search tbl-hero-search-icon"></i>
+                <input type="text" class="tbl-hero-search-input" name="search" id="ntfSearchInput"
                     value="{{ $search }}" placeholder="Buscar notificaciones…" autocomplete="off">
                 @if ($search)
-                    <button class="ntf-clear-btn" type="button" id="ntfClearBtn" title="Limpiar búsqueda">
+                    <button class="tbl-hero-search-clear" type="button" id="ntfClearBtn">
                         <i class="bi bi-x-circle-fill"></i>
                     </button>
                 @endif
-            </div>
-        </form>
+            </form>
 
-        {{-- Filtro --}}
-        <form id="ntfFilterForm" method="GET" action="">
-            <input type="hidden" name="search" value="{{ $search }}">
-            <div class="tbl-hero-select-wrap ntf-select-light">
-                <i class="bi bi-funnel-fill tbl-hero-select-icon" style="color:#94a3b8"></i>
-                <select class="tbl-hero-select ntf-select-field" name="filter" id="ntfFilterSelect">
-                    <option value="all" {{ $filter === 'all' ? 'selected' : '' }}>Todas</option>
-                    <option value="unread" {{ $filter === 'unread' ? 'selected' : '' }}>No leídas</option>
-                    <option value="read" {{ $filter === 'read' ? 'selected' : '' }}>Leídas</option>
-                </select>
-            </div>
-        </form>
+            {{-- Filtro --}}
+            <form id="ntfFilterForm" method="GET" action="">
+                <input type="hidden" name="search" value="{{ $search }}">
+                <div class="tbl-hero-select-wrap">
+                    <i class="bi bi-funnel-fill tbl-hero-select-icon"></i>
+                    <select class="tbl-hero-select" name="filter" id="ntfFilterSelect">
+                        <option value="all" {{ $filter === 'all' ? 'selected' : '' }}>Todas</option>
+                        <option value="unread" {{ $filter === 'unread' ? 'selected' : '' }}>No leídas</option>
+                        <option value="read" {{ $filter === 'read' ? 'selected' : '' }}>Leídas</option>
+                    </select>
+                </div>
+            </form>
 
-        <div class="ntf-toolbar-actions">
-            <button class="tbl-hero-btn tbl-hero-btn-primary" id="ntfMarkAllBtn">
-                <i class="bi bi-check-all"></i>
-                <span>Marcar todo leído</span>
-            </button>
-            <button class="tbl-hero-btn tbl-hero-btn-danger" id="ntfDeleteAllBtn">
-                <i class="bi bi-trash-fill"></i>
-                <span>Eliminar leídas</span>
-            </button>
+            <div class="d-flex gap-2 mt-2 mt-md-0">
+                <button class="tbl-hero-btn tbl-hero-btn-primary" id="ntfMarkAllBtn">
+                    <i class="bi bi-check-all"></i>
+                    <span>Marcar todo</span>
+                </button>
+                <button class="tbl-hero-btn tbl-hero-btn-danger" id="ntfDeleteAllBtn">
+                    <i class="bi bi-trash-fill"></i>
+                    <span>Eliminar leídas</span>
+                </button>
+            </div>
         </div>
-
-        <form id="ntfMarkAllForm" action="{{ route('notifications.mark-all-read') }}" method="POST" class="d-none">
-            @csrf</form>
-        <form id="ntfDeleteAllForm" action="{{ route('notifications.delete-all-read') }}" method="POST" class="d-none">
-            @csrf @method('DELETE')</form>
     </div>
+
+    {{-- Filter Bar --}}
     @if ($search || $filter !== 'all')
         <div class="tbl-filter-bar">
             <div class="tbl-filter-bar-left">
@@ -88,22 +101,22 @@
         <table class="table-modern">
             <thead>
                 <tr>
-                    <th style="width:48%">
+                    <th style="width:50%">
                         <div class="th-content">
                             <i class="bi bi-chat-left-text-fill"></i><span>Descripción</span>
                         </div>
                     </th>
-                    <th style="width:18%">
+                    <th style="width:20%">
                         <div class="th-content">
                             <i class="bi bi-clock-fill"></i><span>Tiempo</span>
                         </div>
                     </th>
-                    <th style="width:14%">
+                    <th style="width:15%">
                         <div class="th-content">
                             <i class="bi bi-circle-fill"></i><span>Estado</span>
                         </div>
                     </th>
-                    <th style="width:20%" class="text-center">
+                    <th style="width:15%" class="text-center">
                         <div class="th-content justify-content-center">
                             <i class="bi bi-gear-fill"></i><span>Acciones</span>
                         </div>
@@ -123,8 +136,7 @@
 
                         <td>
                             <div class="ntf-content">
-                                <div
-                                    class="ntf-icon-wrap {{ $notification->read_at ? 'ntf-icon-wrap--read' : 'ntf-icon-wrap--unread' }}">
+                                <div class="ntf-icon-wrap {{ $notification->read_at ? 'ntf-icon-wrap--read' : 'ntf-icon-wrap--unread' }}">
                                     <i class="bi {{ $notification->data['icon'] ?? 'bi-info-circle' }}"></i>
                                 </div>
                                 <div class="ntf-text">
@@ -133,7 +145,7 @@
                                     </div>
                                     @if (!empty($notification->data['details']))
                                         <div class="ntf-details">
-                                            {{ Str::limit($notification->data['details'], 60) }}
+                                            {{ Str::limit($notification->data['details'], 70) }}
                                         </div>
                                     @endif
                                 </div>
@@ -141,9 +153,8 @@
                         </td>
 
                         <td>
-                            <span class="ntf-time" data-bs-toggle="tooltip" data-bs-placement="top"
-                                title="{{ $notification->created_at->format('d/m/Y H:i:s') }}">
-                                <i class="bi bi-clock-history"></i>
+                            <span class="ntf-time" data-bs-toggle="tooltip" title="{{ $notification->created_at->format('d/m/Y H:i:s') }}">
+                                <i class="bi bi-clock-history me-1"></i>
                                 {{ $notification->created_at->diffForHumans() }}
                             </span>
                         </td>
@@ -162,7 +173,6 @@
 
                         <td>
                             <div class="action-buttons-cell">
-
                                 <button class="btn-action-modern btn-view" data-action="view"
                                     data-bs-toggle="tooltip" title="Ver detalles">
                                     <i class="bi bi-eye-fill"></i>
@@ -179,7 +189,6 @@
                                     </form>
                                 @endif
 
-                                {{-- Eliminar --}}
                                 <form action="{{ route('notifications.delete', $notification->id) }}" method="POST"
                                     class="ntf-form ntf-form-delete">
                                     @csrf @method('DELETE')
@@ -188,10 +197,8 @@
                                         <i class="bi bi-trash-fill"></i>
                                     </button>
                                 </form>
-
                             </div>
                         </td>
-
                     </tr>
                 @empty
                     <tr>
@@ -203,26 +210,15 @@
                                 <h5 class="empty-title-table">
                                     @if ($search)
                                         Sin resultados para "{{ $search }}"
-                                    @elseif($filter === 'unread')
-                                        No tienes notificaciones sin leer
-                                    @elseif($filter === 'read')
-                                        No tienes notificaciones leídas
                                     @else
                                         No hay notificaciones
                                     @endif
                                 </h5>
                                 <p class="empty-text-table">
                                     @if (!$search)
-                                        Cuando recibas notificaciones, aparecerán aquí
+                                        Cuando recibas alertas del sistema, aparecerán aquí.
                                     @endif
                                 </p>
-                                @if ($search || $filter !== 'all')
-                                    <a href="{{ url()->current() }}" class="tbl-hero-btn tbl-hero-btn-primary"
-                                        style="width:auto;margin:0 auto">
-                                        <i class="bi bi-arrow-clockwise"></i>
-                                        Ver todas las notificaciones
-                                    </a>
-                                @endif
                             </div>
                         </td>
                     </tr>
@@ -232,25 +228,21 @@
     </div>
 
     @if ($notifications->hasPages())
-        <div class="ntf-pagination-wrap">
-            @if ($notifications->firstItem())
-                <span class="ntf-pagination-info">
-                    <i class="bi bi-info-circle me-1"></i>
-                    Mostrando <strong>{{ $notifications->firstItem() }}</strong> –
-                    <strong>{{ $notifications->lastItem() }}</strong> de
-                    <strong>{{ $notifications->total() }}</strong>
-                </span>
-            @endif
-            <div class="tbl-pagination" style="border:none;background:transparent;padding:.5rem 0">
+        <div class="tbl-pagination">
+            <div class="tbl-pagination-info">
+                Mostrando <strong>{{ $notifications->firstItem() }}</strong> –
+                <strong>{{ $notifications->lastItem() }}</strong> de
+                <strong>{{ $notifications->total() }}</strong>
+            </div>
+            <div class="tbl-pagination-links">
                 {{ $notifications->links('vendor.pagination.custom') }}
             </div>
         </div>
     @endif
-
-    
-
 </div>
 
+<form id="ntfMarkAllForm" action="{{ route('notifications.mark-all-read') }}" method="POST" class="d-none">@csrf</form>
+<form id="ntfDeleteAllForm" action="{{ route('notifications.delete-all-read') }}" method="POST" class="d-none">@csrf @method('DELETE')</form>
 
 <script>
     (function() {
@@ -258,9 +250,7 @@
 
             /* ── Tooltips ── */
             document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
-                new bootstrap.Tooltip(el, {
-                    trigger: 'hover'
-                });
+                new bootstrap.Tooltip(el, { trigger: 'hover' });
             });
 
             /* ── Filtro ── */
@@ -292,9 +282,9 @@
                         title: '¿Marcar todas como leídas?',
                         icon: 'question',
                         showCancelButton: true,
-                        confirmButtonColor: '#145da0',
+                        confirmButtonColor: '#1a4789',
                         cancelButtonColor: '#94a3b8',
-                        confirmButtonText: '<i class="bi bi-check-all me-1"></i> Confirmar',
+                        confirmButtonText: 'Sí, marcar todas',
                         cancelButtonText: 'Cancelar',
                         reverseButtons: true,
                     }).then(r => {
@@ -307,13 +297,13 @@
             document.getElementById('ntfDeleteAllBtn')
                 ?.addEventListener('click', () => {
                     Swal.fire({
-                        title: '¿Eliminar todas las leídas?',
+                        title: '¿Eliminar notificaciones leídas?',
                         text: 'Esta acción no se puede deshacer.',
                         icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonColor: '#dc2626',
+                        confirmButtonColor: '#dc3545',
                         cancelButtonColor: '#94a3b8',
-                        confirmButtonText: '<i class="bi bi-trash-fill me-1"></i> Eliminar',
+                        confirmButtonText: 'Sí, eliminar',
                         cancelButtonText: 'Cancelar',
                         reverseButtons: true,
                     }).then(r => {
@@ -331,7 +321,7 @@
                         title: '¿Marcar como leída?',
                         icon: 'question',
                         showCancelButton: true,
-                        confirmButtonColor: '#145da0',
+                        confirmButtonColor: '#1a4789',
                         cancelButtonColor: '#94a3b8',
                         confirmButtonText: 'Sí, marcar',
                         cancelButtonText: 'Cancelar',
@@ -352,7 +342,7 @@
                         text: 'Esta acción no se puede deshacer.',
                         icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonColor: '#dc2626',
+                        confirmButtonColor: '#dc3545',
                         cancelButtonColor: '#94a3b8',
                         confirmButtonText: 'Sí, eliminar',
                         cancelButtonText: 'Cancelar',
@@ -381,8 +371,8 @@
                     const mTime = document.getElementById('ntfModalTime');
 
                     header.style.background = isRead ?
-                        'linear-gradient(135deg,#374151,#64748b)' :
-                        'linear-gradient(135deg,#0d2244,#145da0)';
+                        'linear-gradient(135deg,#64748b,#475569)' :
+                        'linear-gradient(135deg,#1a4789,#055c9d)';
                     mIcon.innerHTML = `<i class="bi ${icon}"></i>`;
                     mTime.textContent = timeRel;
 
@@ -393,11 +383,11 @@
 
                     let html = `
                         <div class="d-flex align-items-start gap-3 mb-4">
-                            <div class="ntf-modal-icon-wrap">
+                            <div class="ntf-modal-icon-wrap" style="background: ${isRead ? '#f1f5f9' : 'rgba(26, 71, 137, 0.1)'}; color: ${isRead ? '#64748b' : '#1a4789'}">
                                 <i class="bi ${icon}"></i>
                             </div>
                             <div>
-                                <p class="mb-2" style="font-weight:600;font-size:.95rem">${message}</p>
+                                <p class="mb-2" style="font-weight:700;font-size:1.05rem;color:#1e293b">${message}</p>
                                 ${badge}
                             </div>
                         </div>`;
@@ -406,9 +396,9 @@
                         html += `
                         <div class="info-field mb-3">
                             <label class="info-label">
-                                <i class="bi bi-card-text"></i> Detalles
+                                <i class="bi bi-card-text"></i> Detalles de la notificación
                             </label>
-                            <div class="info-value">${details}</div>
+                            <div class="info-value" style="background:#f8fafc;padding:1rem;border-radius:10px;border:1px solid #e2e8f0;font-size:.9rem">${details}</div>
                         </div>`;
                     }
 
@@ -425,7 +415,7 @@
                             <div class="col-md-6">
                                 <div class="info-field">
                                     <label class="info-label">
-                                        <i class="bi bi-clock-history"></i> Hace
+                                        <i class="bi bi-clock-history"></i> Tiempo transcurrido
                                     </label>
                                     <div class="info-value">${timeRel}</div>
                                 </div>
@@ -433,10 +423,10 @@
                             <div class="col-12">
                                 <div class="info-field">
                                     <label class="info-label">
-                                        <i class="bi bi-hash"></i> ID
+                                        <i class="bi bi-hash"></i> Identificador
                                     </label>
                                     <div class="info-value">
-                                        <code style="font-size:.82rem">#${id}</code>
+                                        <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;color:#475569;font-size:.85rem">${id}</code>
                                     </div>
                                 </div>
                             </div>
@@ -452,3 +442,7 @@
         });
     })();
 </script>
+
+@endsection
+
+

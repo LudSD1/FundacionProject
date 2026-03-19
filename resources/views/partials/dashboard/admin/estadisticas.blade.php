@@ -1,83 +1,72 @@
-<style>
-    .stat-card {
-        border-radius: 10px;
-        transition: transform .2s ease, box-shadow .2s ease;
-    }
 
-    .stat-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-    }
-
-    .stat-icon {
-        width: 50px;
-        height: 50px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 50%;
-        font-size: 1.5rem;
-    }
-</style>
-
-<div class="container py-1">
+<div class="container py-2">
     <div class="row g-3">
 
+        {{-- Cursos --}}
         <div class="col-xl-3 col-md-6">
-            <div class="card stat-card shadow-sm p-3">
-                <div class="d-flex justify-content-between align-items-center">
+            <div class="st-card st-card--red">
+                <div class="st-card-body">
                     <div>
-                        <h6 class="text-muted text-uppercase mb-1">Cursos</h6>
-                        <h3 class="fw-bold">0</h3>
+                        <div class="st-label">Cursos</div>
+                        <div class="st-num">{{ $totalCursos ?? 0 }}</div>
                     </div>
-                    <div class="stat-icon bg-danger text-white">
+                    <div class="st-icon st-icon--red">
                         <i class="bi bi-bar-chart-fill"></i>
                     </div>
                 </div>
+                <div class="st-bar st-bar--red"></div>
             </div>
         </div>
 
+        {{-- Estudiantes --}}
         <div class="col-xl-3 col-md-6">
-            <div class="card stat-card shadow-sm p-3">
-                <div class="d-flex justify-content-between align-items-center">
+            <div class="st-card st-card--orange">
+                <div class="st-card-body">
                     <div>
-                        <h6 class="text-muted text-uppercase mb-1">Estudiantes</h6>
-                        <h3 class="fw-bold">0</h3>
+                        <div class="st-label">Estudiantes</div>
+                        <div class="st-num">{{ $totalEstudiantes ?? 0 }}</div>
                     </div>
-                    <div class="stat-icon bg-warning text-white">
+                    <div class="st-icon st-icon--orange">
                         <i class="bi bi-people-fill"></i>
                     </div>
                 </div>
+                <div class="st-bar st-bar--orange"></div>
             </div>
         </div>
 
+        {{-- Docentes --}}
         <div class="col-xl-3 col-md-6">
-            <div class="card stat-card shadow-sm p-3">
-                <div class="d-flex justify-content-between align-items-center">
+            <div class="st-card st-card--blue">
+                <div class="st-card-body">
                     <div>
-                        <h6 class="text-muted text-uppercase mb-1">Docentes</h6>
-                        <h3 class="fw-bold">0</h3>
+                        <div class="st-label">Docentes</div>
+                        <div class="st-num">{{ $totalDocentes ?? 0 }}</div>
                     </div>
-                    <div class="stat-icon bg-primary text-white">
+                    <div class="st-icon st-icon--blue">
                         <i class="bi bi-person-check-fill"></i>
                     </div>
                 </div>
+                <div class="st-bar st-bar--blue"></div>
             </div>
         </div>
 
+        {{-- Inscripciones --}}
         <div class="col-xl-3 col-md-6">
-            <div class="card stat-card shadow-sm p-3">
-                <div class="d-flex justify-content-between align-items-center">
+            <div class="st-card st-card--green">
+                <div class="st-card-body">
                     <div>
-                        <h6 class="text-muted text-uppercase mb-1">Inscripciones</h6>
-                        <h3 class="fw-bold">0</h3>
+                        <div class="st-label">Inscripciones</div>
+                        <div class="st-num">{{ $totalInscripciones ?? 0 }}</div>
                     </div>
-                    <div class="stat-icon bg-info text-white">
+                    <div class="st-icon st-icon--green">
                         <i class="bi bi-clipboard-check-fill"></i>
                     </div>
                 </div>
+                <div class="st-bar st-bar--green"></div>
             </div>
         </div>
 
     </div>
 </div>
+
+

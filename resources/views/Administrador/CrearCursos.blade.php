@@ -1,11 +1,10 @@
-@section('titulo')
-    Crear Curso
-@endsection
-
-
-
+@section('titulo', 'Crear Curso')
 
 @section('content')
+<style>
+  
+</style>
+
     <div class="back-button-wrapper">
         <a href="{{ route('ListadeCursos') }}" class="btn-back-modern">
             <i class="bi bi-arrow-left-circle-fill"></i>
@@ -17,32 +16,33 @@
         <!-- Header -->
         <div class="wizard-header">
             <h2><i class="bi bi-plus-circle-fill me-2"></i>Crear Nuevo Curso o Evento</h2>
-            <p>Complete el formulario paso a paso para registrar su curso o evento</p>
+            <p>Complete el formulario paso a paso para registrar su oferta académica</p>
         </div>
 
         <!-- Progress Bar -->
         <div class="progress-wrapper">
             <div class="steps-progress">
-                <div class="progress-line" id="progressLine"></div>
+                <div class="progress-line"></div>
+                <div class="progress-line-active" id="progressLine"></div>
 
                 <div class="step-item active" data-step="1">
                     <div class="step-circle">1</div>
-                    <span class="step-label">Datos Básicos</span>
+                    <span class="step-label">Datos</span>
                 </div>
 
                 <div class="step-item" data-step="2">
                     <div class="step-circle">2</div>
-                    <span class="step-label">Configuración</span>
+                    <span class="step-label">Config</span>
                 </div>
 
                 <div class="step-item" data-step="3">
                     <div class="step-circle">3</div>
-                    <span class="step-label">Público Objetivo</span>
+                    <span class="step-label">Público</span>
                 </div>
 
                 <div class="step-item" data-step="4">
                     <div class="step-circle">4</div>
-                    <span class="step-label">Detalles Finales</span>
+                    <span class="step-label">Precio</span>
                 </div>
             </div>
         </div>
@@ -145,7 +145,7 @@
                                     <i class="bi bi-laptop label-icon"></i>
                                     Formato
                                 </label>
-                                <select name="formato" class="form-select-modern"> 
+                                <select name="formato" class="form-select-modern">
                                     <option value="Virtual" {{ old('formato') == 'Virtual' ? 'selected' : '' }}>💻 Virtual
                                     </option>
                                 </select>

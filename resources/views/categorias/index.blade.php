@@ -7,175 +7,137 @@
 @endsection
 
 @section('content')
-<div class="container-fluid mt-4">
-    <!-- Header con título y botón crear -->
-
-    <!-- Barra de búsqueda moderna -->
-    <div class="card-modern mb-4">
-        <div class="card-body">
-                <div class="row align-items-center mb-4">
-        <div class="col-md-8">
-            <h2 class="mb-0">
-                <i class="fas fa-folder me-2 text-primary"></i>
-                Gestión de Categorías
-            </h2>
-            <p class="text-muted mb-0">Administra las categorías del sistema</p>
+<div class="container-fluid py-5">
+    {{-- Estructura tbl-card moderna --}}
+    <div class="tbl-card">
+        {{-- Cabecera con lenguaje visual moderno --}}
+        <div class="tbl-card-hero">
+            <div class="tbl-hero-left">
+                <div class="tbl-hero-eyebrow">
+                    <i class="fas fa-sitemap"></i> Estructura Académica
+                </div>
+                <h2 class="tbl-hero-title">Gestión de Categorías</h2>
+                <p class="tbl-hero-sub">Organice y administre las categorías de cursos y eventos</p>
+            </div>
+            <div class="tbl-hero-controls">
+                <button class="tbl-hero-btn tbl-hero-btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#crearCategoriaModal">
+                    <i class="fas fa-plus"></i> Nueva Categoría
+                </button>
+            </div>
         </div>
-        <div class="col-md-4 text-end">
-            <button class="btn-modern btn-create" data-bs-toggle="modal" data-bs-target="#crearCategoriaModal">
-                <i class="fa fa-plus"></i>
-                <span class="ms-1">Nueva Categoría</span>
-            </button>
-        </div>
-    </div>
 
-            <form action="{{ route('categorias.index') }}" method="GET" class="row g-3 align-items-center">
-                <input type="hidden" name="tab" value="{{ request('tab', 'activas') }}">
+        <div class="card-body p-4">
+            <!-- Barra de búsqueda y filtros -->
+            <div class="row g-3 align-items-center mb-4">
                 <div class="col-md-8">
-                    <div class="search-box-table">
+                    <form action="{{ route('categorias.index') }}" method="GET" class="search-box-table w-100">
+                        <input type="hidden" name="tab" value="{{ request('tab', 'activas') }}">
                         <i class="fas fa-search search-icon-table"></i>
                         <input type="text" name="busqueda" class="search-input-table"
-                               placeholder="Buscar por nombre, descripción..."
+                               placeholder="Buscar por nombre o descripción..."
                                value="{{ request('busqueda') }}">
-                        <button type="submit" class="btn-search-icon" aria-label="Buscar">
-                            <i class="fas fa-search"></i>
-                        </button>
-                        <span class="search-indicator"></span>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="d-flex gap-2">
                         @if(request('busqueda'))
-                            <a href="{{ route('categorias.index', ['tab' => request('tab', 'activas')]) }}" class="btn btn-outline-secondary">
-                                <i class="fas fa-times me-1"></i>
-                                Limpiar
+                            <a href="{{ route('categorias.index', ['tab' => request('tab', 'activas')]) }}" class="btn-search-clear" title="Limpiar búsqueda">
+                                <i class="fas fa-times"></i>
                             </a>
                         @endif
+                        <button type="submit" class="btn-search-icon">
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </form>
+                </div>
+                <div class="col-md-4">
+                    {{-- Tabs integrados --}}
+                    <div class="adm-tabs-container">
+                        <div class="adm-tabs-links">
+                            <a class="adm-tab-link {{ request('tab', 'activas') === 'activas' ? 'active' : '' }}"
+                               href="{{ route('categorias.index', ['tab' => 'activas', 'busqueda' => request('busqueda')]) }}">
+                                <i class="fas fa-check-circle me-1"></i> Activas
+                                <span class="badge rounded-pill bg-success ms-1">{{ $countActivas }}</span>
+                            </a>
+                            <a class="adm-tab-link {{ request('tab') === 'eliminadas' ? 'active' : '' }}"
+                               href="{{ route('categorias.index', ['tab' => 'eliminadas', 'busqueda' => request('busqueda')]) }}">
+                                <i class="fas fa-trash-alt me-1"></i> Papelera
+                                <span class="badge rounded-pill bg-danger ms-1">{{ $countEliminadas }}</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </form>
-        </div>
-    </div>
+            </div>
 
-    <!-- Tabs mejorados -->
-    <div class="card shadow-sm">
-        <div class="card-header bg-white border-0">
-            <ul class="nav nav-tabs" id="categoriaTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <a class="nav-link {{ request('tab', 'activas') === 'activas' ? 'active' : '' }}"
-                       href="{{ route('categorias.index', ['tab' => 'activas', 'busqueda' => request('busqueda')]) }}">
-                        <i class="fas fa-folder-open me-2"></i>
-                        Categorías Activas
-                        <span class="badge bg-success ms-2">{{ $countActivas }}</span>
-                    </a>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <a class="nav-link {{ request('tab') === 'eliminadas' ? 'active' : '' }}"
-                       href="{{ route('categorias.index', ['tab' => 'eliminadas', 'busqueda' => request('busqueda')]) }}">
-                        <i class="fas fa-trash me-2"></i>
-                        Categorías Eliminadas
-                        <span class="badge bg-danger ms-2">{{ $countEliminadas }}</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
+            @if(session('success'))
+                <div class="alert alert-success border-0 shadow-sm rounded-4 mb-4">
+                    <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+                </div>
+            @endif
 
-        <!-- Tabla mejorada -->
-        <div class="card-body p-0">
             <div class="table-container-modern">
-                <table class="table-modern table table-hover mb-0">
-                    <thead class="table-light">
+                <table class="table-modern">
+                    <thead>
                         <tr>
-                            <th scope="col" class="fw-semibold">ID</th>
-                            <th scope="col" class="fw-semibold">
-                                <i class="fas fa-tag me-1"></i>
-                                Nombre
-                            </th>
-                            <th scope="col" class="fw-semibold">
-                                <i class="fas fa-sitemap me-1"></i>
-                                Categoría Padre
-                            </th>
-                            <th scope="col" class="fw-semibold text-center">
-                                @if(request('tab') === 'eliminadas')
-                                    <i class="fas fa-calendar me-1"></i>
-                                    Eliminación / Acciones
-                                @else
-                                    <i class="fas fa-cogs me-1"></i>
-                                    Acciones
-                                @endif
-                            </th>
+                            <th style="width: 80px;"><div class="th-content">ID</div></th>
+                            <th><div class="th-content">Información de Categoría</div></th>
+                            <th><div class="th-content">Categoría Padre</div></th>
+                            <th class="text-center" style="width: 200px;"><div class="th-content text-center w-100">Acciones</div></th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($categorias as $categoria)
-                            <tr>
+                            <tr class="{{ $categoria->trashed() ? 'opacity-75 bg-light' : '' }}">
                                 <td>
                                     <span class="row-number">#{{ $categoria->id }}</span>
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="me-3">
-                                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center"
-                                                 style="width: 40px; height: 40px;">
-                                                <i class="fas fa-folder text-white"></i>
-                                            </div>
+                                        <div class="bg-primary bg-opacity-10 rounded-3 p-2 me-3">
+                                            <i class="fas fa-folder text-primary fs-5"></i>
                                         </div>
                                         <div>
-                                            <h6 class="mb-1 fw-semibold">{{ $categoria->name }}</h6>
+                                            <div class="fw-bold text-dark fs-6">{{ $categoria->name }}</div>
                                             @if($categoria->description)
-                                                <small class="text-muted">{{ Str::limit($categoria->description, 50) }}</small>
+                                                <div class="text-muted small italic">{{ Str::limit($categoria->description, 60) }}</div>
                                             @endif
+                                            <code class="text-primary mt-1 d-block" style="font-size: 0.7rem;">/{{ $categoria->slug }}</code>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
                                     @if($categoria->parent)
-                                        <span class="badge bg-info text-white">
-                                            <i class="fas fa-folder me-1"></i>
+                                        <span class="format-badge">
+                                            <i class="fas fa-level-up-alt fa-rotate-90 me-1"></i>
                                             {{ $categoria->parent->name }}
                                         </span>
                                     @else
-                                        <span class="text-muted">
-                                            <i class="fas fa-minus"></i>
-                                            Sin padre
+                                        <span class="text-muted small italic">
+                                            <i class="fas fa-minus me-1"></i> Raíz
                                         </span>
                                     @endif
                                 </td>
-                                <td class="text-center">
+                                <td>
                                     @if(request('tab') === 'eliminadas')
-                                        <!-- Para categorías eliminadas -->
-                                        <div class="mb-2">
-                                            <small class="text-muted">
-                                                <i class="fas fa-clock me-1"></i>
-                                                {{ $categoria->deleted_at->format('d/m/Y H:i') }}
-                                            </small>
-                                        </div>
-                                        <div class="btn-group-vertical btn-group-sm" role="group">
-                                            <form action="{{ route('categorias.restore', encrypt($categoria->id)) }}" method="POST" class="d-inline">
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <form action="{{ route('categorias.restore', encrypt($categoria->id)) }}" method="POST">
                                                 @csrf
-                                                <button class="btn btn-outline-success btn-sm"
+                                                <button class="btn btn-sm btn-outline-success rounded-pill px-3"
                                                         onclick="return confirm('¿Restaurar esta categoría?')"
-                                                        title="Restaurar categoría">
-                                                    <i class="fas fa-undo me-1"></i>
-                                                    Restaurar
+                                                        title="Restaurar">
+                                                    <i class="fas fa-undo me-1"></i> Restaurar
                                                 </button>
                                             </form>
-                                            <form action="{{ route('categorias.forceDelete', encrypt($categoria->id)) }}" method="POST" class="d-inline mt-1">
+                                            <form action="{{ route('categorias.forceDelete', encrypt($categoria->id)) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button class="btn btn-outline-danger btn-sm"
-                                                        onclick="return confirm('¿Eliminar permanentemente? Esta acción no se puede deshacer.')"
-                                                        title="Eliminar permanentemente">
-                                                    <i class="fas fa-trash me-1"></i>
-                                                    Eliminar
+                                                <button class="btn btn-sm btn-outline-danger rounded-pill px-3"
+                                                        onclick="return confirm('¿Eliminar permanentemente?')"
+                                                        title="Eliminar">
+                                                    <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
                                         </div>
                                     @else
-                                        <!-- Para categorías activas -->
-                                        <div class="action-buttons-cell">
+                                        <div class="d-flex justify-content-center gap-2">
                                             <button
-                                                class="btn-action-modern btn-edit"
+                                                class="btn btn-sm btn-outline-info rounded-pill px-2"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#editarCategoriaModal"
                                                 data-id="{{ $categoria->id }}"
@@ -183,16 +145,16 @@
                                                 data-slug="{{ $categoria->slug }}"
                                                 data-description="{{ $categoria->description }}"
                                                 data-parent="{{ $categoria->parent_id }}"
-                                                title="Editar categoría">
+                                                title="Editar">
                                                 <i class="fas fa-edit"></i>
                                             </button>
 
-                                            <form action="{{ route('categorias.destroy', $categoria->id) }}" method="POST" class="d-inline">
+                                            <form action="{{ route('categorias.destroy', $categoria->id) }}" method="POST">
                                                 @csrf
                                                 @method('delete')
-                                                <button class="btn-action-modern btn-delete"
+                                                <button class="btn btn-sm btn-outline-danger rounded-pill px-2"
                                                         onclick="return confirm('¿Eliminar esta categoría?')"
-                                                        title="Eliminar categoría">
+                                                        title="Eliminar">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -203,16 +165,10 @@
                         @empty
                             <tr>
                                 <td colspan="4" class="text-center py-5">
-                                    <div class="empty-state">
-                                        @if(request('tab') === 'eliminadas')
-                                            <i class="fas fa-trash"></i>
-                                            <h5>No hay categorías eliminadas</h5>
-                                            <p>Todas las categorías están activas.</p>
-                                        @else
-                                            <i class="fas fa-folder-open"></i>
-                                            <h5>No se encontraron categorías</h5>
-                                            <p>Crea tu primera categoría para comenzar.</p>
-                                        @endif
+                                    <div class="text-muted">
+                                        <i class="fas fa-folder-open fa-3x mb-3 opacity-25"></i>
+                                        <h5 class="fw-bold">No se encontraron categorías</h5>
+                                        <p class="small">Intente con otros términos de búsqueda o cree una nueva categoría.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -222,86 +178,55 @@
             </div>
         </div>
     </div>
-
-    <!-- Información de búsqueda -->
-    @if(request('busqueda'))
-        <div class="alert alert-info mt-3" role="alert">
-            <div class="d-flex align-items-center">
-                <i class="fas fa-search me-2"></i>
-                <div>
-                    Mostrando resultados para: <strong>"{{ request('busqueda') }}"</strong>
-                    en {{ request('tab') === 'eliminadas' ? 'categorías eliminadas' : 'categorías activas' }}
-                </div>
-            </div>
-        </div>
-    @endif
 </div>
 
 <!-- Modal Crear Mejorado -->
 <div class="modal fade" id="crearCategoriaModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow overflow-hidden">
             <form action="{{ route('categorias.store') }}" method="POST">
                 @csrf
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">
-                        <i class="fas fa-plus me-2"></i>
-                        Crear Nueva Categoría
+                <div class="modal-header border-0 py-3 text-white" style="background: var(--gradient-primary) !important;">
+                    <h5 class="modal-title fw-bold">
+                        <i class="fas fa-plus-circle me-2"></i> Crear Nueva Categoría
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">
-                                    <i class="fas fa-tag me-1"></i>
-                                    Nombre *
-                                </label>
-                                <input type="text" name="name" class="form-control" required
-                                       placeholder="Ej: Tecnología">
+                <div class="modal-body p-4">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">NOMBRE DE CATEGORÍA *</label>
+                            <input type="text" name="name" class="form-control rounded-3 py-2" required
+                                   placeholder="Ej: Programación Web">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">SLUG (URL) *</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted" style="font-size: 0.8rem;">/</span>
+                                <input type="text" name="slug" class="form-control rounded-end-3 py-2 border-start-0" required
+                                       placeholder="ej-programacion-web">
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">
-                                    <i class="fas fa-link me-1"></i>
-                                    Slug *
-                                </label>
-                                <input type="text" name="slug" class="form-control" required
-                                       placeholder="Ej: tecnologia">
-                            </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">DESCRIPCIÓN BREVE</label>
+                            <textarea name="description" class="form-control rounded-3" rows="3"
+                                      placeholder="De qué trata esta categoría..."></textarea>
                         </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">
-                            <i class="fas fa-align-left me-1"></i>
-                            Descripción
-                        </label>
-                        <textarea name="description" class="form-control" rows="3"
-                                  placeholder="Descripción opcional de la categoría"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">
-                            <i class="fas fa-sitemap me-1"></i>
-                            Categoría Padre (opcional)
-                        </label>
-                        <select name="parent_id" class="form-select">
-                            <option value="">-- Ninguna (Categoría principal) --</option>
-                            @foreach ($categorias as $cat)
-                                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                            @endforeach
-                        </select>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">CATEGORÍA PADRE</label>
+                            <select name="parent_id" class="form-select rounded-3 py-2">
+                                <option value="">-- Ninguna (Categoría principal) --</option>
+                                @foreach ($categorias_all as $cat)
+                                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-1"></i>
-                        Guardar Categoría
-                    </button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-1"></i>
-                        Cancelar
+                <div class="modal-footer border-0 bg-light p-3">
+                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm" style="background: var(--gradient-primary) !important; border: none;">
+                        <i class="fas fa-save me-2"></i> Guardar Categoría
                     </button>
                 </div>
             </form>
@@ -311,68 +236,50 @@
 
 <!-- Modal Editar Mejorado -->
 <div class="modal fade" id="editarCategoriaModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow overflow-hidden">
             <form id="editarCategoriaForm" method="POST">
                 @csrf
                 @method('PUT')
-                <div class="modal-header bg-info text-white">
-                    <h5 class="modal-title">
-                        <i class="fas fa-edit me-2"></i>
-                        Editar Categoría
+                <div class="modal-header border-0 py-3 text-white" style="background: var(--gradient-secondary) !important;">
+                    <h5 class="modal-title fw-bold">
+                        <i class="fas fa-edit me-2"></i> Editar Categoría
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body p-4">
                     <input type="hidden" name="id" id="edit-id">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">
-                                    <i class="fas fa-tag me-1"></i>
-                                    Nombre *
-                                </label>
-                                <input type="text" name="name" id="edit-name" class="form-control" required>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">NOMBRE DE CATEGORÍA *</label>
+                            <input type="text" name="name" id="edit-name" class="form-control rounded-3 py-2" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">SLUG (URL) *</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted" style="font-size: 0.8rem;">/</span>
+                                <input type="text" name="slug" id="edit-slug" class="form-control rounded-end-3 py-2 border-start-0" required>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">
-                                    <i class="fas fa-link me-1"></i>
-                                    Slug *
-                                </label>
-                                <input type="text" name="slug" id="edit-slug" class="form-control" required>
-                            </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">DESCRIPCIÓN BREVE</label>
+                            <textarea name="description" id="edit-description" class="form-control rounded-3" rows="3"></textarea>
                         </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">
-                            <i class="fas fa-align-left me-1"></i>
-                            Descripción
-                        </label>
-                        <textarea name="description" id="edit-description" class="form-control" rows="3"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">
-                            <i class="fas fa-sitemap me-1"></i>
-                            Categoría Padre (opcional)
-                        </label>
-                        <select name="parent_id" id="edit-parent" class="form-select">
-                            <option value="">-- Ninguna (Categoría principal) --</option>
-                            @foreach ($categorias as $cat)
-                                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                            @endforeach
-                        </select>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">CATEGORÍA PADRE</label>
+                            <select name="parent_id" id="edit-parent" class="form-select rounded-3 py-2">
+                                <option value="">-- Ninguna (Categoría principal) --</option>
+                                @foreach ($categorias_all as $cat)
+                                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">
-                        <i class="fas fa-save me-1"></i>
-                        Actualizar Categoría
-                    </button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-1"></i>
-                        Cancelar
+                <div class="modal-footer border-0 bg-light p-3">
+                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-info rounded-pill px-4 fw-bold text-white shadow-sm" style="background: var(--gradient-secondary) !important; border: none;">
+                        <i class="fas fa-save me-2"></i> Actualizar Cambios
                     </button>
                 </div>
             </form>

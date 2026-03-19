@@ -4,471 +4,350 @@
         ->get();
 @endphp
 
-<!-- ========================================================= -->
-<!-- BUSCADOR + BOTÓN NUEVO LOGRO -->
-<!-- ========================================================= -->
-<div class="row mb-3">
-    <div class="col-md-6">
-        <div class="search-box-table">
-            <i class="bi bi-search search-icon-table"></i>
-            <input type="text" id="searchAchievements" class="search-input-table" placeholder="Buscar logros..."
-                autocomplete="off">
-            <span class="search-indicator"></span>
-        </div>
-    </div>
 
-    <div class="col-md-6 text-end">
-        <button class="btn-modern btn-primary-custom" data-bs-toggle="modal" data-bs-target="#newAchievementModal">
-            <i class="bi bi-plus-lg"></i>
-            <span class="ms-1">Nuevo Logro</span>
+
+
+<div class="ach-module">
+
+    <div class="ach-topbar">
+        <div class="ach-search-wrap">
+            <i class="bi bi-search ach-search-ico"></i>
+            <input type="text"
+                   id="achSearch"
+                   placeholder="Buscar por nombre, tipo, categoría…"
+                   autocomplete="off">
+        </div>
+        <button class="ach-btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#achNewModal">
+            <i class="bi bi-plus-lg"></i> Nuevo logro
         </button>
     </div>
-</div>
 
-<!-- ========================================================= -->
-<!-- LISTA DE LOGROS -->
-<!-- ========================================================= -->
-<div class="row g-4" id="achievementsContainer">
+    {{-- ============================================================
+         GRID DE LOGROS
+         ============================================================ --}}
+    <div class="ach-grid" id="achGrid">
 
-    @forelse ($achievements as $achievement)
-        <div class="col-md-4 achievement-item" data-title="{{ strtolower($achievement->title) }}"
-            data-description="{{ strtolower($achievement->description) }}"
-            data-type="{{ strtolower($achievement->type) }}" data-category="{{ strtolower($achievement->category) }}">
+        @forelse ($achievements as $achievement)
+            @php
+                $totalUsers = ($achievement->users_count ?? 0) + ($achievement->inscritos_count ?? 0);
+                $req         = $achievement->requirement_value ?? 1;
+                $progress    = $req > 1 ? min(100, round(($totalUsers / $req) * 100)) : null;
+                $isSecret    = $achievement->is_secret;
+            @endphp
 
-            <div class="card-modern h-100">
-                <div class="card-body">
+            <div class="ach-card achievement-item"
+                 data-title="{{ strtolower($achievement->title) }}"
+                 data-description="{{ strtolower($achievement->description) }}"
+                 data-type="{{ strtolower($achievement->type) }}"
+                 data-category="{{ strtolower($achievement->category) }}">
 
-                    <!-- === ENCABEZADO DEL LOGRO: ÍCONO + INFO === -->
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="achievement-icon me-3" style="font-size: 2.5rem;">
-                            {{ $achievement->icon }}
-                        </div>
-                        <div>
-                            <h5 class="card-title mb-1">{{ $achievement->title }}</h5>
-                            <p class="card-subtitle text-muted">
-                                @php
-                                    $totalCount =
-                                        ($achievement->users_count ?? 0) + ($achievement->inscritos_count ?? 0);
-                                @endphp
-                                {{ $totalCount }} {{ $totalCount === 1 ? 'usuario ha' : 'usuarios han' }} obtenido
-                                este logro
-                            </p>
+                {{-- Franja lateral --}}
+                <div class="ach-card-stripe {{ $isSecret ? 'secret' : '' }}"></div>
+
+                <div class="ach-card-body">
+
+                    {{-- Encabezado --}}
+                    <div class="ach-card-head">
+                        <div class="ach-icon-wrap"><i class="bi bi-star"></i></div>
+                        <div class="ach-card-meta">
+                            <h5 class="ach-card-title" title="{{ $achievement->title }}">
+                                {{ $achievement->title }}
+                            </h5>
+                            <span class="ach-card-users">
+                                <i class="bi bi-people-fill" style="font-size:.7rem;margin-right:.25rem;"></i>
+                                {{ $totalUsers }} {{ $totalUsers === 1 ? 'usuario ha obtenido' : 'usuarios han obtenido' }} este logro
+                            </span>
                         </div>
                     </div>
 
-                    <!-- === DESCRIPCIÓN === -->
-                    <p class="card-text">{{ $achievement->description }}</p>
+                    {{-- Descripción --}}
+                    <p class="ach-card-desc">{{ $achievement->description }}</p>
 
-                    <!-- === PROGRESO (solo si aplica) === -->
-                    @if ($achievement->requirement_value > 1)
-                        @php
-                            $totalCount = ($achievement->users_count ?? 0) + ($achievement->inscritos_count ?? 0);
-                            $progress = $totalCount > 0 ? ($totalCount / $achievement->requirement_value) * 100 : 0;
-                            $progress = min(100, $progress);
-                        @endphp
-
-                        <div class="progress mb-3">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ $progress }}%"
-                                aria-valuenow="{{ $progress }}" aria-valuemin="0" aria-valuemax="100">
-                                {{ $totalCount }}/{{ $achievement->requirement_value }}
+                    {{-- Progreso (solo si requirement_value > 1) --}}
+                    @if ($progress !== null)
+                        <div class="ach-progress-wrap">
+                            <div class="ach-progress-label">
+                                <span>Progreso global</span>
+                                <span>{{ $totalUsers }}/{{ $req }}</span>
+                            </div>
+                            <div class="ach-progress-track">
+                                <div class="ach-progress-fill" style="width:{{ $progress }}%"></div>
                             </div>
                         </div>
                     @endif
 
-                    <!-- === FOOTER: XP + SECRETO + BOTONES === -->
-                    <div class="d-flex justify-content-between align-items-center">
+                    {{-- Footer --}}
+                    <div class="ach-card-footer">
 
-                        <!-- Badges -->
-                        <div>
-                            <span class="badge bg-primary me-2">
+                        {{-- Badges --}}
+                        <div style="display:flex;gap:.4rem;flex-wrap:wrap;">
+                            <span class="ach-badge ach-badge-xp">
+                                <i class="bi bi-lightning-charge-fill"></i>
                                 {{ $achievement->xp_reward }} XP
                             </span>
-
-                            <span class="badge bg-{{ $achievement->is_secret ? 'danger' : 'info' }}">
-                                {{ $achievement->is_secret ? 'Secreto' : 'Público' }}
-                            </span>
+                            @if ($isSecret)
+                                <span class="ach-badge ach-badge-sec">
+                                    <i class="bi bi-lock-fill"></i> Secreto
+                                </span>
+                            @else
+                                <span class="ach-badge ach-badge-pub">
+                                    <i class="bi bi-globe2"></i> Público
+                                </span>
+                            @endif
                         </div>
 
-                        <!-- Botones -->
-                        <div class="action-buttons-cell">
-                            <button class="btn-action-modern" onclick="viewAchievement({{ $achievement->id }})"
-                                data-bs-toggle="tooltip" title="Ver detalles">
+                        {{-- Acciones --}}
+                        <div class="ach-actions">
+                            <button class="ach-action-btn"
+                                    onclick="achView({{ $achievement->id }})"
+                                    title="Ver detalles">
                                 <i class="bi bi-eye"></i>
                             </button>
-
-                            <button class="btn-action-modern" onclick="editAchievement({{ $achievement->id }})"
-                                data-bs-toggle="tooltip" title="Editar">
+                            <button class="ach-action-btn"
+                                    onclick="achEdit({{ $achievement->id }})"
+                                    title="Editar">
                                 <i class="bi bi-pencil"></i>
                             </button>
-
-                            <button class="btn-action-modern btn-action-delete"
-                                onclick="deleteAchievement({{ $achievement->id }})" data-bs-toggle="tooltip"
-                                title="Eliminar">
+                            <button class="ach-action-btn del"
+                                    onclick="achDelete({{ $achievement->id }})"
+                                    title="Eliminar">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </div>
 
                     </div>
-
                 </div>
             </div>
 
-        </div>
-
-    @empty
-        <!-- ========================================================= -->
-        <!-- ESTADO VACÍO CUANDO NO HAY LOGROS -->
-        <!-- ========================================================= -->
-        <div class="col-12" id="emptyState">
-            <div class="empty-state text-center py-5">
-                <i class="bi bi-trophy display-4 text-muted"></i>
-                <p class="mt-3 mb-0">No hay logros disponibles</p>
-
-                <button class="btn-modern btn-primary-custom mt-3" data-bs-toggle="modal"
-                    data-bs-target="#newAchievementModal">
+        @empty
+            <div class="ach-empty" id="achEmpty">
+                <i class="bi bi-trophy"></i>
+                <p>No hay logros creados todavía.</p>
+                <button class="ach-btn-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#achNewModal">
                     Crear primer logro
                 </button>
             </div>
+        @endforelse
+
+        {{-- Sin resultados en búsqueda --}}
+        <div class="ach-empty d-none" id="achNoResults">
+            <i class="bi bi-search"></i>
+            <p>Sin resultados para tu búsqueda.</p>
+            <button class="ach-btn-ghost" onclick="achClearSearch()">
+                <i class="bi bi-x-lg"></i> Limpiar búsqueda
+            </button>
         </div>
-    @endforelse
-</div>
 
-<!-- ========================================================= -->
-<!-- ESTADO VACÍO PARA BÚSQUEDAS SIN RESULTADOS -->
-<!-- ========================================================= -->
-<div class="col-12 d-none" id="noResults">
-    <div class="empty-state text-center py-5">
-        <i class="bi bi-search display-4 text-muted"></i>
-        <p class="mt-3 mb-0">No se encontraron logros que coincidan con tu búsqueda</p>
-
-        <button class="btn-modern btn-accent-custom mt-3" onclick="clearSearch()">
-            Limpiar búsqueda
-        </button>
     </div>
-</div>
 
-<!-- ========================================================= -->
-<!-- MODAL: NUEVO LOGRO -->
-<!-- ========================================================= -->
-<div class="modal fade" id="newAchievementModal" tabindex="-1" aria-labelledby="newAchievementModalLabel"
-    aria-hidden="true">
+    {{-- ============================================================
+         MODAL – NUEVO LOGRO
+         ============================================================ --}}
+    <div class="modal fade ach-modal"
+         id="achNewModal"
+         tabindex="-1"
+         aria-labelledby="achNewModalLabel"
+         aria-hidden="true">
 
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
-        <div class="modal-content">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
 
-            <!-- Header -->
-            <div class="modal-header">
-                <h5 class="modal-title" id="newAchievementModalLabel">Nuevo Logro</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                {{-- Header --}}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="achNewModalLabel">
+                        <i class="bi bi-trophy me-2" style="color:var(--ach-primary);"></i>
+                        Nuevo Logro
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                {{-- Body --}}
+                <div class="modal-body">
+                    <form id="achNewForm" method="POST" action="">
+                        @csrf
+
+                        <div class="ach-field">
+                            <label>Nombre del logro</label>
+                            <input type="text" name="name" placeholder="Ej. Maestro del quiz" required>
+                        </div>
+
+                        <div class="ach-field">
+                            <label>Descripción</label>
+                            <textarea name="description" placeholder="Describe qué debe hacer el usuario…" required></textarea>
+                        </div>
+
+                        <div class="ach-row">
+                            <div class="ach-field">
+                                <label>XP a otorgar</label>
+                                <input type="number" name="xp_reward" min="0" value="100" required>
+                            </div>
+                            <div class="ach-field">
+                                <label>Valor requerido</label>
+                                <input type="number" name="requirement_value" min="1" value="1" required>
+                            </div>
+                        </div>
+
+                        <div class="ach-row">
+                            <div class="ach-field">
+                                <label>Tipo</label>
+                                <select name="type" required>
+                                    <option value="QUIZ_MASTER">Maestro de Cuestionarios</option>
+                                    <option value="COURSE_COMPLETER">Completador de Cursos</option>
+                                    <option value="PERFECT_SCORE">Puntuación Perfecta</option>
+                                </select>
+                            </div>
+                            <div class="ach-field">
+                                <label>Categoría</label>
+                                <select name="category" required>
+                                    <option value="academic">Académico</option>
+                                    <option value="participation">Participación</option>
+                                    <option value="social">Social</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="ach-field">
+                            <label>Ícono</label>
+                            <select name="icon" required>
+                                <option value="🎯">🎯  Objetivo</option>
+                                <option value="🏆">🏆  Trofeo</option>
+                                <option value="⭐">⭐  Estrella</option>
+                                <option value="🏅">🏅  Medalla</option>
+                                <option value="👑">👑  Corona</option>
+                            </select>
+                        </div>
+
+                        <div class="ach-switch-row">
+                            <label for="achIsSecret">Logro secreto</label>
+                            <div class="form-check form-switch mb-0">
+                                <input class="form-check-input" type="checkbox" name="is_secret" id="achIsSecret" role="switch">
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+                {{-- Footer --}}
+                <div class="modal-footer">
+                    <button type="button" class="ach-btn-ghost" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="button" class="ach-btn-primary" onclick="achSave()">
+                        <i class="bi bi-check-lg"></i> Guardar logro
+                    </button>
+                </div>
+
             </div>
-
-            <!-- Body -->
-            <div class="modal-body">
-                <form id="newAchievementForm" method="POST" action="">
-                    @csrf
-
-                    <!-- Nombre -->
-                    <div class="mb-3">
-                        <label class="form-label-modern">Nombre</label>
-                        <input type="text" class="form-control-modern" name="name" required>
-                    </div>
-
-                    <!-- Descripción -->
-                    <div class="mb-3">
-                        <label class="form-label-modern">Descripción</label>
-                        <textarea class="form-control-modern" name="description" rows="3" required></textarea>
-                    </div>
-
-                    <!-- XP -->
-                    <div class="mb-3">
-                        <label class="form-label-modern">XP a otorgar</label>
-                        <input type="number" class="form-control-modern" name="xp_reward" min="0"
-                            value="100" required>
-                    </div>
-
-                    <!-- Tipo -->
-                    <div class="mb-3">
-                        <label class="form-label-modern">Tipo</label>
-                        <select class="form-select-modern" name="type" required>
-                            <option value="QUIZ_MASTER">Maestro de Cuestionarios</option>
-                            <option value="COURSE_COMPLETER">Completador de Cursos</option>
-                            <option value="PERFECT_SCORE">Puntuación Perfecta</option>
-                        </select>
-                    </div>
-
-                    <!-- Valor requerido -->
-                    <div class="mb-3">
-                        <label class="form-label-modern">Valor Requerido</label>
-                        <input type="number" class="form-control-modern" name="requirement_value" min="1"
-                            value="1" required>
-                    </div>
-
-                    <!-- Categoría -->
-                    <div class="mb-3">
-                        <label class="form-label-modern">Categoría</label>
-                        <select class="form-select-modern" name="category" required>
-                            <option value="academic">Académico</option>
-                            <option value="participation">Participación</option>
-                            <option value="social">Social</option>
-                        </select>
-                    </div>
-
-                    <!-- Secreto -->
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" name="is_secret" id="is_secret">
-                        <label class="form-check-label" for="is_secret">Logro Secreto</label>
-                    </div>
-
-                    <!-- Ícono -->
-                    <div class="mb-3">
-                        <label class="form-label-modern">Ícono</label>
-                        <select class="form-select-modern" name="icon" required>
-                            <option value="🎯">🎯 Objetivo</option>
-                            <option value="🏆">🏆 Trofeo</option>
-                            <option value="⭐">⭐ Estrella</option>
-                            <option value="🏅">🏅 Medalla</option>
-                            <option value="👑">👑 Corona</option>
-                        </select>
-                    </div>
-
-                </form>
-            </div>
-
-            <!-- Footer -->
-            <div class="modal-footer">
-                <button type="button" class="btn-modern btn-accent-custom" data-bs-dismiss="modal">
-                    Cancelar
-                </button>
-
-                <button type="button" class="btn-modern btn-primary-custom" onclick="saveAchievement()">
-                    Guardar
-                </button>
-            </div>
-
         </div>
     </div>
-</div>
+
+</div>{{-- /ach-module --}}
 
 
+{{-- ============================================================
+     JAVASCRIPT
+     ============================================================ --}}
 <script>
-    // Variables globales
-    let allAchievements = [];
-    let currentSearchTerm = '';
+(function () {
+    'use strict';
 
-    // Inicializar cuando el DOM esté listo
-    (function() {
-        'use strict';
+    /* ── Estado ─────────────────────────────────────────── */
+    let achItems = [];
 
-        // Esperar a que el DOM esté completamente cargado
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializeAchievements);
-        } else {
-            initializeAchievements();
-        }
+    /* ── Init ────────────────────────────────────────────── */
+    function init() {
+        achItems = Array.from(document.querySelectorAll('.achievement-item'));
+        setupSearch();
+        setupModal();
+        initTooltips();
+    }
 
-        function initializeAchievements() {
-            console.log('Inicializando sistema de logros...');
+    /* ── Búsqueda ────────────────────────────────────────── */
+    function setupSearch() {
+        const input = document.getElementById('achSearch');
+        if (!input) return;
 
-            // Obtener todos los elementos de logros
-            allAchievements = Array.from(document.querySelectorAll('.achievement-item'));
-            console.log('Logros encontrados:', allAchievements.length);
+        input.addEventListener('input', filterAchievements);
 
-            // Configurar el buscador
-            setupSearch();
+        // Paste necesita pequeño delay
+        input.addEventListener('paste', () => setTimeout(filterAchievements, 16));
+    }
 
-            // Inicializar tooltips si está disponible Bootstrap
-            if (typeof bootstrap !== 'undefined') {
-                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-                var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-                    return new bootstrap.Tooltip(tooltipTriggerEl);
-                });
-            }
+    function filterAchievements() {
+        const term = document.getElementById('achSearch').value.trim().toLowerCase();
 
-            // Reubicar el modal bajo <body> para evitar desplazamientos por contenedores con transform/overflow
-            const modalEl = document.getElementById('newAchievementModal');
-            if (modalEl && modalEl.parentElement !== document.body) {
-                document.body.appendChild(modalEl);
-            }
-            if (modalEl && typeof bootstrap !== 'undefined') {
-                modalEl.addEventListener('hidden.bs.modal', function() {
-                    const form = document.getElementById('newAchievementForm');
-                    if (form) form.reset();
-                });
-            }
-        }
+        if (!term) { showAll(); return; }
 
-        function setupSearch() {
-            const searchInput = document.getElementById('searchAchievements');
+        let visible = 0;
+        achItems.forEach(el => {
+            const match = ['title','description','type','category']
+                .some(attr => (el.dataset[attr] || '').includes(term));
 
-            if (!searchInput) {
-                console.error('Campo de búsqueda no encontrado');
-                return;
-            }
-
-            console.log('Configurando búsqueda...');
-
-            // Eventos de búsqueda
-            searchInput.addEventListener('input', performSearch);
-            searchInput.addEventListener('keyup', performSearch);
-            searchInput.addEventListener('paste', function() {
-                // Usar timeout para permitir que el paste se complete
-                setTimeout(performSearch, 10);
-            });
-
-            // Búsqueda inicial si hay texto
-            if (searchInput.value.trim() !== '') {
-                performSearch();
-            }
-        }
-
-        window.performSearch = function() {
-            const searchInput = document.getElementById('searchAchievements');
-            const searchTerm = searchInput.value.trim().toLowerCase();
-
-            console.log('Búsqueda:', searchTerm);
-
-            currentSearchTerm = searchTerm;
-
-            if (searchTerm === '') {
-                // Mostrar todos los logros
-                showAllAchievements();
-                return;
-            }
-
-            let visibleCount = 0;
-
-            allAchievements.forEach(function(achievement) {
-                const title = achievement.getAttribute('data-title') || '';
-                const description = achievement.getAttribute('data-description') || '';
-                const type = achievement.getAttribute('data-type') || '';
-                const category = achievement.getAttribute('data-category') || '';
-
-                const matches = title.includes(searchTerm) ||
-                    description.includes(searchTerm) ||
-                    type.includes(searchTerm) ||
-                    category.includes(searchTerm);
-
-                if (matches) {
-                    achievement.style.display = '';
-                    achievement.classList.remove('d-none');
-                    visibleCount++;
-                } else {
-                    achievement.style.display = 'none';
-                    achievement.classList.add('d-none');
-                }
-            });
-
-            // Mostrar/ocultar mensaje de "sin resultados"
-            const noResults = document.getElementById('noResults');
-            const emptyState = document.getElementById('emptyState');
-
-            if (visibleCount === 0) {
-                if (noResults) {
-                    noResults.classList.remove('d-none');
-                }
-                if (emptyState) {
-                    emptyState.classList.add('d-none');
-                }
-            } else {
-                if (noResults) {
-                    noResults.classList.add('d-none');
-                }
-            }
-
-            console.log('Resultados visibles:', visibleCount);
-        };
-
-        function showAllAchievements() {
-            allAchievements.forEach(function(achievement) {
-                achievement.style.display = '';
-                achievement.classList.remove('d-none');
-            });
-
-            // Ocultar mensaje de sin resultados
-            const noResults = document.getElementById('noResults');
-            if (noResults) {
-                noResults.classList.add('d-none');
-            }
-        }
-
-        // Función para limpiar búsqueda
-        window.clearSearch = function() {
-            const searchInput = document.getElementById('searchAchievements');
-            if (searchInput) {
-                searchInput.value = '';
-                performSearch();
-                searchInput.focus();
-            }
-        };
-
-        // Funciones para los botones de acción
-        window.viewAchievement = function(id) {
-            console.log('Ver logro:', id);
-            // Implementar vista de logro
-        };
-
-        window.editAchievement = function(id) {
-            console.log('Editar logro:', id);
-            // Implementar edición de logro
-        };
-
-        window.deleteAchievement = function(id) {
-            console.log('Eliminar logro:', id);
-            // Implementar eliminación de logro
-        };
-
-        window.saveAchievement = function() {
-            const form = document.getElementById('newAchievementForm');
-            if (!form) return;
-            const nameInput = form.querySelector('input[name="name"]');
-            if (nameInput && nameInput.value.trim() === '') {
-                nameInput.focus();
-                return;
-            }
-            const modalEl = document.getElementById('newAchievementModal');
-            if (modalEl && typeof bootstrap !== 'undefined') {
-                const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
-                modalInstance.hide();
-            }
-            form.reset();
-        };
-
-        // Fix para modal de Bootstrap
-        window.openNewAchievementModal = function() {
-            const modal = document.getElementById('newAchievementModal');
-            if (modal && typeof bootstrap !== 'undefined') {
-                const modalInstance = new bootstrap.Modal(modal);
-                modalInstance.show();
-            }
-        };
-
-        window.closeNewAchievementModal = function() {
-            const modal = document.getElementById('newAchievementModal');
-            if (modal && typeof bootstrap !== 'undefined') {
-                const modalInstance = bootstrap.Modal.getInstance(modal);
-                if (modalInstance) {
-                    modalInstance.hide();
-                }
-            }
-        };
-
-        // Event listeners adicionales para el modal
-        document.addEventListener('click', function(e) {
-            // Cerrar modal al hacer clic fuera
-            if (e.target.classList.contains('modal')) {
-                const modal = e.target;
-                if (modal.id === 'newAchievementModal') {
-                    closeNewAchievementModal();
-                }
-            }
+            el.style.display = match ? '' : 'none';
+            if (match) visible++;
         });
 
-        // Manejar tecla ESC para cerrar modal
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeNewAchievementModal();
-            }
-        });
+        toggleNoResults(visible === 0);
+    }
 
-    })();
+    function showAll() {
+        achItems.forEach(el => (el.style.display = ''));
+        toggleNoResults(false);
+    }
+
+    function toggleNoResults(show) {
+        document.getElementById('achNoResults')?.classList.toggle('d-none', !show);
+    }
+
+    window.achClearSearch = function () {
+        const input = document.getElementById('achSearch');
+        if (input) { input.value = ''; filterAchievements(); input.focus(); }
+    };
+
+    /* ── Modal ───────────────────────────────────────────── */
+    function setupModal() {
+        const el = document.getElementById('achNewModal');
+        if (!el) return;
+
+        // Mover bajo <body> para evitar conflictos con transform/overflow
+        if (el.parentElement !== document.body) document.body.appendChild(el);
+
+        el.addEventListener('hidden.bs.modal', () => {
+            document.getElementById('achNewForm')?.reset();
+        });
+    }
+
+    /* ── Tooltips ────────────────────────────────────────── */
+    function initTooltips() {
+        if (typeof bootstrap === 'undefined') return;
+        document.querySelectorAll('[title]').forEach(el => new bootstrap.Tooltip(el));
+    }
+
+    /* ── Acciones públicas ───────────────────────────────── */
+    window.achView   = id => console.log('Ver logro:', id);
+    window.achEdit   = id => console.log('Editar logro:', id);
+    window.achDelete = id => console.log('Eliminar logro:', id);
+
+    window.achSave = function () {
+        const form  = document.getElementById('achNewForm');
+        const name  = form?.querySelector('input[name="name"]');
+
+        if (name && !name.value.trim()) { name.focus(); return; }
+
+        // TODO: enviar formulario vía fetch / submit
+        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('achNewModal'));
+        modal.hide();
+        form?.reset();
+    };
+
+    /* ── Arranque ────────────────────────────────────────── */
+    document.readyState === 'loading'
+        ? document.addEventListener('DOMContentLoaded', init)
+        : init();
+
+})();
 </script>

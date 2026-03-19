@@ -17,7 +17,7 @@
                     </div>
                 </div>
                 <div class="header-actions">
-                    <a href="{{ route('Curso', encrypt($cursos->id)) }}" class="btn btn-outline-primary">
+                    <a href="{{ route('Curso', ($cursos->codigoCurso)) }}" class="btn btn-outline-primary">
                         <i class="fas fa-arrow-left me-2"></i> Volver al Curso
                     </a>
                 </div>

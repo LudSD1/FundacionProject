@@ -3,145 +3,158 @@
 @section('titulo', 'Gestión de Backups')
 
 @section('content')
-<div class="container-fluid py-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="card-modern">
-                <div class="card-header-modern d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0 text-white">
-                        <i class="fas fa-database me-2"></i>
-                        Gestión de Backups de Base de Datos
-                    </h4>
-                    <div>
-                        <a href="{{ route('Inicio') }}" class="btn-modern btn-primary-custom me-2">
-                            <i class="fas fa-home me-1"></i><span class="ms-1">Inicio</span>
-                        </a>
-                        <button onclick="location.reload()" class="btn-modern btn-accent-custom">
-                            <i class="fas fa-sync-alt me-1"></i><span class="ms-1">Actualizar</span>
-                        </button>
+<div class="container-fluid py-5">
+    {{-- Estructura tbl-card moderna --}}
+    <div class="tbl-card">
+        {{-- Cabecera con lenguaje visual moderno --}}
+        <div class="tbl-card-hero">
+            <div class="tbl-hero-left">
+                <div class="tbl-hero-eyebrow">
+                    <i class="fas fa-shield-alt"></i> Seguridad del Sistema
+                </div>
+                <h2 class="tbl-hero-title">Gestión de Backups</h2>
+                <p class="tbl-hero-sub">Administre las copias de seguridad de la base de datos y archivos</p>
+            </div>
+            <div class="tbl-hero-controls">
+                <a href="{{ route('Inicio') }}" class="tbl-hero-btn tbl-hero-btn-glass">
+                    <i class="fas fa-home"></i> Inicio
+                </a>
+                <button onclick="location.reload()" class="tbl-hero-btn tbl-hero-btn-glass">
+                    <i class="fas fa-sync-alt"></i> Actualizar
+                </button>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+            <!-- Sección de creación rápida -->
+            <div class="row g-4 mb-5">
+                <div class="col-lg-8">
+                    <div class="alert alert-info border-0 shadow-sm rounded-4 p-4 d-flex align-items-center mb-0 h-100">
+                        <div class="bg-info bg-opacity-10 rounded-circle p-3 me-4">
+                            <i class="fas fa-info-circle text-info fs-3"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold text-info mb-1">Información Importante</h6>
+                            <p class="mb-0 small opacity-75">Los backups se almacenan en <code>storage/backups/</code>. Se recomienda descargar copias externas periódicamente para mayor seguridad.</p>
+                        </div>
                     </div>
                 </div>
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm rounded-4 bg-light h-100">
+                        <div class="card-body p-4 text-center d-flex flex-column justify-content-center">
+                            <h6 class="fw-bold text-primary mb-3">Nuevo Punto de Restauración</h6>
+                            <form action="{{ route('admin.backup.create') }}" method="POST">
+                                @csrf
+                                <div class="form-check form-switch d-inline-block mb-3">
+                                    <input class="form-check-input" type="checkbox" name="compress" id="compress" checked>
+                                    <label class="form-check-label small fw-bold text-muted" for="compress">Comprimir archivos</label>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow-sm" style="background: var(--gradient-primary) !important; border: none;">
+                                    <i class="fas fa-download me-2"></i> Generar Backup
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                <div class="card-body">
-                    <!-- Sección de crear backup -->
-                    <div class="row mb-4">
-                        <div class="col-md-8">
-                            <div class="alert alert-info">
-                                <i class="fas fa-info-circle me-2"></i>
-                                <strong>Información:</strong> Los backups se almacenan en <code>storage/backups/</code> y contienen toda la estructura y datos de la base de datos.
+            <!-- Lista de backups -->
+            <div class="mb-4">
+                <h5 class="fw-bold text-dark mb-3"><i class="fas fa-history me-2 text-primary"></i>Backups Disponibles</h5>
+                @if(empty($backups))
+                    <div class="text-center py-5 bg-light rounded-4">
+                        <i class="fas fa-database fa-3x mb-3 opacity-25 text-primary"></i>
+                        <p class="mb-0 fw-bold text-muted">No hay backups disponibles</p>
+                        <small class="text-muted">Genera uno nuevo usando el panel superior</small>
+                    </div>
+                @else
+                    <div class="table-container-modern">
+                        <table class="table-modern">
+                            <thead>
+                                <tr>
+                                    <th><div class="th-content">Archivo</div></th>
+                                    <th><div class="th-content">Fecha de Creación</div></th>
+                                    <th><div class="th-content">Tamaño</div></th>
+                                    <th><div class="th-content">Estado</div></th>
+                                    <th class="text-center"><div class="th-content text-center w-100">Acciones</div></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($backups as $backup)
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-light rounded p-2 me-3">
+                                                    <i class="fas fa-file-archive text-primary"></i>
+                                                </div>
+                                                <code class="text-primary fw-bold">{{ $backup['name'] }}</code>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="date-badge date-start">
+                                                <i class="fas fa-calendar-alt me-1"></i> {{ $backup['date'] }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-light text-dark border px-3 py-2 rounded-pill fw-bold">
+                                                <i class="fas fa-weight-hanging me-1 text-muted"></i> {{ $backup['size_mb'] }} MB
+                                            </span>
+                                        </td>
+                                        <td>
+                                            @if($backup['is_compressed'])
+                                                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
+                                                    <i class="fas fa-compress-arrows-alt me-1"></i> Comprimido
+                                                </span>
+                                            @else
+                                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-3 py-2 rounded-pill">
+                                                    <i class="fas fa-file me-1"></i> Normal
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <a href="{{ route('admin.backup.download', $backup['name']) }}"
+                                                   class="btn btn-sm btn-outline-primary rounded-pill px-3" title="Descargar">
+                                                    <i class="fas fa-download me-1"></i> Descargar
+                                                </a>
+                                                <button type="button"
+                                                        class="btn btn-sm btn-outline-danger rounded-pill px-3"
+                                                        onclick="confirmDelete('{{ $backup['name'] }}')" title="Eliminar">
+                                                    <i class="fas fa-trash me-1"></i> Eliminar
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Estadísticas Rápidas -->
+                    <div class="row g-4 mt-4">
+                        <div class="col-md-4">
+                            <div class="bg-primary bg-opacity-10 border-0 rounded-4 p-4 text-center h-100">
+                                <div class="text-primary mb-2"><i class="fas fa-copy fa-2x"></i></div>
+                                <div class="fs-3 fw-bold text-primary">{{ count($backups) }}</div>
+                                <div class="text-muted small fw-bold text-uppercase">Total Backups</div>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="card-modern">
-                                <div class="card-body text-center">
-                                    <h6 class="card-title">
-                                        <i class="fas fa-plus-circle text-success me-1"></i>
-                                        Crear Nuevo Backup
-                                    </h6>
-                                    <form action="{{ route('admin.backup.create') }}" method="POST" class="d-inline">
-                                        @csrf
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" name="compress" id="compress">
-                                            <label class="form-check-label" for="compress">
-                                                <small>Comprimir (recomendado)</small>
-                                            </label>
-                                        </div>
-                                        <button type="submit" class="btn-modern btn-success-custom">
-                                            <i class="fas fa-download me-1"></i>
-                                            Crear Backup
-                                        </button>
-                                    </form>
-                                </div>
+                            <div class="bg-success bg-opacity-10 border-0 rounded-4 p-4 text-center h-100">
+                                <div class="text-success mb-2"><i class="fas fa-hdd fa-2x"></i></div>
+                                <div class="fs-3 fw-bold text-success">{{ array_sum(array_column($backups, 'size_mb')) }} MB</div>
+                                <div class="text-muted small fw-bold text-uppercase">Espacio Usado</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="bg-info bg-opacity-10 border-0 rounded-4 p-4 text-center h-100">
+                                <div class="text-info mb-2"><i class="fas fa-file-zipper fa-2x"></i></div>
+                                <div class="fs-3 fw-bold text-info">{{ count(array_filter($backups, fn($b) => $b['is_compressed'])) }}</div>
+                                <div class="text-muted small fw-bold text-uppercase">Comprimidos</div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Lista de backups -->
-                    @if(empty($backups))
-                        <div class="alert alert-warning text-center">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            No hay backups disponibles. Crea tu primer backup usando el botón de arriba.
-                        </div>
-                    @else
-                        <div class="table-container-modern">
-                            <table class="table-modern table table-hover">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th><i class="fas fa-file me-1"></i>Archivo</th>
-                                        <th><i class="fas fa-calendar me-1"></i>Fecha de Creación</th>
-                                        <th><i class="fas fa-weight me-1"></i>Tamaño</th>
-                                        <th><i class="fas fa-compress me-1"></i>Tipo</th>
-                                        <th><i class="fas fa-cogs me-1"></i>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($backups as $backup)
-                                        <tr>
-                                            <td>
-                                                <code class="text-dark">{{ $backup['name'] }}</code>
-                                            </td>
-                                            <td>
-                                                <span class="badge bg-secondary">
-                                                    {{ $backup['date'] }}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span class="badge bg-info">
-                                                    {{ $backup['size_mb'] }} MB
-                                                </span>
-                                            </td>
-                                            <td>
-                                                @if($backup['is_compressed'])
-                                                    <span class="badge bg-success">
-                                                        <i class="fas fa-compress me-1"></i>
-                                                        Comprimido
-                                                    </span>
-                                                @else
-                                                    <span class="badge bg-warning">
-                                                        <i class="fas fa-file me-1"></i>
-                                                        Sin comprimir
-                                                    </span>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <div class="action-buttons-cell" role="group">
-                                                    <a href="{{ route('admin.backup.download', $backup['name']) }}" class="btn-action-modern" title="Descargar backup">
-                                                        <i class="fas fa-download"></i>
-                                                    </a>
-                                                    <button type="button" class="btn-action-modern btn-action-delete" title="Eliminar backup" onclick="confirmDelete('{{ $backup['name'] }}')">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Estadísticas -->
-                        <div class="row mt-4">
-                            <div class="col-md-4">
-                                <div class="stats-card text-center">
-                                    <div class="stats-number">{{ count($backups) }}</div>
-                                    <div class="stats-label">Total de Backups</div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="stats-card text-center">
-                                    <div class="stats-number">{{ array_sum(array_column($backups, 'size_mb')) }} MB</div>
-                                    <div class="stats-label">Espacio Total Usado</div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="stats-card text-center">
-                                    <div class="stats-number">{{ count(array_filter($backups, fn($b) => $b['is_compressed'])) }}</div>
-                                    <div class="stats-label">Backups Comprimidos</div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -149,31 +162,32 @@
 
 <!-- Modal de confirmación para eliminar -->
 <div class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    Confirmar Eliminación
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow overflow-hidden">
+            <div class="modal-header border-0 bg-danger text-white py-3">
+                <h5 class="modal-title fw-bold">
+                    <i class="fas fa-exclamation-triangle me-2"></i> Confirmar Eliminación
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <p>¿Estás seguro de que deseas eliminar el backup <strong id="backupName"></strong>?</p>
-                <div class="alert alert-warning">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    <strong>Advertencia:</strong> Esta acción no se puede deshacer.
+            <div class="modal-body p-4 text-center">
+                <div class="bg-danger bg-opacity-10 text-danger rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                    <i class="fas fa-trash fa-2x"></i>
+                </div>
+                <h5>¿Estás seguro?</h5>
+                <p class="text-muted mb-4">Vas a eliminar el archivo:<br><strong class="text-dark" id="backupName"></strong></p>
+
+                <div class="alert alert-warning border-0 rounded-3 small mb-0">
+                    <i class="fas fa-exclamation-circle me-2"></i> Esta acción es irreversible.
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-modern btn-accent-custom" data-bs-dismiss="modal">
-                    <i class="fas fa-times me-1"></i><span class="ms-1">Cancelar</span>
-                </button>
+            <div class="modal-footer border-0 bg-light p-3">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
                 <form id="deleteForm" method="POST" class="d-inline">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn-modern btn-orange-custom">
-                        <i class="fas fa-trash me-1"></i><span class="ms-1">Eliminar</span>
+                    <button type="submit" class="btn btn-danger rounded-pill px-4 fw-bold shadow-sm">
+                        <i class="fas fa-trash me-2"></i> Eliminar Permanentemente
                     </button>
                 </form>
             </div>
@@ -190,41 +204,11 @@ function confirmDelete(filename) {
     modal.show();
 }
 
-// Auto-refresh cada 30 segundos si hay backups en proceso
 @if(!empty($backups))
     setTimeout(() => {
         location.reload();
-    }, 30000);
+    }, 60000); // Aumentado a 60 segundos para evitar recargas constantes
 @endif
 </script>
 
-<style>
-.table th {
-    border-top: none;
-    font-weight: 600;
-}
-
-.btn-group .btn {
-    margin-right: 2px;
-}
-
-.btn-group .btn:last-child {
-    margin-right: 0;
-}
-
-.card {
-    transition: transform 0.2s ease;
-}
-
-.card:hover {
-    transform: translateY(-2px);
-}
-
-code {
-    background-color: #f8f9fa;
-    padding: 2px 4px;
-    border-radius: 3px;
-    font-size: 0.9em;
-}
-</style>
 @endsection

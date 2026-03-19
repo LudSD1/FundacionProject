@@ -34,7 +34,10 @@ class CategoriaController extends Controller
         $countActivas = Categoria::whereNull('deleted_at')->count();
         $countEliminadas = Categoria::onlyTrashed()->count();
 
-        return view('categorias.index', compact('categorias', 'tab', 'countActivas', 'countEliminadas'));
+        // Todas las categorías activas para el select de padre en los modales
+        $categorias_all = Categoria::whereNull('deleted_at')->orderBy('name')->get();
+
+        return view('categorias.index', compact('categorias', 'tab', 'countActivas', 'countEliminadas', 'categorias_all'));
     }
 
 

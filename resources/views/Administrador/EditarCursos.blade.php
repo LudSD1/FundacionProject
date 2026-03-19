@@ -4,772 +4,595 @@
 
 @section('content')
 
-    <div class="ec-wrapper">
-    <div class="container" style="max-width:880px">
+    <div class="back-button-wrapper">
+        <a href="{{ route('Curso', $cursos->codigoCurso) }}" class="btn-back-modern">
+            <i class="bi bi-arrow-left-circle-fill"></i>
+            <span>Volver al Curso</span>
+        </a>
+    </div>
 
-        <div class="ec-header">
-            <a href="{{ route('Curso', $cursos->codigoCurso) }}" class="ec-back">
-                <i class="bi bi-arrow-left"></i> Volver al Curso
-            </a>
-            <div class="text-end">
-                <div class="ec-course-title">Editando: <span>{{ ucfirst(strtolower($cursos->nombreCurso)) }}</span></div>
-                <div class="mt-1"><span class="ec-role-badge"><i class="bi bi-shield-fill"></i> {{ auth()->user()->getRoleNames()->first() }}</span></div>
+    <div class="wizard-container">
+        <!-- Header -->
+        <div class="wizard-header">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <h2><i class="bi bi-pencil-square me-2"></i>Editar Curso o Evento</h2>
+                    <p>Actualice la información del curso: <span class="fw-bold text-primary">{{ ucfirst(strtolower($cursos->nombreCurso)) }}</span></p>
+                </div>
+                <div class="ec-role-badge">
+                    <i class="bi bi-shield-fill me-1"></i> {{ auth()->user()->getRoleNames()->first() }}
+                </div>
             </div>
         </div>
 
-        <div class="ec-progress"><div class="ec-progress-bar" id="ecProgressBar" style="width:20%"></div></div>
+        <!-- Progress Bar -->
+        <div class="progress-wrapper">
+            <div class="steps-progress">
+                <div class="progress-line"></div>
+                <div class="progress-line-active" id="progressLine"></div>
 
-        <div class="ec-steps">
-            <div class="ec-step active" onclick="goStep(1)" id="step-btn-1">
-                <div class="ec-step-num" id="step-num-1">1</div>
-                <div><span class="ec-step-label">Información</span><span class="ec-step-sub">Nombre y descripción</span></div>
-            </div>
-            <div class="ec-step" onclick="goStep(2)" id="step-btn-2">
-                <div class="ec-step-num" id="step-num-2">2</div>
-                <div><span class="ec-step-label">Configuración</span><span class="ec-step-sub">Fechas y formato</span></div>
-            </div>
-            @if(auth()->user()->hasRole('Administrador'))
-            <div class="ec-step" onclick="goStep(3)" id="step-btn-3">
-                <div class="ec-step-num" id="step-num-3">3</div>
-                <div><span class="ec-step-label">Detalles</span><span class="ec-step-sub">Cupos y precio</span></div>
-            </div>
-            @endif
-            <div class="ec-step" onclick="goStep(4)" id="step-btn-4">
-                <div class="ec-step-num" id="step-num-4">{{ auth()->user()->hasRole('Administrador') ? 4 : 3 }}</div>
-                <div><span class="ec-step-label">Archivos</span><span class="ec-step-sub">PDF e imagen</span></div>
-            </div>
-            <div class="ec-step" onclick="goStep(5)" id="step-btn-5">
-                <div class="ec-step-num" id="step-num-5">{{ auth()->user()->hasRole('Administrador') ? 5 : 4 }}</div>
-                <div><span class="ec-step-label">Categorías</span><span class="ec-step-sub">Clasificación</span></div>
+                <div class="step-item active" data-step="1">
+                    <div class="step-circle">1</div>
+                    <span class="step-label">Datos</span>
+                </div>
+
+                <div class="step-item" data-step="2">
+                    <div class="step-circle">2</div>
+                    <span class="step-label">Config</span>
+                </div>
+
+                @if(auth()->user()->hasRole('Administrador'))
+                <div class="step-item" data-step="3">
+                    <div class="step-circle">3</div>
+                    <span class="step-label">Detalles</span>
+                </div>
+                @endif
+
+                <div class="step-item" data-step="{{ auth()->user()->hasRole('Administrador') ? 4 : 3 }}">
+                    <div class="step-circle">{{ auth()->user()->hasRole('Administrador') ? 4 : 3 }}</div>
+                    <span class="step-label">Archivos</span>
+                </div>
+
+                <div class="step-item" data-step="{{ auth()->user()->hasRole('Administrador') ? 5 : 4 }}">
+                    <div class="step-circle">{{ auth()->user()->hasRole('Administrador') ? 5 : 4 }}</div>
+                    <span class="step-label">Categorías</span>
+                </div>
             </div>
         </div>
 
-        @if(session('success'))
-        <script>document.addEventListener('DOMContentLoaded',()=>Swal.fire({icon:'success',title:'Guardado',text:'{{ session('success') }}',confirmButtonColor:'#1a4789',timer:3000}))</script>
-        @endif
-        @if($errors->any())
-        <script>document.addEventListener('DOMContentLoaded',()=>Swal.fire({icon:'error',title:'Errores',html:'<ul style="text-align:left;color:#dc3545">@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul>',confirmButtonColor:'#1a4789'}))</script>
-        @endif
-
-        <form action="{{ route('editarCursoPost', $cursos->id) }}" method="POST" enctype="multipart/form-data">
+        <!-- Form -->
+        <form id="wizardForm" action="{{ route('editarCursoPost', $cursos->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
+            <div class="wizard-body">
+                <!-- Step 1: Datos Básicos -->
+                <div class="form-step active" data-step="1">
+                    <h3 class="step-title">
+                        <i class="bi bi-info-circle-fill"></i>
+                        Información Básica
+                    </h3>
+                    <p class="step-description">Nombre, descripción y público objetivo</p>
 
-            {{-- PASO 1: Información --}}
-            <div class="ec-panel active" id="panel-1">
-                <div class="ec-card">
-                    <div class="ec-card-header">
-                        <div class="ec-card-header-icon"><i class="bi bi-info-circle-fill"></i></div>
-                        <div><h6>Información Básica</h6><p>Nombre, descripción y público objetivo</p></div>
-                    </div>
-                    <div class="ec-card-body">
-                        <div class="ec-field">
-                            <label class="ec-label"><i class="bi bi-book-fill"></i> Nombre del Curso <span class="req">*</span></label>
-                            @if(auth()->user()->hasRole('Administrador'))
-                                <input type="text" name="nombre" class="ec-input" value="{{ old('nombre', $cursos->nombreCurso) }}" placeholder="Ej. Programación Web Avanzada" required>
-                            @else
-                                <input type="hidden" name="nombre" value="{{ $cursos->nombreCurso }}">
-                                <input type="text" class="ec-input" value="{{ $cursos->nombreCurso }}" disabled>
-                            @endif
-                        </div>
-                        <div class="ec-field">
-                            <label class="ec-label"><i class="bi bi-card-text"></i> Descripción <span class="req">*</span></label>
-                            <textarea name="descripcion" id="descripcionTA" class="ec-textarea" rows="4" maxlength="500" required placeholder="Describe el contenido y objetivos...">{{ old('descripcion', $cursos->descripcionC) }}</textarea>
-                            <div class="ec-char-count" id="charCount">0/500 caracteres</div>
-                        </div>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="ec-field mb-0">
-                                    <label class="ec-label"><i class="bi bi-people-fill"></i> Edad Dirigida</label>
-                                    <input type="text" name="edad_id" class="ec-input" value="{{ old('edad_id', $cursos->edad_dirigida) }}" placeholder="Ej: 18-30 años">
-                                </div>
+                    <div class="row g-4">
+                        <div class="col-md-12">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-bookmark-fill label-icon"></i>
+                                    Nombre del Curso
+                                    <span class="required-badge">*</span>
+                                </label>
+                                @if(auth()->user()->hasRole('Administrador'))
+                                    <input type="text" name="nombre" class="form-control-modern" value="{{ old('nombre', $cursos->nombreCurso) }}"
+                                        placeholder="Ej: Introducción a la Programación" required>
+                                @else
+                                    <input type="hidden" name="nombre" value="{{ $cursos->nombreCurso }}">
+                                    <input type="text" class="form-control-modern" value="{{ $cursos->nombreCurso }}" disabled>
+                                @endif
                             </div>
-                            <div class="col-md-6">
-                                <div class="ec-field mb-0">
-                                    <label class="ec-label"><i class="bi bi-bar-chart-fill"></i> Nivel</label>
-                                    <input type="text" name="nivel_id" class="ec-input" value="{{ old('nivel_id', $cursos->nivel) }}" placeholder="Ej: Básico, Intermedio">
-                                </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-text-paragraph label-icon"></i>
+                                    Descripción
+                                    <span class="required-badge">*</span>
+                                </label>
+                                <textarea name="descripcion" id="descripcionTA" class="form-control-modern" rows="4" maxlength="500" required
+                                    placeholder="Describe el contenido y objetivos...">{{ old('descripcion', $cursos->descripcionC) }}</textarea>
+                                <div class="helper-text-modern mt-1 text-end" id="charCount">0/500 caracteres</div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="ec-nav-btns">
-                    <span></span>
-                    <button type="button" class="ec-btn ec-btn-next" onclick="goStep(2)">Siguiente <i class="bi bi-arrow-right"></i></button>
-                </div>
-            </div>
 
-            {{-- PASO 2: Configuración --}}
-            <div class="ec-panel" id="panel-2">
-                <div class="ec-card">
-                    <div class="ec-card-header">
-                        <div class="ec-card-header-icon"><i class="bi bi-gear-fill"></i></div>
-                        <div><h6>Configuración del Curso</h6><p>Fechas, formato y tipo</p></div>
-                    </div>
-                    <div class="ec-card-body">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="ec-field">
-                                    <label class="ec-label"><i class="bi bi-calendar-check-fill"></i> Fecha de Inicio <span class="req">*</span></label>
-                                    <input type="datetime-local" name="fecha_ini" class="ec-input" required
-                                        value="{{ old('fecha_ini', $cursos->fecha_ini ? \Carbon\Carbon::parse($cursos->fecha_ini)->format('Y-m-d\TH:i') : '') }}">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="ec-field">
-                                    <label class="ec-label"><i class="bi bi-calendar-x-fill"></i> Fecha de Fin <span class="req">*</span></label>
-                                    <input type="datetime-local" name="fecha_fin" class="ec-input" required
-                                        value="{{ old('fecha_fin', $cursos->fecha_fin ? \Carbon\Carbon::parse($cursos->fecha_fin)->format('Y-m-d\TH:i') : '') }}">
-                                </div>
+                    <div class="row g-4 mt-2">
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-person-check label-icon"></i>
+                                    Edad Dirigida
+                                </label>
+                                <select id="edad_id" name="edad_id" class="form-select-modern" onchange="actualizarNiveles()">
+                                    <option value="">Seleccione un rango</option>
+                                    <option value="3-5" {{ old('edad_id', $cursos->edad_dirigida) == '3-5' ? 'selected' : '' }}>👶 3 a 5 años</option>
+                                    <option value="6-8" {{ old('edad_id', $cursos->edad_dirigida) == '6-8' ? 'selected' : '' }}>🧒 6 a 8 años</option>
+                                    <option value="9-12" {{ old('edad_id', $cursos->edad_dirigida) == '9-12' ? 'selected' : '' }}>👦 9 a 12 años</option>
+                                    <option value="13-15" {{ old('edad_id', $cursos->edad_dirigida) == '13-15' ? 'selected' : '' }}>👨 13 a 15 años</option>
+                                    <option value="16-18" {{ old('edad_id', $cursos->edad_dirigida) == '16-18' ? 'selected' : '' }}>🎓 16 a 18 años</option>
+                                    <option value="18+" {{ old('edad_id', $cursos->edad_dirigida) == '18+' ? 'selected' : '' }}>👔 18 años o más</option>
+                                </select>
                             </div>
                         </div>
-                        <div class="ec-field">
-                            <label class="ec-label"><i class="bi bi-display-fill"></i> Formato</label>
-                            @if(auth()->user()->hasRole('Administrador'))
-                                <div class="ec-pill-group">
-                                    @foreach(['Presencial','Virtual','Híbrido'] as $fmt)
-                                    <div class="ec-pill">
-                                        <input type="radio" name="formato" id="fmt_{{ $fmt }}" value="{{ $fmt }}" {{ $cursos->formato==$fmt?'checked':'' }}>
-                                        <label for="fmt_{{ $fmt }}">{{ $fmt }}</label>
-                                    </div>
-                                    @endforeach
-                                </div>
-                            @else
-                                <input type="hidden" name="formato" value="{{ $cursos->formato }}">
-                                <input type="text" class="ec-input" value="{{ $cursos->formato }}" disabled>
-                            @endif
-                        </div>
-                        <div class="ec-field mb-0">
-                            <label class="ec-label"><i class="bi bi-tags-fill"></i> Tipo</label>
-                            @if(auth()->user()->hasRole('Administrador'))
-                                <div class="ec-pill-group">
-                                    <div class="ec-pill">
-                                        <input type="radio" name="tipo" id="tipo_curso" value="curso" {{ $cursos->tipo=='curso'?'checked':'' }}>
-                                        <label for="tipo_curso">🎓 Curso</label>
-                                    </div>
-                                    <div class="ec-pill">
-                                        <input type="radio" name="tipo" id="tipo_congreso" value="congreso" {{ $cursos->tipo=='congreso'?'checked':'' }}>
-                                        <label for="tipo_congreso">📅 Evento / Congreso</label>
-                                    </div>
-                                </div>
-                            @else
-                                <input type="hidden" name="tipo" value="{{ $cursos->tipo }}">
-                                <input type="text" class="ec-input" value="{{ $cursos->tipo=='congreso'?'Evento':'Curso' }}" disabled>
-                            @endif
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-bar-chart-fill label-icon"></i>
+                                    Nivel
+                                </label>
+                                <select id="nivel_id" name="nivel_id" class="form-select-modern">
+                                    <option value="">Seleccione un nivel</option>
+                                    @if($cursos->nivel)
+                                        <option value="{{ $cursos->nivel }}" selected>{{ $cursos->nivel }}</option>
+                                    @endif
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="ec-nav-btns">
-                    <button type="button" class="ec-btn ec-btn-prev" onclick="goStep(1)"><i class="bi bi-arrow-left"></i> Anterior</button>
-                    <button type="button" class="ec-btn ec-btn-next" onclick="goStep({{ auth()->user()->hasRole('Administrador') ? 3 : 4 }})">Siguiente <i class="bi bi-arrow-right"></i></button>
-                </div>
-            </div>
 
-            {{-- PASO 3: Admin --}}
-            @if(auth()->user()->hasRole('Administrador'))
-            <div class="ec-panel" id="panel-3">
-                <div class="ec-card">
-                    <div class="ec-card-header">
-                        <div class="ec-card-header-icon"><i class="bi bi-sliders"></i></div>
-                        <div><h6>Detalles Administrativos</h6><p>Docente, cupos, precio y visibilidad</p></div>
+                <!-- Step 2: Configuración -->
+                <div class="form-step" data-step="2">
+                    <h3 class="step-title">
+                        <i class="bi bi-gear-fill"></i>
+                        Configuración del Curso
+                    </h3>
+                    <p class="step-description">Fechas, formato y tipo de evento</p>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-calendar-check-fill label-icon"></i>
+                                    Fecha de Inicio
+                                    <span class="required-badge">*</span>
+                                </label>
+                                <input type="datetime-local" name="fecha_ini" class="form-control-modern" required
+                                    value="{{ old('fecha_ini', $cursos->fecha_ini ? \Carbon\Carbon::parse($cursos->fecha_ini)->format('Y-m-d\TH:i') : '') }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-calendar-x-fill label-icon"></i>
+                                    Fecha de Fin
+                                    <span class="required-badge">*</span>
+                                </label>
+                                <input type="datetime-local" name="fecha_fin" class="form-control-modern" required
+                                    value="{{ old('fecha_fin', $cursos->fecha_fin ? \Carbon\Carbon::parse($cursos->fecha_fin)->format('Y-m-d\TH:i') : '') }}">
+                            </div>
+                        </div>
                     </div>
-                    <div class="ec-card-body">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="ec-field">
-                                    <label class="ec-label"><i class="bi bi-person-badge-fill"></i> Docente <span class="req">*</span></label>
-                                    <select class="ec-select" name="docente_id">
-                                        @foreach($docente as $doc)
-                                            <option value="{{ $doc->id }}" {{ $cursos->docente_id==$doc->id?'selected':'' }}>{{ $doc->name }} {{ $doc->lastname1 }}</option>
+
+                    <div class="row g-4 mt-2">
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-display-fill label-icon"></i>
+                                    Formato
+                                </label>
+                                @if(auth()->user()->hasRole('Administrador'))
+                                    <select name="formato" class="form-select-modern">
+                                        @foreach(['Presencial','Virtual','Híbrido'] as $fmt)
+                                            <option value="{{ $fmt }}" {{ $cursos->formato == $fmt ? 'selected' : '' }}>
+                                                {{ $fmt == 'Virtual' ? '💻 Virtual' : ($fmt == 'Presencial' ? '🏢 Presencial' : '🌓 Híbrido') }}
+                                            </option>
                                         @endforeach
                                     </select>
-                                </div>
+                                @else
+                                    <input type="hidden" name="formato" value="{{ $cursos->formato }}">
+                                    <input type="text" class="form-control-modern" value="{{ $cursos->formato }}" disabled>
+                                @endif
                             </div>
-                            <div class="col-md-6">
-                                <div class="ec-field">
-                                    <label class="ec-label"><i class="bi bi-eye-fill"></i> Visibilidad</label>
-                                    <div class="ec-pill-group">
-                                        <div class="ec-pill">
-                                            <input type="radio" name="visibilidad" id="vis_pub" value="publico" {{ $cursos->visibilidad=='publico'?'checked':'' }}>
-                                            <label for="vis_pub">🌐 Público</label>
-                                        </div>
-                                        <div class="ec-pill">
-                                            <input type="radio" name="visibilidad" id="vis_priv" value="privado" {{ $cursos->visibilidad=='privado'?'checked':'' }}>
-                                            <label for="vis_priv">🔒 Privado</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="ec-field mb-0">
-                                    <label class="ec-label"><i class="bi bi-clock-fill"></i> Duración (horas) <span class="req">*</span></label>
-                                    <input type="number" name="duracion" class="ec-input" value="{{ old('duracion', $cursos->duracion) }}" min="1" required placeholder="40">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="ec-field mb-0">
-                                    <label class="ec-label"><i class="bi bi-people-fill"></i> Cupos <span class="req">*</span></label>
-                                    <input type="number" name="cupos" class="ec-input" value="{{ old('cupos', $cursos->cupos) }}" min="1" required placeholder="30">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="ec-field mb-0">
-                                    <label class="ec-label"><i class="bi bi-currency-dollar"></i> Precio (Bs) <span class="req">*</span></label>
-                                    <input type="number" name="precio" class="ec-input" value="{{ old('precio', $cursos->precio) }}" step="0.01" min="0" required placeholder="250.00">
-                                </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-tags-fill label-icon"></i>
+                                    Tipo
+                                </label>
+                                @if(auth()->user()->hasRole('Administrador'))
+                                    <select name="tipo" class="form-select-modern">
+                                        <option value="curso" {{ $cursos->tipo == 'curso' ? 'selected' : '' }}>📚 Curso</option>
+                                        <option value="congreso" {{ $cursos->tipo == 'congreso' ? 'selected' : '' }}>📅 Evento / Congreso</option>
+                                    </select>
+                                @else
+                                    <input type="hidden" name="tipo" value="{{ $cursos->tipo }}">
+                                    <input type="text" class="form-control-modern" value="{{ $cursos->tipo == 'congreso' ? 'Evento' : 'Curso' }}" disabled>
+                                @endif
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="ec-nav-btns">
-                    <button type="button" class="ec-btn ec-btn-prev" onclick="goStep(2)"><i class="bi bi-arrow-left"></i> Anterior</button>
-                    <button type="button" class="ec-btn ec-btn-next" onclick="goStep(4)">Siguiente <i class="bi bi-arrow-right"></i></button>
-                </div>
-            </div>
-            @else
-                <input type="hidden" name="docente_id" value="{{ auth()->user()->id }}">
-            @endif
 
-            {{-- PASO 4: Archivos --}}
-            <div class="ec-panel" id="panel-4">
-                <div class="ec-card">
-                    <div class="ec-card-header">
-                        <div class="ec-card-header-icon"><i class="bi bi-folder-fill"></i></div>
-                        <div><h6>Archivos y Recursos</h6><p>PDF del curso e imagen de portada</p></div>
+                <!-- Step 3: Admin (Solo Administrador) -->
+                @if(auth()->user()->hasRole('Administrador'))
+                <div class="form-step" data-step="3">
+                    <h3 class="step-title">
+                        <i class="bi bi-sliders"></i>
+                        Detalles Administrativos
+                    </h3>
+                    <p class="step-description">Docente, cupos, precio y visibilidad</p>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-person-badge-fill label-icon"></i>
+                                    Docente
+                                    <span class="required-badge">*</span>
+                                </label>
+                                <select name="docente_id" class="form-select-modern" required>
+                                    @foreach($docente as $doc)
+                                        <option value="{{ $doc->id }}" {{ $cursos->docente_id == $doc->id ? 'selected' : '' }}>
+                                            {{ $doc->name }} {{ $doc->lastname1 }} {{ $doc->lastname2 }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-eye-fill label-icon"></i>
+                                    Visibilidad
+                                </label>
+                                <select name="visibilidad" class="form-select-modern">
+                                    <option value="publico" {{ $cursos->visibilidad == 'publico' ? 'selected' : '' }}>🌐 Público</option>
+                                    <option value="privado" {{ $cursos->visibilidad == 'privado' ? 'selected' : '' }}>🔒 Privado</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
-                    <div class="ec-card-body">
-                        <div class="row g-4">
-                            <div class="col-md-6">
-                                <label class="ec-label"><i class="bi bi-file-earmark-pdf-fill"></i> Archivo PDF</label>
+
+                    <div class="row g-4 mt-2">
+                        <div class="col-md-4">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-clock-fill label-icon"></i>
+                                    Duración (horas)
+                                    <span class="required-badge">*</span>
+                                </label>
+                                <input type="number" name="duracion" class="form-control-modern" value="{{ old('duracion', $cursos->duracion) }}" min="1" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-people-fill label-icon"></i>
+                                    Cupos
+                                    <span class="required-badge">*</span>
+                                </label>
+                                <input type="number" name="cupos" class="form-control-modern" value="{{ old('cupos', $cursos->cupos) }}" min="1" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-currency-dollar label-icon"></i>
+                                    Precio (Bs)
+                                    <span class="required-badge">*</span>
+                                </label>
+                                <input type="number" name="precio" class="form-control-modern" value="{{ old('precio', $cursos->precio) }}" step="0.01" min="0" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @else
+                    <input type="hidden" name="docente_id" value="{{ auth()->user()->id }}">
+                @endif
+
+                <!-- Step 4/3: Archivos -->
+                <div class="form-step" data-step="{{ auth()->user()->hasRole('Administrador') ? 4 : 3 }}">
+                    <h3 class="step-title">
+                        <i class="bi bi-folder-fill"></i>
+                        Archivos y Recursos
+                    </h3>
+                    <p class="step-description">PDF del curso e imagen de portada</p>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-file-earmark-pdf-fill label-icon"></i>
+                                    Archivo PDF
+                                </label>
                                 <div class="ec-file-wrap">
                                     <input type="file" name="archivo" accept=".pdf" id="archivoInput">
-                                    <div class="ec-file-icon"><i class="bi bi-file-earmark-pdf"></i></div>
-                                    <div class="ec-file-text"><strong>Haz clic</strong> o arrastra tu PDF<br><span style="font-size:.72rem">Solo archivos .pdf</span></div>
+                                    <div class="ec-file-icon"><i class="bi bi-cloud-arrow-up-fill"></i></div>
+                                    <div class="ec-file-text" id="archivoLabel"><strong>Haz clic</strong> o arrastra tu PDF</div>
                                 </div>
                                 @if($cursos->archivoContenidodelCurso)
-                                    <div class="ec-file-preview">
-                                        <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:1.8rem;flex-shrink:0"></i>
-                                        <div>
-                                            <div class="ec-file-sub">Archivo actual</div>
-                                            <a href="{{ asset('storage/'.$cursos->archivoContenidodelCurso) }}" target="_blank" class="ec-file-name">{{ basename($cursos->archivoContenidodelCurso) }}</a>
+                                    <div class="ec-file-preview mt-2">
+                                        <i class="bi bi-file-earmark-pdf-fill text-danger me-2" style="font-size: 1.5rem;"></i>
+                                        <a href="{{ asset('storage/'.$cursos->archivoContenidodelCurso) }}" target="_blank" class="ec-file-name text-truncate d-inline-block" style="max-width: 200px;">
+                                            {{ basename($cursos->archivoContenidodelCurso) }}
+                                        </a>
+                                        <div class="form-check form-switch ms-auto">
+                                            <input class="form-check-input" type="checkbox" name="eliminar_archivo" id="eliminar_archivo">
+                                            <label class="form-check-label text-danger" for="eliminar_archivo">Eliminar</label>
                                         </div>
-                                    </div>
-                                    <div class="ec-del-check">
-                                        <input type="checkbox" name="eliminar_archivo" id="eliminar_archivo">
-                                        <label for="eliminar_archivo"><i class="bi bi-trash-fill me-1"></i>Eliminar archivo actual</label>
                                     </div>
                                 @endif
                             </div>
-                            <div class="col-md-6">
-                                <label class="ec-label"><i class="bi bi-image-fill"></i> Imagen de Portada</label>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-image-fill label-icon"></i>
+                                    Imagen de Portada
+                                </label>
                                 <div class="ec-file-wrap">
                                     <input type="file" name="imagen" accept="image/*" id="imagenInput">
                                     <div class="ec-file-icon"><i class="bi bi-image"></i></div>
-                                    <div class="ec-file-text"><strong>Haz clic</strong> o arrastra tu imagen<br><span style="font-size:.72rem">JPG, PNG, WEBP</span></div>
+                                    <div class="ec-file-text" id="imagenLabel"><strong>Haz clic</strong> o arrastra tu imagen</div>
                                 </div>
                                 @if($cursos->imagen)
-                                    <div class="ec-file-preview">
-                                        <img src="{{ asset('storage/'.$cursos->imagen) }}" alt="Portada">
-                                        <div><div class="ec-file-sub">Imagen actual</div><div class="ec-file-name">Portada del curso</div></div>
-                                    </div>
-                                    <div class="ec-del-check">
-                                        <input type="checkbox" name="eliminar_imagen" id="eliminar_imagen">
-                                        <label for="eliminar_imagen"><i class="bi bi-trash-fill me-1"></i>Eliminar imagen actual</label>
+                                    <div class="ec-file-preview mt-2">
+                                        <img src="{{ asset('storage/'.$cursos->imagen) }}" alt="Portada" class="me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+                                        <span class="ec-file-name">Imagen actual</span>
+                                        <div class="form-check form-switch ms-auto">
+                                            <input class="form-check-input" type="checkbox" name="eliminar_imagen" id="eliminar_imagen">
+                                            <label class="form-check-label text-danger" for="eliminar_imagen">Eliminar</label>
+                                        </div>
                                     </div>
                                 @endif
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="ec-nav-btns">
-                    <button type="button" class="ec-btn ec-btn-prev" onclick="goStep({{ auth()->user()->hasRole('Administrador') ? 3 : 2 }})"><i class="bi bi-arrow-left"></i> Anterior</button>
-                    <button type="button" class="ec-btn ec-btn-next" onclick="goStep(5)">Siguiente <i class="bi bi-arrow-right"></i></button>
+
+                <!-- Step 5/4: Categorías -->
+                <div class="form-step" data-step="{{ auth()->user()->hasRole('Administrador') ? 5 : 4 }}">
+                    <h3 class="step-title">
+                        <i class="bi bi-tag-fill"></i>
+                        Categorías del Curso
+                    </h3>
+                    <p class="step-description">Seleccione las categorías que mejor describen el curso</p>
+
+                    <div class="search-box-table mb-4">
+                        <i class="bi bi-search search-icon-table"></i>
+                        <input type="text" class="form-control search-input-table" id="buscarCat" placeholder="Buscar categoría...">
+                    </div>
+
+                    <div class="ec-cat-grid" id="catGrid">
+                        @foreach($categorias as $categoria)
+                            <div class="ec-cat-item {{ $cursos->categorias->contains($categoria->id) ? 'checked' : '' }}" onclick="toggleCat(this)">
+                                <input type="checkbox" name="categorias[]" value="{{ $categoria->id }}"
+                                    {{ $cursos->categorias->contains($categoria->id) ? 'checked' : '' }} style="display: none;">
+                                <div class="ec-cat-check"><i class="bi bi-check"></i></div>
+                                <span class="ec-cat-name">{{ $categoria->name }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <div class="mt-4 p-3 bg-light rounded-3 border-start border-primary border-4">
+                        <div class="d-flex align-items-center text-muted" style="font-size: 0.9rem;">
+                            <i class="bi bi-info-circle-fill text-primary me-2"></i>
+                            <span><strong id="catCount" class="text-primary">{{ $cursos->categorias->count() }}</strong> categorías seleccionadas</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            {{-- PASO 5: Categorías --}}
-            <div class="ec-panel" id="panel-5">
-                <div class="ec-card">
-                    <div class="ec-card-header">
-                        <div class="ec-card-header-icon"><i class="bi bi-tag-fill"></i></div>
-                        <div><h6>Categorías del Curso</h6><p>Selecciona las categorías que aplican</p></div>
-                    </div>
-                    <div class="ec-card-body">
-                        <div class="search-box-table mb-3">
-                            <i class="bi bi-search search-icon-table"></i>
-                            <input type="text" class="form-control search-input-table" id="buscarCat" placeholder="Buscar categoría...">
-                        </div>
-                        <div class="ec-cat-grid" id="catGrid">
-                            @foreach($categorias as $categoria)
-                                <div class="ec-cat-item {{ $cursos->categorias->contains($categoria->id) ? 'checked' : '' }}" onclick="toggleCat(this)">
-                                    <input type="checkbox" name="categorias[]" value="{{ $categoria->id }}" {{ $cursos->categorias->contains($categoria->id)?'checked':'' }}>
-                                    <div class="ec-cat-check"><i class="bi bi-check"></i></div>
-                                    <span class="ec-cat-name">{{ $categoria->name }}</span>
-                                </div>
-                            @endforeach
-                        </div>
-                        <div class="mt-2" style="font-size:.78rem;color:#94a3b8">
-                            <i class="bi bi-check2-circle me-1" style="color:var(--color-success)"></i>
-                            <span id="catCount">{{ $cursos->categorias->count() }}</span> categoría(s) seleccionada(s)
-                        </div>
-                    </div>
-                </div>
-                <div class="ec-nav-btns">
-                    <button type="button" class="ec-btn ec-btn-prev" onclick="goStep(4)"><i class="bi bi-arrow-left"></i> Anterior</button>
-                    <button type="submit" class="ec-btn ec-btn-save"><i class="bi bi-save2-fill"></i> Guardar Cambios</button>
-                </div>
+            <!-- Footer Buttons -->
+            <div class="wizard-footer mt-5">
+                <button type="button" class="btn-wizard btn-prev" id="prevBtn" style="display: none;">
+                    <i class="bi bi-arrow-left"></i>
+                    Anterior
+                </button>
+                <button type="button" class="btn-wizard btn-next" id="nextBtn">
+                    Siguiente
+                    <i class="bi bi-arrow-right"></i>
+                </button>
+                <button type="submit" class="btn-wizard btn-submit" id="submitBtn" style="display: none;">
+                    <i class="bi bi-check-circle-fill"></i>
+                    Guardar Cambios
+                </button>
             </div>
-
         </form>
     </div>
-    </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-    const TOTAL = {{ auth()->user()->hasRole('Administrador') ? 5 : 4 }};
-    let cur = 1;
-    function goStep(n){
-        const p=cur;
-        document.getElementById('panel-'+p)?.classList.remove('active');
-        document.getElementById('step-btn-'+p)?.classList.remove('active');
-        if(n>p){
-            document.getElementById('step-btn-'+p)?.classList.add('done');
-            document.getElementById('step-num-'+p).innerHTML='<i class="bi bi-check-lg"></i>';
-        }else{
-            document.getElementById('step-btn-'+p)?.classList.remove('done');
-            document.getElementById('step-num-'+p).textContent=p;
+        const isAdmin = {{ auth()->user()->hasRole('Administrador') ? 'true' : 'false' }};
+        const totalSteps = isAdmin ? 5 : 4;
+        let currentStep = 1;
+
+        // Niveles por edad
+        const nivelesPorEdad = {
+            "3-5": ["Preescolar", "Educación Inicial", "Estimulación Temprana"],
+            "6-8": ["Primaria (1º y 2º)", "Primaria (3º)", "Educación Básica"],
+            "9-12": ["Primaria (4º a 6º)", "Educación Intermedia", "Pre-adolescentes"],
+            "13-15": ["Secundaria Básica", "Educación Media (1º-3º)", "Adolescentes"],
+            "16-18": ["Preparatoria", "Bachillerato", "Educación Media Superior", "Universitario (inicial)"],
+            "18+": ["Público General", "Adultos", "Profesionales", "Interesados en Salud Mental", "Bienestar"]
+        };
+
+        function actualizarNiveles() {
+            const edad = document.getElementById("edad_id").value;
+            const nivelSelect = document.getElementById("nivel_id");
+            if (!nivelSelect) return;
+
+            const currentVal = nivelSelect.value;
+            nivelSelect.innerHTML = '<option value="">Seleccione un nivel</option>';
+
+            if (edad && nivelesPorEdad[edad]) {
+                nivelesPorEdad[edad].forEach(nivel => {
+                    const option = document.createElement("option");
+                    option.value = nivel;
+                    option.textContent = nivel;
+                    if (nivel === currentVal) option.selected = true;
+                    nivelSelect.appendChild(option);
+                });
+            }
         }
-        cur=n;
-        document.getElementById('panel-'+cur)?.classList.add('active');
-        document.getElementById('step-btn-'+cur)?.classList.add('active');
-        document.getElementById('step-btn-'+cur)?.classList.remove('done');
-        document.getElementById('ecProgressBar').style.width=((cur/TOTAL)*100)+'%';
-        window.scrollTo({top:0,behavior:'smooth'});
-    }
-    const ta=document.getElementById('descripcionTA'),cc=document.getElementById('charCount');
-    if(ta){const u=()=>{const l=ta.value.length;cc.textContent=l+'/500 caracteres';cc.className='ec-char-count'+(l>450?' warn':'')};ta.addEventListener('input',u);u();}
-    function toggleCat(el){el.classList.toggle('checked');el.querySelector('input[type="checkbox"]').checked=el.classList.contains('checked');document.getElementById('catCount').textContent=document.querySelectorAll('#catGrid .ec-cat-item.checked').length;}
-    document.getElementById('buscarCat')?.addEventListener('input',function(){const q=this.value.toLowerCase();document.querySelectorAll('.ec-cat-item').forEach(i=>i.style.display=i.querySelector('.ec-cat-name').textContent.toLowerCase().includes(q)?'':'none');});
-    ['archivoInput','imagenInput'].forEach(id=>{const el=document.getElementById(id);if(!el)return;el.addEventListener('change',function(){if(!this.files[0])return;this.closest('.ec-file-wrap').querySelector('.ec-file-text').innerHTML='<strong>'+this.files[0].name+'</strong><br><span style="font-size:.72rem;color:var(--color-success)">Listo para subir</span>';});});
+
+        function updateProgress() {
+            const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            const line = document.getElementById('progressLine');
+            if (line) line.style.width = progress + '%';
+
+            document.querySelectorAll('.step-item').forEach((item, index) => {
+                const stepNumber = index + 1;
+                item.classList.remove('active', 'completed');
+
+                if (stepNumber === currentStep) {
+                    item.classList.add('active');
+                    item.querySelector('.step-circle').textContent = stepNumber;
+                } else if (stepNumber < currentStep) {
+                    item.classList.add('completed');
+                    item.querySelector('.step-circle').innerHTML = '<i class="bi bi-check-lg"></i>';
+                } else {
+                    item.querySelector('.step-circle').textContent = stepNumber;
+                }
+            });
+        }
+
+        function showStep(step) {
+            document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+            const targetStep = document.querySelector(`[data-step="${step}"].form-step`);
+            if (targetStep) targetStep.classList.add('active');
+
+            document.getElementById('prevBtn').style.display = step === 1 ? 'none' : 'flex';
+            document.getElementById('nextBtn').style.display = step === totalSteps ? 'none' : 'flex';
+            document.getElementById('submitBtn').style.display = step === totalSteps ? 'flex' : 'none';
+
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function validateStep(step) {
+            const currentStepElement = document.querySelector(`[data-step="${step}"].form-step`);
+            if (!currentStepElement) return true;
+
+            const inputs = currentStepElement.querySelectorAll('input[required], select[required], textarea[required]');
+
+            for (let input of inputs) {
+                if (!input.value.trim()) {
+                    input.focus();
+                    input.classList.add('is-invalid');
+                    setTimeout(() => input.classList.remove('is-invalid'), 3000);
+
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Campo Requerido',
+                        text: 'Por favor complete todos los campos obligatorios antes de continuar.',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function toggleCat(el) {
+            const checkbox = el.querySelector('input[type="checkbox"]');
+            el.classList.toggle('checked');
+            checkbox.checked = el.classList.contains('checked');
+            document.getElementById('catCount').textContent = document.querySelectorAll('#catGrid .ec-cat-item.checked').length;
+        }
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            if (validateStep(currentStep)) {
+                if (currentStep < totalSteps) {
+                    currentStep++;
+                    showStep(currentStep);
+                }
+            }
+        });
+
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        });
+
+        // Búsqueda de categorías
+        document.getElementById('buscarCat')?.addEventListener('input', function() {
+            const q = this.value.toLowerCase();
+            document.querySelectorAll('.ec-cat-item').forEach(item => {
+                const name = item.querySelector('.ec-cat-name').textContent.toLowerCase();
+                item.style.display = name.includes(q) ? '' : 'none';
+            });
+        });
+
+        // Contador de caracteres descripción
+        const ta = document.getElementById('descripcionTA');
+        const cc = document.getElementById('charCount');
+        if (ta && cc) {
+            const updateCount = () => {
+                const len = ta.value.length;
+                cc.textContent = `${len}/500 caracteres`;
+                cc.style.color = len > 450 ? '#ff4757' : '#94a3b8';
+            };
+            ta.addEventListener('input', updateCount);
+            updateCount();
+        }
+
+        // Labels de archivos
+        document.getElementById('archivoInput')?.addEventListener('change', function() {
+            if (this.files[0]) document.getElementById('archivoLabel').innerHTML = `<strong>${this.files[0].name}</strong>`;
+        });
+        document.getElementById('imagenInput')?.addEventListener('change', function() {
+            if (this.files[0]) document.getElementById('imagenLabel').innerHTML = `<strong>${this.files[0].name}</strong>`;
+        });
+
+        // Confirmación al guardar
+        document.getElementById('wizardForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (!validateStep(currentStep)) return;
+
+            // Verificar categorías
+            const cats = document.querySelectorAll('#catGrid .ec-cat-item.checked').length;
+            if (cats === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Sin Categorías',
+                    text: 'Debe seleccionar al menos una categoría para el curso.',
+                    confirmButtonColor: '#1a4789'
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: '¿Guardar Cambios?',
+                text: "Se actualizará la información del curso.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Sí, guardar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Guardando...',
+                        didOpen: () => Swal.showLoading(),
+                        allowOutsideClick: false
+                    });
+                    this.submit();
+                }
+            });
+        });
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            showStep(1);
+            actualizarNiveles();
+        });
     </script>
-    @endsection
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-
-        // ========== CONTADOR DE CARACTERES ==========
-        const descripcion = document.getElementById('descripcion');
-        const contador = document.getElementById('contadorDescripcion');
-
-        if (descripcion && contador) {
-            const actualizarContador = () => {
-                const length = descripcion.value.length;
-                contador.textContent = length;
-                contador.parentElement.classList.toggle('warning', length > 450);
-            };
-
-            actualizarContador();
-            descripcion.addEventListener('input', actualizarContador);
-        }
-
-        // ========== BÚSQUEDA DE CATEGORÍAS ==========
-        const buscadorCategorias = document.getElementById('buscadorCategorias');
-        if (buscadorCategorias) {
-            buscadorCategorias.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                document.querySelectorAll('.categoria-item-compact').forEach(item => {
-                    const text = item.textContent.toLowerCase();
-                    item.style.display = text.includes(searchTerm) ? 'block' : 'none';
-                });
-            });
-        }
-
-        // ========== VALIDACIÓN DE FECHAS ==========
-        const fechaInicio = document.querySelector('input[name="fecha_ini"]');
-        const fechaFin = document.querySelector('input[name="fecha_fin"]');
-
-        if (fechaInicio && fechaFin) {
-            fechaInicio.addEventListener('change', function() {
-                if (fechaFin.value && new Date(this.value) > new Date(fechaFin.value)) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Fecha inválida',
-                        text: 'La fecha de inicio no puede ser posterior a la fecha de fin',
-                        confirmButtonColor: '#1a4789',
-                        confirmButtonText: 'Entendido'
-                    });
-                    this.value = '';
-                }
-            });
-
-            fechaFin.addEventListener('change', function() {
-                if (fechaInicio.value && new Date(this.value) < new Date(fechaInicio.value)) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Fecha inválida',
-                        text: 'La fecha de fin no puede ser anterior a la fecha de inicio',
-                        confirmButtonColor: '#1a4789',
-                        confirmButtonText: 'Entendido'
-                    });
-                    this.value = '';
-                }
-            });
-        }
-
-        // ========== VALIDACIÓN DE ARCHIVOS PDF ==========
-        const archivoInput = document.getElementById('archivoInput');
-        if (archivoInput) {
-            archivoInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    if (file.type !== 'application/pdf') {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Archivo no válido',
-                            text: 'Solo se permiten archivos PDF',
-                            confirmButtonColor: '#1a4789',
-                            confirmButtonText: 'Entendido'
-                        });
-                        this.value = '';
-                        return;
-                    }
-
-                    // Validar tamaño (máximo 10MB)
-                    const maxSize = 10 * 1024 * 1024; // 10MB en bytes
-                    if (file.size > maxSize) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Archivo muy grande',
-                            text: 'El archivo no debe superar los 10MB',
-                            confirmButtonColor: '#1a4789',
-                            confirmButtonText: 'Entendido'
-                        });
-                        this.value = '';
-                    }
-                }
-            });
-        }
-
-        // ========== VALIDACIÓN DE ARCHIVOS DE IMAGEN ==========
-        const imagenInput = document.getElementById('imagenInput');
-        if (imagenInput) {
-            imagenInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    if (!file.type.startsWith('image/')) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Archivo no válido',
-                            text: 'Solo se permiten archivos de imagen (JPG, PNG, GIF, etc.)',
-                            confirmButtonColor: '#1a4789',
-                            confirmButtonText: 'Entendido'
-                        });
-                        this.value = '';
-                        return;
-                    }
-
-                    // Validar tamaño (máximo 5MB)
-                    const maxSize = 5 * 1024 * 1024; // 5MB en bytes
-                    if (file.size > maxSize) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Imagen muy grande',
-                            text: 'La imagen no debe superar los 5MB',
-                            confirmButtonColor: '#1a4789',
-                            confirmButtonText: 'Entendido'
-                        });
-                        this.value = '';
-                    }
-                }
-            });
-        }
-
-        // ========== CONFIRMACIÓN AL GUARDAR CURSO ==========
-        const btnGuardarCurso = document.getElementById('btnGuardarCurso');
-        const cursoForm = document.getElementById('cursoForm');
-
-        if (btnGuardarCurso && cursoForm) {
-            btnGuardarCurso.addEventListener('click', function(e) {
-                e.preventDefault();
-
-                // Validar campos obligatorios
-                if (!cursoForm.checkValidity()) {
-                    cursoForm.reportValidity();
-                    return;
-                }
-
-                Swal.fire({
-                    title: '¿Guardar cambios?',
-                    text: '¿Está seguro de que desea modificar la información del curso?',
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#28a745',
-                    cancelButtonColor: '#6c757d',
-                    confirmButtonText: '<i class="fas fa-check me-2"></i>Sí, guardar',
-                    cancelButtonText: '<i class="fas fa-times me-2"></i>Cancelar',
-                    reverseButtons: true,
-                    focusCancel: true
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Mostrar loading
-                        Swal.fire({
-                            title: 'Guardando cambios...',
-                            html: 'Por favor espere un momento',
-                            allowOutsideClick: false,
-                            allowEscapeKey: false,
-                            allowEnterKey: false,
-                            didOpen: () => {
-                                Swal.showLoading();
-                            }
-                        });
-
-                        // Enviar formulario
-                        cursoForm.submit();
-                    }
-                });
-            });
-        }
-
-        // ========== CONFIRMACIÓN AL GUARDAR CATEGORÍAS ==========
-        const btnGuardarCategorias = document.getElementById('btnGuardarCategorias');
-        const categoriasForm = document.getElementById('categoriasForm');
-
-        if (btnGuardarCategorias && categoriasForm) {
-            btnGuardarCategorias.addEventListener('click', function(e) {
-                e.preventDefault();
-
-                // Contar categorías seleccionadas
-                const categoriasSeleccionadas = categoriasForm.querySelectorAll('input[type="checkbox"]:checked');
-                const totalSeleccionadas = categoriasSeleccionadas.length;
-
-                if (totalSeleccionadas === 0) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Sin categorías',
-                        text: 'Debe seleccionar al menos una categoría para el curso',
-                        confirmButtonColor: '#1a4789',
-                        confirmButtonText: 'Entendido'
-                    });
-                    return;
-                }
-
-                Swal.fire({
-                    title: '¿Guardar categorías?',
-                    html: `
-                        <p>¿Está seguro de asignar <strong>${totalSeleccionadas}</strong> categoría(s) a este curso?</p>
-                        <small class="text-muted">Esto reemplazará las categorías actuales</small>
-                    `,
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#28a745',
-                    cancelButtonColor: '#6c757d',
-                    confirmButtonText: '<i class="fas fa-check me-2"></i>Sí, guardar',
-                    cancelButtonText: '<i class="fas fa-times me-2"></i>Cancelar',
-                    reverseButtons: true,
-                    focusCancel: true
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Mostrar loading
-                        Swal.fire({
-                            title: 'Guardando categorías...',
-                            html: 'Por favor espere un momento',
-                            allowOutsideClick: false,
-                            allowEscapeKey: false,
-                            allowEnterKey: false,
-                            didOpen: () => {
-                                Swal.showLoading();
-                            }
-                        });
-
-                        // Si estás usando AJAX (opcional)
-                        // Descomenta esto si prefieres envío AJAX en lugar de submit normal
-                        /*
-                        const formData = new FormData(categoriasForm);
-
-                        fetch(categoriasForm.action, {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            Swal.fire({
-                                icon: 'success',
-                                title: '¡Guardado!',
-                                text: 'Las categorías se actualizaron correctamente',
-                                confirmButtonColor: '#1a4789',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
-                        })
-                        .catch(error => {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'Ocurrió un error al guardar las categorías',
-                                confirmButtonColor: '#1a4789'
-                            });
-                        });
-                        */
-
-                        // Envío normal del formulario
-                        categoriasForm.submit();
-                    }
-                });
-            });
-        }
-
-        // ========== RESALTAR CATEGORÍAS AL BUSCAR ==========
-        if (buscadorCategorias) {
-            buscadorCategorias.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase().trim();
-                const items = document.querySelectorAll('.categoria-item-compact');
-
-                items.forEach(item => {
-                    const label = item.querySelector('label');
-                    const text = label.textContent.toLowerCase();
-
-                    if (searchTerm === '') {
-                        item.style.display = 'block';
-                        label.innerHTML = label.textContent; // Remover highlights
-                    } else if (text.includes(searchTerm)) {
-                        item.style.display = 'block';
-
-                        // Resaltar texto coincidente
-                        const regex = new RegExp(`(${searchTerm})`, 'gi');
-                        const icon = '<i class="fas fa-folder me-1"></i>';
-                        const originalText = label.textContent.replace('📁 ', '');
-                        const highlighted = originalText.replace(regex, '<mark>$1</mark>');
-                        label.innerHTML = icon + highlighted;
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-            });
-        }
-
-        // ========== CONTADOR DE CATEGORÍAS SELECCIONADAS ==========
-        const categoriaCheckboxes = document.querySelectorAll('.categoria-checkbox');
-        if (categoriaCheckboxes.length > 0) {
-            const actualizarContadorCategorias = () => {
-                const seleccionadas = document.querySelectorAll('.categoria-checkbox:checked').length;
-                const total = categoriaCheckboxes.length;
-
-                // Puedes agregar un elemento para mostrar esto si lo deseas
-                console.log(`Categorías seleccionadas: ${seleccionadas} de ${total}`);
-            };
-
-            categoriaCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', actualizarContadorCategorias);
-            });
-
-            actualizarContadorCategorias();
-        }
-
-        // ========== ANIMACIÓN AL CAMBIAR DE TAB ==========
-        const tabButtons = document.querySelectorAll('[data-bs-toggle="tab"]');
-        tabButtons.forEach(button => {
-            button.addEventListener('shown.bs.tab', function(e) {
-                const targetPane = document.querySelector(this.getAttribute('data-bs-target'));
-                if (targetPane) {
-                    targetPane.style.opacity = '0';
-                    setTimeout(() => {
-                        targetPane.style.transition = 'opacity 0.3s ease';
-                        targetPane.style.opacity = '1';
-                    }, 10);
-                }
-            });
-        });
-
-        // ========== PREVENIR ENVÍO DOBLE DEL FORMULARIO ==========
-        let formSubmitting = false;
-
-        if (cursoForm) {
-            cursoForm.addEventListener('submit', function(e) {
-                if (formSubmitting) {
-                    e.preventDefault();
-                    return false;
-                }
-                formSubmitting = true;
-
-                // Deshabilitar botón de envío
-                if (btnGuardarCurso) {
-                    btnGuardarCurso.disabled = true;
-                    btnGuardarCurso.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Guardando...';
-                }
-            });
-        }
-
-        if (categoriasForm) {
-            categoriasForm.addEventListener('submit', function(e) {
-                if (formSubmitting) {
-                    e.preventDefault();
-                    return false;
-                }
-                formSubmitting = true;
-
-                // Deshabilitar botón de envío
-                if (btnGuardarCategorias) {
-                    btnGuardarCategorias.disabled = true;
-                    btnGuardarCategorias.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Guardando...';
-                }
-            });
-        }
-
-        // ========== VALIDACIÓN DE NÚMEROS ==========
-        const numerosInputs = document.querySelectorAll('input[type="number"]');
-        numerosInputs.forEach(input => {
-            input.addEventListener('input', function() {
-                if (this.value < 0) {
-                    this.value = 0;
-                }
-            });
-        });
-
-        // ========== CONFIRMACIÓN AL ELIMINAR ARCHIVOS ==========
-        const eliminarArchivo = document.getElementById('eliminar_archivo');
-        if (eliminarArchivo) {
-            eliminarArchivo.addEventListener('change', function() {
-                if (this.checked) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: '¿Eliminar archivo?',
-                        text: 'El archivo PDF actual será eliminado permanentemente',
-                        showCancelButton: true,
-                        confirmButtonColor: '#dc3545',
-                        cancelButtonColor: '#6c757d',
-                        confirmButtonText: 'Sí, eliminar',
-                        cancelButtonText: 'Cancelar'
-                    }).then((result) => {
-                        if (!result.isConfirmed) {
-                            this.checked = false;
-                        }
-                    });
-                }
-            });
-        }
-
-        const eliminarImagen = document.getElementById('eliminar_imagen');
-        if (eliminarImagen) {
-            eliminarImagen.addEventListener('change', function() {
-                if (this.checked) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: '¿Eliminar imagen?',
-                        text: 'La imagen actual será eliminada permanentemente',
-                        showCancelButton: true,
-                        confirmButtonColor: '#dc3545',
-                        cancelButtonColor: '#6c757d',
-                        confirmButtonText: 'Sí, eliminar',
-                        cancelButtonText: 'Cancelar'
-                    }).then((result) => {
-                        if (!result.isConfirmed) {
-                            this.checked = false;
-                        }
-                    });
-                }
-            });
-        }
-    });
-</script>
+@endsection

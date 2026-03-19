@@ -446,3 +446,96 @@
     }
 }
 
+
+.st-card {
+    background:    #fff;
+    border-radius: 12px;
+    border:        1.5px solid #e2eaf4;
+    box-shadow:    0 2px 10px rgba(0,0,0,.06);
+    overflow:      hidden;
+    transition:    transform .22s ease, box-shadow .22s ease;
+    border-top:    3px solid transparent; /* sobreescrito por variante */
+}
+.st-card:hover {
+    transform:  translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,.11);
+}
+
+/* Cuerpo: contenido + ícono en fila */
+.st-card-body {
+    display:         flex;
+    justify-content: space-between;
+    align-items:     center;
+    padding:         1.1rem 1.2rem .8rem;
+}
+
+/* Etiqueta */
+.st-label {
+    font-size:      .72rem;
+    font-weight:    700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color:          #94a3b8;
+    margin-bottom:  .3rem;
+}
+
+/* Número */
+.st-num {
+    font-size:   1.9rem;
+    font-weight: 900;
+    color:       #0f172a;
+    line-height: 1;
+}
+
+/* Ícono circular */
+.st-icon {
+    width:           46px;
+    height:          46px;
+    border-radius:   50%;
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    font-size:       1.2rem;
+    flex-shrink:     0;
+    transition:      transform .22s ease;
+}
+.st-card:hover .st-icon { transform: scale(1.12) rotate(-6deg); }
+
+/* Barra inferior de color */
+.st-bar {
+    height:        3px;
+    border-radius: 0 0 12px 12px;
+    margin-top:    .5rem;
+}
+
+/* ── Variantes de color ── */
+
+/* Rojo — Cursos */
+.st-card--red    { border-top-color: #dc2626; }
+.st-icon--red    { background: rgba(220,38,38,.10); color: #dc2626; }
+.st-bar--red     { background: linear-gradient(90deg, #dc2626, #f87171); }
+.st-card--red .st-num  { color: #dc2626; }
+
+/* Naranja — Estudiantes */
+.st-card--orange { border-top-color: #ffa500; }
+.st-icon--orange { background: rgba(255,165,0,.12); color: #d97706; }
+.st-bar--orange  { background: linear-gradient(90deg, #ffa500, #fbbf24); }
+.st-card--orange .st-num { color: #d97706; }
+
+/* Azul — Docentes */
+.st-card--blue   { border-top-color: #145da0; }
+.st-icon--blue   { background: rgba(20,93,160,.10); color: #145da0; }
+.st-bar--blue    { background: linear-gradient(90deg, #145da0, #2a81c2); }
+.st-card--blue .st-num   { color: #145da0; }
+
+/* Verde — Inscripciones */
+.st-card--green  { border-top-color: #16a34a; }
+.st-icon--green  { background: rgba(22,163,74,.10); color: #16a34a; }
+.st-bar--green   { background: linear-gradient(90deg, #16a34a, #22c55e); }
+.st-card--green .st-num  { color: #16a34a; }
+
+/* ── Responsive ── */
+@media (max-width: 576px) {
+    .st-num   { font-size: 1.6rem; }
+    .st-icon  { width: 40px; height: 40px; font-size: 1rem; }
+}

@@ -1,283 +1,451 @@
 
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes cardIn {
+    from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+/* ── Tokens locales con fallbacks (FIX 2) ──────────────────── */
 :root {
-  --card-transition:    0.25s ease;
-  --card-animation:     0.5s fadeInUp both;
-  --card-lift-sm:       translateY(-2px);
-  --card-lift-md:       translateY(-5px);
-  --card-bg:            #fff;
-  --card-border-subtle: rgba(26, 71, 137, 0.08);
-  --card-shadow-hover:  0 15px 40px rgba(0, 0, 0, 0.12);
+    /* Transiciones y animaciones */
+    --card-transition:      0.25s ease;
+    --card-animation:       0.5s fadeInUp both;
+    --card-lift-sm:         translateY(-2px);
+    --card-lift-md:         translateY(-5px);
+
+    /* Colores */
+    --card-bg:              #ffffff;
+    --card-border-subtle:   rgba(20, 93, 160, 0.08);
+    --card-shadow-hover:    0 15px 40px rgba(0, 0, 0, 0.12);
+
+    /* Radios — fallbacks si variables.css no está cargado */
+    --border-radius:        12px;
+    --border-radius-sm:     8px;
+    --border-radius-md:     14px;
+    --border-radius-lg:     20px;
+
+    /* Sombras — fallbacks */
+    --shadow-sm:            0 2px 8px rgba(0, 0, 0, 0.07);
+    --shadow-md:            0 4px 16px rgba(0, 0, 0, 0.10);
+    --shadow-lg:            0 8px 28px rgba(0, 0, 0, 0.13);
+
+    /* Colores del sistema — fallbacks */
+    --color-primary:        #145da0;
+    --color-primary-l:      #2a81c2;
+    --color-secondary:      #39a6cb;
+    --color-accent1:        #63becf;
+    --color-accent3:        #2197bd;
+    --orange-accent:        #ffa500;
+    --orange-accent-d:      #e59400;
 }
 
-/* ── 1. Card base (Bootstrap override) ──────────────────────── */
+
+/* ============================================================
+   1. CARD BASE (Bootstrap override mínimo)
+   ============================================================ */
 .card {
-  background: var(--card-bg);
-  transition: transform var(--card-transition),
-              box-shadow var(--card-transition);
-  animation: var(--card-animation);
+    background:  var(--card-bg);
+    border:      1px solid var(--card-border-subtle);
+    border-radius: var(--border-radius-md);
+    box-shadow:  var(--shadow-sm);
+    transition:
+        transform  var(--card-transition),
+        box-shadow var(--card-transition);
+    animation: var(--card-animation);
 }
+
+/* FIX 3: sin !important */
 .card:hover {
-  transform: var(--card-lift-md);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+    transform:   var(--card-lift-md);
+    box-shadow:  0 10px 30px rgba(0, 0, 0, 0.12);
 }
+
 .card-header {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    background:    transparent;
 }
-.card-header h4 {
-  color: #2c3e50;
-  margin: 0;
+.card-header h4,
+.card-header h5 {
+    color:  #0f172a;
+    margin: 0;
 }
+
 .card-body {
-  padding: 2rem;
-  background: var(--card-bg);
+    padding:    1.5rem;
+    background: var(--card-bg);
 }
 
-/* Columnas internas con hover sutil */
-.card-body .row > [class*="col-"] {
-  transition: background var(--card-transition);
-  padding: 0.5rem;
-  border-radius: 8px;
-}
-.card-body .row > [class*="col-"]:hover {
-  background: rgba(255, 165, 0, 0.05);
-}
+/* FIX 4: selector específico eliminado
+   Era: .card-body .row > [class*="col-"]:hover { background: rgba(255,165,0,0.05) }
+   Afectaba TODOS los rows de TODAS las cards. Eliminado. */
 
-/* ── 2. Card moderna (fondo primario) ───────────────────────── */
+
+/* ============================================================
+   2. CARD MODERNA (contenedor principal de tablas/listas)
+   FIX 5: background era var(--color-primary) = azul oscuro
+          → corregido a #fff para consistencia visual
+   ============================================================ */
 .card-modern {
-  background: var(--color-primary);
-  border-radius: 16px;
-  box-shadow: 0 8px 30px rgba(26, 71, 137, 0.12);
-  margin-bottom: 1rem;
+    background:    #fff;
+    border-radius: 16px;
+    border:        1.5px solid rgba(20, 93, 160, 0.10);
+    box-shadow:    0 8px 30px rgba(20, 93, 160, 0.10);
+    margin-bottom: 1rem;
+    overflow:      hidden;
 }
+
+/* FIX 6: gradiente coherente con el sistema */
 .card-header-modern {
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid rgba(22, 51, 94, 0.08);
-  background: linear-gradient(
-    135deg,
-    rgba(26, 71, 137, 0.03) 0%,
-    rgba(57, 166, 203, 0.03) 100%
-  );
+    padding:       1rem 1.25rem;
+    border-bottom: 1.5px solid rgba(20, 93, 160, 0.08);
+    background:    linear-gradient(
+        135deg,
+        rgba(20, 93, 160, 0.04) 0%,
+        rgba(42, 129, 194, 0.04) 100%
+    );
 }
 
-/* ── 3. Info card (bloque de información detallada) ─────────── */
+
+/* ============================================================
+   3. INFO CARD MODERNA (bloque de información detallada)
+   ============================================================ */
 .info-card-modern {
-  background: var(--card-bg);
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 6px 25px rgba(26, 71, 137, 0.1);
-}
-.info-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;                /* gap por si hay wrap en móvil */
-  padding: 1.75rem 2rem;
-  background: linear-gradient(
-    135deg,
-    rgba(26, 71, 137, 0.05) 0%,
-    rgba(99, 190, 207, 0.05) 100%
-  );
-  border-bottom: 2px solid var(--card-border-subtle);
-}
-.info-card-body {
-  padding: 2rem;
+    background:    var(--card-bg);
+    border-radius: 20px;
+    overflow:      hidden;
+    box-shadow:    0 6px 25px rgba(20, 93, 160, 0.10);
+    border:        1.5px solid var(--card-border-subtle);
 }
 
-/* ── 4. Info card (tarjeta compacta con ícono) ──────────────── */
-.info-card {
-  background: var(--card-bg);
-  border-radius: 15px;
-  padding: 1.5rem;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-  border: 2px solid transparent;
-  transition: transform var(--card-transition),
-              box-shadow var(--card-transition),
-              border-color var(--card-transition);
-  animation: var(--card-animation);
+.info-card-header {
+    display:         flex;
+    justify-content: space-between;
+    align-items:     center;
+    gap:             1rem;
+    padding:         1.5rem 1.75rem;
+    background:      linear-gradient(
+        135deg,
+        rgba(20, 93, 160, 0.04) 0%,
+        rgba(99, 190, 207, 0.04) 100%
+    );
+    border-bottom:   2px solid var(--card-border-subtle);
 }
+
+.info-card-body {
+    padding: 1.75rem;
+}
+
+
+/* ============================================================
+   4. INFO CARD COMPACTA (tarjeta con ícono)
+   ============================================================ */
+.info-card {
+    background:    var(--card-bg);
+    border-radius: 15px;
+    padding:       1.5rem;
+    box-shadow:    var(--shadow-md);
+    border:        2px solid transparent;
+    transition:
+        transform     var(--card-transition),
+        box-shadow    var(--card-transition),
+        border-color  var(--card-transition);
+    animation: var(--card-animation);
+}
+
 .info-card:hover {
-  transform: var(--card-lift-md);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-  border-color: var(--color-accent1);
+    transform:    var(--card-lift-md);
+    box-shadow:   0 10px 30px rgba(0, 0, 0, 0.12);
+    border-color: var(--color-accent1);
 }
 
 /* Ícono */
 .info-card-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
-  flex-shrink: 0;           /* evita que se comprima en flex */
+    width:          44px;
+    height:         44px;
+    border-radius:  12px;
+    display:        flex;
+    align-items:    center;
+    justify-content: center;
+    margin-bottom:  .9rem;
+    font-size:      1.3rem;
+    flex-shrink:    0;
 }
 .info-card-icon.primary {
-  background: rgba(26, 71, 137, 0.1);
-  color: var(--color-primary);
+    background: rgba(20, 93, 160, 0.10);
+    color:      var(--color-primary);
 }
 .info-card-icon.accent {
-  background: rgba(33, 151, 189, 0.1);
-  color: var(--color-accent3);
+    background: rgba(33, 151, 189, 0.10);
+    color:      var(--color-accent3);
 }
 .info-card-icon.orange {
-  background: rgba(255, 165, 0, 0.1);
-  color: var(--orange-accent);
+    background: rgba(255, 165, 0, 0.10);
+    color:      var(--orange-accent);
 }
 
 .info-card h5 {
-  font-weight: 600;
-  font-size: 0.95rem;
-  margin-bottom: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-primary);
+    font-weight:    700;
+    font-size:      .9rem;
+    margin-bottom:  .65rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color:          var(--color-primary);
 }
 
-/* Campos de info */
+/* Campos internos */
 .info-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-.info-label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #6c757d;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-.info-label i {
-  color: var(--color-secondary);
-}
-.info-value {
-  padding: 0.875rem 1.25rem;
-  background: linear-gradient(
-    135deg,
-    rgba(26, 71, 137, 0.03) 0%,
-    rgba(99, 190, 207, 0.03) 100%
-  );
-  border-radius: 12px;
-  color: #333;
-  font-weight: 500;
-  border-left: 3px solid var(--color-secondary);
+    display:        flex;
+    flex-direction: column;
+    gap:            .45rem;
 }
 
-/* ── 5. Cards de contenido ──────────────────────────────────── */
+.info-label {
+    display:     flex;
+    align-items: center;
+    gap:         .45rem;
+    font-size:   .82rem;
+    font-weight: 600;
+    color:       #64748b;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+}
+.info-label i { color: var(--color-secondary); }
+
+.info-value {
+    padding:       .75rem 1rem;
+    background:    linear-gradient(
+        135deg,
+        rgba(20, 93, 160, 0.03) 0%,
+        rgba(99, 190, 207, 0.03) 100%
+    );
+    border-radius: 10px;
+    color:         #0f172a;
+    font-weight:   500;
+    font-size:     .88rem;
+    border-left:   3px solid var(--color-secondary);
+}
+
+
+/* ============================================================
+   5. CARDS DE CONTENIDO ESPECÍFICO
+   ============================================================ */
 
 /* Curso */
 .course-card {
-  background: var(--card-bg);
-  border: none;
-  border-radius: var(--border-radius-md);
-  box-shadow: var(--shadow-md);
-  overflow: hidden;
-  transition: transform var(--card-transition),
-              box-shadow var(--card-transition);
+    background:    var(--card-bg);
+    border:        none;
+    border-radius: var(--border-radius-md);
+    box-shadow:    var(--shadow-md);
+    overflow:      hidden;
+    transition:
+        transform  var(--card-transition),
+        box-shadow var(--card-transition);
 }
 .course-card:hover {
-  box-shadow: var(--shadow-lg);
-  transform: var(--card-lift-sm);
+    box-shadow: var(--shadow-lg);
+    transform:  var(--card-lift-sm);
 }
 
 /* Docente */
 .teacher-card {
-  background: var(--card-bg);
-  border-radius: 20px;
-  padding: 2rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  margin-bottom: 2rem;
-  transition: transform var(--card-transition),
-              box-shadow var(--card-transition);
-  animation: var(--card-animation);
+    background:    var(--card-bg);
+    border-radius: 20px;
+    padding:       1.75rem;
+    box-shadow:    var(--shadow-md);
+    margin-bottom: 1.5rem;
+    border:        1.5px solid var(--card-border-subtle);
+    transition:
+        transform  var(--card-transition),
+        box-shadow var(--card-transition);
+    animation: var(--card-animation);
 }
 .teacher-card:hover {
-  transform: var(--card-lift-md);
-  box-shadow: var(--card-shadow-hover);
+    transform:  var(--card-lift-md);
+    box-shadow: var(--card-shadow-hover);
 }
+
+/* Docente compacto (sidebar) */
+.teacher-card-compact {
+    background:    var(--card-bg);
+    border-radius: var(--border-radius);
+    padding:       1rem;
+    border:        1.5px solid var(--card-border-subtle);
+    box-shadow:    var(--shadow-sm);
+    transition:    box-shadow var(--card-transition);
+}
+.teacher-card-compact:hover { box-shadow: var(--shadow-md); }
 
 /* Expositor */
 .expositor-card {
-  border: none;
-  border-radius: var(--border-radius-md);
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
-  transition: transform var(--card-transition),
-              box-shadow var(--card-transition);
+    border:        1.5px solid var(--card-border-subtle);
+    border-radius: var(--border-radius-md);
+    box-shadow:    var(--shadow-sm);
+    overflow:      hidden;
+    transition:
+        transform  var(--card-transition),
+        box-shadow var(--card-transition);
 }
 .expositor-card:hover {
-  box-shadow: var(--shadow-md);
-  transform: var(--card-lift-sm);
+    box-shadow: var(--shadow-md);
+    transform:  var(--card-lift-sm);
 }
 .expositor-card img {
-  transition: transform 0.4s ease;
-  display: block;           /* elimina espacio inferior inline */
-  width: 100%;
+    transition: transform 0.4s ease;
+    display:    block;
+    width:      100%;
 }
-.expositor-card:hover img {
-  transform: scale(1.05);
-}
+.expositor-card:hover img { transform: scale(1.05); }
 
 /* Recurso */
 .resource-card {
-  background: var(--card-bg);
-  border: 1px solid #e9ecef;
-  border-radius: var(--border-radius);
-  padding: 1.5rem;
-  box-shadow: var(--shadow-sm);
-  transition: transform var(--card-transition),
-              box-shadow var(--card-transition),
-              border-color var(--card-transition);
+    background:    var(--card-bg);
+    border:        1.5px solid #e2eaf4;
+    border-radius: var(--border-radius);
+    padding:       1.4rem;
+    box-shadow:    var(--shadow-sm);
+    transition:
+        transform     var(--card-transition),
+        box-shadow    var(--card-transition),
+        border-color  var(--card-transition);
 }
 .resource-card:hover {
-  border-color: var(--color-secondary);
-  box-shadow: var(--shadow-md);
-  transform: var(--card-lift-sm);
+    border-color: var(--color-secondary);
+    box-shadow:   var(--shadow-md);
+    transform:    var(--card-lift-sm);
 }
 
-/* ── 6. Cards de formulario / sistema ───────────────────────── */
 
+/* ============================================================
+   6. CARDS DE FORMULARIO / SISTEMA
+   ============================================================ */
+
+/* Formulario general */
 .form-card-modern {
-  background: var(--card-bg);
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 8px 30px rgba(26, 71, 137, 0.12);
+    background:    var(--card-bg);
+    border-radius: 20px;
+    overflow:      hidden;
+    box-shadow:    0 8px 30px rgba(20, 93, 160, 0.10);
+    border:        1.5px solid var(--card-border-subtle);
 }
 
+/* Crear usuario */
 .create-user-card {
-  background: var(--card-bg);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-lg);
-  overflow: hidden;
-  border: 1px solid var(--border);
-  animation: 0.45s cubic-bezier(0.4, 0, 0.2, 1) both cardIn;
+    background:    var(--card-bg);
+    border-radius: var(--border-radius-lg);
+    box-shadow:    var(--shadow-lg);
+    overflow:      hidden;
+    border:        1.5px solid var(--card-border-subtle);
+    animation:     0.45s cubic-bezier(0.4, 0, 0.2, 1) both cardIn;
 }
 
+/* Editar curso */
 .ec-card {
-  background: var(--card-bg);
-  border-radius: var(--border-radius);
-  border: 1.5px solid #d1dce8;
-  box-shadow: var(--shadow-md);
-  overflow: hidden;
+    background:    var(--card-bg);
+    border-radius: var(--border-radius);
+    border:        1.5px solid #d1dce8;
+    box-shadow:    var(--shadow-md);
+    overflow:      hidden;
 }
 
-/* ── Responsive ─────────────────────────────────────────────── */
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 @media (max-width: 768px) {
-  .card-body {
-    padding: 1rem;
-  }
-  .info-card-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .info-card-body {
-    padding: 1.5rem;
-  }
-  .card-header-modern {
-    padding: 1.5rem;
-  }
+    .card-body          { padding: 1rem; }
+    .info-card-header   { flex-direction: column; align-items: flex-start; }
+    .info-card-body     { padding: 1.25rem; }
+    .card-header-modern { padding: 1rem; }
+    .teacher-card       { padding: 1.25rem; }
+    .form-card-modern,
+    .info-card-modern   { border-radius: 14px; }
+}
+
+@media (max-width: 480px) {
+    .info-card          { padding: 1.1rem; }
+    .resource-card      { padding: 1rem; }
+}
+
+
+.rpt-course-cell {
+    display:     flex;
+    align-items: center;
+    gap:         .7rem;
+    min-width:   0;
+}
+
+.rpt-thumb {
+    width:         38px;
+    height:        38px;
+    border-radius: var(--tbl-radius-sm, 8px);
+    object-fit:    cover;
+    flex-shrink:   0;
+    border:        1.5px solid #e2eaf4;
+    display:       block;
+    transition:    transform .22s ease;
+}
+tr:hover .rpt-thumb { transform: scale(1.08); }
+
+/* Descripción truncada con tooltip */
+.rpt-desc {
+    display:       inline-block;
+    max-width:     220px;
+    overflow:      hidden;
+    text-overflow: ellipsis;
+    white-space:   nowrap;
+    font-size:     .83rem;
+    color:         #64748b;
+    cursor:        default;
+    vertical-align: middle;
+}
+
+
+/* ── Thumbnail del curso ── */
+.rpt-course-cell {
+    display:     flex;
+    align-items: center;
+    gap:         .7rem;
+    min-width:   0;
+}
+
+.rpt-thumb {
+    width:         38px;
+    height:        38px;
+    border-radius: var(--tbl-radius-sm, 8px);
+    object-fit:    cover;
+    flex-shrink:   0;
+    border:        1.5px solid #e2eaf4;
+    display:       block;
+    transition:    transform .22s ease;
+}
+tr:hover .rpt-thumb { transform: scale(1.08); }
+
+/* Descripción truncada con tooltip */
+.rpt-desc {
+    display:       inline-block;
+    max-width:     220px;
+    overflow:      hidden;
+    text-overflow: ellipsis;
+    white-space:   nowrap;
+    font-size:     .83rem;
+    color:         #64748b;
+    cursor:        default;
+    vertical-align: middle;
 }

@@ -147,18 +147,11 @@ Route::group(['middleware' => ['auth']], function () {
     //Rutas Sesion
     Route::post('/logout', [UserController::class, 'logout'])->name('logout');
     Route::get('/Inicio', [MenuController::class, 'index'])->name('Inicio');
-
-
-
-
-    //DOCENTE
-
-    //ENDDOCENTE
-
     //ESTUDIANTE
     Route::group(['middleware' => ['role:Estudiante|Docente|Administrador', 'verified']], function () {
 
         //notification
+        Route::get('/notifications', [NotificationController::class, 'index'])->name('notificationes');
         Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
         Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
         Route::delete('/notifications/{id}', [NotificationController::class, 'delete'])->name('notifications.delete');

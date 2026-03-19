@@ -243,7 +243,7 @@
                         {{-- Buscador --}}
                         <div class="dc-search">
                             <i class="bi bi-search dc-search-icon"></i>
-                            <input type="search" id="dcSearch" placeholder="Buscar curso o congreso..."
+                            <input type="search" id="dcSearch" placeholder="Buscar curso o evento..."
                                 class="dc-search-input" autocomplete="off">
                         </div>
 
@@ -254,7 +254,7 @@
                                     <option value="all">Todos</option>
                                     <option value="activo">En progreso</option>
                                     <option value="completado">Completados</option>
-                                    <option value="congreso">Congresos</option>
+                                    <option value="congreso">Eventos</option>
                                     <option value="curso">Solo cursos</option>
                                 </select>
                                 <i class="bi bi-chevron-down dc-select-icon"></i>
@@ -330,7 +330,7 @@
                 <li class="nav-item" role="presentation">
                     <button class="dc-tab-btn nav-link" data-bs-toggle="tab"
                         data-bs-target="#{{ $tabPrefix }}-congresos" type="button" role="tab">
-                        <i class="bi bi-calendar-event me-2"></i>Congresos
+                        <i class="bi bi-calendar-event me-2"></i>Eventos
                         <span class="dc-tab-badge dc-badge-orange">
                             @if ($userRole === 'Estudiante')
                                 {{ $inscritos->where('cursos.tipo', 'congreso')->count() }}

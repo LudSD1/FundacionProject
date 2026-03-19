@@ -1,107 +1,123 @@
-@section('titulo')
-    Asignar Cursos
-@endsection
+@extends('layout')
 
-
-
+@section('titulo', 'Asignar Cursos')
 
 @section('content')
-    <div class="container py-5">
-        <div class="card-modern">
-            <div class="card-header-modern">
-                <h2 class="text-white"><i class="fas fa-user-graduate me-2"></i>Asignar Cursos a Estudiantes</h2>
+<div class="container-fluid py-5">
+    {{-- Estructura tbl-card moderna --}}
+    <div class="tbl-card">
+        {{-- Cabecera con lenguaje visual moderno --}}
+        <div class="tbl-card-hero">
+            <div class="tbl-hero-left">
+                <div class="tbl-hero-eyebrow">
+                    <i class="fas fa-user-plus"></i> Inscripciones Manuales
+                </div>
+                <h2 class="tbl-hero-title">Asignar Cursos</h2>
+                <p class="tbl-hero-sub">Inscriba múltiples estudiantes a un curso de forma rápida y masiva</p>
             </div>
-
-            <div class="card-body">
-                <a href="{{ route('import.users.form') }}" class="btn-modern btn-create mb-3">
-                    <i class="fas fa-file-excel"></i>
-                    Importar Usuarios desde Excel
+            <div class="tbl-hero-controls">
+                <a href="{{ route('import.users.form') }}" class="tbl-hero-btn tbl-hero-btn-glass">
+                    <i class="fas fa-file-excel"></i> Importar desde Excel
                 </a>
+            </div>
+        </div>
 
-                <form action="{{ route('inscribir') }}" method="POST" id="formulario-inscripcion">
-                    @csrf
-                    <div class="row">
-                        <div class="col-md-12 mb-4">
-                            <div class="form-group-modern">
-                                <label for="curso_id" class="form-label-modern">
-                                    <i class="fas fa-book me-2"></i>
-                                    Seleccionar Curso
+        <div class="card-body p-4">
+            <form action="{{ route('inscribir') }}" method="POST" id="formulario-inscripcion">
+                @csrf
+                <div class="row g-4">
+                    {{-- Selección de Curso --}}
+                    <div class="col-lg-5">
+                        <div class="card border-0 shadow-sm rounded-4 h-100 bg-light bg-opacity-50">
+                            <div class="card-body p-4">
+                                <label for="curso_id" class="form-label small fw-bold text-muted mb-3 text-uppercase">
+                                    <i class="fas fa-book me-2 text-primary"></i> 1. Seleccionar Curso
                                 </label>
-                                <select class="form-select-modern @error('curso_id') is-invalid @enderror" id="curso_id"
-                                    name="curso_id" required>
-                                    <option value="">Seleccione un curso</option>
-                                    @foreach ($cursos as $curso)
-                                        <option value="{{ $curso->id }}"
-                                            {{ old('curso_id') == $curso->id ? 'selected' : '' }}>
-                                            {{ $curso->nombreCurso }} - {{ $curso->fecha_ini }} a {{ $curso->fecha_fin }}
-                                            @if ($curso->cupos > 0)
-                                                ({{ $curso->cupos - $curso->inscritos_count }} cupos disponibles)
-                                            @else
-                                                (Cupos ilimitados)
-                                            @endif
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('curso_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <div class="position-relative">
+                                    <select class="form-select border-0 shadow-sm rounded-3 py-3 px-4 @error('curso_id') is-invalid @enderror"
+                                            id="curso_id" name="curso_id" required style="font-size: 0.95rem;">
+                                        <option value="">-- Elige un curso disponible --</option>
+                                        @foreach ($cursos as $curso)
+                                            <option value="{{ $curso->id }}" {{ old('curso_id') == $curso->id ? 'selected' : '' }}>
+                                                {{ $curso->nombreCurso }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('curso_id')
+                                        <div class="invalid-feedback ps-2">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                {{-- Detalles del curso seleccionado (se llenan por JS o se muestran dinámicamente) --}}
+                                <div id="curso-info-extra" class="mt-4 p-3 bg-white rounded-3 shadow-sm d-none">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-calendar-alt text-primary me-2"></i>
+                                        <span class="small fw-bold text-dark" id="curso-fechas">-</span>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-users text-primary me-2"></i>
+                                        <span class="small fw-bold text-dark" id="curso-cupos">-</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label class="form-label-modern">
-                                    <i class="fas fa-users me-2"></i>
-                                    Seleccionar Estudiante(s)
-                                </label>
-                                <div class="search-box-modern mb-3">
-                                    <i class="fas fa-search search-icon"></i>
-                                    <input type="text" id="buscador" class="search-input-modern"
-                                        placeholder="Buscar estudiante por nombre o email...">
-                                    <button type="button" class="btn-clear-search" aria-label="Limpiar">
+                    {{-- Selección de Estudiantes --}}
+                    <div class="col-lg-7">
+                        <div class="card border-0 shadow-sm rounded-4 h-100">
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <label class="form-label small fw-bold text-muted mb-0 text-uppercase">
+                                        <i class="fas fa-users me-2 text-primary"></i> 2. Seleccionar Estudiante(s)
+                                    </label>
+                                    <button type="button" id="seleccionar-todos" class="btn btn-sm btn-link text-decoration-none fw-bold p-0">
+                                        <i class="fas fa-check-double me-1"></i> Seleccionar Todos
+                                    </button>
+                                </div>
+
+                                <div class="search-box-table w-100 mb-3 bg-light border-0">
+                                    <i class="fas fa-search search-icon-table"></i>
+                                    <input type="text" id="buscador" class="search-input-table bg-transparent"
+                                        placeholder="Filtrar por nombre o correo electrónico…">
+                                    <button type="button" class="btn-search-clear d-none" id="btn-clear-search">
                                         <i class="fas fa-times"></i>
                                     </button>
                                 </div>
 
-                                <div class="info-card-modern mt-3">
-                                    <div class="info-card-header">
-                                        <span><i class="fas fa-list me-2"></i>Lista de Estudiantes</span>
-                                        <button type="button" id="seleccionar-todos"
-                                            class="btn-modern btn-read-all btn-sm">
-                                            <i class="fas fa-check-double me-1"></i>
-                                            Seleccionar Todos
-                                        </button>
-                                    </div>
-                                    <div class="info-card-body">
-                                        <div id="lista-estudiantes" class="list-group">
-                                            <div class="empty-state">
-                                                <i class="fas fa-info-circle"></i>
-                                                <p>Seleccione un curso para ver los estudiantes disponibles</p>
-                                            </div>
+                                <div class="table-container-modern border rounded-3" style="max-height: 400px; overflow-y: auto;">
+                                    <div id="lista-estudiantes" class="p-0">
+                                        <div class="text-center py-5 opacity-50">
+                                            <i class="fas fa-arrow-left fa-3x mb-3 text-primary"></i>
+                                            <p class="mb-0 fw-bold">Seleccione un curso primero</p>
+                                            <small>Los estudiantes se cargarán automáticamente</small>
                                         </div>
                                     </div>
-                                    <div class="card-footer">
-                                        <i class="fas fa-users me-2"></i>
-                                        <span id="contador-seleccionados">0 estudiantes seleccionados</span>
-                                    </div>
                                 </div>
-                                @error('estudiante_id')
-                                    <div class="text-danger mt-2">{{ $message }}</div>
-                                @enderror
+
+                                <div class="d-flex justify-content-between align-items-center mt-3 px-2">
+                                    <span class="small fw-bold text-primary" id="contador-seleccionados">
+                                        <i class="fas fa-user-check me-1"></i> 0 seleccionados
+                                    </span>
+                                    @error('estudiante_id')
+                                        <div class="text-danger small fw-bold"><i class="fas fa-exclamation-circle me-1"></i> {{ $message }}</div>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="mt-4 d-flex justify-content-end">
-                        <button type="submit" class="btn-modern btn-submit" id="btn-inscribir">
-                            <i class="fas fa-save me-2"></i>
-                            Inscribir Estudiantes
-                        </button>
-                    </div>
-                </form>
-            </div>
+                <div class="mt-5 d-flex justify-content-end pt-4 border-top">
+                    <button type="submit" class="btn btn-primary rounded-pill px-5 py-2 fw-bold shadow-sm" id="btn-inscribir"
+                            style="background: var(--gradient-primary) !important; border: none;">
+                        <i class="fas fa-save me-2"></i> Procesar Inscripción
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -211,15 +227,19 @@
             // Cargar estudiantes cuando se selecciona un curso
             $('#curso_id').change(function() {
                 var curso_id = $(this).val();
+                var curso_text = $("#curso_id option:selected").text();
 
                 if (curso_id) {
+                    // Mostrar info extra del curso
+                    $('#curso-info-extra').removeClass('d-none').hide().fadeIn();
+
                     // Mostrar spinner mientras carga
                     $('#lista-estudiantes').html(`
                         <div class="text-center py-5">
-                            <div class="spinner-border" role="status">
+                            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
                                 <span class="visually-hidden">Cargando...</span>
                             </div>
-                            <p class="mt-2 text-muted">Cargando estudiantes...</p>
+                            <p class="mt-3 fw-bold text-primary">Buscando estudiantes disponibles...</p>
                         </div>
                     `);
 
@@ -232,61 +252,59 @@
 
                             if (data.length === 0) {
                                 $('#lista-estudiantes').html(`
-                                    <div class="empty-state">
-                                        <i class="fas fa-exclamation-circle"></i>
-                                        <p>No hay estudiantes disponibles para este curso</p>
+                                    <div class="text-center py-5 opacity-75">
+                                        <i class="fas fa-user-slash fa-3x mb-3 text-warning"></i>
+                                        <p class="mb-0 fw-bold">No hay estudiantes disponibles</p>
+                                        <small>Todos los estudiantes registrados ya están en este curso.</small>
                                     </div>
                                 `);
                                 return;
                             }
 
+                            let html = '<div class="list-group list-group-flush">';
                             $.each(data, function(key, value) {
                                 const isSelected = @json(old('estudiante_id', []))
                                     .includes(value.id);
-                                $('#lista-estudiantes').append(`
-                                    <div class="list-group-item">
-                                        <div class="form-check">
-                                            <input class="form-check-input estudiante-checkbox"
+                                html += `
+                                    <label class="list-group-item list-group-item-action border-0 border-bottom px-4 py-3 cursor-pointer" for="estudiante_${value.id}">
+                                        <div class="form-check d-flex align-items-center mb-0">
+                                            <input class="form-check-input me-3 estudiante-checkbox"
+                                                   style="width: 1.2rem; height: 1.2rem;"
                                                    type="checkbox"
                                                    name="estudiante_id[]"
                                                    value="${value.id}"
                                                    id="estudiante_${value.id}"
                                                    ${isSelected ? 'checked' : ''}>
-                                            <label class="form-check-label" for="estudiante_${value.id}">
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <strong>${value.name} ${value.lastname1} ${value.lastname2}</strong>
-                                                    <small class="text-muted">${value.email}</small>
-                                                </div>
-                                            </label>
+                                            <div class="ms-2">
+                                                <div class="fw-bold text-dark">${value.name} ${value.lastname1} ${value.lastname2}</div>
+                                                <div class="text-muted small"><i class="fas fa-envelope me-1"></i>${value.email}</div>
+                                            </div>
                                         </div>
-                                    </div>
-                                `);
+                                    </label>
+                                `;
                             });
+                            html += '</div>';
+                            $('#lista-estudiantes').html(html);
 
                             actualizarContador();
                         },
                         error: function(xhr, status, error) {
                             $('#lista-estudiantes').html(`
-                                <div class="alert alert-danger m-3">
-                                    <i class="fas fa-exclamation-triangle me-2"></i>
-                                    Error al cargar los estudiantes. Intente nuevamente.
+                                <div class="p-4 text-center">
+                                    <i class="fas fa-exclamation-triangle text-danger fa-3x mb-3"></i>
+                                    <p class="text-danger fw-bold">Error al conectar con el servidor</p>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="$('#curso_id').trigger('change')">Reintentar</button>
                                 </div>
                             `);
-
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'No se pudieron cargar los estudiantes. Intente nuevamente.',
-                                confirmButtonText: 'Aceptar',
-                                confirmButtonColor: swalColors.error
-                            });
                         }
                     });
                 } else {
+                    $('#curso-info-extra').addClass('d-none');
                     $('#lista-estudiantes').html(`
-                        <div class="empty-state">
-                            <i class="fas fa-info-circle"></i>
-                            <p>Seleccione un curso para ver los estudiantes disponibles</p>
+                        <div class="text-center py-5 opacity-50">
+                            <i class="fas fa-arrow-left fa-3x mb-3 text-primary"></i>
+                            <p class="mb-0 fw-bold">Seleccione un curso primero</p>
+                            <small>Los estudiantes se cargarán automáticamente</small>
                         </div>
                     `);
                     actualizarContador();
@@ -296,6 +314,12 @@
             // Buscar estudiantes
             $('#buscador').on('input', function() {
                 var searchTerm = $(this).val().toLowerCase();
+
+                if (searchTerm.length > 0) {
+                    $('#btn-clear-search').removeClass('d-none');
+                } else {
+                    $('#btn-clear-search').addClass('d-none');
+                }
 
                 if (searchTerm === '') {
                     $('#lista-estudiantes .list-group-item').show();
@@ -311,7 +335,7 @@
             });
 
             // Botón limpiar búsqueda
-            $('.btn-clear-search').click(function() {
+            $('#btn-clear-search').click(function() {
                 $('#buscador').val('').trigger('input');
             });
 
@@ -362,10 +386,3 @@
         });
     </script>
 @endsection
-
-
-
-
-
-
-@extends('layout')

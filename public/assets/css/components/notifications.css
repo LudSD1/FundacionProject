@@ -200,3 +200,168 @@
     .notification-message { font-size: 0.85rem; }
     .badge-modern { padding: 3px 10px; font-size: 0.74rem; }
 }
+
+
+.ntf-wrap    { display: flex; flex-direction: column; gap: 0; }
+
+.ntf-toolbar {
+    display:     flex;
+    align-items: center;
+    gap:         .7rem;
+    padding:     1rem 1rem .8rem;
+    flex-wrap:   wrap;
+    border-bottom: 1.5px solid #f0f4f8;
+    background:  #f8fafc;
+}
+
+.ntf-toolbar-search { flex: 1; min-width: 200px; }
+
+.ntf-toolbar-actions {
+    display:     flex;
+    gap:         .5rem;
+    flex-wrap:   wrap;
+    margin-left: auto;
+}
+
+/* Variantes claras para inputs dentro del panel (fondo blanco) */
+.ntf-search-light {
+    background:  #fff !important;
+    color:       #0f172a !important;
+    border-color: #d1dce8 !important;
+    width:       100% !important;
+}
+.ntf-search-light::placeholder { color: #94a3b8 !important; }
+.ntf-search-light:focus {
+    border-color: #2a81c2 !important;
+    background:   #fff !important;
+    box-shadow:   0 0 0 3px rgba(42,129,194,.13) !important;
+    width:        100% !important;
+}
+
+.ntf-select-light .tbl-hero-select {
+    background-color: #fff !important;
+    color:            #374151 !important;
+    border-color:     #d1dce8 !important;
+}
+.ntf-select-light .tbl-hero-select option { background: #fff; color: #374151; }
+
+/* Botón limpiar búsqueda */
+.ntf-clear-btn {
+    position:   absolute;
+    right:      .7rem;
+    background: none;
+    border:     none;
+    color:      #94a3b8;
+    font-size:  .88rem;
+    cursor:     pointer;
+    padding:    .2rem;
+    transition: color .18s ease;
+    z-index:    1;
+}
+.ntf-clear-btn:hover { color: #dc2626; }
+
+/* ════════════════════
+   FILAS NO LEÍDAS
+════════════════════ */
+.ntf-row-unread {
+    background: rgba(20,93,160,.025) !important;
+    border-left-color: #145da0 !important;
+}
+.ntf-row-unread:hover { background: rgba(20,93,160,.06) !important; }
+
+/* ════════════════════
+   CONTENIDO CELDA
+════════════════════ */
+.ntf-content {
+    display:     flex;
+    align-items: flex-start;
+    gap:         .7rem;
+}
+
+.ntf-icon-wrap {
+    width:           34px;
+    height:          34px;
+    border-radius:   50%;
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    font-size:       .9rem;
+    flex-shrink:     0;
+    margin-top:      .1rem;
+}
+.ntf-icon-wrap--unread { background: rgba(20,93,160,.10); color: #145da0; }
+.ntf-icon-wrap--read   { background: rgba(100,116,139,.09); color: #94a3b8; }
+
+.ntf-text    { flex: 1; min-width: 0; }
+
+.ntf-message {
+    font-size:   .87rem;
+    font-weight: 600;
+    color:       #0f172a;
+    line-height: 1.4;
+    white-space: normal;
+}
+.ntf-message--read { color: #64748b; font-weight: 400; }
+
+.ntf-details {
+    font-size:  .75rem;
+    color:      #94a3b8;
+    margin-top: .2rem;
+    line-height: 1.4;
+}
+
+/* Tiempo */
+.ntf-time {
+    display:     inline-flex;
+    align-items: center;
+    gap:         .3rem;
+    font-size:   .78rem;
+    color:       #64748b;
+    white-space: nowrap;
+}
+
+/* ════════════════════
+   PAGINACIÓN INFO
+════════════════════ */
+.ntf-pagination-wrap {
+    display:         flex;
+    align-items:     center;
+    justify-content: space-between;
+    padding:         .5rem 1rem;
+    flex-wrap:       wrap;
+    gap:             .5rem;
+    border-top:      1.5px solid #f0f4f8;
+    background:      #f8fafc;
+}
+.ntf-pagination-info {
+    font-size: .8rem;
+    color:     #64748b;
+}
+
+/* ════════════════════
+   MODAL — campos info
+════════════════════ */
+.ntf-modal-icon-wrap {
+    width:           42px;
+    height:          42px;
+    border-radius:   50%;
+    background:      rgba(20,93,160,.10);
+    color:           #145da0;
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    font-size:       1.1rem;
+    flex-shrink:     0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .ntf-toolbar         { flex-direction: column; align-items: stretch; }
+    .ntf-toolbar-search  { min-width: unset; }
+    .ntf-toolbar-actions { margin-left: 0; }
+    .tbl-hero-btn span   { display: none; }    /* solo íconos en mobile */
+}
+
+@media (max-width: 480px) {
+    .ntf-toolbar { padding: .75rem; }
+}

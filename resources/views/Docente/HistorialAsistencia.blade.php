@@ -200,7 +200,7 @@
             <div
                 class="card-header py-3 d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
                 <div class="d-flex align-items-center mb-2 mb-md-0">
-                    <a href="{{ route('Curso', $cursos) }}" class="btn btn-primary me-3">
+                    <a href="{{ route('Curso', $cursos->codigoCurso) }}" class="btn btn-primary me-3">
                         <i class="fas fa-arrow-left me-2"></i>Volver
                     </a>
                     <a href="{{ route('asistencias', encrypt($cursos->id)) }}" class="btn btn-primary me-3">

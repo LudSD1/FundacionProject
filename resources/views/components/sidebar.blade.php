@@ -63,7 +63,7 @@
     <div class="user-profile">
         <div class="dropdown">
             <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle"
-                id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Menú de usuario">
+                id="userDropdown" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" aria-label="Menú de usuario">
 
                 <div class="position-relative">
                     <img src="{{ $avatarUrl }}" alt="Avatar de {{ $user->name }}"
@@ -133,7 +133,7 @@
     <!-- Notifications Section -->
     <div class="dropdown mt-3">
         <button class="notification-btn" id="notificationDropdown" data-bs-toggle="dropdown"
-            aria-expanded="false" aria-label="Notificaciones">
+            data-bs-display="static" aria-expanded="false" aria-label="Notificaciones">
             <i class="bi {{ $unreadCount > 0 ? 'bi-bell-fill' : 'bi-bell' }}"></i>
             <span class="label-notification">Notificaciones</span>
 
@@ -186,7 +186,7 @@
 
             @if ($totalNotifications > 0)
                 <li class="border-top">
-                    <a class="notification-view-all" href="#">
+                    <a class="notification-view-all" href="{{ route('notificationes') }}">
                         Ver todas las notificaciones
                         <i class="bi bi-arrow-right ms-1"></i>
                     </a>
@@ -253,45 +253,35 @@ const Sidebar = (() => {
 
     // ─── Dropdown positioning ────────────────────────────────────────────────────
     //
-    // Estrategia: posicionar SOLO al momento del "shown" (getBoundingClientRect
-    // justo cuando el menú ya existe en el DOM). NO reposicionar en scroll/resize
-    // para evitar el desplazamiento errático.
-    //
     // Desktop: el menú aparece a la derecha del sidebar.
     // Móvil:   el menú se centra en pantalla (CSS lo maneja con transform).
 
     function positionDropdown(menu, toggle) {
         if (window.innerWidth < 992) {
-            // En móvil el CSS centra el dropdown; solo necesitamos el top
+            // En móvil el CSS centra el dropdown via left: 50% y transform: translateX(-50%)
             const toggleRect = toggle.getBoundingClientRect();
-            const menuHeight = menu.offsetHeight || 300; // fallback antes de render
-            const idealTop   = toggleRect.bottom + 8;
-            const maxTop     = window.innerHeight - menuHeight - 10;
-            const top        = Math.max(10, Math.min(idealTop, maxTop));
+            const top = toggleRect.bottom + 8;
 
             Object.assign(menu.style, {
                 top:  `${top}px`,
-                left: '',
-                right: '',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                position: 'fixed'
             });
             return;
         }
 
         // Desktop: a la derecha del sidebar
-        const isCollapsed  = sidebar.classList.contains('collapsed');
-        const sidebarWidth = isCollapsed
-            ? parseInt(getComputedStyle(document.documentElement)
-                .getPropertyValue('--sidebar-collapsed-width')) || 80
-            : parseInt(getComputedStyle(document.documentElement)
-                .getPropertyValue('--sidebar-width')) || 280;
+        const sidebarRect = sidebar.getBoundingClientRect();
+        const toggleRect  = toggle.getBoundingClientRect();
+        const menuHeight  = menu.offsetHeight || 300;
 
-        const toggleRect = toggle.getBoundingClientRect();
-        const menuHeight = menu.offsetHeight || 300;
-        const left       = sidebarWidth + 8;
+        const left = sidebarRect.right + 8;
+        let top    = toggleRect.top;
 
-        let top = toggleRect.top;
+        // Ajustar si se sale por abajo
         const maxTop = window.innerHeight - menuHeight - 10;
-        top = Math.max(10, Math.min(top, maxTop));
+        if (top > maxTop) top = Math.max(10, maxTop);
 
         Object.assign(menu.style, {
             position:   'fixed',
@@ -300,42 +290,50 @@ const Sidebar = (() => {
             right:      '',
             transform:  'none',
             zIndex:     '1055',
+            display:    'block'
         });
     }
 
     function clearDropdownStyles(menu) {
         if (!menu) return;
         Object.assign(menu.style, {
-            top: '', left: '', right: '', transform: '', position: '',
+            top: '', left: '', right: '', transform: '', position: '', display: ''
         });
     }
 
     // ─── Bootstrap dropdown bindings ────────────────────────────────────────────
 
     function bindDropdownEvents() {
-        document.querySelectorAll('.sidebar [data-bs-toggle="dropdown"]').forEach(toggle => {
-            // Al MOSTRAR: posicionar una sola vez (tras el primer frame de render)
-            toggle.addEventListener('shown.bs.dropdown', () => {
-                const labelledBy = toggle.id
-                    ? `[aria-labelledby="${toggle.id}"]`
-                    : null;
-                const menu = labelledBy
-                    ? document.querySelector(labelledBy)
-                    : toggle.closest('.dropdown')?.querySelector('.dropdown-menu');
-                if (menu) requestAnimationFrame(() => positionDropdown(menu, toggle));
+        const dropdownToggles = document.querySelectorAll('.sidebar [data-bs-toggle="dropdown"]');
+
+        dropdownToggles.forEach(toggle => {
+            // Usamos 'show.bs.dropdown' para posicionar ANTES de que se vea
+            toggle.addEventListener('show.bs.dropdown', () => {
+                const menu = toggle.nextElementSibling ||
+                           document.querySelector(`[aria-labelledby="${toggle.id}"]`);
+                if (menu) positionDropdown(menu, toggle);
             });
 
             // Al OCULTAR: limpiar estilos inline
             toggle.addEventListener('hidden.bs.dropdown', () => {
-                const labelledBy = toggle.id
-                    ? `[aria-labelledby="${toggle.id}"]`
-                    : null;
-                const menu = labelledBy
-                    ? document.querySelector(labelledBy)
-                    : toggle.closest('.dropdown')?.querySelector('.dropdown-menu');
+                const menu = toggle.nextElementSibling ||
+                           document.querySelector(`[aria-labelledby="${toggle.id}"]`);
                 clearDropdownStyles(menu);
             });
         });
+
+        // Reposicionar dinámicamente al hacer scroll para que no se "despegue" del botón
+        const handleScroll = () => {
+            const openToggle = document.querySelector('.sidebar [data-bs-toggle="dropdown"].show');
+            if (openToggle) {
+                const menu = openToggle.nextElementSibling ||
+                           document.querySelector(`[aria-labelledby="${openToggle.id}"]`);
+                if (menu) positionDropdown(menu, openToggle);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        document.querySelector('.sidebar-content')?.addEventListener('scroll', handleScroll, { passive: true });
     }
 
     // ─── Init ────────────────────────────────────────────────────────────────────

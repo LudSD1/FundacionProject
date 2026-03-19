@@ -7,7 +7,7 @@
         <!-- Header con botones de acción -->
         <div class="row mb-4">
             <div class="col-md-6">
-                <a href="{{ route('Curso', encrypt($cursos->id)) }}" class="btn-back-modern">
+                <a href="{{ route('Curso', ($cursos->codigoCurso)) }}" class="btn-back-modern">
                     <i class="bi bi-arrow-left-circle"></i>
                     <span class="ms-1">Volver al Curso</span>
                 </a>
