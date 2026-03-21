@@ -1,235 +1,208 @@
-@section('titulo')
-    Respuestas
-@endsection
+@extends('layout')
 
-
-
+@section('titulo', 'Gestión de Cuestionario')
 
 @section('content')
-    <div class="container my-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <a href="{{ route('Curso', encrypt($cuestionario->actividad->subtema->tema->curso_id)) }}" class="btn btn-sm btn-primary">
-                &#9668; Volver
+    <div class="container-fluid py-4">
+        {{-- Botón Volver --}}
+        <div class="back-button-wrapper mb-4">
+            <a href="{{ route('Curso', $cuestionario->actividad->subtema->tema->curso->codigoCurso) }}" class="btn-back-modern">
+                <i class="bi bi-arrow-left-circle-fill"></i>
+                <span>Volver al Curso</span>
             </a>
-
-
-
         </div>
 
-
-
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const preguntasContainer = document.getElementById('preguntas-container');
-                const addPreguntaButton = document.getElementById('addPreguntaButton');
-
-                let preguntaIndex = 1; // Índice para las preguntas dinámicas
-
-                addPreguntaButton.addEventListener('click', function() {
-                    const nuevaPregunta = `
-            <div class="pregunta-item mb-3">
-                <div class="mb-3">
-                    <label for="preguntaTexto" class="form-label">Texto de la Pregunta</label>
-                    <input type="text" class="form-control" name="preguntas[${preguntaIndex}][enunciado]" placeholder="Escribe la pregunta aquí" required>
+        <div class="tbl-card">
+            {{-- Hero Section --}}
+            <div class="tbl-card-hero">
+                <div class="tbl-card-hero-content">
+                    <h1 class="tbl-card-hero-title text-white">
+                        <i class="bi bi-patch-question-fill me-2"></i>Gestión de Cuestionario
+                    </h1>
+                    <p class="tbl-card-hero-subtitle text-white">
+                        Configure las preguntas y respuestas para: <span class="fw-bold">{{ $cuestionario->actividad->titulo }}</span>
+                    </p>
                 </div>
-                <div class="mb-3">
-                    <label for="preguntaTipo" class="form-label">Tipo de Pregunta</label>
-                    <select class="form-select" name="preguntas[${preguntaIndex}][tipo]" required>
-                        <option value="opcion_multiple">Opción Múltiple</option>
-                        <option value="abierta">Respuesta Abierta</option>
-                        <option value="boolean">Verdadero/Falso</option>
-                    </select>
+
+                <div class="tbl-card-hero-actions">
+                    <div class="d-flex gap-2">
+                        <div class="ec-role-badge text-white">
+                            <i class="bi bi-check-circle-fill me-1"></i> {{ $cuestionario->preguntas->count() }} Preguntas
+                        </div>
+                        <div class="ec-role-badge bg-info">
+                            <i class="bi bi-star-fill me-1"></i> {{ $cuestionario->preguntas->sum('puntaje') }} Puntos Totales
+                        </div>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="puntosPregunta" class="form-label">Puntos</label>
-                    <input type="number" class="form-control" name="preguntas[${preguntaIndex}][puntaje]" min="1" placeholder="Ejemplo: 5" required>
-                </div>
-                <button type="button" class="btn btn-sm btn-danger removePreguntaButton">Eliminar</button>
-                <hr>
             </div>
-        `;
 
-                    preguntasContainer.insertAdjacentHTML('beforeend', nuevaPregunta);
-                    preguntaIndex++;
+            <div class="p-4">
+                {{-- Navegación de las pestañas Modernizada --}}
+                <ul class="nav nav-tabs border-0 mb-4 bg-light p-1 rounded-pill" id="preguntasRespuestasTabs" role="tablist" style="width: fit-content;">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active rounded-pill px-4 border-0" id="preguntas-tab" data-bs-toggle="tab" data-bs-target="#preguntas"
+                            type="button" role="tab" aria-controls="preguntas" aria-selected="true">
+                            <i class="bi bi-question-circle me-2"></i>Preguntas
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link rounded-pill px-4 border-0" id="respuestas-tab" data-bs-toggle="tab" data-bs-target="#respuestas"
+                            type="button" role="tab" aria-controls="respuestas" aria-selected="false">
+                            <i class="bi bi-reply-all me-2"></i>Respuestas
+                        </button>
+                    </li>
+                </ul>
 
-                    // Agregar funcionalidad para eliminar preguntas dinámicas
-                    const removeButtons = document.querySelectorAll('.removePreguntaButton');
-                    removeButtons.forEach(button => {
-                        button.addEventListener('click', function() {
-                            this.parentElement.remove();
-                        });
-                    });
-                });
-            });
-        </script>
+                {{-- Contenido de las pestañas --}}
+                <div class="tab-content" id="preguntasRespuestasContent">
+                    {{-- Pestaña de Preguntas --}}
+                    <div class="tab-pane fade show active" id="preguntas" role="tabpanel" aria-labelledby="preguntas-tab">
+                        <div class="table-container-modern shadow-none border-0 p-0">
+                            @include('partials.preguntas', ['preguntas' => $cuestionario->preguntas])
+                        </div>
+                    </div>
 
+                    {{-- Pestaña de Respuestas --}}
+                    <div class="tab-pane fade" id="respuestas" role="tabpanel" aria-labelledby="respuestas-tab">
+                        <div class="table-container-modern shadow-none border-0 p-0">
+                            @include('partials.respuestas', ['preguntas' => $cuestionario->preguntas])
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-
-        <div class="modal fade" id="crearRespuestaModal" tabindex="-1" aria-labelledby="crearRespuestaLabel"
-            aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
+    @push('modals')
+        {{-- Modal Crear Respuesta (Modernizado) --}}
+        <div class="modal fade" id="crearRespuestaModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg" style="border-radius: 15px;">
                     <form method="POST" action="">
                         @csrf
-                        <div class="modal-header bg-primary text-white">
-                            <h5 class="modal-title" id="crearRespuestaLabel">Crear Respuesta</h5>
+                        <div class="modal-header bg-primary text-white" style="border-radius: 15px 15px 0 0;">
+                            <h5 class="modal-title">
+                                <i class="bi bi-plus-circle me-2"></i>Crear Respuesta
+                            </h5>
                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                                 aria-label="Close"></button>
                         </div>
-                        <div class="modal-body">
+                        <div class="modal-body p-4">
                             <input type="hidden" name="pregunta_id" id="pregunta_id" value="">
 
-                            <div class="mb-3">
-                                <label for="respuestaTexto" class="form-label">Texto de la Respuesta</label>
-                                <input type="text" class="form-control" id="respuestaTexto" name="respuesta" required>
+                            <div class="form-group-modern mb-3">
+                                <label class="form-label-modern">Texto de la Respuesta</label>
+                                <input type="text" class="form-control-modern" name="respuesta"
+                                    placeholder="Escribe la respuesta aquí..." required>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label d-block">¿Es correcta?</label>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="es_correcta" id="verdadero"
-                                        value="1" required>
-                                    <label class="form-check-label" for="verdadero">Verdadero</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="es_correcta" id="falso"
-                                        value="0">
-                                    <label class="form-check-label" for="falso">Falso</label>
+                            <div class="form-group-modern mb-3">
+                                <label class="form-label-modern d-block">¿Es correcta?</label>
+                                <div class="d-flex gap-3 mt-2">
+                                    <div class="form-check form-check-inline custom-radio">
+                                        <input class="form-check-input" type="radio" name="es_correcta" id="verdadero"
+                                            value="1" required>
+                                        <label class="form-check-label" for="verdadero">Verdadero</label>
+                                    </div>
+                                    <div class="form-check form-check-inline custom-radio">
+                                        <input class="form-check-input" type="radio" name="es_correcta" id="falso"
+                                            value="0">
+                                        <label class="form-check-label" for="falso">Falso</label>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="puntosRespuesta" class="form-label">Puntos (opcional)</label>
-                                <input type="number" class="form-control" id="puntosRespuesta" name="puntos"
-                                    min="0">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">Puntos (opcional)</label>
+                                <input type="number" class="form-control-modern" name="puntos" min="0" placeholder="0">
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary">Guardar Respuesta</button>
+                        <div class="modal-footer border-0 bg-light p-3" style="border-radius: 0 0 15px 15px;">
+                            <button type="button" class="btn btn-secondary rounded-pill px-4"
+                                data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary rounded-pill px-4">Guardar Respuesta</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
+    @endpush
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Confirmación de eliminación con SweetAlert2
+            document.querySelectorAll('.form-eliminar').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: "¡No podrás revertir esta acción!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#64748b',
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar',
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) this.submit();
+                    });
+                });
+            });
 
-        <div class="mb-4">
-            <h4 class="border-bottom pb-2">
-                <i class="fas fa-question-circle me-2"></i> Preguntas y Respuestas
-            </h4>
+            // Confirmación de restauración
+            document.querySelectorAll('.form-restaurar').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: '¿Restaurar pregunta?',
+                        text: "¿Quieres habilitar esta pregunta nuevamente?",
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#10b981',
+                        cancelButtonColor: '#64748b',
+                        confirmButtonText: 'Sí, restaurar',
+                        cancelButtonText: 'Cancelar',
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) this.submit();
+                    });
+                });
+            });
 
-            <!-- Navegación de las pestañas -->
-            <ul class="nav nav-tabs" id="preguntasRespuestasTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="preguntas-tab" data-bs-toggle="tab" data-bs-target="#preguntas"
-                        type="button" role="tab" aria-controls="preguntas" aria-selected="true">
-                        <i class="fas fa-question me-1"></i> Preguntas
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="respuestas-tab" data-bs-toggle="tab" data-bs-target="#respuestas"
-                        type="button" role="tab" aria-controls="respuestas" aria-selected="false">
-                        <i class="fas fa-reply me-1"></i> Respuestas
-                    </button>
-                </li>
-            </ul>
+            // Animación de pestañas
+            const tabButtons = document.querySelectorAll('button[data-bs-toggle="tab"]');
+            tabButtons.forEach(button => {
+                button.addEventListener('show.bs.tab', () => {
+                    const target = document.querySelector(button.dataset.bsTarget);
+                    target.style.opacity = '0';
+                    target.style.transform = 'translateY(10px)';
+                    setTimeout(() => {
+                        target.style.transition = 'all 0.3s ease';
+                        target.style.opacity = '1';
+                        target.style.transform = 'translateY(0)';
+                    }, 50);
+                });
+            });
+        });
+    </script>
 
-            <!-- Contenido de las pestañas -->
-            <div class="tab-content mt-3" id="preguntasRespuestasContent">
-                <!-- Pestaña de Preguntas -->
-                <div class="tab-pane fade show active" id="preguntas" role="tabpanel" aria-labelledby="preguntas-tab">
-                    @include('partials.preguntas', ['preguntas' => $cuestionario->preguntas])
-                </div>
-
-                <!-- Pestaña de Respuestas -->
-                <div class="tab-pane fade" id="respuestas" role="tabpanel" aria-labelledby="respuestas-tab">
-                    @include('partials.respuestas', ['preguntas' => $cuestionario->preguntas])
-                </div>
-            </div>
-        </div>
-
-
-    </div>
+    <style>
+        .nav-tabs .nav-link {
+            color: #64748b;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .nav-tabs .nav-link.active {
+            background-color: #1a4789 !important;
+            color: white !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .custom-radio .form-check-input:checked {
+            background-color: #1a4789;
+            border-color: #1a4789;
+        }
+    </style>
 @endsection
 
-
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-    const buscador = document.getElementById('buscador');
-    const tablaPreguntas = document.getElementById('tabla-preguntas');
-
-    buscador.addEventListener('input', function () {
-        const filtro = buscador.value.toLowerCase();
-        const filas = tablaPreguntas.getElementsByTagName('tr');
-
-        Array.from(filas).forEach(fila => {
-            const columnas = fila.getElementsByTagName('td');
-            const textoFila = Array.from(columnas).map(columna => columna.textContent.toLowerCase()).join(' ');
-            fila.style.display = textoFila.includes(filtro) ? '' : 'none';
-        });
-    });
-});
-</script>
-
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Selecciona todos los formularios con la clase 'form-eliminar'
-        const formsEliminar = document.querySelectorAll('.form-eliminar');
-        // Selecciona todos los formularios con la clase 'form-restaurar'
-        const formsRestaurar = document.querySelectorAll('.form-restaurar');
-
-        // Función para manejar la confirmación de eliminación
-        formsEliminar.forEach(form => {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault(); // Evita el envío automático del formulario
-
-                Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: "¡No podrás revertir esta acción!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Sí, eliminar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Si el usuario confirma, envía el formulario
-                        form.submit();
-                    }
-                });
-            });
-        });
-
-        // Función para manejar la confirmación de restauración
-        formsRestaurar.forEach(form => {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault(); // Evita el envío automático del formulario
-
-                Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: "¿Quieres restaurar esta pregunta?",
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#28a745', // Verde para restaurar
-                    cancelButtonColor: '#6c757d', // Gris para cancelar
-                    confirmButtonText: 'Sí, restaurar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Si el usuario confirma, envía el formulario
-                        form.submit();
-                    }
-                });
-            });
-        });
-    });
-</script>
-
-
-
-@include('layout')

@@ -418,17 +418,35 @@
                                                     <i class="bi bi-play-circle-fill me-2"></i>Continuar Curso
                                                 </a>
                                             @else
-                                                <button type="button" class="dc-btn dc-btn-warning"
-                                                    data-bs-toggle="modal" data-bs-target="#pagoModal"
-                                                    data-inscrito-id="{{ $inscrito->id }}"
-                                                    data-curso-id="{{ $inscrito->cursos->id }}"
-                                                    data-curso-nombre="{{ $inscrito->cursos->nombreCurso }}">
-                                                    <i class="bi bi-credit-card-2-front me-2"></i>Completar Pago
-                                                </button>
-                                                @if ($inscrito->created_at->diffInDays(now()) < 2)
-                                                    <div class="dc-payment-status mt-2">
-                                                        <i class="bi bi-hourglass-split me-1"></i>Pago en revisión
+                                                @php
+                                                    $aportePendiente = \App\Models\Aportes::where('estudiante_id', auth()->id())
+                                                        ->where('cursos_id', $inscrito->cursos->id)
+                                                        ->where('monto_pagado', 0)
+                                                        ->where('restante_a_pagar', '>', 0)
+                                                        ->first();
+                                                @endphp
+
+                                                @if ($aportePendiente)
+                                                    {{-- Tiene un comprobante pendiente de validación --}}
+                                                    <div class="dc-payment-status">
+                                                        <i class="bi bi-hourglass-split me-1"></i>
+                                                        Pago en revisión
                                                     </div>
+                                                    <small class="text-muted d-block mt-1 text-center">
+                                                        <i class="bi bi-info-circle me-1"></i>
+                                                        Tu comprobante está siendo validado
+                                                    </small>
+                                                @else
+                                                    {{-- No tiene comprobante enviado, mostrar botón de pago --}}
+                                                    <button type="button" class="dc-btn dc-btn-warning"
+                                                        data-bs-toggle="modal" data-bs-target="#pagoModal"
+                                                        data-inscrito-id="{{ $inscrito->id }}"
+                                                        data-curso-id="{{ $inscrito->cursos->id }}"
+                                                        data-curso-nombre="{{ $inscrito->cursos->nombreCurso }}"
+                                                        data-curso-precio="{{ $inscrito->cursos->precio }}"
+                                                        data-estudiante-nombre="{{ auth()->user()->name }} {{ auth()->user()->lastname1 }} {{ auth()->user()->lastname2 }}">
+                                                        <i class="bi bi-credit-card-2-front me-2"></i>Completar Pago
+                                                    </button>
                                                 @endif
                                             @endif
                                         </div>

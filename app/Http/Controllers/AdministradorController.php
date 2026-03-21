@@ -197,7 +197,7 @@ class AdministradorController extends Controller
             'fecha_fin' => 'required|date|date_format:Y-m-d|after_or_equal:fecha_ini',
             'duracion' => 'required|integer|min:1',
             'visibilidad' => 'required|in:publico,privado',
-            'cupos' => 'required|integer|min:1',
+            'cupos' => 'required|integer|min:0',
             'precio' => 'required|numeric|min:0',
         ], [
             'nombre.required' => 'El nombre es obligatorio.',
@@ -225,7 +225,7 @@ class AdministradorController extends Controller
 
             'cupos.required' => 'Debes indicar la cantidad de cupos.',
             'cupos.integer' => 'Los cupos deben ser un número entero.',
-            'cupos.min' => 'Debe haber al menos 1 cupo disponible.',
+            'cupos.min' => 'Los cupos no pueden ser negativos.',
 
             'precio.required' => 'El precio es obligatorio.',
             'precio.numeric' => 'El precio debe ser un valor numérico.',

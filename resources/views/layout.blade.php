@@ -166,31 +166,31 @@
         </script>
     @endif
 
-</body>
+    @stack('modals')
 
-<div class="modal fade" id="ntfDetailModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width:540px">
-        <div class="modal-content cc-modal">
-            <div class="cc-modal-header" id="ntfModalHeader">
-                <div class="cc-modal-icon" id="ntfModalIcon">
-                    <i class="bi bi-bell-fill"></i>
+    <div class="modal fade" id="ntfDetailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width:540px">
+            <div class="modal-content cc-modal">
+                <div class="cc-modal-header" id="ntfModalHeader">
+                    <div class="cc-modal-icon" id="ntfModalIcon">
+                        <i class="bi bi-bell-fill"></i>
+                    </div>
+                    <div>
+                        <h5 class="cc-modal-title">Detalle de Notificación</h5>
+                        <small id="ntfModalTime" class="opacity-75"></small>
+                    </div>
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal"></button>
                 </div>
-                <div>
-                    <h5 class="cc-modal-title">Detalle de Notificación</h5>
-                    <small id="ntfModalTime" class="opacity-75"></small>
+                <div class="modal-body p-4" id="ntfModalBody">
                 </div>
-                <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-4" id="ntfModalBody">
-            </div>
-            <div class="cc-modal-footer">
-                <button type="button" class="cc-btn cc-btn-outline" data-bs-dismiss="modal">
-                    <i class="bi bi-x-circle me-1"></i> Cerrar
-                </button>
+                <div class="cc-modal-footer">
+                    <button type="button" class="cc-btn cc-btn-outline" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-1"></i> Cerrar
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
+</body>
 
 </html>

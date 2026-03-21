@@ -58,6 +58,7 @@ class Cursos extends BaseModel
     protected $appends = [
         'duracion_formateada',
         'url', // URL amigable del curso
+        'cupos_texto', // Texto descriptivo de cupos disponibles
     ];
 
     /**
@@ -299,5 +300,53 @@ class Cursos extends BaseModel
         return Attribute::get(function () {
             return $this->fecha_ini > now() && $this->fecha_ini->diffInDays(now()) <= 7;
         });
+    }
+
+    /**
+     * Verifica si el curso tiene cupos ilimitados (cupos = 0)
+     */
+    public function esCuposIlimitados(): bool
+    {
+        return (int) $this->cupos === 0;
+    }
+
+    /**
+     * Obtiene la cantidad de cupos disponibles
+     * Retorna null si es ilimitado, o el número de cupos restantes
+     */
+    public function cuposDisponibles(): ?int
+    {
+        if ($this->esCuposIlimitados()) {
+            return null; // Ilimitado
+        }
+
+        $inscripcionesActuales = $this->inscritos()->count();
+        return max(0, $this->cupos - $inscripcionesActuales);
+    }
+
+    /**
+     * Verifica si hay cupos disponibles para nuevas inscripciones
+     */
+    public function tieneCuposDisponibles(int $cantidad = 1): bool
+    {
+        if ($this->esCuposIlimitados()) {
+            return true;
+        }
+
+        $disponibles = $this->cuposDisponibles();
+        return $disponibles >= $cantidad;
+    }
+
+    /**
+     * Obtiene el texto descriptivo de los cupos
+     */
+    public function getCuposTextoAttribute(): string
+    {
+        if ($this->esCuposIlimitados()) {
+            return 'Ilimitado';
+        }
+
+        $disponibles = $this->cuposDisponibles();
+        return "{$disponibles}/{$this->cupos}";
     }
 }

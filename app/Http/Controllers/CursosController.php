@@ -199,7 +199,7 @@ class CursosController extends Controller
             if ($user->hasRole('Administrador')) {
                 $validationRules['docente_id'] = 'required|exists:users,id';
                 $validationRules['duracion'] = 'required|integer|min:1';
-                $validationRules['cupos'] = 'required|integer|min:1';
+                $validationRules['cupos'] = 'required|integer|min:0';
                 $validationRules['precio'] = 'required|numeric|min:0';
             }
 

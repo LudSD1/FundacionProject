@@ -100,6 +100,33 @@
                                             </h4>
                                         </div>
                                         <div class="card-body">
+                                            {{-- Indicador de cupos disponibles --}}
+                                            @if (!$cursos->esCuposIlimitados())
+                                                @php
+                                                    $cuposDisponibles = $cursos->cuposDisponibles();
+                                                    $cuposAgotados = $cuposDisponibles <= 0;
+                                                    $cuposBajos = !$cuposAgotados && $cuposDisponibles <= 5;
+                                                @endphp
+                                                <div class="text-center mb-3">
+                                                    @if ($cuposAgotados)
+                                                        <div class="alert alert-danger d-flex align-items-center justify-content-center gap-2 py-2 mb-0 rounded-pill" role="alert">
+                                                            <i class="bi bi-x-circle-fill fs-5"></i>
+                                                            <strong>¡Cupos Agotados!</strong>
+                                                        </div>
+                                                    @elseif ($cuposBajos)
+                                                        <div class="alert alert-warning d-flex align-items-center justify-content-center gap-2 py-2 mb-0 rounded-pill" role="alert">
+                                                            <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                                                            <strong>¡Solo {{ $cuposDisponibles }} cupo{{ $cuposDisponibles > 1 ? 's' : '' }} disponible{{ $cuposDisponibles > 1 ? 's' : '' }}!</strong>
+                                                        </div>
+                                                    @else
+                                                        <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill">
+                                                            <i class="bi bi-people-fill me-1"></i>
+                                                            {{ $cuposDisponibles }} cupo{{ $cuposDisponibles > 1 ? 's' : '' }} disponible{{ $cuposDisponibles > 1 ? 's' : '' }}
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            @endif
+
                                             @if ($cursos->tipo == 'curso')
                                                 <!-- Información de precio del curso -->
                                                 <div class="text-center mb-4 course-price-panel">
@@ -126,11 +153,22 @@
                                                     </div>
                                                 </div>
 
-                                                <button class="btn btn-success w-100 py-3 fw-bold fs-5"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#{{ auth()->check() ? 'compraCursoModal' : 'loginRequiredModal' }}">
-                                                    <i class="bi bi-credit-card me-2"></i>Comprar Ahora
-                                                </button>
+                                                @if (!$cursos->esCuposIlimitados() && $cursos->cuposDisponibles() <= 0)
+                                                    {{-- Cupos agotados: botón deshabilitado --}}
+                                                    <button class="btn btn-secondary w-100 py-3 fw-bold fs-5" disabled>
+                                                        <i class="bi bi-x-circle-fill me-2"></i>Cupos Agotados
+                                                    </button>
+                                                    <p class="text-muted text-center mt-2 small">
+                                                        <i class="bi bi-info-circle me-1"></i>
+                                                        No hay cupos disponibles en este momento. Intenta más tarde.
+                                                    </p>
+                                                @else
+                                                    <button class="btn btn-success w-100 py-3 fw-bold fs-5"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#{{ auth()->check() ? 'compraCursoModal' : 'loginRequiredModal' }}">
+                                                        <i class="bi bi-credit-card me-2"></i>Comprar Ahora
+                                                    </button>
+                                                @endif
                                             @else
                                                 <!-- Información del Congreso -->
                                                 <div class="text-center mb-4 course-price-panel">
@@ -164,7 +202,17 @@
                                                         <div id="countdown-timer"></div>
                                                     </div>
 
-                                                    @if (auth()->user())
+                                                    @if (!$cursos->esCuposIlimitados() && $cursos->cuposDisponibles() <= 0)
+                                                        {{-- Cupos agotados para congreso --}}
+                                                        <button class="btn btn-secondary w-100 py-3 fw-bold fs-5" disabled>
+                                                            <i class="bi bi-x-circle-fill me-2"></i>
+                                                            Cupos Agotados
+                                                        </button>
+                                                        <p class="text-muted text-center mt-2 small">
+                                                            <i class="bi bi-info-circle me-1"></i>
+                                                            No hay cupos disponibles para este evento.
+                                                        </p>
+                                                    @elseif (auth()->user())
                                                         <form
                                                             action="{{ route('certificados.obtener', encrypt($cursos->id)) }}"
                                                             method="POST">

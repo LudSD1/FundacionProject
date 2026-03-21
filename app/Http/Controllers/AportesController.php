@@ -365,6 +365,11 @@ class AportesController extends Controller
             return redirect()->back()->with('error', 'Curso no encontrado');
         }
 
+        // Verificar cupos disponibles
+        if (!$curso->tieneCuposDisponibles()) {
+            return redirect()->back()->with('error', '¡Cupos agotados! No hay cupos disponibles en este curso.');
+        }
+
         $user = auth()->user();
 
         // VERIFICAR SI YA PAGÓ ESTE CURSO ANTERIORMENTE

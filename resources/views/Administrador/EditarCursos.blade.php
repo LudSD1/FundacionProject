@@ -270,7 +270,23 @@
                                     Cupos
                                     <span class="required-badge">*</span>
                                 </label>
-                                <input type="number" name="cupos" class="form-control-modern" value="{{ old('cupos', $cursos->cupos) }}" min="1" required>
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="cupos_ilimitados"
+                                        {{ old('cupos', $cursos->cupos) == 0 ? 'checked' : '' }}
+                                        onchange="toggleCuposIlimitados(this)">
+                                    <label class="form-check-label small fw-semibold" for="cupos_ilimitados">
+                                        <i class="bi bi-infinity me-1"></i> Ilimitado
+                                    </label>
+                                </div>
+                                <input type="number" name="cupos" id="cupos_input" class="form-control-modern"
+                                    value="{{ old('cupos', $cursos->cupos) == 0 ? '' : old('cupos', $cursos->cupos) }}" min="1"
+                                    {{ old('cupos', $cursos->cupos) == 0 ? 'disabled' : '' }} required>
+                                <input type="hidden" name="cupos" id="cupos_hidden" value="0"
+                                    {{ old('cupos', $cursos->cupos) == 0 ? '' : 'disabled' }}>
+                                <div class="helper-text-modern mt-1" id="cupos_helper" style="display: {{ old('cupos', $cursos->cupos) == 0 ? 'block' : 'none' }};">
+                                    <i class="bi bi-infinity me-1 text-success"></i>
+                                    <span class="text-success fw-semibold">Sin límite de inscripciones</span>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -589,10 +605,37 @@
             });
         });
 
+        // Toggle cupos ilimitados
+        function toggleCuposIlimitados(checkbox) {
+            const cuposInput = document.getElementById('cupos_input');
+            const cuposHidden = document.getElementById('cupos_hidden');
+            const cuposHelper = document.getElementById('cupos_helper');
+
+            if (checkbox.checked) {
+                cuposInput.disabled = true;
+                cuposInput.removeAttribute('required');
+                cuposInput.value = '';
+                cuposHidden.disabled = false;
+                cuposHelper.style.display = 'block';
+            } else {
+                cuposInput.disabled = false;
+                cuposInput.setAttribute('required', 'required');
+                cuposHidden.disabled = true;
+                cuposHelper.style.display = 'none';
+                cuposInput.focus();
+            }
+        }
+
         // Inicialización
         document.addEventListener('DOMContentLoaded', () => {
             showStep(1);
             actualizarNiveles();
+
+            // Inicializar estado del toggle de cupos ilimitados
+            const cuposCheckbox = document.getElementById('cupos_ilimitados');
+            if (cuposCheckbox && cuposCheckbox.checked) {
+                toggleCuposIlimitados(cuposCheckbox);
+            }
         });
     </script>
 @endsection

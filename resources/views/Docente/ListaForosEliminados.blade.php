@@ -1,231 +1,114 @@
-@section('titulo')
-    Lista de Foros Eliminados
-@endsection
+@extends('layout')
 
-
-
-
+@section('titulo', 'Foros Eliminados')
 
 @section('content')
+<div class="container-fluid py-4">
+    {{-- Botón Volver --}}
+    <div class="back-button-wrapper mb-4">
+        <a href="{{ route('Curso', $cursos->codigoCurso) }}" class="btn-back-modern">
+            <i class="bi bi-arrow-left-circle-fill"></i>
+            <span>Volver al Curso</span>
+        </a>
+    </div>
 
-@foreach ($foro as $foroItem)
-           <div class="modal fade" id="modalDetallesForo-{{ $foroItem->id }}" tabindex="-1">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header bg-primary text-white">
-                                                <h5 class="modal-title">
-                                                    <i class="fas fa-info-circle me-2"></i>
-                                                    Detalles del Foro
-                                                </h5>
-                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="foro-details">
-                                                    <h6 class="text-primary">{{ $foroItem->nombreForo }}</h6>
-                                                    @if($foroItem->SubtituloForo)
-                                                        <p class="text-muted">{{ $foroItem->SubtituloForo }}</p>
-                                                    @endif
-                                                    <div class="mb-3">
-                                                        <strong>Descripción:</strong>
-                                                        <p class="mt-1">{{ $foroItem->descripcionForo ?: 'Sin descripción' }}</p>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-6">
-                                                            <small class="text-muted">
-                                                                <i class="fas fa-calendar-plus me-1"></i>
-                                                                Creado: {{ $foroItem->created_at->format('d/m/Y') }}
-                                                            </small>
-                                                        </div>
-                                                        <div class="col-6">
-                                                            <small class="text-muted">
-                                                                <i class="fas fa-calendar-times me-1"></i>
-                                                                Eliminado: {{ $foroItem->deleted_at ? $foroItem->deleted_at->format('d/m/Y') : 'N/A' }}
-                                                            </small>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                                <a href="{{ route('restaurar', encrypt($foroItem->id)) }}" class="btn btn-success">
-                                                    <i class="fas fa-arrow-clockwise me-1"></i> Restaurar
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-@endforeach
- 
-<div class="container my-5">
-    <!-- Header de la página -->
-    <div class="page-header mb-5">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h1 class="page-title">
-                    <i class="fas fa-trash-restore me-3"></i>
-                    Foros Eliminados
+    <div class="tbl-card">
+        {{-- Hero Section --}}
+        <div class="tbl-card-hero">
+            <div class="tbl-card-hero-content">
+                <h1 class="tbl-card-hero-title text-white">
+                    <i class="bi bi-chat-left-dots-fill me-2"></i>Foros Eliminados
                 </h1>
-                <p class="page-subtitle text-muted">
-                    Gestiona y restaura foros que han sido eliminados del curso
+                <p class="tbl-card-hero-subtitle text-white">
+                    Curso: <span class="fw-bold">{{ $cursos->nombreCurso }}</span>
                 </p>
             </div>
-            <a href="javascript:history.back()" class="btn btn-outline-primary">
-                <i class="fas fa-arrow-left me-2"></i> Volver al Curso
-            </a>
-        </div>
-    </div>
 
-    <!-- Panel de estadísticas -->
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="stats-card danger">
-                <div class="stats-icon">
-                    <i class="fas fa-trash"></i>
-                </div>
-                <div class="stats-content">
-                    <h3 class="stats-number">{{ $foro->where('cursos_id', $cursos->id)->count() }}</h3>
-                    <p class="stats-label">Foros Eliminados</p>
+            <div class="tbl-card-hero-actions">
+                <div class="d-flex gap-2">
+                    <div class="ec-role-badge text-white">
+                        <i class="bi bi-trash-fill me-1"></i> {{ $foro->where('cursos_id', $cursos->id)->count() }} Foros
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="stats-card warning">
-                <div class="stats-icon">
-                    <i class="fas fa-history"></i>
-                </div>
-                <div class="stats-content">
-                    <h3 class="stats-number">0</h3>
-                    <p class="stats-label">Pendientes Restauración</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="stats-card success">
-                <div class="stats-icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="stats-content">
-                    <h3 class="stats-number">0</h3>
-                    <p class="stats-label">Restaurados Hoy</p>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Barra de herramientas -->
-    <div class="toolbar-section mb-4">
-        <div class="row align-items-center">
-            <div class="col-md-6">
-                <div class="search-box">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" class="form-control search-input" placeholder="Buscar foros eliminados..." id="searchForos">
-                    <button class="btn btn-outline-secondary search-clear" type="button">
-                        <i class="fas fa-times"></i>
-                    </button>
+        <div class="p-4">
+            {{-- Barra de Herramientas --}}
+            <div class="d-flex justify-content-between align-items-center mb-4 p-2 bg-light rounded-4 border border-light-subtle">
+                <div class="tbl-hero-search" style="max-width: 350px; width: 100%;">
+                    <i class="bi bi-search tbl-hero-search-icon text-muted"></i>
+                    <input type="text" class="tbl-hero-search-input text-dark border-dark-subtle text-black-50" id="searchForos"  autocomplete="off">
+                </div>
+                <div class="d-flex gap-2">
+                    <span class="status-badge status-secondary">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Los foros restaurados volverán a ser visibles
+                    </span>
                 </div>
             </div>
-            <div class="col-md-6 text-end">
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-outline-primary" id="btnFiltrarTodos">
-                        <i class="fas fa-list me-2"></i>Todos
-                    </button>
-                    <button type="button" class="btn btn-outline-secondary" id="btnFiltrarRecientes">
-                        <i class="fas fa-clock me-2"></i>Más Recientes
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Tabla de Foros Eliminados Mejorada -->
-    <div class="card shadow-sm border-0">
-        <div class="card-header bg-gradient-danger text-white">
-            <div class="d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">
-                    <i class="fas fa-trash-alt me-2"></i>
-                    Lista de Foros Eliminados
-                </h5>
-                <span class="badge bg-light text-danger">
-                    {{ $foro->where('cursos_id', $cursos->id)->count() }} elementos
-                </span>
-            </div>
-        </div>
-        
-        <div class="card-body p-0">
-            <div class="table-container">
-                <table class="table table-hover align-middle mb-0" id="tablaForosEliminados">
-                    <thead class="table-light">
+            {{-- Tabla de Foros Eliminados --}}
+            <div class="table-container-modern shadow-none border-0 p-0">
+                <table class="table-modern" id="tablaForosEliminados">
+                    <thead>
                         <tr>
-                            <th scope="col" width="60">#</th>
-                            <th scope="col">Información del Foro</th>
-                            <th scope="col" width="120" class="text-center">Estado</th>
-                            <th scope="col" width="150" class="text-end">Acciones</th>
+                            <th style="width: 5%">#</th>
+                            <th style="width: 45%"><div class="th-content"><i class="bi bi-chat-left-text-fill"></i><span>Información del Foro</span></div></th>
+                            <th style="width: 20%"><div class="th-content"><i class="bi bi-calendar-x"></i><span>Eliminación</span></div></th>
+                            <th style="width: 15%"><div class="th-content justify-content-center"><i class="bi bi-info-circle-fill"></i><span>Estado</span></div></th>
+                            <th style="width: 15%" class="text-center"><div class="th-content justify-content-center"><i class="bi bi-gear-fill"></i><span>Acciones</span></div></th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($foro as $foroItem)
                             @if ($foroItem->cursos_id == $cursos->id)
                                 <tr class="foro-row" data-foro-name="{{ strtolower($foroItem->nombreForo) }}">
-                                    <td class="text-muted fw-bold">
-                                        {{ $loop->iteration }}
-                                    </td>
+                                    <td><span class="text-muted fw-bold">{{ $loop->iteration }}</span></td>
                                     <td>
-                                        <div class="foro-info">
-                                            <h6 class="foro-title mb-1">
-                                                <i class="fas fa-comments me-2 text-primary"></i>
-                                                {{ $foroItem->nombreForo }}
-                                            </h6>
+                                        <div class="d-flex flex-column">
+                                            <div class="fw-bold text-dark mb-1">{{ $foroItem->nombreForo }}</div>
                                             @if($foroItem->SubtituloForo)
-                                                <p class="foro-subtitle text-muted mb-1">
-                                                    <small>{{ $foroItem->SubtituloForo }}</small>
-                                                </p>
+                                                <div class="text-muted small mb-1">{{ $foroItem->SubtituloForo }}</div>
                                             @endif
-                                            <div class="foro-meta">
-                                                <small class="text-muted">
-                                                    <i class="fas fa-calendar-alt me-1"></i>
-                                                    Eliminado: {{ $foroItem->deleted_at ? $foroItem->deleted_at->format('d/m/Y') : 'Fecha no disponible' }}
-                                                </small>
+                                            <div class="text-muted smallest" style="font-size: 0.75rem;">
+                                                <i class="bi bi-clock-history me-1"></i>
+                                                Creado: {{ $foroItem->created_at->format('d/m/Y') }}
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="text-center">
-                                        <span class="badge bg-danger">
-                                            <i class="fas fa-trash me-1"></i> Eliminado
+                                    <td>
+                                        <span class="status-badge status-secondary">
+                                            <i class="bi bi-calendar-event me-1"></i>
+                                            {{ $foroItem->deleted_at ? $foroItem->deleted_at->format('d/m/Y H:i') : 'N/A' }}
                                         </span>
                                     </td>
-                                    <td class="text-end">
-                                        <div class="btn-group" role="group">
-                                            <a href="{{ route('restaurar', encrypt($foroItem->id)) }}"
-                                               class="btn btn-success btn-sm btn-action"
-                                               data-bs-toggle="tooltip"
-                                               title="Restaurar foro">
-                                                <i class="fas fa-arrow-clockwise"></i>
-                                                <span class="d-none d-md-inline">Restaurar</span>
-                                            </a>
-                                            <button type="button" 
-                                                    class="btn btn-outline-info btn-sm btn-action"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#modalDetallesForo-{{ $foroItem->id }}"
-                                                    title="Ver detalles">
-                                                <i class="fas fa-eye"></i>
+                                    <td class="text-center">
+                                        <span class="status-badge status-danger">
+                                            <i class="bi bi-trash-fill me-1"></i> Eliminado
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons-cell">
+                                            <form action="{{ route('restaurar', encrypt($foroItem->id)) }}" method="GET" class="form-restaurar">
+                                                <button type="submit" class="btn-action-modern btn-view" title="Restaurar foro">
+                                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                                </button>
+                                            </form>
+                                            <button type="button" class="btn-action-modern btn-info" data-bs-toggle="modal" data-bs-target="#modalDetallesForo-{{ $foroItem->id }}" title="Ver detalles">
+                                                <i class="bi bi-eye-fill"></i>
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
-
-                                <!-- Modal de Detalles del Foro -->
-                     
                             @endif
                         @empty
                             <tr>
-                                <td colspan="4">
-                                    <div class="empty-state text-center py-5">
-                                        <i class="fas fa-trash-alt fa-4x text-muted mb-3"></i>
+                                <td colspan="5">
+                                    <div class="empty-state-table py-5">
+                                        <i class="bi bi-chat-left-x display-4 text-muted mb-3"></i>
                                         <h5 class="text-muted">No hay foros eliminados</h5>
-                                        <p class="text-muted mb-4">Los foros que elimines aparecerán aquí para su posible restauración.</p>
-                                        <a href="javascript:history.back()" class="btn btn-primary">
-                                            <i class="fas fa-arrow-left me-2"></i> Volver al Curso
-                                        </a>
+                                        <p class="text-muted small">Los foros que elimines aparecerán aquí.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -235,372 +118,125 @@
             </div>
         </div>
     </div>
-
-    <!-- Mensaje de éxito -->
-    @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show mt-4" role="alert">
-            <div class="d-flex align-items-center">
-                <i class="fas fa-check-circle fa-lg me-3"></i>
-                <div>
-                    <h6 class="mb-1">¡Operación exitosa!</h6>
-                    <p class="mb-0">{{ session('success') }}</p>
-                </div>
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
 </div>
 
-<style>
-/* Variables CSS */
-:root {
-    --color-primary: #1a4789;
-    --color-secondary: #39a6cb;
-    --color-success: #28a745;
-    --color-warning: #ffc107;
-    --color-danger: #dc3545;
-    --color-info: #17a2b8;
-    
-    --gradient-primary: linear-gradient(135deg, #1a4789 0%, #055c9d 100%);
-    --gradient-danger: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-    --gradient-success: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-    --gradient-warning: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
-    
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
-    
-    --border-radius: 12px;
-    --border-radius-sm: 8px;
-}
+@push('modals')
+    @foreach ($foro as $foroItem)
+        <div class="modal fade" id="modalDetallesForo-{{ $foroItem->id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg" style="border-radius: 15px;">
+                    <div class="modal-header bg-primary text-white" style="border-radius: 15px 15px 0 0;">
+                        <h5 class="modal-title">
+                            <i class="bi bi-info-circle-fill me-2"></i>Detalles del Foro
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="mb-4">
+                            <label class="form-label-modern text-primary fw-bold mb-1">Nombre del Foro</label>
+                            <div class="p-3 bg-light rounded-4 border border-light-subtle fw-semibold text-dark">
+                                {{ $foroItem->nombreForo }}
+                            </div>
+                        </div>
 
-/* Header de página */
-.page-header {
-    background: white;
-    padding: 2rem;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-sm);
-}
+                        @if($foroItem->SubtituloForo)
+                            <div class="mb-4">
+                                <label class="form-label-modern text-muted fw-bold mb-1">Subtítulo</label>
+                                <div class="p-3 bg-light rounded-4 border border-light-subtle text-muted">
+                                    {{ $foroItem->SubtituloForo }}
+                                </div>
+                            </div>
+                        @endif
 
-.page-title {
-    color: var(--color-primary);
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-}
+                        <div class="mb-4">
+                            <label class="form-label-modern text-muted fw-bold mb-1">Descripción</label>
+                            <div class="p-3 bg-light rounded-4 border border-light-subtle text-muted" style="max-height: 150px; overflow-y: auto;">
+                                {{ $foroItem->descripcionForo ?: 'Sin descripción' }}
+                            </div>
+                        </div>
 
-.page-subtitle {
-    font-size: 1.1rem;
-}
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="p-2 bg-info-subtle rounded-3 border border-info-subtle text-center">
+                                    <small class="text-info-emphasis d-block fw-bold">Creado</small>
+                                    <span class="text-dark small">{{ $foroItem->created_at->format('d/m/Y') }}</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-2 bg-danger-subtle rounded-3 border border-danger-subtle text-center">
+                                    <small class="text-danger-emphasis d-block fw-bold">Eliminado</small>
+                                    <span class="text-dark small">{{ $foroItem->deleted_at ? $foroItem->deleted_at->format('d/m/Y') : 'N/A' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 bg-light p-3" style="border-radius: 0 0 15px 15px;">
+                        <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cerrar</button>
+                        <form action="{{ route('restaurar', encrypt($foroItem->id)) }}" method="GET" class="form-restaurar d-inline">
+                            <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">
+                                <i class="bi bi-arrow-counterclockwise me-1"></i> Restaurar Foro
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
+@endpush
 
-/* Tarjetas de estadísticas */
-.stats-card {
-    background: white;
-    border-radius: var(--border-radius);
-    padding: 1.5rem;
-    box-shadow: var(--shadow-sm);
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    transition: all 0.3s ease;
-    border-left: 4px solid;
-}
-
-.stats-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-.stats-card.danger {
-    border-left-color: var(--color-danger);
-}
-
-.stats-card.warning {
-    border-left-color: var(--color-warning);
-}
-
-.stats-card.success {
-    border-left-color: var(--color-success);
-}
-
-.stats-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-}
-
-.stats-card.danger .stats-icon {
-    background: var(--gradient-danger);
-    color: white;
-}
-
-.stats-card.warning .stats-icon {
-    background: var(--gradient-warning);
-    color: white;
-}
-
-.stats-card.success .stats-icon {
-    background: var(--gradient-success);
-    color: white;
-}
-
-.stats-number {
-    font-size: 2rem;
-    font-weight: 700;
-    margin: 0;
-    color: var(--color-primary);
-}
-
-.stats-label {
-    color: #6c757d;
-    margin: 0;
-    font-size: 0.9rem;
-}
-
-/* Barra de búsqueda mejorada */
-.search-box {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.search-icon {
-    position: absolute;
-    left: 1rem;
-    color: #6c757d;
-    z-index: 3;
-}
-
-.search-input {
-    padding-left: 3rem;
-    padding-right: 3rem;
-    border-radius: var(--border-radius-sm);
-    border: 1px solid #e0e0e0;
-    transition: all 0.3s ease;
-}
-
-.search-input:focus {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 0.2rem rgba(26, 71, 137, 0.15);
-}
-
-.search-clear {
-    position: absolute;
-    right: 0.5rem;
-    border: none;
-    background: transparent;
-    color: #6c757d;
-    z-index: 3;
-}
-
-/* Tabla mejorada */
-.table-container {
-    overflow: hidden;
-    border-radius: 0 0 var(--border-radius) var(--border-radius);
-}
-
-.table {
-    margin: 0;
-}
-
-.table th {
-    border-bottom: 2px solid #e9ecef;
-    font-weight: 600;
-    color: var(--color-primary);
-    padding: 1rem 0.75rem;
-}
-
-.table td {
-    padding: 1rem 0.75rem;
-    vertical-align: middle;
-}
-
-.foro-row:hover {
-    background-color: #f8f9fa;
-}
-
-.foro-title {
-    color: var(--color-primary);
-    font-weight: 600;
-}
-
-.foro-subtitle {
-    font-size: 0.9rem;
-}
-
-.foro-meta {
-    font-size: 0.8rem;
-}
-
-/* Botones de acción */
-.btn-action {
-    border-radius: var(--border-radius-sm);
-    padding: 0.5rem 0.75rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    border: none;
-}
-
-.btn-action:hover {
-    transform: translateY(-1px);
-}
-
-.btn-success {
-    background: var(--gradient-success);
-}
-
-.btn-success:hover {
-    background: var(--color-success);
-}
-
-/* Badges */
-.badge {
-    font-weight: 500;
-    padding: 0.5rem 0.75rem;
-    border-radius: 20px;
-}
-
-/* Estados vacíos */
-.empty-state {
-    padding: 3rem 2rem;
-}
-
-/* Alertas mejoradas */
-.alert {
-    border: none;
-    border-radius: var(--border-radius);
-    padding: 1.25rem 1.5rem;
-}
-
-.alert-success {
-    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-    color: #155724;
-    border-left: 4px solid var(--color-success);
-}
-
-/* Toolbar */
-.toolbar-section {
-    background: white;
-    padding: 1.5rem;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-sm);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .page-header {
-        padding: 1.5rem 1rem;
-        text-align: center;
-    }
-    
-    .stats-card {
-        flex-direction: column;
-        text-align: center;
-        padding: 1rem;
-    }
-    
-    .toolbar-section .row {
-        gap: 1rem;
-    }
-    
-    .btn-group {
-        width: 100%;
-    }
-    
-    .btn-group .btn {
-        flex: 1;
-    }
-    
-    .table-responsive {
-        font-size: 0.9rem;
-    }
-    
-    .btn-action span {
-        display: none;
-    }
-}
-</style>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Búsqueda en tiempo real
-    const searchInput = document.getElementById('searchForos');
-    const searchClear = document.querySelector('.search-clear');
-    const foroRows = document.querySelectorAll('.foro-row');
-    
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase().trim();
-            
-            foroRows.forEach(row => {
-                const foroName = row.getAttribute('data-foro-name');
-                if (foroName.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Búsqueda en tiempo real
+        const searchInput = document.getElementById('searchForos');
+        const foroRows = document.querySelectorAll('.foro-row');
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+                foroRows.forEach(row => {
+                    const foroName = row.getAttribute('data-foro-name');
+                    row.style.display = foroName.includes(searchTerm) ? '' : 'none';
+                });
             });
-            
-            // Mostrar/ocultar botón de limpiar
-            searchClear.style.display = searchTerm ? 'block' : 'none';
-        });
-        
-        // Limpiar búsqueda
-        searchClear.addEventListener('click', function() {
-            searchInput.value = '';
-            searchInput.focus();
-            searchClear.style.display = 'none';
-            
-            foroRows.forEach(row => {
-                row.style.display = '';
-            });
-        });
-        
-        // Ocultar botón de limpiar inicialmente
-        searchClear.style.display = 'none';
-    }
-    
-    // Filtrar por más recientes
-    const btnFiltrarRecientes = document.getElementById('btnFiltrarRecientes');
-    if (btnFiltrarRecientes) {
-        btnFiltrarRecientes.addEventListener('click', function() {
-            // Aquí implementarías la lógica de filtrado por fecha
-            alert('Funcionalidad de filtrado por fecha próximamente');
-        });
-    }
-    
-    // Inicializar tooltips
-    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(function(tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-    
-    // Efectos hover en tarjetas de estadísticas
-    const statsCards = document.querySelectorAll('.stats-card');
-    statsCards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-5px)';
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-        });
-    });
-    
-    // Confirmación antes de restaurar
-    const restoreButtons = document.querySelectorAll('a[href*="restaurar"]');
-    restoreButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            if (!confirm('¿Estás seguro de que deseas restaurar este foro?')) {
+        }
+
+        // Confirmación de restauración con SweetAlert2
+        document.querySelectorAll('.form-restaurar').forEach(form => {
+            form.addEventListener('submit', function(e) {
                 e.preventDefault();
-            }
+                Swal.fire({
+                    title: '¿Restaurar este foro?',
+                    text: "El foro volverá a estar disponible para el curso.",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#10b981',
+                    cancelButtonColor: '#64748b',
+                    confirmButtonText: 'Sí, restaurar',
+                    cancelButtonText: 'Cancelar',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) this.submit();
+                });
+            });
         });
     });
-});
 </script>
+
+<style>
+    .smallest { font-size: 0.75rem; }
+    .empty-state-table {
+        text-align: center;
+        background: #f8fafc;
+        border-radius: 20px;
+        border: 2px dashed #e2e8f0;
+    }
+    .tbl-hero-search-input:focus {
+        border-color: #1a4789 !important;
+        box-shadow: 0 0 0 0.2rem rgba(26, 71, 137, 0.1) !important;
+        background: white !important;
+        color: #1a4789 !important;
+    }
+</style>
 @endsection
 
-@include('layout')

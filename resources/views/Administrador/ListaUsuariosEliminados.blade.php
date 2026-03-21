@@ -154,9 +154,7 @@
     </div>
 </div>
 
-    <div class="d-flex justify-content-center mt-4">
-        {{ $usuarios->appends(['search' => request('search'), 'role' => request('role')])->links('custom-pagination') }}
-    </div>
+
 
     @if(session('success'))
         <script>
@@ -170,7 +168,6 @@
             });
         </script>
     @endif
-</div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
