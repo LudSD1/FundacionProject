@@ -5,22 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Boletin;
 use App\Models\Cursos;
 use App\Models\Inscritos;
-use App\Models\NotaEntrega;
-use App\Models\NotaEvaluacion;
 use App\Models\Notas_Boletin;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\View;
-
 use Swift_Message;
 use Swift_SmtpTransport;
 use Swift_Mailer;
 use Swift_Attachment;
-use Illuminate\Support\Facades\Mail;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Mail\Message;
-use App\Mail\BoletinCorreo;
 use App\Models\Actividad;
-use Spatie\Browsershot\Browsershot;
 
 
 class BoletinController extends Controller

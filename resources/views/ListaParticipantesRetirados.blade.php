@@ -1,271 +1,316 @@
+@extends('layout')
+
 @section('titulo')
-    Lista de Paticipantes {{ $cursos->nombreCurso }}
+    Lista de Participantes Retirados: {{ $cursos->nombreCurso }}
 @endsection
 
-
-
-
 @section('content')
-    <div class="container">
-        <!-- Header con botones de acción -->
-        <div class="row mb-4">
-            <div class="col-md-6">
+
+<div class="container my-4">
+    <div class="tbl-card">
+
+        <div class="tbl-card-hero">
+            <div class="tbl-hero-left">
                 <a href="{{ route('listacurso', ['id' => encrypt($cursos->id)]) }}"
-                    class="btn btn-outline-primary btn-lg shadow-sm">
-                    <i class="bi bi-arrow-left-circle me-2"></i>Volver al Curso
+                   class="tbl-hero-btn tbl-hero-btn-glass prt-back-btn mb-2">
+                    <i class="bi bi-arrow-left-circle-fill"></i>
+                    <span>Volver</span>
                 </a>
+                <div class="tbl-hero-eyebrow">
+                    <i class="bi bi-person-x-fill"></i> Retirados
+                </div>
+                <h2 class="tbl-hero-title">Estudiantes Retirados</h2>
+                <p class="tbl-hero-sub">
+                    Curso: <strong>{{ $cursos->nombreCurso }}</strong>
+                </p>
             </div>
-            <div class="col-md-6 text-end">
-                <div class="btn-group shadow-sm">
+
+            <div class="tbl-hero-controls">
+                {{-- Botones de acción --}}
+                <div class="d-flex gap-2 mb-2 flex-wrap justify-content-end">
                     <form id="restaurar-todos-form" action="{{ route('cursos.restaurarTodos', ['cursoId' => $cursos->id]) }}"
                         method="POST" style="display: none;">
                         @csrf
                     </form>
-                    <button type="button" class="btn btn-success" onclick="confirmarRestaurarTodos()"
+                    <button type="button" class="tbl-hero-btn tbl-hero-btn-glass" onclick="confirmarRestaurarTodos()"
                         {{ $inscritos->where('cursos_id', $cursos->id)->count() == 0 ? 'disabled' : '' }}>
-                        <i class="fas fa-undo"></i> Restaurar Todas las Inscripciones
-                    </button>
-                    <button type="button" class="btn btn-outline-secondary" id="selectAllBtn">
-                        <i class="bi bi-check-square me-2"></i>Seleccionar Todo
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        <span>Restaurar Todos</span>
                     </button>
                 </div>
+
+                {{-- Buscador --}}
+                <div class="d-flex gap-2 flex-wrap justify-content-end align-items-center">
+                    <div class="tbl-hero-search">
+                        <i class="bi bi-search tbl-hero-search-icon"></i>
+                        <input type="text"
+                               class="tbl-hero-search-input"
+                               id="searchInput"
+                               placeholder="Buscar por nombre, email o celular..."
+                               autocomplete="off">
+                    </div>
+                </div>
+            </div>
+        </div>{{-- /tbl-card-hero --}}
+
+        {{-- Barra de contadores --}}
+        <div class="tbl-filter-bar">
+            <div class="tbl-filter-bar-left">
+                <i class="bi bi-people-fill"></i>
+                Total Retirados: <strong id="totalCount">{{ $inscritos->where('cursos_id', $cursos->id)->count() }}</strong>
+                <span class="mx-2">·</span>
+                Mostrando: <strong id="visibleCount">{{ $inscritos->where('cursos_id', $cursos->id)->count() }}</strong>
             </div>
         </div>
 
-        <!-- Alertas -->
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-check-circle me-2"></i>
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-exclamation-circle me-2"></i>
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
-        <!-- Barra de búsqueda mejorada -->
-        <div class="row mb-4">
-            <div class="col-md-6 mx-auto">
-                <div class="input-group input-group-lg shadow-sm">
-                    <span class="input-group-text bg-white">
-                        <i class="bi bi-search text-primary"></i>
-                    </span>
-                    <input type="text" class="form-control border-start-0" id="searchInput"
-                        placeholder="Buscar estudiante retirado..." autocomplete="off">
-                    <button class="btn btn-outline-secondary" type="button" id="clearSearch">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
-                </div>
-                <div class="text-center mt-2">
-                    <small class="text-muted">
-                        Total: <span id="totalCount">{{ $inscritos->where('cursos_id', $cursos->id)->count() }}</span>
-                        estudiantes |
-                        Mostrando: <span id="visibleCount">{{ $inscritos->where('cursos_id', $cursos->id)->count() }}</span>
-                    </small>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tabla mejorada -->
-        <div class="card shadow-sm">
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0 align-middle" id="estudiantesTable">
-                        <thead>
-                            <tr>
-                                <th class="px-4" scope="col" width="5%">
-                                    <input type="checkbox" id="masterCheckbox" class="form-check-input">
-                                </th>
-                                <th class="px-4" scope="col" width="8%">#</th>
-                                <th scope="col" width="40%">Nombre y Apellidos</th>
-                                <th scope="col" width="20%">Celular</th>
-                                <th scope="col" width="15%">Fecha Retiro</th>
-                                <th scope="col" width="12%" class="text-center">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($inscritos as $inscrito)
-                                @if ($inscrito->cursos_id == $cursos->id)
-                                    <tr class="align-middle estudiante-row" data-estudiante-id="{{ $inscrito->id }}">
-                                        <td class="px-4">
-                                            <input type="checkbox" class="form-check-input student-checkbox"
-                                                value="{{ $inscrito->id }}">
-                                        </td>
-                                        <td class="px-4 fw-bold text-primary">{{ $loop->iteration }}</td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar-circle bg-warning text-white me-3">
-                                                    {{ substr($inscrito->estudiantes->name ?? 'E', 0, 1) }}
-                                                </div>
-                                                <div>
-                                                    <h6 class="mb-0">
-                                                        {{ $inscrito->estudiantes->name ?? 'Estudiante Eliminado' }}
-                                                        {{ $inscrito->estudiantes->lastname1 ?? '' }}
-                                                        {{ $inscrito->estudiantes->lastname2 ?? '' }}
-                                                    </h6>
-                                                    @if (isset($inscrito->estudiantes->email))
-                                                        <small class="text-muted">
-                                                            <i
-                                                                class="bi bi-envelope me-1"></i>{{ $inscrito->estudiantes->email }}
-                                                        </small>
-                                                    @endif
-                                                    <span class="badge bg-danger">Retirado</span>
-                                                </div>
+        <div class="p-0">
+            <!-- Tabla de Estudiantes Retirados -->
+            <div class="table-container-modern">
+                <table class="table-modern" id="estudiantesTable">
+                    <thead>
+                        <tr>
+                            <th class="text-center" width="5%">
+                                <input type="checkbox" id="masterCheckbox" class="prt-checkbox">
+                            </th>
+                            <th width="5%">
+                                <div class="th-content"><i class="bi bi-hash"></i></div>
+                            </th>
+                            <th width="35%">
+                                <div class="th-content"><i class="bi bi-person-fill"></i><span>Estudiante</span></div>
+                            </th>
+                            <th width="20%">
+                                <div class="th-content"><i class="bi bi-telephone-fill"></i><span>Contacto</span></div>
+                            </th>
+                            <th width="15%">
+                                <div class="th-content"><i class="bi bi-calendar-x-fill"></i><span>Fecha Retiro</span></div>
+                            </th>
+                            <th class="text-center" width="20%">
+                                <div class="th-content justify-content-center"><i class="bi bi-gear-fill"></i><span>Acciones</span></div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($inscritos as $inscrito)
+                            @if ($inscrito->cursos_id == $cursos->id)
+                                <tr class="estudiante-row prt-row" data-estudiante-id="{{ $inscrito->id }}">
+                                    <td class="text-center">
+                                        <input type="checkbox" class="prt-checkbox student-checkbox"
+                                            value="{{ $inscrito->id }}">
+                                    </td>
+                                    <td><span class="row-number">{{ $loop->iteration }}</span></td>
+                                    <td>
+                                        <div class="prt-student">
+                                            <div class="tbl-avatar bg-warning text-white">
+                                                {{ strtoupper(substr($inscrito->estudiantes->name ?? 'E', 0, 1)) }}
                                             </div>
-                                        </td>
-                                        <td>
-                                            @if ($inscrito->estudiantes->Celular ?? false)
-                                                <a href="tel:{{ $inscrito->estudiantes->Celular }}"
-                                                    class="text-decoration-none">
-                                                    <i class="bi bi-telephone me-2"></i>
-                                                    +{{ $inscrito->estudiantes->Celular }}
-                                                </a>
-                                            @else
-                                                <span class="text-muted">Sin celular</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            <small class="text-muted">
-                                                <i class="bi bi-calendar-date me-1"></i>
-                                                {{ $inscrito->updated_at ? $inscrito->updated_at->format('d/m/Y') : 'N/A' }}
-                                            </small>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex justify-content-center gap-2">
-                                                <button class="btn btn-sm btn-outline-success"
-                                                    onclick="confirmarRestauracion('{{ encrypt($inscrito->id ?? '') }}', '{{ $inscrito->estudiantes->name ?? 'Estudiante' }}')"
-                                                    data-bs-toggle="tooltip" title="Restaurar inscripción">
-                                                    <i class="bi bi-arrow-clockwise"></i>
-                                                </button>
-                                                <a class="btn btn-sm btn-outline-info"
-                                                    href="{{ route('perfil', [encrypt($inscrito->estudiantes->id)]) }}"
-                                                    data-bs-toggle="tooltip" title="Ver Perfil">
-                                                    <i class="bi bi-person-badge"></i>
-                                                </a>
+                                            <div class="prt-student-info">
+                                                <div class="prt-student-name">
+                                                    {{ $inscrito->estudiantes->name ?? 'Estudiante Eliminado' }}
+                                                    {{ $inscrito->estudiantes->lastname1 ?? '' }}
+                                                    {{ $inscrito->estudiantes->lastname2 ?? '' }}
+                                                </div>
+                                                @if (isset($inscrito->estudiantes->email))
+                                                    <div class="prt-student-email">
+                                                        <i class="bi bi-envelope me-1"></i>{{ $inscrito->estudiantes->email }}
+                                                    </div>
+                                                @endif
+                                                <span class="badge bg-danger-subtle text-danger border-danger-subtle px-2 py-0 small mt-1">Retirado</span>
                                             </div>
-                                        </td>
-                                    </tr>
-                                @endif
-                            @empty
-                                <tr id="noResultsRow">
-                                    <td colspan="6" class="text-center py-5">
-                                        <div class="d-flex flex-column align-items-center">
-                                            <i class="bi bi-emoji-smile display-1 text-success mb-3"></i>
-                                            <h4 class="text-muted">¡Excelente!</h4>
-                                            <p class="text-muted">No hay estudiantes retirados en este curso</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if ($inscrito->estudiantes->Celular ?? false)
+                                            <div class="prt-phone">
+                                                <i class="bi bi-telephone-fill"></i>
+                                                +{{ $inscrito->estudiantes->Celular }}
+                                            </div>
+                                        @else
+                                            <span class="prt-no-data">Sin celular</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <div class="prt-phone text-muted">
+                                            <i class="bi bi-calendar-event"></i>
+                                            {{ $inscrito->updated_at ? $inscrito->updated_at->format('d/m/Y') : 'N/A' }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons-cell justify-content-center">
+                                            <button class="btn-action-modern btn-edit"
+                                                onclick="confirmarRestauracion('{{ encrypt($inscrito->id ?? '') }}', '{{ $inscrito->estudiantes->name ?? 'Estudiante' }}')"
+                                                title="Restaurar inscripción">
+                                                <i class="bi bi-arrow-counterclockwise"></i>
+                                            </button>
+                                            <a class="btn-action-modern btn-info"
+                                                href="{{ route('perfil', [encrypt($inscrito->estudiantes->id)]) }}"
+                                                title="Ver Perfil">
+                                                <i class="bi bi-person-badge-fill"></i>
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                            @endif
+                        @empty
+                            <tr id="noResultsRow">
+                                <td colspan="6">
+                                    <div class="empty-state-table">
+                                        <div class="empty-icon-table text-primary"><i class="bi bi-check-circle"></i></div>
+                                        <h5 class="empty-title-table">¡Excelente!</h5>
+                                        <p class="empty-text-table">No hay estudiantes retirados en este curso</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Acciones masivas Flotantes -->
+        <div id="massActionsCard" class="prt-mass-actions" style="display:none; margin: 1rem; position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%); z-index: 1000; min-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            <div class="prt-mass-actions-inner">
+                <div class="prt-mass-info">
+                    <div class="prt-mass-icon"><i class="bi bi-check-all"></i></div>
+                    <div>
+                        <strong><span id="selectedCount">0</span> seleccionados</strong>
+                        <div class="prt-mass-sub">Acción masiva para retirados</div>
+                    </div>
+                </div>
+                <div class="prt-mass-btns">
+                    <button class="tbl-hero-btn tbl-hero-btn-primary" id="restaurarSeleccionados">
+                        <i class="bi bi-arrow-counterclockwise"></i> Restaurar
+                    </button>
+                    <button class="tbl-hero-btn tbl-hero-btn-glass prt-btn-cancel" id="deselectAll">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
                 </div>
             </div>
         </div>
 
         <!-- Mensaje cuando no hay resultados de búsqueda -->
-        <div class="card shadow-sm mt-3" id="noSearchResults" style="display: none;">
-            <div class="card-body text-center py-5">
-                <i class="bi bi-search display-1 text-muted mb-3"></i>
-                <h4 class="text-muted">Sin resultados</h4>
-                <p class="text-muted">No se encontraron estudiantes que coincidan con la búsqueda</p>
-                <button class="btn btn-outline-primary" id="clearSearchBtn">
-                    <i class="bi bi-x-lg me-1"></i>Limpiar búsqueda
+        <div class="text-center py-5" id="noSearchResults" style="display: none;">
+            <div class="empty-state-table">
+                <div class="empty-icon-table"><i class="bi bi-search"></i></div>
+                <h5 class="empty-title-table">Sin resultados</h5>
+                <p class="empty-text-table mb-4">No se encontraron estudiantes que coincidan con la búsqueda</p>
+                <button class="tbl-hero-btn tbl-hero-btn-primary mx-auto" id="clearSearchBtn" style="width: auto;">
+                    <i class="bi bi-arrow-clockwise me-1"></i> Limpiar búsqueda
                 </button>
             </div>
         </div>
-
-        <!-- Acciones masivas -->
-        <div class="card shadow-sm mt-3" id="massActionsCard" style="display: none;">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <span class="text-muted">
-                        <i class="bi bi-check-square me-2"></i>
-                        <strong id="selectedCount">0</strong> estudiante(s) seleccionado(s)
-                    </span>
-                    <div class="btn-group">
-                        <button class="btn btn-outline-success" id="restaurarSeleccionados">
-                            <i class="bi bi-arrow-clockwise me-1"></i>Restaurar Seleccionados
-                        </button>
-                        <button class="btn btn-outline-secondary" id="deselectAll">
-                            <i class="bi bi-square me-1"></i>Deseleccionar
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
+</div>
+@endsection
 
-    <!-- Estilos adicionales -->
-    <style>
-        .avatar-circle {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
+<style>
+/* ════════════════════
+   TOOLBAR (REUSADO DE PARTICIPANTES)
+════════════════════ */
+.tbl-hero-search {
+    position: relative;
+    width: 100%;
+}
+.tbl-hero-search-icon {
+    position: absolute;
+    left: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    color: #94a3b8;
+}
+.tbl-hero-search-input {
+    padding-left: 3rem !important;
+    background: #fff !important;
+    border: 1px solid #d1dce8 !important;
+    border-radius: 50px !important;
+    height: 42px;
+    width: 100%;
+}
+.tbl-hero-search-input:focus {
+    border-color: #2a81c2 !important;
+    box-shadow: 0 0 0 3px rgba(42,129,194,.13) !important;
+    outline: none;
+}
 
-        .table th {
-            font-weight: 600;
-            background-color: #f8f9fa;
-        }
+/* ════════════════════
+   ACCIONES MASIVAS
+════════════════════ */
+.prt-mass-actions {
+    background: rgba(20,93,160,.06);
+    border: 1.5px solid rgba(20,93,160,.18);
+    border-radius: 12px;
+    animation: prtFadeIn .25s ease both;
+}
+@keyframes prtFadeIn {
+    from { opacity: 0; transform: translate(-50%, 20px); }
+    to   { opacity: 1; transform: translate(-50%, 0); }
+}
+.prt-mass-actions-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .9rem 1.1rem;
+    gap: .8rem;
+}
+.prt-mass-info {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+}
+.prt-mass-icon {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: rgba(20,93,160,.12);
+    color: #145da0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+.prt-mass-sub { font-size: .76rem; color: #64748b; }
+.prt-mass-btns { display: flex; gap: .5rem; }
 
-        .btn-group .btn {
-            position: relative;
-            transition: all 0.2s;
-        }
+/* ════════════════════
+   TABLA Y CELDAS
+════════════════════ */
+.prt-checkbox {
+    width: 1.1rem; height: 1.1rem;
+    accent-color: #145da0;
+    cursor: pointer;
+}
+.prt-student { display: flex; align-items: center; gap: .7rem; }
+.prt-student-info { display: flex; flex-direction: column; gap: .1rem; }
+.prt-student-name { font-size: .88rem; font-weight: 700; color: #0f172a; }
+.prt-student-email { font-size: .72rem; color: #94a3b8; display: flex; align-items: center; }
+.prt-phone { display: flex; align-items: center; gap: .35rem; font-size: .83rem; color: #374151; }
+.prt-phone i { color: #145da0; font-size: .78rem; }
+.prt-no-data { font-size: .76rem; color: #c5d0dc; font-style: italic; }
+.prt-back-btn { padding: .32rem .75rem !important; font-size: .76rem !important; }
 
-        .btn-group .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+@media (max-width: 768px) {
+    #massActionsCard { min-width: 90% !important; }
+    .prt-mass-actions-inner { flex-direction: column; align-items: flex-start; }
+    .prt-mass-btns { width: 100%; justify-content: flex-end; }
+}
+</style>
 
-        .table tbody tr {
-            transition: all 0.2s;
-        }
-
-        .table tbody tr:hover {
-            background-color: rgba(0, 0, 0, 0.02);
-        }
-
-        .estudiante-row {
-            transition: all 0.3s ease;
-        }
-
-        .alert {
-            border: none;
-            border-radius: 10px;
-        }
-
-        .card {
-            border-radius: 10px;
-        }
-
-        .badge {
-            font-size: 0.75em;
-        }
-
-        .table-active {
-            background-color: rgba(13, 110, 253, 0.1) !important;
-        }
-    </style>
-
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
     <script>
-        $(document).ready(function() {
-            let totalRows = $('.estudiante-row').length;
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const clearSearch = document.getElementById('clearSearch');
+            const clearSearchBtn = document.getElementById('clearSearchBtn');
+            const rows = document.querySelectorAll('.estudiante-row');
+            const visibleCountSpan = document.getElementById('visibleCount');
+            const totalCountSpan = document.getElementById('totalCount');
+            const noSearchResults = document.getElementById('noSearchResults');
+            const tableResponsive = document.querySelector('.table-responsive');
+            const masterCheckbox = document.getElementById('masterCheckbox');
+            const studentCheckboxes = document.querySelectorAll('.student-checkbox');
+            const massActionsCard = document.getElementById('massActionsCard');
+            const selectedCountSpan = document.getElementById('selectedCount');
+
+            let totalRows = rows.length;
 
             // Inicializar tooltips de Bootstrap
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
@@ -274,94 +319,107 @@
             });
 
             // Función de búsqueda mejorada
-            $('#searchInput').on('input', function() {
-                const searchText = $(this).val().toLowerCase().trim();
+            function applySearch() {
+                const searchText = searchInput.value.toLowerCase().trim();
                 let visibleCount = 0;
 
-                $('.estudiante-row').each(function() {
-                    const rowText = $(this).text().toLowerCase();
+                rows.forEach(row => {
+                    const rowText = row.textContent.toLowerCase();
                     const match = searchText === '' || rowText.includes(searchText);
-                    $(this).toggle(match);
+                    row.style.display = match ? '' : 'none';
 
-                    // Añadir efecto de resaltado
                     if (match && searchText.length > 0) {
-                        $(this).addClass('table-active');
+                        row.classList.add('table-active');
                     } else {
-                        $(this).removeClass('table-active');
+                        row.classList.remove('table-active');
                     }
 
                     if (match) visibleCount++;
                 });
 
                 // Actualizar contadores
-                $('#visibleCount').text(visibleCount);
+                if (visibleCountSpan) visibleCountSpan.textContent = visibleCount;
 
                 // Mostrar/ocultar mensaje de sin resultados
                 if (visibleCount === 0 && searchText !== '' && totalRows > 0) {
-                    $('#noSearchResults').show();
-                    $('.table-responsive').hide();
+                    if (noSearchResults) noSearchResults.style.display = 'block';
+                    if (tableResponsive) tableResponsive.style.display = 'none';
                 } else {
-                    $('#noSearchResults').hide();
-                    $('.table-responsive').show();
+                    if (noSearchResults) noSearchResults.style.display = 'none';
+                    if (tableResponsive) tableResponsive.style.display = 'block';
+                }
+            }
+
+            if (searchInput) {
+                searchInput.addEventListener('input', applySearch);
+            }
+
+            // Limpiar búsqueda
+            function resetSearch() {
+                if (searchInput) searchInput.value = '';
+                rows.forEach(row => {
+                    row.style.display = '';
+                    row.classList.remove('table-active');
+                });
+                if (visibleCountSpan) visibleCountSpan.textContent = totalRows;
+                if (noSearchResults) noSearchResults.style.display = 'none';
+                if (tableResponsive) tableResponsive.style.display = 'block';
+            }
+
+            if (clearSearch) clearSearch.addEventListener('click', resetSearch);
+            if (clearSearchBtn) clearSearchBtn.addEventListener('click', resetSearch);
+
+            // Manejo de checkboxes
+            if (masterCheckbox) {
+                masterCheckbox.addEventListener('change', function() {
+                    const isChecked = this.checked;
+                    rows.forEach(row => {
+                        if (row.style.display !== 'none') {
+                            const cb = row.querySelector('.student-checkbox');
+                            if (cb) cb.checked = isChecked;
+                        }
+                    });
+                    updateMassActions();
+                });
+            }
+
+            document.addEventListener('change', function(e) {
+                if (e.target.classList.contains('student-checkbox')) {
+                    updateMassActions();
                 }
             });
 
-            // Limpiar búsqueda
-            $('#clearSearch, #clearSearchBtn').on('click', function() {
-                $('#searchInput').val('');
-                $('.estudiante-row').show().removeClass('table-active');
-                $('#visibleCount').text(totalRows);
-                $('#noSearchResults').hide();
-                $('.table-responsive').show();
-            });
+            function updateMassActions() {
+                const selected = document.querySelectorAll('.student-checkbox:checked').length;
+                if (selectedCountSpan) selectedCountSpan.textContent = selected;
+                if (massActionsCard) massActionsCard.style.display = selected > 0 ? 'block' : 'none';
 
-            // Manejo de checkboxes
-            $('#masterCheckbox').on('change', function() {
-                $('.student-checkbox:visible').prop('checked', this.checked);
-                updateSelectedCount();
-            });
-
-            $('.student-checkbox').on('change', function() {
-                updateSelectedCount();
-                updateMasterCheckbox();
-            });
-
-            // Seleccionar/Deseleccionar todos
-            $('#selectAllBtn').on('click', function() {
-                $('.student-checkbox:visible').prop('checked', true);
-                updateSelectedCount();
-                updateMasterCheckbox();
-            });
-
-            $('#deselectAll').on('click', function() {
-                $('.student-checkbox').prop('checked', false);
-                updateSelectedCount();
-                updateMasterCheckbox();
-            });
-
-            function updateSelectedCount() {
-                const selectedCount = $('.student-checkbox:checked').length;
-                $('#selectedCount').text(selectedCount);
-                $('#massActionsCard').toggle(selectedCount > 0);
+                if (masterCheckbox) {
+                    const visibleCBs = Array.from(document.querySelectorAll('.student-checkbox')).filter(cb => cb.closest('tr').style.display !== 'none');
+                    const checkedVisible = visibleCBs.filter(cb => cb.checked);
+                    masterCheckbox.checked = visibleCBs.length > 0 && visibleCBs.length === checkedVisible.length;
+                }
             }
 
-            function updateMasterCheckbox() {
-                const visibleCheckboxes = $('.student-checkbox:visible');
-                const checkedVisible = $('.student-checkbox:visible:checked');
-                $('#masterCheckbox').prop('checked', visibleCheckboxes.length > 0 && visibleCheckboxes.length ===
-                    checkedVisible.length);
+            const deselectAllBtn = document.getElementById('deselectAll');
+            if (deselectAllBtn) {
+                deselectAllBtn.addEventListener('click', function() {
+                    document.querySelectorAll('.student-checkbox').forEach(cb => cb.checked = false);
+                    if (masterCheckbox) masterCheckbox.checked = false;
+                    updateMassActions();
+                });
             }
 
             // Restaurar seleccionados
-            $('#restaurarSeleccionados').on('click', function() {
-                const selected = $('.student-checkbox:checked').map(function() {
-                    return this.value;
-                }).get();
-
-                if (selected.length > 0) {
-                    confirmarRestauracionMasiva(selected);
-                }
-            });
+            const restaurarSeleccionadosBtn = document.getElementById('restaurarSeleccionados');
+            if (restaurarSeleccionadosBtn) {
+                restaurarSeleccionadosBtn.addEventListener('click', function() {
+                    const selected = Array.from(document.querySelectorAll('.student-checkbox:checked')).map(cb => cb.value);
+                    if (selected.length > 0) {
+                        confirmarRestauracionMasiva(selected);
+                    }
+                });
+            }
         });
 
         // Funciones de confirmación con SweetAlert2
@@ -383,12 +441,9 @@
             });
         }
 
-
-
         function confirmarRestaurarTodos() {
             const total = {{ $inscritos->where('cursos_id', $cursos->id)->count() }};
 
-            // Verificar que haya inscripciones para restaurar
             if (total === 0) {
                 Swal.fire({
                     title: 'Sin inscripciones',
@@ -411,7 +466,6 @@
                 reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Enviar el formulario
                     document.getElementById('restaurar-todos-form').submit();
                 }
             });
@@ -430,8 +484,6 @@
                 reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
-
-
                     Swal.fire({
                         title: 'Función pendiente',
                         text: 'Esta funcionalidad requiere implementar la ruta correspondiente.',
@@ -441,6 +493,3 @@
             });
         }
     </script>
-@endsection
-
-@include('layout')

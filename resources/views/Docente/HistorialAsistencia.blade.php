@@ -4,523 +4,282 @@
 
 @section('content')
 
-    <style>
-        :root {
-            --color-primary: #1a4789;
-            --color-secondary: #39a6cb;
-            --color-accent1: #63becf;
-            --color-accent2: #055c9d;
-            --color-accent3: #2197bd;
-            --color-success: #28a745;
-            --color-warning: #ffc107;
-            --color-danger: #dc3545;
-            --color-info: #17a2b8;
+<div class="container my-4">
+    <div class="tbl-card">
 
-            --gradient-primary: linear-gradient(135deg, #1a4789 0%, #055c9d 100%);
-            --gradient-secondary: linear-gradient(135deg, #39a6cb 0%, #63becf 100%);
-
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
-            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
-            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
-
-            --border-radius: 12px;
-            --border-radius-sm: 8px;
-        }
-
-        .attendance-container .card {
-            border: none;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-md);
-        }
-
-        .attendance-container .card-header {
-            background: var(--gradient-primary);
-            color: white;
-            border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
-            padding: 1rem 1.5rem;
-        }
-
-        .attendance-container .btn-primary {
-            background: var(--color-primary);
-            border-color: var(--color-primary);
-            border-radius: var(--border-radius-sm);
-        }
-
-        .attendance-container .btn-primary:hover {
-            background: var(--color-accent2);
-            border-color: var(--color-accent2);
-        }
-
-        .attendance-container .btn-success {
-            background: var(--color-success);
-            border-color: var(--color-success);
-            border-radius: var(--border-radius-sm);
-        }
-
-        .attendance-container .btn-outline-secondary {
-            border-radius: var(--border-radius-sm);
-        }
-
-        .attendance-container .table thead th {
-            background: var(--color-primary);
-            color: white;
-            border: none;
-            padding: 1rem;
-            font-weight: 600;
-        }
-
-        .attendance-container .table tbody td {
-            padding: 1rem;
-            vertical-align: middle;
-            border-color: #e9ecef;
-        }
-
-        .attendance-container .table-hover tbody tr:hover {
-            background-color: rgba(57, 166, 203, 0.05);
-        }
-
-        .attendance-container .badge-presente {
-            background-color: var(--color-success);
-        }
-
-        .attendance-container .badge-retraso {
-            background-color: var(--color-warning);
-            color: #212529;
-        }
-
-        .attendance-container .badge-licencia {
-            background-color: var(--color-info);
-        }
-
-        .attendance-container .badge-falta {
-            background-color: var(--color-danger);
-        }
-
-        .attendance-container .avatar-title {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-        }
-
-        .attendance-container .form-control {
-            border-radius: var(--border-radius-sm);
-            border: 1px solid #dee2e6;
-        }
-
-        .attendance-container .form-control:focus {
-            border-color: var(--color-accent1);
-            box-shadow: 0 0 0 0.2rem rgba(57, 166, 203, 0.25);
-        }
-
-        .attendance-container .attendance-select {
-            border-radius: var(--border-radius-sm);
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        .attendance-container .attendance-select.border-success {
-            border-width: 2px;
-        }
-
-        .attendance-container .attendance-select.border-warning {
-            border-width: 2px;
-        }
-
-        .attendance-container .attendance-select.border-info {
-            border-width: 2px;
-        }
-
-        .attendance-container .attendance-select.border-danger {
-            border-width: 2px;
-        }
-
-        .attendance-container .empty-state {
-            padding: 3rem 1rem;
-        }
-
-        .attendance-container .empty-state i {
-            opacity: 0.5;
-        }
-
-        .attendance-container .pagination .page-link {
-            color: var(--color-primary);
-            border-radius: var(--border-radius-sm);
-            margin: 0 2px;
-        }
-
-        .attendance-container .pagination .page-item.active .page-link {
-            background-color: var(--color-primary);
-            border-color: var(--color-primary);
-        }
-
-        .attendance-container .filter-card .card-header {
-            background: var(--gradient-secondary);
-            color: white;
-        }
-
-        .attendance-container .stats-card {
-            background: var(--gradient-primary);
-            color: white;
-            border-radius: var(--border-radius);
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .attendance-container .modal-header.bg-danger {
-            background: var(--color-danger) !important;
-        }
-
-        .attendance-container .btn-danger {
-            background: var(--color-danger);
-            border-color: var(--color-danger);
-        }
-
-        @media (max-width: 768px) {
-            .attendance-container .card-header .d-flex {
-                flex-direction: column;
-                align-items: flex-start !important;
-            }
-
-            .attendance-container .card-header .d-flex>* {
-                margin-bottom: 0.5rem;
-            }
-
-            .attendance-container .table-responsive {
-                font-size: 0.875rem;
-            }
-        }
-    </style>
-
-    <div class="container-fluid attendance-container">
-        <div class="card shadow-lg">
-            <div
-                class="card-header py-3 d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
-                <div class="d-flex align-items-center mb-2 mb-md-0">
-                    <a href="{{ route('Curso', $cursos->codigoCurso) }}" class="btn btn-primary me-3">
-                        <i class="fas fa-arrow-left me-2"></i>Volver
+        {{-- ╔══════════════════════════════════════╗
+             ║  HERO — CABECERA AZUL               ║
+             ╚══════════════════════════════════════╝ --}}
+        <div class="tbl-card-hero">
+            <div class="tbl-hero-left">
+                <div class="d-flex gap-2 mb-2">
+                    <a href="{{ route('Curso', $cursos->codigoCurso) }}" class="tbl-hero-btn tbl-hero-btn-glass prt-back-btn">
+                        <i class="bi bi-arrow-left-circle-fill"></i> Volver
                     </a>
-                    <a href="{{ route('asistencias', encrypt($cursos->id)) }}" class="btn btn-primary me-3">
-                        Asistencias
+                    <a href="{{ route('asistencias', encrypt($cursos->id)) }}" class="tbl-hero-btn tbl-hero-btn-glass prt-back-btn">
+                        <i class="bi bi-calendar-check-fill"></i> Asistencias
                     </a>
-                    <h5 class="m-0 font-weight-bold">Historial de Asistencia</h5>
                 </div>
-                <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center">
-                    <span class="me-3 mb-2 mb-md-0">
-                        <i class="fas fa-calendar-day me-1"></i> {{ now()->format('Y-m-d') }}
-                    </span>
+                <div class="tbl-hero-eyebrow">
+                    <i class="bi bi-clock-history"></i> Control de Asistencia
+                </div>
+                <h2 class="tbl-hero-title">Historial de Asistencia</h2>
+                <p class="tbl-hero-sub">
+                    Curso: <strong>{{ $cursos->nombreCurso }}</strong>
+                </p>
+            </div>
+
+            <div class="tbl-hero-controls">
+                <div class="d-flex gap-2 flex-wrap justify-content-end align-items-center">
                     @if (auth()->user()->hasAnyRole(['Docente', 'Administrador']))
-                        <a href="{{ route('repA', encrypt($cursos->id)) }}" class="btn btn-sm btn-success">
-                            <i class="fas fa-file-export me-1"></i> Generar Reporte
+                        <a href="{{ route('repA', encrypt($cursos->id)) }}" class="tbl-hero-btn tbl-hero-btn-primary">
+                            <i class="bi bi-file-earmark-pdf-fill"></i> <span>Reporte</span>
                         </a>
                     @endif
+
+                    <div class="tbl-hero-search">
+                        <i class="bi bi-search tbl-hero-search-icon"></i>
+                        <input type="text" class="tbl-hero-search-input"
+                               id="busqueda" name="busqueda" value="{{ request('busqueda') }}"
+                               placeholder="Buscar estudiante..."
+                               form="filtrosForm">
+                    </div>
+                </div>
+
+                <div class="text-white opacity-75 small mt-2 text-end">
+                    <i class="bi bi-calendar3 me-1"></i> {{ now()->format('d/m/Y') }}
                 </div>
             </div>
+        </div>{{-- /tbl-card-hero --}}
 
-            <div class="card-body">
-                <!-- Tarjeta de estadísticas -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <div class="stats-card">
-                            <div class="row text-center">
-                                <div class="col-md-3 mb-3 mb-md-0">
-                                    <h4 class="mb-1">{{ $stats['presente_percent'] ?? '0%' }}</h4>
-                                    <small>Asistencia Total</small>
-                                </div>
-                                <div class="col-md-3 mb-3 mb-md-0">
-                                    <h4 class="mb-1">{{ $stats['retraso_percent'] ?? '0%' }}</h4>
-                                    <small>Retrasos</small>
-                                </div>
-                                <div class="col-md-3 mb-3 mb-md-0">
-                                    <h4 class="mb-1">{{ $stats['licencia_percent'] ?? '0%' }}</h4>
-                                    <small>Licencias</small>
-                                </div>
-                                <div class="col-md-3">
-                                    <h4 class="mb-1">{{ $stats['falta_percent'] ?? '0%' }}</h4>
-                                    <small>Faltas</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        {{-- Barra de estadísticas rápidas --}}
+        <div class="tbl-filter-bar bg-light border-bottom">
+            <div class="row w-100 g-0 px-3 py-2 text-center">
+                <div class="col-md-3 border-end">
+                    <div class="small text-muted">Asistencia Total</div>
+                    <strong class="text-primary">{{ $stats['presente_percent'] ?? '0%' }}</strong>
                 </div>
-
-                <!-- Filtros de búsqueda -->
-                <div class="row mb-4">
-                    <div class="col-md-12">
-                        <div class="card filter-card">
-                            <div class="card-header">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h6 class="mb-0">
-                                        <i class="fas fa-search me-2"></i> Filtros de Búsqueda
-                                    </h6>
-                                    <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#filtrosCollapse">
-                                        <i class="fas fa-chevron-down"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="collapse show" id="filtrosCollapse">
-                                <div class="card-body">
-                                    <form method="GET" action="{{ route('historialAsistencias', encrypt($cursos->id)) }}"
-                                        id="filtrosForm">
-                                        <div class="row g-3">
-                                            <div class="col-md-4">
-                                                <label for="busqueda" class="form-label">Buscar Estudiante:</label>
-                                                <div class="input-group">
-                                                    <input type="text" class="form-control" id="busqueda"
-                                                        name="busqueda" value="{{ request('busqueda') }}"
-                                                        placeholder="Nombre del estudiante...">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-search"></i>
-                                                    </span>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-3">
-                                                <label for="fecha_desde" class="form-label">Fecha Desde:</label>
-                                                <input type="date" class="form-control" id="fecha_desde"
-                                                    name="fecha_desde" value="{{ request('fecha_desde') }}">
-                                            </div>
-
-                                            <div class="col-md-3">
-                                                <label for="fecha_hasta" class="form-label">Fecha Hasta:</label>
-                                                <input type="date" class="form-control" id="fecha_hasta"
-                                                    name="fecha_hasta" value="{{ request('fecha_hasta') }}">
-                                            </div>
-
-                                            <div class="col-md-2">
-                                                <label for="tipo_asistencia" class="form-label">Tipo:</label>
-                                                <select name="tipo_asistencia" id="tipo_asistencia" class="form-control">
-                                                    <option value="">Todos</option>
-                                                    <option value="Presente"
-                                                        {{ request('tipo_asistencia') == 'Presente' ? 'selected' : '' }}>
-                                                        Presente</option>
-                                                    <option value="Retraso"
-                                                        {{ request('tipo_asistencia') == 'Retraso' ? 'selected' : '' }}>
-                                                        Retraso</option>
-                                                    <option value="Licencia"
-                                                        {{ request('tipo_asistencia') == 'Licencia' ? 'selected' : '' }}>
-                                                        Licencia</option>
-                                                    <option value="Falta"
-                                                        {{ request('tipo_asistencia') == 'Falta' ? 'selected' : '' }}>Falta
-                                                    </option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mt-4">
-                                            <div
-                                                class="col-md-12 d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
-                                                <div class="mb-2 mb-md-0">
-                                                    <button type="submit" class="btn btn-primary me-2">
-                                                        <i class="fas fa-search me-1"></i> Buscar
-                                                    </button>
-                                                    <a href="{{ route('historialAsistencias', encrypt($cursos->id)) }}"
-                                                        class="btn btn-outline-secondary">
-                                                        <i class="fas fa-eraser me-1"></i> Limpiar Filtros
-                                                    </a>
-                                                </div>
-                                                <div>
-                                                    <span class="text-muted">
-                                                        Mostrando {{ $asistencias->count() }} de
-                                                        {{ $asistencias->total() }} registros
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="col-md-3 border-end">
+                    <div class="small text-muted">Retrasos</div>
+                    <strong class="text-warning">{{ $stats['retraso_percent'] ?? '0%' }}</strong>
                 </div>
-
-                <!-- Tabla de asistencias -->
-                <form action="{{ route('historialAsistenciasPost', encrypt($cursos->id)) }}" method="POST"
-                    id="attendanceForm">
-                    @csrf
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
-                            <thead>
-                                <tr>
-                                    <th width="5%">#</th>
-                                    <th width="35%">
-                                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'estudiante', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc']) }}"
-                                            class="text-white text-decoration-none">
-                                            Estudiante
-                                            @if (request('sort') == 'estudiante')
-                                                <i
-                                                    class="fas fa-sort-{{ request('direction') == 'asc' ? 'up' : 'down' }} ms-1"></i>
-                                            @else
-                                                <i class="fas fa-sort ms-1"></i>
-                                            @endif
-                                        </a>
-                                    </th>
-                                    <th width="25%">Tipo de Asistencia</th>
-                                    <th width="20%">
-                                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'fecha', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc']) }}"
-                                            class="text-white text-decoration-none">
-                                            Fecha
-                                            @if (request('sort') == 'fecha')
-                                                <i
-                                                    class="fas fa-sort-{{ request('direction') == 'asc' ? 'up' : 'down' }} ms-1"></i>
-                                            @else
-                                                <i class="fas fa-sort ms-1"></i>
-                                            @endif
-                                        </a>
-                                    </th>
-                                    @if (auth()->user()->hasAnyRole(['Docente', 'Administrador']))
-                                        <th width="15%">Acciones</th>
-                                    @endif
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($asistencias as $index => $asistencia)
-                                    @if (
-                                        $asistencia->curso_id == $cursos->id &&
-                                            (auth()->user()->hasAnyRole(['Docente', 'Administrador']) ||
-                                                (auth()->user()->hasRole('Estudiante') && auth()->user()->id == $asistencia->inscritos->estudiantes->id)))
-                                        <tr>
-                                            <td>{{ ($asistencias->currentPage() - 1) * $asistencias->perPage() + $loop->iteration }}
-                                            </td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="avatar-sm me-3">
-                                                        <div class="avatar-title bg-primary rounded-circle">
-                                                            {{ substr($asistencia->inscritos->estudiantes->name, 0, 1) }}
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <strong>
-                                                            {{ $asistencia->inscritos->estudiantes->name }}
-                                                            {{ $asistencia->inscritos->estudiantes->lastname1 }}
-                                                            {{ $asistencia->inscritos->estudiantes->lastname2 }}
-                                                        </strong>
-                                                        <br>
-                                                        <small
-                                                            class="text-muted">{{ $asistencia->inscritos->estudiantes->email ?? 'Sin email' }}</small>
-                                                    </div>
-                                                </div>
-                                            </td>
-
-                                            @if (auth()->user()->hasAnyRole(['Docente', 'Administrador']))
-                                                <td>
-                                                    <input type="hidden" name="asistencia[{{ $asistencia->id }}][id]"
-                                                        value="{{ $asistencia->id }}">
-                                                    <select name="asistencia[{{ $asistencia->id }}][tipo_asistencia]"
-                                                        class="form-control form-control-sm attendance-select">
-                                                        <option value="Presente"
-                                                            {{ $asistencia->tipoAsitencia == 'Presente' ? 'selected' : '' }}>
-                                                            Presente</option>
-                                                        <option value="Retraso"
-                                                            {{ $asistencia->tipoAsitencia == 'Retraso' ? 'selected' : '' }}>
-                                                            Retraso</option>
-                                                        <option value="Licencia"
-                                                            {{ $asistencia->tipoAsitencia == 'Licencia' ? 'selected' : '' }}>
-                                                            Licencia</option>
-                                                        <option value="Falta"
-                                                            {{ $asistencia->tipoAsitencia == 'Falta' ? 'selected' : '' }}>
-                                                            Falta</option>
-                                                    </select>
-                                                </td>
-                                            @else
-                                                <td>
-                                                    <span
-                                                        class="badge badge-lg
-                                                    @if ($asistencia->tipoAsitencia == 'Presente') badge-presente
-                                                    @elseif($asistencia->tipoAsitencia == 'Retraso') badge-retraso
-                                                    @elseif($asistencia->tipoAsitencia == 'Licencia') badge-licencia
-                                                    @else badge-falta @endif">
-                                                        <i
-                                                            class="fas
-                                                        @if ($asistencia->tipoAsitencia == 'Presente') fa-check
-                                                        @elseif($asistencia->tipoAsitencia == 'Retraso') fa-clock
-                                                        @elseif($asistencia->tipoAsitencia == 'Licencia') fa-file-medical
-                                                        @else fa-times @endif me-1">
-                                                        </i>
-                                                        {{ $asistencia->tipoAsitencia }}
-                                                    </span>
-                                                </td>
-                                            @endif
-
-                                            <td>
-                                                <i class="fas fa-calendar-alt me-1"></i>
-                                                {{ \Carbon\Carbon::parse($asistencia->fechaasistencia)->format('d/m/Y') }}
-                                                <br>
-                                                <small class="text-muted">
-                                                    {{ \Carbon\Carbon::parse($asistencia->fechaasistencia)->diffForHumans() }}
-                                                </small>
-                                            </td>
-
-                                            @if (auth()->user()->hasAnyRole(['Docente', 'Administrador']))
-                                                <td>
-                                                    <div class="btn-group" role="group">
-                                                        <button type="button" class="btn btn-sm btn-outline-info"
-                                                            data-bs-toggle="tooltip" title="Ver detalles">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            @endif
-                                        </tr>
-                                    @endif
-                                @empty
-                                    <tr>
-                                        <td colspan="{{ auth()->user()->hasAnyRole(['Docente', 'Administrador'])? 5: 4 }}"
-                                            class="text-center text-muted py-5">
-                                            <div class="empty-state">
-                                                <i class="fas fa-clipboard-list fa-3x mb-3 text-muted"></i>
-                                                <h5>No hay registros de asistencia</h5>
-                                                <p class="text-muted">No se encontraron registros que coincidan con los
-                                                    filtros aplicados.</p>
-                                                @if (request()->hasAny(['busqueda', 'fecha_desde', 'fecha_hasta', 'tipo_asistencia']))
-                                                    <a href="{{ route('historialAsistencias', encrypt($cursos->id)) }}"
-                                                        class="btn btn-outline-primary">
-                                                        <i class="fas fa-eraser me-1"></i> Limpiar Filtros
-                                                    </a>
-                                                @endif
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Paginación -->
-                    @if ($asistencias->hasPages())
-                        <div class="row mt-4">
-                            <div class="col-md-6">
-                                <div class="pagination-info">
-                                    <span class="text-muted">
-                                        Mostrando {{ $asistencias->firstItem() }} a {{ $asistencias->lastItem() }} de
-                                        {{ $asistencias->total() }} registros
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="pagination-wrapper float-end">
-                                    {{ $asistencias->appends(request()->query())->links('vendor.pagination.custom') }}
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-                    @if (auth()->user()->hasRole('Docente') && (!$cursos->fecha_fin || now() <= $cursos->fecha_fin))
-                        <div class="text-center mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-save me-2"></i> Guardar Cambios
-                                <span class="badge bg-warning ms-1" id="changesCount">0</span>
-                            </button>
-                        </div>
-                    @endif
-                </form>
+                <div class="col-md-3 border-end">
+                    <div class="small text-muted">Licencias</div>
+                    <strong class="text-info">{{ $stats['licencia_percent'] ?? '0%' }}</strong>
+                </div>
+                <div class="col-md-3">
+                    <div class="small text-muted">Faltas</div>
+                    <strong class="text-danger">{{ $stats['falta_percent'] ?? '0%' }}</strong>
+                </div>
             </div>
         </div>
+
+        {{-- Filtros de búsqueda --}}
+        <div class="p-3 bg-white border-bottom">
+            <form method="GET" action="{{ route('historialAsistencias', encrypt($cursos->id)) }}" id="filtrosForm">
+                <div class="row g-2 align-items-end justify-content-end">
+                    <div class="col-md-3">
+                        <label class="small text-muted ms-2">Desde</label>
+                        <input type="date" class="form-control form-control-sm rounded-pill"
+                               name="fecha_desde" id="fecha_desde" value="{{ request('fecha_desde') }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="small text-muted ms-2">Hasta</label>
+                        <input type="date" class="form-control form-control-sm rounded-pill"
+                               name="fecha_hasta" id="fecha_hasta" value="{{ request('fecha_hasta') }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="small text-muted ms-2">Estado</label>
+                        <select name="tipo_asistencia" id="tipo_asistencia" class="form-select form-select-sm rounded-pill">
+                            <option value="">Todos los estados</option>
+                            <option value="Presente" {{ request('tipo_asistencia') == 'Presente' ? 'selected' : '' }}>Presente</option>
+                            <option value="Retraso" {{ request('tipo_asistencia') == 'Retraso' ? 'selected' : '' }}>Retraso</option>
+                            <option value="Licencia" {{ request('tipo_asistencia') == 'Licencia' ? 'selected' : '' }}>Licencia</option>
+                            <option value="Falta" {{ request('tipo_asistencia') == 'Falta' ? 'selected' : '' }}>Falta</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex gap-1">
+                        <button type="submit" class="btn btn-primary btn-sm rounded-pill flex-fill">
+                            <i class="bi bi-filter"></i> Filtrar
+                        </button>
+                        <a href="{{ route('historialAsistencias', encrypt($cursos->id)) }}"
+                           class="btn btn-outline-secondary btn-sm rounded-pill flex-fill">
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="p-0">
+            <form action="{{ route('historialAsistenciasPost', encrypt($cursos->id)) }}" method="POST" id="attendanceForm">
+                @csrf
+                <div class="table-container-modern">
+                    <table class="table-modern" id="dataTable">
+                        <thead>
+                            <tr>
+                                <th width="5%"><div class="th-content">#</div></th>
+                                <th width="35%">
+                                    <div class="th-content">
+                                        <i class="bi bi-person-fill"></i>
+                                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'estudiante', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc']) }}" class="text-inherit text-decoration-none">
+                                            Estudiante
+                                            <i class="bi bi-sort-alpha-{{ request('direction') == 'asc' ? 'down' : 'up' }} ms-1"></i>
+                                        </a>
+                                    </div>
+                                </th>
+                                <th width="25%"><div class="th-content"><i class="bi bi-check2-square"></i><span>Asistencia</span></div></th>
+                                <th width="20%">
+                                    <div class="th-content">
+                                        <i class="bi bi-calendar-event"></i>
+                                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'fecha', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc']) }}" class="text-inherit text-decoration-none">
+                                            Fecha
+                                            <i class="bi bi-sort-numeric-{{ request('direction') == 'asc' ? 'down' : 'up' }} ms-1"></i>
+                                        </a>
+                                    </div>
+                                </th>
+                                @if (auth()->user()->hasAnyRole(['Docente', 'Administrador']))
+                                    <th width="15%"><div class="th-content justify-content-center"><i class="bi bi-gear-fill"></i><span>Acciones</span></div></th>
+                                @endif
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($asistencias as $index => $asistencia)
+                                @if ($asistencia->curso_id == $cursos->id && (auth()->user()->hasAnyRole(['Docente', 'Administrador']) || (auth()->user()->hasRole('Estudiante') && auth()->user()->id == $asistencia->inscritos->estudiantes->id)))
+                                    <tr>
+                                        <td><span class="row-number">{{ ($asistencias->currentPage() - 1) * $asistencias->perPage() + $loop->iteration }}</span></td>
+                                        <td>
+                                            <div class="prt-student">
+                                                <div class="tbl-avatar">
+                                                    {{ strtoupper(substr($asistencia->inscritos->estudiantes->name, 0, 1)) }}
+                                                </div>
+                                                <div class="prt-student-info">
+                                                    <div class="prt-student-name">
+                                                        {{ $asistencia->inscritos->estudiantes->name }}
+                                                        {{ $asistencia->inscritos->estudiantes->lastname1 }}
+                                                        {{ $asistencia->inscritos->estudiantes->lastname2 }}
+                                                    </div>
+                                                    <small class="prt-student-email">{{ $asistencia->inscritos->estudiantes->email ?? 'Sin email' }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        @if (auth()->user()->hasAnyRole(['Docente', 'Administrador']))
+                                            <td>
+                                                <input type="hidden" name="asistencia[{{ $asistencia->id }}][id]" value="{{ $asistencia->id }}">
+                                                <select name="asistencia[{{ $asistencia->id }}][tipo_asistencia]" class="form-select form-select-sm rounded-pill attendance-select">
+                                                    <option value="Presente" {{ $asistencia->tipoAsitencia == 'Presente' ? 'selected' : '' }}>Presente</option>
+                                                    <option value="Retraso" {{ $asistencia->tipoAsitencia == 'Retraso' ? 'selected' : '' }}>Retraso</option>
+                                                    <option value="Licencia" {{ $asistencia->tipoAsitencia == 'Licencia' ? 'selected' : '' }}>Licencia</option>
+                                                    <option value="Falta" {{ $asistencia->tipoAsitencia == 'Falta' ? 'selected' : '' }}>Falta</option>
+                                                </select>
+                                            </td>
+                                        @else
+                                            <td>
+                                                @php
+                                                    $badgeClass = match($asistencia->tipoAsitencia) {
+                                                        'Presente' => 'status-active',
+                                                        'Retraso'  => 'status-pending',
+                                                        'Licencia' => 'status-info',
+                                                        default    => 'status-danger'
+                                                    };
+                                                    $iconClass = match($asistencia->tipoAsitencia) {
+                                                        'Presente' => 'bi-check-circle-fill',
+                                                        'Retraso'  => 'bi-clock-fill',
+                                                        'Licencia' => 'bi-file-medical-fill',
+                                                        default    => 'bi-x-circle-fill'
+                                                    };
+                                                @endphp
+                                                <span class="status-badge {{ $badgeClass }}">
+                                                    <i class="bi {{ $iconClass }} me-1"></i>
+                                                    {{ $asistencia->tipoAsitencia }}
+                                                </span>
+                                            </td>
+                                        @endif
+
+                                        <td>
+                                            <div class="date-badge">
+                                                <i class="bi bi-calendar-check me-1"></i>
+                                                {{ \Carbon\Carbon::parse($asistencia->fechaasistencia)->format('d/m/Y') }}
+                                            </div>
+                                            <small class="text-muted d-block mt-1">
+                                                {{ \Carbon\Carbon::parse($asistencia->fechaasistencia)->diffForHumans() }}
+                                            </small>
+                                        </td>
+
+                                        @if (auth()->user()->hasAnyRole(['Docente', 'Administrador']))
+                                            <td class="text-center">
+                                                <div class="action-buttons-cell justify-content-center">
+                                                    <button type="button" class="btn-action-modern btn-view" data-bs-toggle="tooltip" title="Ver detalles">
+                                                        <i class="bi bi-eye-fill"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        @endif
+                                    </tr>
+                                @endif
+                            @empty
+                                <tr>
+                                    <td colspan="{{ auth()->user()->hasAnyRole(['Docente', 'Administrador']) ? 5 : 4 }}">
+                                        <div class="empty-state-table">
+                                            <div class="empty-icon-table"><i class="bi bi-clipboard-x"></i></div>
+                                            <h5 class="empty-title-table">No hay registros de asistencia</h5>
+                                            <p class="empty-text-table">No se encontraron registros para los filtros seleccionados.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                {{-- Paginación y Botón Guardar --}}
+                <div class="p-3 bg-light border-top d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+                    <div class="pagination-info small text-muted">
+                        Mostrando {{ $asistencias->firstItem() ?? 0 }} a {{ $asistencias->lastItem() ?? 0 }} de {{ $asistencias->total() }} registros
+                    </div>
+
+                    <div class="tbl-pagination m-0">
+                        {{ $asistencias->appends(request()->query())->links('custom-pagination') }}
+                    </div>
+
+                    @if (auth()->user()->hasRole('Docente') && (!$cursos->fecha_fin || now() <= $cursos->fecha_fin))
+                        <button type="submit" class="tbl-hero-btn tbl-hero-btn-primary" id="saveBtn">
+                            <i class="bi bi-save-fill"></i> Guardar Cambios
+                            <span class="badge bg-white text-primary ms-1" id="changesCount">0</span>
+                        </button>
+                    @endif
+                </div>
+            </form>
+        </div>
     </div>
+</div>
+
+@endsection
+
+<style>
+    .tbl-hero-search-input { padding-left: 2.5rem !important; }
+    .tbl-hero-search-icon { left: 1rem !important; }
+
+    .status-info {
+        background: rgba(13, 202, 240, 0.1) !important;
+        color: #0dcaf0 !important;
+        border: 1px solid rgba(13, 202, 240, 0.2) !important;
+    }
+    .status-danger {
+        background: rgba(220, 53, 69, 0.1) !important;
+        color: #dc3545 !important;
+        border: 1px solid rgba(220, 53, 69, 0.2) !important;
+    }
+
+    .attendance-select {
+        transition: all 0.2s;
+    }
+    .attendance-select:focus {
+        border-color: var(--tbl-primary);
+        box-shadow: 0 0 0 0.2rem rgba(20, 93, 160, 0.15);
+    }
+</style>
 
 
     <script>
@@ -624,4 +383,3 @@
             });
         });
     </script>
-@endsection

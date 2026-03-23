@@ -1,3 +1,5 @@
+
+
 @extends('layout')
 
 @section('titulo')
@@ -5,539 +7,725 @@
 @endsection
 
 @section('content')
-<div class="container-fluid py-4">
-    {{-- Botón Volver --}}
-    <div class="back-button-wrapper mb-4">
-        <a href="{{ route('Curso', $cursos->codigoCurso) }}" class="btn-back-modern">
-            <i class="bi bi-arrow-left-circle-fill"></i>
-            <span>Volver al Curso</span>
-        </a>
-    </div>
 
-    <div class="tbl-card">
-        {{-- Hero Section --}}
-        <div class="tbl-card-hero">
-            <div class="tbl-card-hero-content">
-                <h1 class="tbl-card-hero-title text-white">
-                    <i class="bi bi-people-fill me-2"></i>Lista de Participantes
-                </h1>
-                <p class="tbl-card-hero-subtitle text-white">
-                    Curso: <span class="fw-bold">{{ $cursos->nombreCurso }}</span>
-                </p>
-            </div>
+<div class="container my-4">
+<div class="tbl-card">
 
-            <div class="tbl-card-hero-actions">
-                <div class="d-flex gap-2 flex-wrap justify-content-end">
-                    @if (auth()->user()->id == $cursos->docente_id || auth()->user()->hasRole('Administrador'))
-                        <a class="tbl-hero-btn tbl-hero-btn-glass" href="{{ route('listaretirados', encrypt($cursos->id)) }}">
-                            <i class="bi bi-person-x"></i>
-                            <span>Retirados</span>
-                        </a>
-                        @if ($cursos->tipo == 'congreso')
-                            <a class="tbl-hero-btn tbl-hero-btn-primary" href="{{ route('certificadosCongreso.generar', $cursos->id) }}">
-                                <i class="bi bi-award"></i>
-                                <span>Generar Certificados</span>
-                            </a>
-                        @endif
-                        <a class="tbl-hero-btn tbl-hero-btn-primary" href="{{ route('lista', encrypt($cursos->id)) }}">
-                            <i class="bi bi-download"></i>
-                            <span>Descargar Lista</span>
-                        </a>
-                    @endif
-                </div>
+    <div class="tbl-card-hero">
+
+        <div class="tbl-hero-left">
+            <a href="{{ route('Curso', $cursos->codigoCurso) }}"
+               class="tbl-hero-btn tbl-hero-btn-glass prt-back-btn mb-2">
+                <i class="bi bi-arrow-left-circle-fill"></i>
+                <span>Volver</span>
+            </a>
+            <div class="tbl-hero-eyebrow">
+                <i class="bi bi-people-fill"></i> Participantes
             </div>
+            <h2 class="tbl-hero-title">Lista de Participantes</h2>
+            <p class="tbl-hero-sub">
+                Curso: <strong>{{ $cursos->nombreCurso }}</strong>
+            </p>
         </div>
 
-        <div class="p-4">
-            {{-- Barra de Herramientas y Filtros --}}
-            <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded-4 border border-light-subtle flex-wrap gap-3">
-                <div class="tbl-hero-search" style="max-width: 400px; width: 100%;">
-                    <i class="bi bi-search tbl-hero-search-icon text-muted"></i>
-                    <input type="text" class="tbl-hero-search-input text-dark border-light-subtle" id="searchInput" placeholder="Buscar participante por nombre, email..." autocomplete="off">
+        <div class="tbl-hero-controls">
+            @if(auth()->user()->id == $cursos->docente_id || auth()->user()->hasRole('Administrador'))
+
+                {{-- Botones de acción --}}
+                <div class="d-flex gap-2 mb-2 flex-wrap justify-content-end">
+                    <a class="tbl-hero-btn tbl-hero-btn-glass"
+                       href="{{ route('listaretirados', encrypt($cursos->id)) }}">
+                        <i class="bi bi-person-x-fill"></i>
+                        <span>Retirados</span>
+                    </a>
+
+                    @if($cursos->tipo == 'congreso')
+                    <a class="tbl-hero-btn tbl-hero-btn-primary"
+                       href="{{ route('certificadosCongreso.generar', $cursos->id) }}">
+                        <i class="bi bi-award-fill"></i>
+                        <span>Certificados</span>
+                    </a>
+                    @endif
+
+                    <a class="tbl-hero-btn tbl-hero-btn-primary"
+                       href="{{ route('lista', encrypt($cursos->id)) }}">
+                        <i class="bi bi-download"></i>
+                        <span>Descargar Lista</span>
+                    </a>
                 </div>
 
-                <div class="d-flex gap-3 align-items-center flex-wrap">
+                {{-- Buscador y Filtros --}}
+                <div class="d-flex gap-2 flex-wrap justify-content-end align-items-center">
+
+                    {{-- Filtro estado (solo Admin) --}}
                     @role('Administrador')
-                        <div class="tbl-hero-select-wrap">
-                            <i class="bi bi-filter tbl-hero-select-icon text-muted"></i>
-                            <select class="tbl-hero-select ps-5 text-dark border-light-subtle" id="statusFilter" style="width: 220px; background-color: white;">
-                                <option value="">Todos los estados</option>
-                                @if ($cursos->tipo == 'curso')
-                                    <option value="pago-completado">Pago Completado</option>
-                                    <option value="pago-revision">Pago en Revisión</option>
-                                @elseif($cursos->tipo == 'congreso')
-                                    <option value="certificado">Certificado</option>
-                                    <option value="sin-certificado">Sin certificado</option>
-                                @endif
-                            </select>
-                        </div>
+                    <div class="tbl-hero-select-wrap">
+                        <i class="bi bi-funnel-fill tbl-hero-select-icon"></i>
+                        <select class="tbl-hero-select" id="prtStatusFilter">
+                            <option value="">Todos los estados</option>
+                            @if($cursos->tipo == 'curso')
+                                <option value="pago-completado">Pago Completado</option>
+                                <option value="pago-revision">Pago en Revisión</option>
+                            @elseif($cursos->tipo == 'congreso')
+                                <option value="certificado">Certificado</option>
+                                <option value="sin-certificado">Sin certificado</option>
+                            @endif
+                        </select>
+                    </div>
                     @endrole
 
-                    <div class="d-flex gap-2">
-                        <span class="status-badge status-primary">
-                            <i class="bi bi-people-fill me-1"></i>
-                            <span id="visibleCount">{{ $inscritos->where('cursos_id', $cursos->id)->count() }}</span> / {{ $inscritos->where('cursos_id', $cursos->id)->count() }}
-                        </span>
-                        @role('Administrador')
-                            @if ($cursos->tipo == 'curso')
-                                <span class="status-badge status-warning">
-                                    <i class="bi bi-clock-history me-1"></i>
-                                    Pendientes: {{ $inscritos->where('cursos_id', $cursos->id)->where('pago_completado', false)->count() }}
-                                </span>
-                            @elseif ($cursos->tipo == 'congreso')
-                                <span class="status-badge status-warning">
-                                    <i class="bi bi-award me-1"></i>
-                                    Pendientes: {{ $inscritos->where('cursos_id', $cursos->id)->where('certificado', false)->count() }}
-                                </span>
-                            @endif
-                        @endrole
+                    {{-- Buscador --}}
+                    <div class="tbl-hero-search">
+                        <i class="bi bi-search tbl-hero-search-icon"></i>
+                        <input type="text"
+                               class="tbl-hero-search-input"
+                               id="prtSearchInput"
+                               placeholder="Buscar por nombre, email…"
+                               autocomplete="off">
                     </div>
                 </div>
-            </div>
 
-            {{-- Acciones Masivas (Oculto inicialmente) --}}
-            <div id="massActionsCard" class="alert alert-primary border-0 rounded-4 shadow-sm mb-4 animate__animated animate__fadeIn" style="display: none;">
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-check-all display-6 me-3"></i>
-                        <div>
-                            <p class="mb-0 fw-bold"><span id="selectedCount">0</span> Participantes seleccionados</p>
-                            <p class="mb-0 small text-primary-emphasis">Elige una acción para aplicar a todos los seleccionados.</p>
-                        </div>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-danger rounded-pill px-4" id="retirarSeleccionados">
-                            <i class="bi bi-person-x me-1"></i> Retirar
-                        </button>
-                        @if ($cursos->tipo == 'congreso')
-                            <button class="btn btn-success rounded-pill px-4" id="generarCertificados">
-                                <i class="bi bi-award me-1"></i> Certificados
-                            </button>
-                        @endif
-                        <button class="btn btn-outline-primary rounded-pill px-4" id="deselectAll">
-                            <i class="bi bi-x-circle me-1"></i> Cancelar
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Tabla de Participantes --}}
-            <div class="table-container-modern shadow-none border-0 p-0">
-                <table class="table-modern" id="participantesTable">
-                    <thead>
-                        <tr>
-                            @if (auth()->user()->hasRole('Docente') || auth()->user()->hasRole('Administrador'))
-                                <th style="width: 5%" class="text-center">
-                                    <div class="form-check d-flex justify-content-center">
-                                        <input type="checkbox" id="masterCheckbox" class="form-check-input custom-checkbox">
-                                    </div>
-                                </th>
-                            @endif
-                            <th style="width: 5%">#</th>
-                            <th style="width: 40%"><div class="th-content"><i class="bi bi-person-fill"></i><span>Participante</span></div></th>
-                            <th style="width: 15%"><div class="th-content"><i class="bi bi-telephone-fill"></i><span>Contacto</span></div></th>
-                            @role('Administrador')
-                                <th style="width: 15%"><div class="th-content justify-content-center"><i class="bi bi-info-circle-fill"></i><span>Estado</span></div></th>
-                            @endrole
-                            <th style="width: 20%" class="text-center"><div class="th-content justify-content-center"><i class="bi bi-gear-fill"></i><span>Acciones</span></div></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($inscritos as $inscrito)
-                            @if ($inscrito->cursos_id == $cursos->id)
-                                <tr class="participante-row" data-participante-id="{{ $inscrito->id }}"
-                                    data-pago-status="{{ $inscrito->pago_completado ? 'completado' : 'pendiente' }}"
-                                    data-certificado-status="{{ $inscrito->certificado ? 'certificado' : 'sin-certificado' }}">
-                                    @if (auth()->user()->hasRole('Docente') || auth()->user()->hasRole('Administrador'))
-                                        <td class="text-center">
-                                            <div class="form-check d-flex justify-content-center">
-                                                <input type="checkbox" class="form-check-input student-checkbox custom-checkbox" value="{{ $inscrito->id }}">
-                                            </div>
-                                        </td>
-                                    @endif
-                                    <td><span class="text-muted fw-bold">{{ $loop->iteration }}</span></td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="tbl-avatar me-3">
-                                                {{ substr($inscrito->estudiantes->name ?? 'E', 0, 1) }}
-                                            </div>
-                                            <div class="d-flex flex-column">
-                                                <div class="fw-bold text-dark mb-0">
-                                                    {{ $inscrito->estudiantes->name ?? 'Estudiante Eliminado' }}
-                                                    {{ $inscrito->estudiantes->lastname1 ?? '' }}
-                                                    {{ $inscrito->estudiantes->lastname2 ?? '' }}
-                                                </div>
-                                                @if (isset($inscrito->estudiantes->email))
-                                                    <div class="text-muted smallest" style="font-size: 0.75rem;">
-                                                        <i class="bi bi-envelope me-1"></i>{{ $inscrito->estudiantes->email }}
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        @if ($inscrito->estudiantes->Celular ?? false)
-                                            <div class="text-dark small">
-                                                <i class="bi bi-telephone-fill me-1 text-primary"></i>
-                                                +{{ $inscrito->estudiantes->Celular }}
-                                            </div>
-                                        @else
-                                            <span class="text-muted smallest italic">Sin celular</span>
-                                        @endif
-                                    </td>
-                                    @role('Administrador')
-                                        <td class="text-center">
-                                            @if ($cursos->tipo == 'curso')
-                                                @if ($inscrito->pago_completado)
-                                                    <span class="status-badge status-success">
-                                                        <i class="bi bi-check-circle-fill"></i> Pagado
-                                                    </span>
-                                                @else
-                                                    <span class="status-badge status-warning">
-                                                        <i class="bi bi-clock-history"></i> En Revisión
-                                                    </span>
-                                                @endif
-                                            @elseif ($cursos->tipo == 'congreso')
-                                                @if ($inscrito->certificado)
-                                                    <span class="status-badge status-success">
-                                                        <i class="bi bi-award-fill"></i> Certificado
-                                                    </span>
-                                                @else
-                                                    <span class="status-badge status-warning">
-                                                        <i class="bi bi-award"></i> Pendiente
-                                                    </span>
-                                                @endif
-                                            @endif
-                                        </td>
-                                    @endrole
-                                    <td>
-                                        <div class="action-buttons-cell">
-                                            <a class="btn-action-modern btn-info" href="{{ route('perfil', [encrypt($inscrito->estudiantes->id)]) }}" title="Ver Perfil">
-                                                <i class="bi bi-person-badge-fill"></i>
-                                            </a>
-
-                                            @if (auth()->user()->hasRole('Docente') || auth()->user()->hasRole('Administrador'))
-                                                <form action="{{ route('quitarInscripcion', $inscrito->id) }}" method="POST" class="form-retirar d-inline">
-                                                    @csrf
-                                                    <button type="submit" class="btn-action-modern btn-delete" title="Retirar Estudiante">
-                                                        <i class="bi bi-person-x-fill"></i>
-                                                    </button>
-                                                </form>
-
-                                                @if ($cursos->tipo == 'congreso')
-                                                    <a class="btn-action-modern btn-view"
-                                                        href="{{ !isset($inscrito->certificado) ? route('certificadosCongreso.generar.admin', encrypt($inscrito->id)) : route('certificados.reenviar.email', encrypt($inscrito->id)) }}"
-                                                        title="{{ !isset($inscrito->certificado) ? 'Generar Certificado' : 'Reenviar Certificado' }}">
-                                                        <i class="bi bi-award-fill"></i>
-                                                    </a>
-                                                @endif
-
-                                                @if ($cursos->tipo == 'curso')
-                                                    <a class="btn-action-modern btn-info" href="{{ route('boletin', [encrypt($inscrito->id)]) }}" title="Ver Boletín">
-                                                        <i class="bi bi-journal-text"></i>
-                                                    </a>
-                                                    {{-- <a class="btn-action-modern btn-view" href="{{ route('verCalificacionFinal', [encrypt($inscrito->id)]) }}" title="Calificaciones Finales">
-                                                        <i class="bi bi-journal-check"></i>
-                                                    </a> --}}
-                                                @endif
-                                            @endif
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endif
-                        @empty
-                            <tr>
-                                <td colspan="{{ auth()->user()->hasRole('Administrador') ? '6' : '5' }}">
-                                    <div class="empty-state-table py-5">
-                                        <i class="bi bi-people display-4 text-muted mb-3"></i>
-                                        <h5 class="text-muted">No hay participantes inscritos</h5>
-                                        <p class="text-muted small">Los estudiantes aparecerán aquí conforme se inscriban.</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    {{-- Estadísticas Rápidas --}}
-    <div class="row g-4 mt-2">
-        <div class="col-md-3">
-            <div class="st-card st-card--blue">
-                <div class="st-card-body">
-                    <div>
-                        <div class="st-label">Inscritos Totales</div>
-                        <div class="st-num">{{ $inscritos->where('cursos_id', $cursos->id)->count() }}</div>
-                    </div>
-                    <div class="st-icon st-icon--blue">
-                        <i class="bi bi-people-fill"></i>
-                    </div>
-                </div>
-                <div class="st-bar st-bar--blue"></div>
-            </div>
-        </div>
-        @role('Administrador')
-            @if ($cursos->tipo == 'curso')
-                <div class="col-md-3">
-                    <div class="st-card st-card--green">
-                        <div class="st-card-body">
-                            <div>
-                                <div class="st-label">Pagos Verificados</div>
-                                <div class="st-num text-success">{{ $inscritos->where('cursos_id', $cursos->id)->where('pago_completado', true)->count() }}</div>
-                            </div>
-                            <div class="st-icon st-icon--green">
-                                <i class="bi bi-check-circle-fill"></i>
-                            </div>
-                        </div>
-                        <div class="st-bar st-bar--green"></div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="st-card st-card--orange">
-                        <div class="st-card-body">
-                            <div>
-                                <div class="st-label">Pagos Pendientes</div>
-                                <div class="st-num text-warning">{{ $inscritos->where('cursos_id', $cursos->id)->where('pago_completado', false)->count() }}</div>
-                            </div>
-                            <div class="st-icon st-icon--orange">
-                                <i class="bi bi-clock-history"></i>
-                            </div>
-                        </div>
-                        <div class="st-bar st-bar--orange"></div>
-                    </div>
-                </div>
-            @elseif ($cursos->tipo == 'congreso')
-                <div class="col-md-3">
-                    <div class="st-card st-card--green">
-                        <div class="st-card-body">
-                            <div>
-                                <div class="st-label">Certificados OK</div>
-                                <div class="st-num text-success">{{ $inscritos->where('cursos_id', $cursos->id)->where('certificado', true)->count() }}</div>
-                            </div>
-                            <div class="st-icon st-icon--green">
-                                <i class="bi bi-award-fill"></i>
-                            </div>
-                        </div>
-                        <div class="st-bar st-bar--green"></div>
-                    </div>
-                </div>
             @endif
-        @endrole
-        <div class="col-md-3">
-            <div class="st-card st-card--red">
-                <div class="st-card-body">
-                    <div>
-                        <div class="st-label">En Pantalla</div>
-                        <div id="statsVisible" class="st-num text-danger">{{ $inscritos->where('cursos_id', $cursos->id)->count() }}</div>
-                    </div>
-                    <div class="st-icon st-icon--red">
-                        <i class="bi bi-eye-fill"></i>
-                    </div>
-                </div>
-                <div class="st-bar st-bar--red"></div>
-            </div>
+        </div>
+
+    </div>{{-- /tbl-card-hero --}}
+
+    {{-- Barra de contadores --}}
+    <div class="tbl-filter-bar">
+        <div class="tbl-filter-bar-left">
+            <i class="bi bi-people-fill"></i>
+            Mostrando: <strong id="prtVisible">{{ $inscritos->where('cursos_id', $cursos->id)->count() }}</strong>
+            de <strong>{{ $inscritos->where('cursos_id', $cursos->id)->count() }}</strong>
+            @role('Administrador')
+                @if($cursos->tipo == 'curso')
+                · <span class="ms-2">Pendientes: <strong>{{ $inscritos->where('cursos_id', $cursos->id)->where('pago_completado', false)->count() }}</strong></span>
+                @elseif($cursos->tipo == 'congreso')
+                · <span class="ms-2">Pendientes: <strong>{{ $inscritos->where('cursos_id', $cursos->id)->where('certificado', false)->count() }}</strong></span>
+                @endif
+            @endrole
         </div>
     </div>
+
+    <div class="p-0"> {{-- Cambiado de p-4 a p-0 para que la tabla use todo el ancho --}}
+
+        <div id="prtMassActions" class="prt-mass-actions" style="display:none; margin: 1rem;">
+            <div class="prt-mass-actions-inner">
+                <div class="prt-mass-info">
+                    <div class="prt-mass-icon"><i class="bi bi-check-all"></i></div>
+                    <div>
+                        <strong><span id="prtSelectedCount">0</span> participantes seleccionados</strong>
+                        <div class="prt-mass-sub">Elige una acción para aplicar a los seleccionados</div>
+                    </div>
+                </div>
+                <div class="prt-mass-btns">
+                    <button class="tbl-hero-btn tbl-hero-btn-danger" id="prtBtnRetirar">
+                        <i class="bi bi-person-x-fill"></i> Retirar
+                    </button>
+                    @if($cursos->tipo == 'congreso')
+                    <button class="tbl-hero-btn tbl-hero-btn-primary" id="prtBtnCertificados">
+                        <i class="bi bi-award-fill"></i> Certificados
+                    </button>
+                    @endif
+                    <button class="tbl-hero-btn tbl-hero-btn-glass prt-btn-cancel" id="prtBtnDeselect">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        {{-- ╔══════════════════════════════════════╗
+             ║  TABLA                              ║
+             ╚══════════════════════════════════════╝ --}}
+        <div class="table-container-modern">
+            <table class="table-modern" id="prtTable">
+                <thead>
+                    <tr>
+                        @if(auth()->user()->hasRole('Docente') || auth()->user()->hasRole('Administrador'))
+                        <th style="width:5%" class="text-center">
+                            <input type="checkbox" class="prt-checkbox" id="prtMasterCheck">
+                        </th>
+                        @endif
+                        <th style="width:4%">
+                            <div class="th-content"><i class="bi bi-hash"></i></div>
+                        </th>
+                        <th style="width:38%">
+                            <div class="th-content">
+                                <i class="bi bi-person-fill"></i><span>Participante</span>
+                            </div>
+                        </th>
+                        <th style="width:15%">
+                            <div class="th-content">
+                                <i class="bi bi-telephone-fill"></i><span>Contacto</span>
+                            </div>
+                        </th>
+                        @role('Administrador')
+                        <th style="width:13%" class="text-center">
+                            <div class="th-content justify-content-center">
+                                <i class="bi bi-info-circle-fill"></i><span>Estado</span>
+                            </div>
+                        </th>
+                        @endrole
+                        <th class="text-center">
+                            <div class="th-content justify-content-center">
+                                <i class="bi bi-gear-fill"></i><span>Acciones</span>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($inscritos as $inscrito)
+                    @if($inscrito->cursos_id == $cursos->id)
+                    <tr class="prt-row"
+                        data-pago="{{ $inscrito->pago_completado ? 'completado' : 'pendiente' }}"
+                        data-cert="{{ $inscrito->certificado ? 'certificado' : 'sin-certificado' }}">
+
+                        {{-- Checkbox --}}
+                        @if(auth()->user()->hasRole('Docente') || auth()->user()->hasRole('Administrador'))
+                        <td class="text-center">
+                            <input type="checkbox"
+                                   class="prt-checkbox prt-row-check"
+                                   value="{{ $inscrito->id }}">
+                        </td>
+                        @endif
+
+                        {{-- Nro --}}
+                        <td><span class="row-number">{{ $loop->iteration }}</span></td>
+
+                        {{-- Participante --}}
+                        <td>
+                            <div class="prt-student">
+                                <div class="tbl-avatar">
+                                    {{ strtoupper(substr($inscrito->estudiantes->name ?? 'E', 0, 1)) }}
+                                </div>
+                                <div class="prt-student-info">
+                                    <div class="prt-student-name">
+                                        {{ $inscrito->estudiantes->name      ?? 'Estudiante Eliminado' }}
+                                        {{ $inscrito->estudiantes->lastname1 ?? '' }}
+                                        {{ $inscrito->estudiantes->lastname2 ?? '' }}
+                                    </div>
+                                    @if(isset($inscrito->estudiantes->email))
+                                    <div class="prt-student-email">
+                                        <i class="bi bi-envelope me-1"></i>
+                                        {{ $inscrito->estudiantes->email }}
+                                    </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </td>
+
+                        {{-- Contacto --}}
+                        <td>
+                            @if($inscrito->estudiantes->Celular ?? false)
+                            <div class="prt-phone">
+                                <i class="bi bi-telephone-fill"></i>
+                                +{{ $inscrito->estudiantes->Celular }}
+                            </div>
+                            @else
+                            <span class="prt-no-data">Sin celular</span>
+                            @endif
+                        </td>
+
+                        {{-- Estado (Admin) --}}
+                        @role('Administrador')
+                        <td class="text-center">
+                            @if($cursos->tipo == 'curso')
+                                @if($inscrito->pago_completado)
+                                    <span class="status-badge status-active">
+                                        <i class="bi bi-check-circle-fill"></i> Pagado
+                                    </span>
+                                @else
+                                    <span class="status-badge status-pending">
+                                        <i class="bi bi-clock-history"></i> En Revisión
+                                    </span>
+                                @endif
+                            @elseif($cursos->tipo == 'congreso')
+                                @if($inscrito->certificado)
+                                    <span class="status-badge status-active">
+                                        <i class="bi bi-award-fill"></i> Certificado
+                                    </span>
+                                @else
+                                    <span class="status-badge status-pending">
+                                        <i class="bi bi-award"></i> Pendiente
+                                    </span>
+                                @endif
+                            @endif
+                        </td>
+                        @endrole
+
+                        {{-- Acciones --}}
+                        <td>
+                            <div class="action-buttons-cell">
+
+                                <a class="btn-action-modern btn-info"
+                                   href="{{ route('perfil', [encrypt($inscrito->estudiantes->id)]) }}"
+                                   title="Ver Perfil">
+                                    <i class="bi bi-person-badge-fill"></i>
+                                </a>
+
+                                @if(auth()->user()->hasRole('Docente') || auth()->user()->hasRole('Administrador'))
+
+                                <form action="{{ route('quitarInscripcion', $inscrito->id) }}"
+                                      method="POST"
+                                      class="prt-form prt-form-retirar">
+                                    @csrf
+                                    <button type="submit"
+                                            class="btn-action-modern btn-delete"
+                                            title="Retirar Estudiante">
+                                        <i class="bi bi-person-x-fill"></i>
+                                    </button>
+                                </form>
+
+                                @if($cursos->tipo == 'congreso')
+                                <a class="btn-action-modern btn-view"
+                                   href="{{ !isset($inscrito->certificado)
+                                        ? route('certificadosCongreso.generar.admin', encrypt($inscrito->id))
+                                        : route('certificados.reenviar.email', encrypt($inscrito->id)) }}"
+                                   title="{{ !isset($inscrito->certificado) ? 'Generar Certificado' : 'Reenviar Certificado' }}">
+                                    <i class="bi bi-award-fill"></i>
+                                </a>
+                                @endif
+
+                                @if($cursos->tipo == 'curso')
+                                <a class="btn-action-modern btn-info"
+                                   href="{{ route('boletin', [encrypt($inscrito->id)]) }}"
+                                   title="Ver Boletín">
+                                    <i class="bi bi-journal-text"></i>
+                                </a>
+                                @endif
+
+                                @endif
+
+                            </div>
+                        </td>
+
+                    </tr>
+                    @endif
+                    @empty
+                    <tr>
+                        <td colspan="{{ auth()->user()->hasRole('Administrador') ? '6' : '5' }}">
+                            <div class="empty-state-table">
+                                <div class="empty-icon-table"><i class="bi bi-people"></i></div>
+                                <h5 class="empty-title-table">No hay participantes inscritos</h5>
+                                <p class="empty-text-table">Los estudiantes aparecerán aquí conforme se inscriban.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+    </div>{{-- /p-0 --}}
+
+
+{{-- ╔══════════════════════════════════════╗
+     ║  ESTADÍSTICAS RÁPIDAS              ║
+     ╚══════════════════════════════════════╝ --}}
+<div class="row g-3 mt-2">
+
+    <div class="col-md-3">
+        <div class="st-card st-card--blue">
+            <div class="st-card-body">
+                <div>
+                    <div class="st-label">Inscritos Totales</div>
+                    {{-- FIX 9: sin text-success/warning/danger --}}
+                    <div class="st-num">{{ $inscritos->where('cursos_id', $cursos->id)->count() }}</div>
+                </div>
+                <div class="st-icon st-icon--blue">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+            </div>
+            <div class="st-bar st-bar--blue"></div>
+        </div>
+    </div>
+
+    @role('Administrador')
+    @if($cursos->tipo == 'curso')
+    <div class="col-md-3">
+        <div class="st-card st-card--green">
+            <div class="st-card-body">
+                <div>
+                    <div class="st-label">Pagos Verificados</div>
+                    <div class="st-num">{{ $inscritos->where('cursos_id', $cursos->id)->where('pago_completado', true)->count() }}</div>
+                </div>
+                <div class="st-icon st-icon--green">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+            </div>
+            <div class="st-bar st-bar--green"></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="st-card st-card--orange">
+            <div class="st-card-body">
+                <div>
+                    <div class="st-label">Pagos Pendientes</div>
+                    <div class="st-num">{{ $inscritos->where('cursos_id', $cursos->id)->where('pago_completado', false)->count() }}</div>
+                </div>
+                <div class="st-icon st-icon--orange">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+            </div>
+            <div class="st-bar st-bar--orange"></div>
+        </div>
+    </div>
+    @elseif($cursos->tipo == 'congreso')
+    <div class="col-md-3">
+        <div class="st-card st-card--green">
+            <div class="st-card-body">
+                <div>
+                    <div class="st-label">Certificados OK</div>
+                    <div class="st-num">{{ $inscritos->where('cursos_id', $cursos->id)->where('certificado', true)->count() }}</div>
+                </div>
+                <div class="st-icon st-icon--green">
+                    <i class="bi bi-award-fill"></i>
+                </div>
+            </div>
+            <div class="st-bar st-bar--green"></div>
+        </div>
+    </div>
+    @endif
+    @endrole
+
+    <div class="col-md-3">
+        <div class="st-card st-card--red">
+            <div class="st-card-body">
+                <div>
+                    <div class="st-label">En Pantalla</div>
+                    <div class="st-num" id="prtStatsVisible">
+                        {{ $inscritos->where('cursos_id', $cursos->id)->count() }}
+                    </div>
+                </div>
+                <div class="st-icon st-icon--red">
+                    <i class="bi bi-eye-fill"></i>
+                </div>
+            </div>
+            <div class="st-bar st-bar--red"></div>
+        </div>
+    </div>
+
 </div>
+</div>{{-- /container-fluid --}}
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const searchInput = document.getElementById('searchInput');
-        const statusFilter = document.getElementById('statusFilter');
-        const rows = document.querySelectorAll('.participante-row');
-        const visibleCountSpan = document.getElementById('visibleCount');
-        const statsVisibleSpan = document.getElementById('statsVisible');
-        const totalRows = rows.length;
-
-        function applyFilters() {
-            const searchTerm = searchInput.value.toLowerCase().trim();
-            const filterValue = statusFilter ? statusFilter.value : '';
-            let visibleCount = 0;
-
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                const pagoStatus = row.dataset.pagoStatus;
-                const certificadoStatus = row.dataset.certificadoStatus;
-
-                let matchesSearch = text.includes(searchTerm);
-                let matchesFilter = true;
-
-                if (filterValue) {
-                    if (filterValue === 'pago-completado' || filterValue === 'pago-revision') {
-                        matchesFilter = (filterValue === 'pago-completado' && pagoStatus === 'completado') ||
-                                        (filterValue === 'pago-revision' && pagoStatus === 'pendiente');
-                    } else if (filterValue === 'certificado' || filterValue === 'sin-certificado') {
-                        matchesFilter = (certificadoStatus === filterValue);
-                    }
-                }
-
-                const isVisible = matchesSearch && matchesFilter;
-                row.style.display = isVisible ? '' : 'none';
-                if (isVisible) visibleCount++;
-            });
-
-            visibleCountSpan.textContent = visibleCount;
-            statsVisibleSpan.textContent = visibleCount;
-        }
-
-        if (searchInput) searchInput.addEventListener('input', applyFilters);
-        if (statusFilter) statusFilter.addEventListener('change', applyFilters);
-
-        // Manejo de checkboxes y acciones masivas
-        const masterCheckbox = document.getElementById('masterCheckbox');
-        const studentCheckboxes = document.querySelectorAll('.student-checkbox');
-        const massActionsCard = document.getElementById('massActionsCard');
-        const selectedCountSpan = document.getElementById('selectedCount');
-
-        function updateMassActions() {
-            const selectedCount = document.querySelectorAll('.student-checkbox:checked').length;
-            selectedCountSpan.textContent = selectedCount;
-            massActionsCard.style.display = selectedCount > 0 ? 'block' : 'none';
-        }
-
-        if (masterCheckbox) {
-            masterCheckbox.addEventListener('change', function() {
-                studentCheckboxes.forEach(cb => {
-                    if (cb.closest('tr').style.display !== 'none') {
-                        cb.checked = this.checked;
-                    }
-                });
-                updateMassActions();
-            });
-        }
-
-        studentCheckboxes.forEach(cb => {
-            cb.addEventListener('change', updateMassActions);
-        });
-
-        document.getElementById('deselectAll')?.addEventListener('click', () => {
-            studentCheckboxes.forEach(cb => cb.checked = false);
-            if (masterCheckbox) masterCheckbox.checked = false;
-            updateMassActions();
-        });
-
-        // Confirmación de retiro individual
-        document.querySelectorAll('.form-retirar').forEach(form => {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                Swal.fire({
-                    title: '¿Retirar estudiante?',
-                    text: "Esta acción quitará al estudiante de la lista de inscritos. Se puede revertir desde la lista de retirados.",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#ef4444',
-                    cancelButtonColor: '#64748b',
-                    confirmButtonText: 'Sí, retirar',
-                    cancelButtonText: 'Cancelar',
-                    reverseButtons: true
-                }).then((result) => {
-                    if (result.isConfirmed) this.submit();
-                });
-            });
-        });
-
-        // Retiro masivo
-        document.getElementById('retirarSeleccionados')?.addEventListener('click', function() {
-            const ids = Array.from(document.querySelectorAll('.student-checkbox:checked')).map(cb => cb.value);
-            if (ids.length === 0) return;
-
-            Swal.fire({
-                title: `¿Retirar ${ids.length} participantes?`,
-                text: "Se retirarán todos los estudiantes seleccionados del curso.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#ef4444',
-                cancelButtonColor: '#64748b',
-                confirmButtonText: 'Sí, retirar todos',
-                cancelButtonText: 'Cancelar',
-                reverseButtons: true,
-                showLoaderOnConfirm: true,
-                preConfirm: () => {
-                    return fetch('{{ route('cursos.retirarMasivo') }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            inscripciones: ids,
-                            curso_id: {{ $cursos->id }}
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (!data.success) throw new Error(data.message);
-                        return data;
-                    })
-                    .catch(error => {
-                        Swal.showValidationMessage(`Error: ${error.message}`);
-                    });
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire('¡Éxito!', 'Los participantes han sido retirados.', 'success')
-                        .then(() => window.location.reload());
-                }
-            });
-        });
-
-        // Generar certificados masivos
-        document.getElementById('generarCertificados')?.addEventListener('click', function() {
-            const ids = Array.from(document.querySelectorAll('.student-checkbox:checked')).map(cb => cb.value);
-            Swal.fire({
-                title: '¿Generar certificados?',
-                text: `Se procesarán ${ids.length} certificados para los estudiantes seleccionados.`,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#10b981',
-                confirmButtonText: 'Sí, generar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire('Función en desarrollo', 'La generación masiva estará disponible pronto.', 'info');
-                }
-            });
-        });
-    });
-</script>
-
-<style>
-    .custom-checkbox {
-        width: 1.2rem;
-        height: 1.2rem;
-        border-radius: 6px;
-        cursor: pointer;
-    }
-    .italic { font-style: italic; }
-    .status-badge {
-        font-size: 0.75rem;
-        padding: 0.4rem 0.8rem;
-        border-radius: 50px;
-        font-weight: 700;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-    }
-    .smallest { font-size: 0.75rem; }
-    .empty-state-table {
-        text-align: center;
-        background: #f8fafc;
-        border-radius: 20px;
-        border: 2px dashed #e2e8f0;
-    }
-    .tbl-hero-search-input:focus {
-        border-color: #1a4789 !important;
-        box-shadow: 0 0 0 0.2rem rgba(26, 71, 137, 0.1) !important;
-        background: white !important;
-    }
-    .tbl-hero-select:focus {
-        border-color: #1a4789 !important;
-        outline: none;
-    }
-</style>
 @endsection
 
+
+<style>
+/* ════════════════════
+   TOOLBAR
+════════════════════ */
+.adm-tabs-header .tbl-hero-search {
+    position: relative;
+    width: 100%;
+}
+.adm-tabs-header .tbl-hero-search-icon {
+    position: absolute;
+    left: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+}
+.adm-tabs-header .tbl-hero-search-input {
+    padding-left: 3rem !important;
+}
+.adm-tabs-header .tbl-hero-select-wrap {
+    position: relative;
+}
+.adm-tabs-header .tbl-hero-select-icon {
+    position: absolute;
+    left: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+}
+.adm-tabs-header .tbl-hero-select {
+    padding-left: 2.5rem !important;
+}
+
+/* Inputs en fondo claro */
+.prt-input-light {
+    background:   #fff !important;
+    color:        #0f172a !important;
+    border-color: #d1dce8 !important;
+    width:        100% !important;
+}
+.prt-input-light::placeholder { color: #94a3b8 !important; }
+.prt-input-light:focus {
+    border-color: #2a81c2 !important;
+    box-shadow:   0 0 0 3px rgba(42,129,194,.13) !important;
+    width:        100% !important;
+    background:   #fff !important;
+}
+.prt-select-light {
+    background-color: #fff !important;
+    color:            #374151 !important;
+    border-color:     #d1dce8 !important;
+}
+.prt-icon-muted { color: #94a3b8 !important; }
+
+/* ════════════════════
+   ACCIONES MASIVAS
+   FIX 5: animación del sistema
+════════════════════ */
+.prt-mass-actions {
+    background:    rgba(20,93,160,.06);
+    border:        1.5px solid rgba(20,93,160,.18);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    animation:     prtFadeIn .25s ease both;
+}
+@keyframes prtFadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.prt-mass-actions-inner {
+    display:         flex;
+    align-items:     center;
+    justify-content: space-between;
+    padding:         .9rem 1.1rem;
+    gap:             .8rem;
+    flex-wrap:       wrap;
+}
+.prt-mass-info {
+    display:     flex;
+    align-items: center;
+    gap:         .75rem;
+}
+.prt-mass-icon {
+    width:           40px; height: 40px;
+    border-radius:   50%;
+    background:      rgba(20,93,160,.12);
+    color:           #145da0;
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    font-size:       1.1rem;
+    flex-shrink:     0;
+}
+.prt-mass-sub   { font-size: .76rem; color: #64748b; margin-top: .12rem; }
+.prt-mass-btns  { display: flex; gap: .5rem; flex-wrap: wrap; }
+.prt-btn-cancel { color: #64748b !important; }
+
+/* ════════════════════
+   CHECKBOX PERSONALIZADO
+════════════════════ */
+.prt-checkbox {
+    width:         1.1rem;
+    height:        1.1rem;
+    border-radius: 5px;
+    cursor:        pointer;
+    accent-color:  #145da0;
+}
+
+/* ════════════════════
+   CELDA PARTICIPANTE
+════════════════════ */
+.prt-student {
+    display:     flex;
+    align-items: center;
+    gap:         .7rem;
+}
+.prt-student-info  { display: flex; flex-direction: column; gap: .1rem; }
+.prt-student-name  { font-size: .88rem; font-weight: 700; color: #0f172a; }
+.prt-student-email { font-size: .72rem; color: #94a3b8; display: flex; align-items: center; }
+
+.prt-phone {
+    display:     flex;
+    align-items: center;
+    gap:         .35rem;
+    font-size:   .83rem;
+    color:       #374151;
+}
+.prt-phone i { color: #145da0; font-size: .78rem; }
+.prt-no-data { font-size: .76rem; color: #c5d0dc; font-style: italic; }
+
+/* Botón volver compacto en el hero */
+.prt-back-btn { padding: .32rem .75rem !important; font-size: .76rem !important; margin-bottom: .5rem; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .prt-toolbar         { flex-direction: column; align-items: stretch; }
+    .prt-toolbar-right   { flex-direction: column; align-items: flex-start; }
+    .prt-mass-actions-inner { flex-direction: column; align-items: flex-start; }
+    .prt-mass-btns       { width: 100%; }
+    .tbl-hero-btn span   { display: none; }
+}
+</style>
+
+
+<script>
+(function () {
+    document.addEventListener('DOMContentLoaded', function () {
+
+        /* ── Referencias ── */
+        const searchInput   = document.getElementById('prtSearchInput');
+        const statusFilter  = document.getElementById('prtStatusFilter');
+        const visibleSpan   = document.getElementById('prtVisible');
+        const statsSpan     = document.getElementById('prtStatsVisible');
+        const masterCheck   = document.getElementById('prtMasterCheck');
+        const massActions   = document.getElementById('prtMassActions');
+        const selectedSpan  = document.getElementById('prtSelectedCount');
+
+        /* ── Filtrado ── */
+        function applyFilters() {
+            const rows = document.querySelectorAll('.prt-row');
+            const q  = searchInput?.value.toLowerCase().trim() || '';
+            const fv = statusFilter?.value || '';
+            let vis  = 0;
+
+            rows.forEach(row => {
+                const matchQ = !q || row.textContent.toLowerCase().includes(q);
+                let matchF   = true;
+
+                if (fv) {
+                    if (fv === 'pago-completado') matchF = row.dataset.pago === 'completado';
+                    else if (fv === 'pago-revision') matchF = row.dataset.pago === 'pendiente';
+                    else if (fv === 'certificado' || fv === 'sin-certificado')
+                        matchF = row.dataset.cert === fv;
+                }
+
+                const show = matchQ && matchF;
+                row.style.display = show ? '' : 'none';
+                if (show) vis++;
+            });
+
+            if (visibleSpan)  visibleSpan.textContent  = vis;
+            if (statsSpan)    statsSpan.textContent     = vis;
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('input', applyFilters);
+            searchInput.addEventListener('keyup', applyFilters);
+        }
+
+        if (statusFilter) {
+            statusFilter.addEventListener('change', applyFilters);
+        }
+
+        /* ── Selección masiva ── */
+        function rowChecks() {
+            return document.querySelectorAll('.prt-row-check');
+        }
+
+        function updateMass() {
+            const checkedRows = document.querySelectorAll('.prt-row-check:checked');
+            const n = checkedRows.length;
+            if (selectedSpan)  selectedSpan.textContent  = n;
+            if (massActions)   massActions.style.display = n > 0 ? 'block' : 'none';
+        }
+
+        if (masterCheck) {
+            masterCheck.addEventListener('change', function () {
+                const isChecked = this.checked;
+                rowChecks().forEach(cb => {
+                    if (cb.closest('tr')?.style.display !== 'none') cb.checked = isChecked;
+                });
+                updateMass();
+            });
+        }
+
+        document.addEventListener('change', function (e) {
+            if (e.target.classList.contains('prt-row-check')) updateMass();
+        });
+
+        const deselectBtn = document.getElementById('prtBtnDeselect');
+        if (deselectBtn) {
+            deselectBtn.addEventListener('click', () => {
+                rowChecks().forEach(cb => cb.checked = false);
+                if (masterCheck) masterCheck.checked = false;
+                updateMass();
+            });
+        }
+
+        /* ── Confirmar retiro individual ── */
+        document.querySelectorAll('.prt-form-retirar').forEach(form => {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const f = this;
+                Swal.fire({
+                    title            : '¿Retirar estudiante?',
+                    text             : 'El estudiante será quitado de la lista. Puede revertirse desde retirados.',
+                    icon             : 'warning',
+                    showCancelButton : true,
+                    confirmButtonColor: '#dc2626',
+                    cancelButtonColor : '#145da0',
+                    confirmButtonText : 'Sí, retirar',
+                    cancelButtonText  : 'Cancelar',
+                    reverseButtons    : true,
+                }).then(r => { if (r.isConfirmed) f.submit(); });
+            });
+        });
+
+        /* ── Retiro masivo ── */
+        const btnRetirarMasivo = document.getElementById('prtBtnRetirar');
+        if (btnRetirarMasivo) {
+            btnRetirarMasivo.addEventListener('click', function () {
+                const ids = Array.from(document.querySelectorAll('.prt-row-check:checked'))
+                                .map(cb => cb.value);
+                if (!ids.length) return;
+
+                Swal.fire({
+                    title            : `¿Retirar ${ids.length} participantes?`,
+                    text             : 'Se retirarán todos los estudiantes seleccionados.',
+                    icon             : 'warning',
+                    showCancelButton : true,
+                    confirmButtonColor: '#dc2626',
+                    cancelButtonColor : '#145da0',
+                    confirmButtonText : 'Sí, retirar todos',
+                    cancelButtonText  : 'Cancelar',
+                    reverseButtons    : true,
+                    showLoaderOnConfirm: true,
+                    preConfirm: () => fetch('{{ route('cursos.retirarMasivo') }}', {
+                        method  : 'POST',
+                        headers : {
+                            'Content-Type' : 'application/json',
+                            'X-CSRF-TOKEN' : '{{ csrf_token() }}',
+                            'Accept'       : 'application/json',
+                        },
+                        body: JSON.stringify({ inscripciones: ids, curso_id: {{ $cursos->id }} }),
+                    })
+                    .then(r => r.json())
+                    .then(d => { if (!d.success) throw new Error(d.message); return d; })
+                    .catch(err => Swal.showValidationMessage(`Error: ${err.message}`)),
+                }).then(r => {
+                    if (r.isConfirmed)
+                        Swal.fire({
+                            icon             : 'success',
+                            title            : '¡Listo!',
+                            text             : 'Participantes retirados correctamente.',
+                            confirmButtonColor: '#145da0',
+                        }).then(() => window.location.reload());
+                });
+            });
+        }
+
+        /* ── Certificados masivos ── */
+        const btnCertificadosMasivos = document.getElementById('prtBtnCertificados');
+        if (btnCertificadosMasivos) {
+            btnCertificadosMasivos.addEventListener('click', function () {
+                const ids = Array.from(document.querySelectorAll('.prt-row-check:checked'))
+                                .map(cb => cb.value);
+                Swal.fire({
+                    title            : '¿Generar certificados?',
+                    text             : `Se procesarán ${ids.length} certificados.`,
+                    icon             : 'question',
+                    showCancelButton : true,
+                    confirmButtonColor: '#145da0',
+                    cancelButtonColor : '#94a3b8',
+                    confirmButtonText : 'Sí, generar',
+                    cancelButtonText  : 'Cancelar',
+                }).then(r => {
+                    if (r.isConfirmed)
+                        Swal.fire({
+                            icon             : 'info',
+                            title            : 'En desarrollo',
+                            text             : 'La generación masiva estará disponible pronto.',
+                            confirmButtonColor: '#145da0',
+                        });
+                });
+            });
+        }
+
+    });
+})();
+</script>
