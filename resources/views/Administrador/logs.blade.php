@@ -3,478 +3,246 @@
 @section('titulo', 'Logs del Sistema')
 
 @section('content')
-<style>
-
-.logs-container .card {
-    border: none;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-md);
-}
-
-.logs-container .card-header {
-    background: var(--gradient-primary);
-    color: white;
-    border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
-    padding: 1.25rem 1.5rem;
-}
-
-.logs-container .btn-light {
-    background: white;
-    border-color: white;
-    border-radius: var(--border-radius-sm);
-    color: var(--color-primary);
-    font-weight: 600;
-}
-
-.logs-container .btn-outline-light {
-    border-color: white;
-    color: white;
-    border-radius: var(--border-radius-sm);
-    font-weight: 600;
-}
-
-.logs-container .btn-outline-light:hover {
-    background: white;
-    color: var(--color-primary);
-}
-
-.logs-container .alert-info {
-    background: var(--color-info);
-    color: white;
-    border: none;
-    border-radius: var(--border-radius-sm);
-    padding: 1.5rem;
-}
-
-.logs-container .log-container {
-    border: 1px solid #e9ecef;
-    border-radius: var(--border-radius);
-    background: #f8f9fa;
-    max-height: 600px;
-    overflow-y: auto;
-    padding: 1rem;
-}
-
-.logs-container .log-entry {
-    border-left: 4px solid;
-    border-radius: var(--border-radius-sm);
-    padding: 1rem;
-    margin-bottom: 0.75rem;
-    background: white;
-    transition: all 0.3s ease;
-    box-shadow: var(--shadow-sm);
-}
-
-.logs-container .log-entry:hover {
-    transform: translateX(4px);
-    box-shadow: var(--shadow-md);
-}
-
-.logs-container .log-entry.error {
-    border-left-color: var(--color-danger);
-    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
-}
-
-.logs-container .log-entry.warning {
-    border-left-color: var(--color-warning);
-    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-    color: #856404;
-}
-
-.logs-container .log-entry.info {
-    border-left-color: var(--color-info);
-    background: linear-gradient(135deg, #d1ecf1 0%, #b6e3ec 100%);
-    color: #0c5460;
-}
-
-.logs-container .log-entry.success {
-    border-left-color: var(--color-success);
-    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-    color: #155724;
-}
-
-.logs-container .log-entry.default {
-    border-left-color: var(--color-secondary);
-    background: white;
-}
-
-.logs-container .log-content {
-    white-space: pre-wrap;
-    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-    font-size: 0.85rem;
-    line-height: 1.4;
-    margin: 0;
-}
-
-.logs-container .log-index {
-    background: var(--color-primary);
-    color: white;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: bold;
-    flex-shrink: 0;
-}
-
-.logs-container .stats-bar {
-    background: var(--gradient-secondary);
-    color: white;
-    border-radius: var(--border-radius-sm);
-    padding: 0.75rem 1rem;
-    margin-bottom: 1rem;
-}
-
-.logs-container .stat-item {
-    display: flex;
-    align-items: center;
-    margin-right: 1.5rem;
-}
-
-.logs-container .stat-badge {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
-    padding: 0.25rem 0.75rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.logs-container .btn-group-custom .btn {
-    border-radius: var(--border-radius-sm);
-    margin: 0 0.25rem;
-}
-
-.logs-container .filter-badge {
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.logs-container .filter-badge:hover {
-    transform: scale(1.05);
-}
-
-.logs-container .filter-badge.active {
-    box-shadow: 0 0 0 2px white;
-}
-
-.logs-container .empty-state {
-    padding: 3rem 2rem;
-    text-align: center;
-}
-
-.logs-container .empty-state i {
-    font-size: 4rem;
-    opacity: 0.5;
-    margin-bottom: 1rem;
-    color: var(--color-secondary);
-}
-
-/* Scrollbar personalizado */
-.logs-container .log-container::-webkit-scrollbar {
-    width: 8px;
-}
-
-.logs-container .log-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-}
-
-.logs-container .log-container::-webkit-scrollbar-thumb {
-    background: var(--color-accent1);
-    border-radius: 4px;
-}
-
-.logs-container .log-container::-webkit-scrollbar-thumb:hover {
-    background: var(--color-secondary);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .logs-container .card-header .d-flex {
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .logs-container .stats-bar {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .logs-container .stat-item {
-        margin-right: 0;
-        justify-content: space-between;
-    }
-
-    .logs-container .log-entry {
-        padding: 0.75rem;
-    }
-}
-</style>
-
-<div class="container-fluid py-4 logs-container">
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow-lg">
-                <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
-                    <div class="d-flex align-items-center mb-2 mb-md-0">
-                        <i class="fas fa-file-alt fa-2x me-3"></i>
-                        <div>
-                            <h4 class="mb-0 fw-bold text-white">Logs del Sistema</h4>
-                            <small class="opacity-75">Monitor de actividad y errores</small>
-                        </div>
-                    </div>
-                    <div class="d-flex flex-wrap gap-2">
-                        <a href="{{ route('Inicio') }}" class="btn btn-light">
-                            <i class="fas fa-home me-2"></i>
-                            Inicio
-                        </a>
-                        <button onclick="location.reload()" class="btn btn-outline-light">
-                            <i class="fas fa-sync-alt me-2"></i>
-                            Actualizar
-                        </button>
-                        <button onclick="exportLogs()" class="btn btn-outline-light">
-                            <i class="fas fa-download me-2"></i>
-                            Exportar
-                        </button>
-                    </div>
+<div class="container my-4">
+    <div class="tbl-card shadow-lg">
+   
+        <div class="tbl-card-hero">
+            <div class="tbl-hero-left">
+                <a href="{{ route('Inicio') }}"
+                   class="tbl-hero-btn tbl-hero-btn-glass prt-back-btn mb-2">
+                    <i class="bi bi-house-door-fill"></i> Volver al Inicio
+                </a>
+                <div class="tbl-hero-eyebrow">
+                    <i class="bi bi-terminal-fill"></i> Seguridad & Auditoría
                 </div>
-
-                <div class="card-body">
-                    @if(empty($logs) || (count($logs) == 1 && empty($logs[0])))
-                        <div class="empty-state">
-                            <i class="fas fa-file-search"></i>
-                            <h5 class="text-muted">No hay logs disponibles</h5>
-                            <p class="text-muted mb-3">No se encontraron registros de logs en este momento.</p>
-                            <button onclick="location.reload()" class="btn btn-primary">
-                                <i class="fas fa-sync-alt me-2"></i>
-                                Recargar
-                            </button>
-                        </div>
-                    @else
-                        <!-- Barra de estadísticas -->
-                        <div class="stats-bar d-flex flex-wrap align-items-center justify-content-between">
-                            <div class="d-flex flex-wrap align-items-center">
-                                <div class="stat-item">
-                                    <i class="fas fa-list-ol me-2"></i>
-                                    <span>Total: <strong>{{ count(array_filter($logs)) }}</strong> entradas</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-badge error-badge">
-                                        <i class="fas fa-exclamation-circle me-1"></i>
-                                        <span id="errorCount">0</span> errores
-                                    </span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-badge warning-badge">
-                                        <i class="fas fa-exclamation-triangle me-1"></i>
-                                        <span id="warningCount">0</span> advertencias
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <small class="me-2">Filtrar:</small>
-                                <div class="btn-group-custom">
-                                    <span class="stat-badge filter-badge active" data-filter="all">
-                                        Todos
-                                    </span>
-                                    <span class="stat-badge filter-badge error-badge" data-filter="error">
-                                        Errores
-                                    </span>
-                                    <span class="stat-badge filter-badge warning-badge" data-filter="warning">
-                                        Advertencias
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Contenedor de logs -->
-                        <div class="log-container">
-                            @php
-                                $filteredLogs = array_filter($logs);
-                                $totalLogs = count($filteredLogs);
-                            @endphp
-
-                            @foreach($filteredLogs as $index => $log)
-                                @php
-                                    $logText = trim($log);
-                                    $logClass = 'default';
-                                    $logLower = strtolower($logText);
-
-                                    if (str_contains($logLower, 'error') || str_contains($logLower, 'exception')) {
-                                        $logClass = 'error';
-                                    } elseif (str_contains($logLower, 'warning')) {
-                                        $logClass = 'warning';
-                                    } elseif (str_contains($logLower, 'info')) {
-                                        $logClass = 'info';
-                                    } elseif (str_contains($logLower, 'success') || str_contains($logLower, 'completed')) {
-                                        $logClass = 'success';
-                                    }
-
-                                    $logNumber = $totalLogs - $index;
-                                @endphp
-
-                                <div class="log-entry {{ $logClass }}" data-log-type="{{ $logClass }}">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div class="flex-grow-1 me-3">
-                                            <code class="log-content">{{ $logText }}</code>
-                                        </div>
-                                        <div class="d-flex align-items-center">
-                                            <span class="log-index">{{ $logNumber }}</span>
-                                        </div>
-                                    </div>
-                                    <div class="mt-2 d-flex justify-content-between align-items-center">
-                                        <small class="text-muted">
-                                            <i class="fas fa-clock me-1"></i>
-                                            <span class="log-timestamp">{{ \Carbon\Carbon::now()->subMinutes($index)->diffForHumans() }}</span>
-                                        </small>
-                                        <button class="btn btn-sm btn-outline-secondary copy-log" data-log="{{ $logText }}">
-                                            <i class="fas fa-copy me-1"></i>
-                                            Copiar
-                                        </button>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-
-                        <!-- Controles de navegación -->
-                        <div class="mt-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
-                            <div class="d-flex gap-2">
-                                <button onclick="scrollToTop()" class="btn btn-outline-primary">
-                                    <i class="fas fa-arrow-up me-2"></i>
-                                    Inicio
-                                </button>
-                                <button onclick="scrollToBottom()" class="btn btn-outline-primary">
-                                    <i class="fas fa-arrow-down me-2"></i>
-                                    Final
-                                </button>
-                                <button onclick="clearFilters()" class="btn btn-outline-secondary">
-                                    <i class="fas fa-filter me-2"></i>
-                                    Limpiar filtros
-                                </button>
-                            </div>
-                            <div class="text-muted">
-                                <small>
-                                    <i class="fas fa-database me-1"></i>
-                                    Mostrando {{ count($filteredLogs) }} registros
-                                </small>
-                            </div>
-                        </div>
-                    @endif
+                <h2 class="tbl-hero-title">Logs del Sistema</h2>
+                <p class="tbl-hero-sub text-white-50">
+                    Monitor de actividad, eventos y errores en tiempo real.
+                </p>
+            </div>
+            <div class="tbl-hero-controls text-end">
+                <div class="ec-role-badge mb-2 d-inline-block">
+                    <i class="bi bi-shield-lock-fill me-1"></i> {{ auth()->user()->getRoleNames()->first() }}
+                </div>
+                <div class="d-flex gap-2 justify-content-end">
+                    <button onclick="location.reload()" class="tbl-hero-btn tbl-hero-btn-glass btn-sm">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Actualizar
+                    </button>
+                    <button onclick="exportLogs()" class="tbl-hero-btn tbl-hero-btn-glass btn-sm">
+                        <i class="bi bi-download me-1"></i> Exportar
+                    </button>
                 </div>
             </div>
+        </div>
+
+        <div class="p-4 p-md-5">
+            @if(empty($logs) || (count($logs) == 1 && empty($logs[0])))
+                <div class="text-center py-5">
+                    <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <i class="bi bi-search text-muted fs-1"></i>
+                    </div>
+                    <h5 class="text-muted fw-bold">No hay logs disponibles</h5>
+                    <p class="text-muted small mb-4">No se encontraron registros de actividad en este momento.</p>
+                    <button onclick="location.reload()" class="tbl-hero-btn tbl-hero-btn-primary px-4">
+                        <i class="bi bi-arrow-clockwise me-2"></i> Recargar Monitor
+                    </button>
+                </div>
+            @else
+                <!-- Barra de Estadísticas & Filtros -->
+                <div class="row g-3 align-items-center mb-4 bg-light p-3 rounded-4 border">
+                    <div class="col-md-6">
+                        <div class="d-flex flex-wrap gap-3">
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-white text-dark border p-2 rounded-3 me-2">
+                                    <i class="bi bi-list-ol me-1 text-primary"></i> Total: <strong>{{ count(array_filter($logs)) }}</strong>
+                                </span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-white text-danger border p-2 rounded-3 me-2">
+                                    <i class="bi bi-exclamation-circle-fill me-1"></i> <span id="errorCount">0</span> Errores
+                                </span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-white text-warning border p-2 rounded-3">
+                                    <i class="bi bi-exclamation-triangle-fill me-1"></i> <span id="warningCount">0</span> Avisos
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-md-end align-items-center gap-2">
+                            <span class="small fw-bold text-muted text-uppercase">Filtrar:</span>
+                            <div class="btn-group btn-group-sm p-1 bg-white border rounded-pill shadow-sm">
+                                <button class="btn filter-badge active rounded-pill px-3" data-filter="all">Todos</button>
+                                <button class="btn filter-badge text-danger rounded-pill px-3" data-filter="error">Errores</button>
+                                <button class="btn filter-badge text-warning rounded-pill px-3" data-filter="warning">Avisos</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contenedor de logs con scroll personalizado -->
+                <div class="log-scroll-container rounded-4 border bg-dark p-3" style="max-height: 600px; overflow-y: auto;">
+                    @php
+                        $filteredLogs = array_filter($logs);
+                        $totalLogs = count($filteredLogs);
+                    @endphp
+
+                    @foreach($filteredLogs as $index => $log)
+                        @php
+                            $logText = trim($log);
+                            $logClass = 'default';
+                            $logLower = strtolower($logText);
+
+                            if (str_contains($logLower, 'error') || str_contains($logLower, 'exception')) {
+                                $logClass = 'error';
+                            } elseif (str_contains($logLower, 'warning')) {
+                                $logClass = 'warning';
+                            } elseif (str_contains($logLower, 'info')) {
+                                $logClass = 'info';
+                            } elseif (str_contains($logLower, 'success') || str_contains($logLower, 'completed')) {
+                                $logClass = 'success';
+                            }
+
+                            $logNumber = $totalLogs - $index;
+                        @endphp
+
+                        <div class="log-entry-modern {{ $logClass }} mb-2 p-3 rounded-3 border-start border-4" data-log-type="{{ $logClass }}">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="flex-grow-1 overflow-hidden">
+                                    <code class="text-light small d-block text-break">{{ $logText }}</code>
+                                </div>
+                                <span class="badge bg-secondary-subtle text-secondary small ms-3">#{{ $logNumber }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-white-50 small">
+                                    <i class="bi bi-clock me-1"></i>
+                                    {{ \Carbon\Carbon::now()->subMinutes($index)->diffForHumans() }}
+                                </span>
+                                <button class="btn btn-sm btn-link text-white-50 p-0 text-decoration-none copy-log" data-log="{{ $logText }}">
+                                    <i class="bi bi-clipboard me-1"></i> Copiar
+                                </button>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <!-- Footer de Controles -->
+                <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+                    <div class="d-flex gap-2">
+                        <button onclick="scrollToTop()" class="btn btn-light btn-sm rounded-pill px-3 border">
+                            <i class="bi bi-chevron-double-up me-1"></i> Inicio
+                        </button>
+                        <button onclick="scrollToBottom()" class="btn btn-light btn-sm rounded-pill px-3 border">
+                            <i class="bi bi-chevron-double-down me-1"></i> Final
+                        </button>
+                    </div>
+                    <div class="text-muted small fw-bold">
+                        <i class="bi bi-database-fill-check me-1"></i> Mostrando {{ count($filteredLogs) }} registros
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 </div>
 
+<style>
+    .ec-role-badge {
+        background: rgba(255,165,0,0.15); color: #ffa500;
+        padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.7rem; font-weight: 800;
+        border: 1px solid rgba(255,165,0,0.3);
+    }
+
+    /* Estilos para las entradas de Log */
+    .log-entry-modern { background: rgba(255,255,255,0.03); transition: all 0.2s; }
+    .log-entry-modern:hover { background: rgba(255,255,255,0.06); }
+
+    .log-entry-modern.error { border-color: #ef4444 !important; background: rgba(239, 68, 68, 0.05); }
+    .log-entry-modern.warning { border-color: #f59e0b !important; background: rgba(245, 158, 11, 0.05); }
+    .log-entry-modern.info { border-color: #3b82f6 !important; background: rgba(59, 130, 246, 0.05); }
+    .log-entry-modern.success { border-color: #10b981 !important; background: rgba(16, 185, 129, 0.05); }
+    .log-entry-modern.default { border-color: #64748b !important; }
+
+    .filter-badge.active { background: #145da0 !important; color: #fff !important; }
+
+    /* Scrollbar personalizado para los logs */
+    .log-scroll-container::-webkit-scrollbar { width: 8px; }
+    .log-scroll-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 10px; }
+    .log-scroll-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    .log-scroll-container::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Auto-scroll al final
     scrollToBottom();
-
-    // Contar tipos de logs
     countLogTypes();
-
-    // Configurar filtros
     setupFilters();
-
-    // Configurar botones de copiar
     setupCopyButtons();
 });
 
 function scrollToTop() {
-    const container = document.querySelector('.log-container');
-    container.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
+    const container = document.querySelector('.log-scroll-container');
+    if(container) container.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function scrollToBottom() {
-    const container = document.querySelector('.log-container');
-    container.scrollTo({
-        top: container.scrollHeight,
-        behavior: 'smooth'
-    });
+    const container = document.querySelector('.log-scroll-container');
+    if(container) container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
 }
 
 function countLogTypes() {
-    const errorCount = document.querySelectorAll('.log-entry.error').length;
-    const warningCount = document.querySelectorAll('.log-entry.warning').length;
+    const errorCount = document.querySelectorAll('.log-entry-modern.error').length;
+    const warningCount = document.querySelectorAll('.log-entry-modern.warning').length;
 
-    document.getElementById('errorCount').textContent = errorCount;
-    document.getElementById('warningCount').textContent = warningCount;
+    const errEl = document.getElementById('errorCount');
+    const warnEl = document.getElementById('warningCount');
+
+    if(errEl) errEl.textContent = errorCount;
+    if(warnEl) warnEl.textContent = warningCount;
 }
 
 function setupFilters() {
-    const filterBadges = document.querySelectorAll('.filter-badge');
-    const logEntries = document.querySelectorAll('.log-entry');
+    const filterButtons = document.querySelectorAll('.filter-badge');
+    const logEntries = document.querySelectorAll('.log-entry-modern');
 
-    filterBadges.forEach(badge => {
-        badge.addEventListener('click', function() {
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
             const filter = this.getAttribute('data-filter');
 
-            // Actualizar badges activos
-            filterBadges.forEach(b => b.classList.remove('active'));
+            filterButtons.forEach(b => b.classList.remove('active'));
             this.classList.add('active');
 
-            // Aplicar filtro
             logEntries.forEach(entry => {
                 if (filter === 'all') {
                     entry.style.display = 'block';
                 } else {
-                    if (entry.getAttribute('data-log-type') === filter) {
-                        entry.style.display = 'block';
-                    } else {
-                        entry.style.display = 'none';
-                    }
+                    entry.style.display = entry.getAttribute('data-log-type') === filter ? 'block' : 'none';
                 }
             });
-
-            // Recontar después de filtrar
-            setTimeout(countLogTypes, 100);
         });
     });
 }
 
-function clearFilters() {
-    const allBadge = document.querySelector('.filter-badge[data-filter="all"]');
-    if (allBadge) {
-        allBadge.click();
-    }
-}
-
 function setupCopyButtons() {
-    const copyButtons = document.querySelectorAll('.copy-log');
-
-    copyButtons.forEach(button => {
+    document.querySelectorAll('.copy-log').forEach(button => {
         button.addEventListener('click', function() {
             const logText = this.getAttribute('data-log');
-
             navigator.clipboard.writeText(logText).then(() => {
-                // Feedback visual
                 const originalHtml = this.innerHTML;
-                this.innerHTML = '<i class="fas fa-check me-1"></i>Copiado!';
-                this.classList.remove('btn-outline-secondary');
-                this.classList.add('btn-success');
-
+                this.innerHTML = '<i class="bi bi-check2 me-1"></i> Copiado';
+                this.classList.add('text-success');
                 setTimeout(() => {
                     this.innerHTML = originalHtml;
-                    this.classList.remove('btn-success');
-                    this.classList.add('btn-outline-secondary');
+                    this.classList.remove('text-success');
                 }, 2000);
-            }).catch(err => {
-                console.error('Error al copiar: ', err);
-                alert('Error al copiar el log');
             });
         });
     });
 }
 
 function exportLogs() {
-    const logEntries = document.querySelectorAll('.log-content');
+    const logEntries = document.querySelectorAll('code.text-light');
     let logText = '=== LOGS DEL SISTEMA ===\n';
     logText += 'Generado: ' + new Date().toLocaleString() + '\n';
     logText += 'Total de entradas: ' + logEntries.length + '\n\n';
@@ -492,17 +260,19 @@ function exportLogs() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+
+    Swal.fire({
+        icon: 'success', title: 'Exportación Lista', text: 'El archivo de logs se ha descargado.',
+        toast: true, position: 'top-end', showConfirmButton: false, timer: 3000
+    });
 }
 
-// Auto-refresh cada 30 segundos (opcional)
 setInterval(() => {
-    const refreshBtn = document.querySelector('button[onclick="location.reload()"]');
-    if (refreshBtn) {
-        refreshBtn.innerHTML = '<i class="fas fa-sync-alt me-2"></i>Actualizando...';
-        setTimeout(() => {
-            location.reload();
-        }, 1000);
+    // Solo recargar si no hay filtros activos distintos a 'all'
+    const activeFilter = document.querySelector('.filter-badge.active').getAttribute('data-filter');
+    if (activeFilter === 'all') {
+        // Podrías implementar una recarga AJAX aquí para no refrescar toda la página
     }
-}, 30000);
+}, 60000);
 </script>
 @endsection

@@ -1876,9 +1876,7 @@
    RECURSOS GRID
 ════════════════════ */
 .si-resources-grid {
-    display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1rem;
 }
 
 .si-resource-card {
@@ -1887,7 +1885,6 @@
     border-radius: 12px;
     padding: 1.1rem;
     display: flex;
-    gap: .9rem;
     transition: box-shadow .22s ease, transform .22s ease;
 }
 .si-resource-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.09); transform: translateY(-2px); }

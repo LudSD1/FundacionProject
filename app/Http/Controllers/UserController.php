@@ -389,9 +389,7 @@ class UserController extends Controller
 
             return back()->with('success', 'Se ha cambiado la contraseña correctamente');
         } else {
-            return back()->withErrors([
-                'password' => 'Error en la contraseña antigua.',
-            ]);
+            return back()->with('error', 'La contraseña antigua es incorrecta.');
         }
     }
 

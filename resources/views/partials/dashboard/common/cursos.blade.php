@@ -275,14 +275,11 @@
 
             </div>
         </div>
-    </div>{{-- /dc-header --}}
+    </div>
 
 
     <div class="container dc-body">
 
-        {{-- ╔═══════════════════════════════════════╗
-             ║  ESTADO VACÍO                         ║
-             ╚═══════════════════════════════════════╝ --}}
         @if ($hasNoCourses)
             <div class="dc-empty">
                 <div class="dc-empty-icon">

@@ -65,62 +65,56 @@
                 </div>
 
                 <!-- Tabla de Respuestas Modernizada -->
-                <div class="table-container-modern shadow-none border-0 p-0">
-                    <table class="table-modern">
+                <div class="table-responsive">
+                    <table class="table table-modern align-middle mb-0">
                         <thead>
                             <tr>
-                                <th style="width: 10%">#</th>
-                                <th style="width: 50%">
-                                    <div class="th-content">
-                                        <i class="bi bi-chat-left-text"></i><span>Respuesta</span>
-                                    </div>
-                                </th>
-                                <th style="width: 20%">
-                                    <div class="th-content">
-                                        <i class="bi bi-check-circle"></i><span>¿Es Correcta?</span>
-                                    </div>
-                                </th>
-                                <th style="width: 20%" class="text-center">
-                                    <div class="th-content justify-content-center">
-                                        <i class="bi bi-gear"></i><span>Acciones</span>
-                                    </div>
-                                </th>
+                                <th class="ps-4" style="width: 80px;">#</th>
+                                <th>Información de la Respuesta</th>
+                                <th class="text-center">¿Es Correcta?</th>
+                                <th class="text-end pe-4">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($pregunta->respuestas as $respuesta)
                                 <tr>
-                                    <td><span class="text-muted fw-bold">{{ $loop->iteration }}</span></td>
+                                    <td class="ps-4 text-muted fw-bold">{{ $loop->iteration }}</td>
                                     <td>
-                                        <div class="fw-semibold text-dark">{{ $respuesta->contenido }}</div>
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-light rounded-3 p-2 me-3">
+                                                <i class="bi bi-chat-left-text text-primary fs-5"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 fw-bold text-dark">{{ $respuesta->contenido }}</h6>
+                                            </div>
+                                        </div>
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         @if ($respuesta->es_correcta)
-                                            <span class="status-badge status-success">
-                                                <i class="bi bi-check-lg"></i> Correcta
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-2 small fw-bold">
+                                                <i class="bi bi-check-circle-fill me-1"></i> Correcta
                                             </span>
                                         @else
-                                            <span class="status-badge status-secondary">
-                                                <i class="bi bi-x-lg"></i> Incorrecta
+                                            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-3 py-2 small fw-bold">
+                                                <i class="bi bi-x-circle-fill me-1"></i> Incorrecta
                                             </span>
                                         @endif
                                     </td>
-                                    <td>
-                                        <div class="action-buttons-cell">
-                                            <!-- Botón para Editar Respuesta -->
-                                            <button class="btn-action-modern btn-info" data-bs-toggle="modal"
-                                                data-bs-target="#editarRespuestaModal-{{ $respuesta->id }}"
-                                                title="Editar">
-                                                <i class="bi bi-pencil-square"></i>
+                                    <td class="text-end pe-4">
+                                        <div class="d-flex justify-content-end gap-2">
+                                            <button class="btn btn-light btn-sm border rounded-circle"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#editarRespuestaModal-{{ $respuesta->id }}"
+                                                    title="Editar">
+                                                <i class="bi bi-pencil-square text-primary"></i>
                                             </button>
 
-                                            <!-- Botón para Eliminar Respuesta -->
                                             <form method="POST" action="{{ route('respuestas.delete', encrypt($respuesta->id)) }}"
-                                                class="form-eliminar-resp">
+                                                class="form-eliminar-resp d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn-action-modern btn-delete" title="Eliminar">
-                                                    <i class="bi bi-trash-fill"></i>
+                                                <button type="submit" class="btn btn-light btn-sm border rounded-circle" title="Eliminar">
+                                                    <i class="bi bi-trash-fill text-danger"></i>
                                                 </button>
                                             </form>
                                         </div>
@@ -129,9 +123,12 @@
                             @empty
                                 <tr>
                                     <td colspan="4">
-                                        <div class="empty-state-table py-4">
-                                            <i class="bi bi-inbox display-6 text-muted mb-2"></i>
-                                            <p class="text-muted small">No hay respuestas registradas.</p>
+                                        <div class="text-center py-4">
+                                            <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                                <i class="bi bi-inbox text-muted fs-2"></i>
+                                            </div>
+                                            <h6 class="text-muted fw-bold">No hay respuestas registradas</h6>
+                                            <p class="text-muted small mb-0">Comienza agregando opciones para esta pregunta.</p>
                                         </div>
                                     </td>
                                 </tr>

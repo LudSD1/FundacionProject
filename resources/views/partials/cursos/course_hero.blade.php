@@ -1,8 +1,15 @@
+{{-- ===================================================
+     PARTIAL: Hero del Curso + Panel de Detalles
+     Incluye: hero, panel colapsable, modales de
+     horarios, certificados y gestión de curso.
+     =================================================== --}}
+
+{{-- ===== HERO ===== --}}
 <div class="container-fluid ch-outer">
     <div class="ch-hero">
         @if($cursos->imagen)
-        <div class="ch-hero-bg"
-             style="background-image:url('{{ asset('storage/'.$cursos->imagen) }}')"></div>
+            <div class="ch-hero-bg"
+                 style="background-image:url('{{ asset('storage/'.$cursos->imagen) }}')"></div>
         @endif
         <div class="ch-hero-overlay"></div>
 
@@ -11,7 +18,6 @@
 
                 {{-- Título + badges --}}
                 <div class="ch-hero-text">
-                    {{-- Tipo pill --}}
                     <div class="ch-eyebrow">
                         @if($cursos->tipo === 'curso')
                             <i class="bi bi-book-fill"></i> Curso
@@ -26,35 +32,33 @@
 
                     <h1 class="ch-title">{{ $cursos->nombreCurso }}</h1>
 
-                    {{-- Estado --}}
                     <div class="ch-badges">
                         @php
                             $estadoClass = match($cursos->estado) {
-                                'Activo'                => 'ch-badge-green',
-                                'Certificado Disponible'=> 'ch-badge-orange',
-                                default                 => 'ch-badge-gray',
+                                'Activo'                 => 'ch-badge-green',
+                                'Certificado Disponible' => 'ch-badge-orange',
+                                default                  => 'ch-badge-gray',
                             };
                             $estadoIcon = match($cursos->estado) {
-                                'Activo'                => 'bi-check-circle-fill',
-                                'Certificado Disponible'=> 'bi-patch-check-fill',
-                                default                 => 'bi-pause-circle-fill',
+                                'Activo'                 => 'bi-check-circle-fill',
+                                'Certificado Disponible' => 'bi-patch-check-fill',
+                                default                  => 'bi-pause-circle-fill',
                             };
                         @endphp
                         <span class="ch-badge {{ $estadoClass }}">
-                            <i class="bi {{ $estadoIcon }}"></i>
-                            {{ $cursos->estado }}
+                            <i class="bi {{ $estadoIcon }}"></i> {{ $cursos->estado }}
                         </span>
 
                         @if($cursos->duracion)
-                        <span class="ch-badge ch-badge-glass">
-                            <i class="bi bi-clock"></i> {{ $cursos->duracion }} horas
-                        </span>
+                            <span class="ch-badge ch-badge-glass">
+                                <i class="bi bi-clock"></i> {{ $cursos->duracion }} horas
+                            </span>
                         @endif
 
                         @if($cursos->tipo === 'congreso')
-                        <span class="ch-badge ch-badge-glass">
-                            <i class="bi bi-gift-fill"></i> Gratuito
-                        </span>
+                            <span class="ch-badge ch-badge-glass">
+                                <i class="bi bi-gift-fill"></i> Gratuito
+                            </span>
                         @endif
                     </div>
                 </div>
@@ -74,11 +78,12 @@
     </div>
 
 
+    {{-- ===== PANEL COLAPSABLE ===== --}}
     <div id="courseInfo" class="collapse show">
         <div class="container ch-panel-wrap">
             <div class="ch-panel">
 
-                {{-- ── MAIN: Descripción ── --}}
+                {{-- ── Descripción ── --}}
                 <div class="ch-panel-main">
                     <div class="ch-card">
                         <div class="ch-card-header">
@@ -88,10 +93,39 @@
                             <h5 class="ch-card-title">Descripción del Curso</h5>
                         </div>
                         <p class="ch-description">{{ $cursos->descripcionC ?? 'Sin descripción disponible.' }}</p>
+
+                        @if($cursos->youtube_url)
+                            <div class="mt-4 pt-3 border-top">
+                                <div class="d-flex align-items-center mb-3 text-primary">
+                                    <i class="bi bi-play-circle-fill fs-5 me-2"></i>
+                                    <h6 class="mb-0 fw-bold">Video de Presentación</h6>
+                                </div>
+                                <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow-sm border border-light">
+                                    @php
+                                        $url = $cursos->youtube_url;
+                                        if (str_contains($url, 'watch?v=')) {
+                                            $url = str_replace('watch?v=', 'embed/', $url);
+                                        } elseif (str_contains($url, 'youtu.be/')) {
+                                            $url = str_replace('youtu.be/', 'youtube.com/embed/', $url);
+                                        }
+                                        // Asegurar que no tenga parámetros extras que rompan el embed simple
+                                        if (str_contains($url, '&')) {
+                                            $url = explode('&', $url)[0];
+                                        }
+                                    @endphp
+                                    <iframe src="{{ $url }}"
+                                            title="Presentación del Curso"
+                                            frameborder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                            allowfullscreen>
+                                    </iframe>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
-                {{-- ── SIDEBAR: Docente + Acciones ── --}}
+                {{-- ── Sidebar: Docente + Acciones ── --}}
                 <div class="ch-panel-sidebar">
 
                     {{-- Docente --}}
@@ -103,28 +137,26 @@
                             <h5 class="ch-card-title">Docente</h5>
                         </div>
                         @if($cursos->docente)
-                        <a href="{{ route('perfil', encrypt($cursos->docente->id)) }}"
-                           class="ch-teacher-link">
-                            {{-- Avatar con inicial --}}
-                            <div class="ch-teacher-avatar">
-                                {{ strtoupper(substr($cursos->docente->name, 0, 1)) }}
-                            </div>
-                            <div class="ch-teacher-info">
-                                <span class="ch-teacher-name">
-                                    {{ $cursos->docente->name }}
-                                    {{ $cursos->docente->lastname1 }}
-                                    {{ $cursos->docente->lastname2 }}
-                                </span>
-                                <span class="ch-teacher-sub">Ver perfil completo</span>
-                            </div>
-                            <i class="bi bi-chevron-right ch-teacher-arrow"></i>
-                        </a>
+                            <a href="{{ route('perfil', encrypt($cursos->docente->id)) }}" class="ch-teacher-link">
+                                <div class="ch-teacher-avatar">
+                                    {{ strtoupper(substr($cursos->docente->name, 0, 1)) }}
+                                </div>
+                                <div class="ch-teacher-info">
+                                    <span class="ch-teacher-name">
+                                        {{ $cursos->docente->name }}
+                                        {{ $cursos->docente->lastname1 }}
+                                        {{ $cursos->docente->lastname2 }}
+                                    </span>
+                                    <span class="ch-teacher-sub">Ver perfil completo</span>
+                                </div>
+                                <i class="bi bi-chevron-right ch-teacher-arrow"></i>
+                            </a>
                         @else
                             <p class="text-muted mb-0" style="font-size:.85rem">Sin docente asignado</p>
                         @endif
                     </div>
 
-                    {{-- Acciones rápidas --}}
+                    {{-- Acciones Rápidas --}}
                     <div class="ch-card ch-actions-card">
                         <div class="ch-card-header">
                             <div class="ch-card-icon ch-card-icon--orange">
@@ -157,114 +189,113 @@
                                 </a>
                             @endif
 
-                            {{-- ── Menú Gestionar (Docente / Admin) ── --}}
+                            {{-- Menú Gestionar (Docente / Admin) --}}
                             @if($esDocente || auth()->user()->hasRole('Administrador'))
-                            <div class="ch-manage-wrap">
-                                <button class="ch-action ch-action--manage"
-                                        type="button"
-                                        id="chManageBtn"
-                                        aria-expanded="false">
-                                    <i class="bi bi-gear-fill"></i>
-                                    <span>Gestionar Curso</span>
-                                    <i class="bi bi-chevron-down ch-action-arrow ch-manage-chevron"></i>
-                                </button>
+                                <div class="ch-manage-wrap">
+                                    <button class="ch-action ch-action--manage"
+                                            type="button"
+                                            id="chManageBtn"
+                                            aria-expanded="false">
+                                        <i class="bi bi-gear-fill"></i>
+                                        <span>Gestionar Curso</span>
+                                        <i class="bi bi-chevron-down ch-action-arrow ch-manage-chevron"></i>
+                                    </button>
 
-                                <div class="ch-manage-menu" id="chManageMenu">
+                                    <div class="ch-manage-menu" id="chManageMenu">
 
-                                    <a class="ch-manage-item"
-                                       href="{{ route('curso-imagenes.index', $cursos) }}">
-                                        <i class="bi bi-images text-primary"></i>
-                                        Imágenes de Presentación
-                                    </a>
-
-                                    {{-- FIX: Editar curso aparecía 2 veces. Unificado aquí. --}}
-                                    @if($esDocente || auth()->user()->hasRole('Administrador'))
                                         <a class="ch-manage-item"
-                                           href="{{ route('editarCurso', [encrypt($cursos->id)]) }}">
-                                            <i class="bi bi-pencil-square" style="color:#0ea5e9"></i>
-                                            Editar Curso
+                                           href="{{ route('curso-imagenes.index', $cursos->codigoCurso) }}">
+                                            <i class="bi bi-images text-primary"></i>
+                                            Imágenes de Presentación
                                         </a>
-                                    @endif
 
-                                    @if($esDocente && $cursos->tipo == 'curso')
-                                        <hr class="ch-manage-divider">
-                                        <a class="ch-manage-item" href="#"
-                                           data-bs-toggle="modal" data-bs-target="#modalCrearHorario">
-                                            <i class="bi bi-calendar-plus-fill text-success"></i>
-                                            Crear Horarios
-                                        </a>
-                                        <a class="ch-manage-item"
-                                           href="{{ route('repF', [encrypt($cursos->id)]) }}"
-                                           onclick="mostrarAdvertencia2(event)">
-                                            <i class="bi bi-star-fill text-warning"></i>
-                                            Calificaciones
-                                        </a>
-                                        <a class="ch-manage-item"
-                                           href="{{ route('asistencias', [encrypt($cursos->id)]) }}">
-                                            <i class="bi bi-check2-square text-success"></i>
-                                            Dar Asistencia
-                                        </a>
-                                        <a class="ch-manage-item"
-                                           href="{{ route('cursos.elementos-eliminados', encrypt($cursos->id)) }}">
-                                            <i class="bi bi-trash3-fill text-danger"></i>
-                                            Elementos Eliminados
-                                        </a>
-                                    @endif
-
-                                    @if(auth()->user()->hasRole('Administrador') && !empty($cursos->archivoContenidodelCurso))
-                                        <a class="ch-manage-item"
-                                           href="{{ asset('storage/'.$cursos->archivoContenidodelCurso) }}"
-                                           target="_blank">
-                                            <i class="bi bi-file-earmark-pdf-fill text-danger"></i>
-                                            Ver Plan del Curso
-                                        </a>
-                                    @endif
-
-                                    <hr class="ch-manage-divider">
-
-                                    @if($cursos->estado === 'Certificado Disponible')
-                                        <button type="button" class="ch-manage-item"
-                                                data-bs-toggle="modal" data-bs-target="#certificadoModal">
-                                            <i class="bi bi-patch-check-fill text-warning"></i>
-                                            Obtener Certificado
-                                        </button>
-                                    @endif
-
-                                    @if($cursos->estado == 'Activo')
-                                        <form action="{{ route('cursos.activarCertificados', ['id' => $cursos->id]) }}"
-                                              method="POST">
-                                            @csrf
-                                            <button type="submit" class="ch-manage-item w-100">
-                                                <i class="bi bi-patch-check text-success"></i>
-                                                Activar Certificados
-                                            </button>
-                                        </form>
-                                    @endif
-
-                                    @if(auth()->user()->hasRole('Administrador') || $esDocente)
-                                        @if(!isset($template))
-                                            <a class="ch-manage-item" href="#"
-                                               data-bs-toggle="modal" data-bs-target="#modalCertificado">
-                                                <i class="bi bi-cloud-upload-fill text-primary"></i>
-                                                Subir Plantilla de Certificado
-                                            </a>
-                                        @else
-                                            <a class="ch-manage-item" href="#"
-                                               data-bs-toggle="modal" data-bs-target="#modalEditarCertificado">
-                                                <i class="bi bi-pencil-fill text-primary"></i>
-                                                Actualizar Plantilla
+                                        @if($esDocente || auth()->user()->hasRole('Administrador'))
+                                            <a class="ch-manage-item"
+                                               href="{{ route('editarCurso', [encrypt($cursos->id)]) }}">
+                                                <i class="bi bi-pencil-square" style="color:#0ea5e9"></i>
+                                                Editar Curso
                                             </a>
                                         @endif
-                                        <a class="ch-manage-item"
-                                           href="{{ route('certificados.vistaPrevia', encrypt($cursos->id)) }}"
-                                           target="_blank">
-                                            <i class="bi bi-eye-fill" style="color:#0ea5e9"></i>
-                                            Vista Previa del Certificado
-                                        </a>
-                                    @endif
 
-                                </div>{{-- /ch-manage-menu --}}
-                            </div>{{-- /ch-manage-wrap --}}
+                                        @if($esDocente && $cursos->tipo == 'curso')
+                                            <hr class="ch-manage-divider">
+                                            <a class="ch-manage-item" href="#"
+                                               data-bs-toggle="modal" data-bs-target="#modalCrearHorario">
+                                                <i class="bi bi-calendar-plus-fill text-success"></i>
+                                                Crear Horarios
+                                            </a>
+                                            <a class="ch-manage-item"
+                                               href="{{ route('repF', [encrypt($cursos->id)]) }}"
+                                               onclick="mostrarAdvertencia2(event)">
+                                                <i class="bi bi-star-fill text-warning"></i>
+                                                Calificaciones
+                                            </a>
+                                            <a class="ch-manage-item"
+                                               href="{{ route('asistencias', [encrypt($cursos->id)]) }}">
+                                                <i class="bi bi-check2-square text-success"></i>
+                                                Dar Asistencia
+                                            </a>
+                                            <a class="ch-manage-item"
+                                               href="{{ route('cursos.elementos-eliminados', encrypt($cursos->id)) }}">
+                                                <i class="bi bi-trash3-fill text-danger"></i>
+                                                Elementos Eliminados
+                                            </a>
+                                        @endif
+
+                                        @if(auth()->user()->hasRole('Administrador') && !empty($cursos->archivoContenidodelCurso))
+                                            <a class="ch-manage-item"
+                                               href="{{ asset('storage/'.$cursos->archivoContenidodelCurso) }}"
+                                               target="_blank">
+                                                <i class="bi bi-file-earmark-pdf-fill text-danger"></i>
+                                                Ver Plan del Curso
+                                            </a>
+                                        @endif
+
+                                        <hr class="ch-manage-divider">
+
+                                        @if($cursos->estado === 'Certificado Disponible')
+                                            <button type="button" class="ch-manage-item"
+                                                    data-bs-toggle="modal" data-bs-target="#certificadoModal">
+                                                <i class="bi bi-patch-check-fill text-warning"></i>
+                                                Obtener Certificado
+                                            </button>
+                                        @endif
+
+                                        @if($cursos->estado == 'Activo')
+                                            <form action="{{ route('cursos.activarCertificados', ['id' => $cursos->id]) }}"
+                                                  method="POST">
+                                                @csrf
+                                                <button type="submit" class="ch-manage-item w-100">
+                                                    <i class="bi bi-patch-check text-success"></i>
+                                                    Activar Certificados
+                                                </button>
+                                            </form>
+                                        @endif
+
+                                        @if(auth()->user()->hasRole('Administrador') || $esDocente)
+                                            @if(!isset($template))
+                                                <a class="ch-manage-item" href="#"
+                                                   data-bs-toggle="modal" data-bs-target="#modalCertificado">
+                                                    <i class="bi bi-cloud-upload-fill text-primary"></i>
+                                                    Subir Plantilla de Certificado
+                                                </a>
+                                            @else
+                                                <a class="ch-manage-item" href="#"
+                                                   data-bs-toggle="modal" data-bs-target="#modalEditarCertificado">
+                                                    <i class="bi bi-pencil-fill text-primary"></i>
+                                                    Actualizar Plantilla
+                                                </a>
+                                            @endif
+                                            <a class="ch-manage-item"
+                                               href="{{ route('certificados.vistaPrevia', encrypt($cursos->id)) }}"
+                                               target="_blank">
+                                                <i class="bi bi-eye-fill" style="color:#0ea5e9"></i>
+                                                Vista Previa del Certificado
+                                            </a>
+                                        @endif
+
+                                    </div>{{-- /ch-manage-menu --}}
+                                </div>{{-- /ch-manage-wrap --}}
                             @endif
 
                         </div>{{-- /ch-action-list --}}
@@ -273,55 +304,16 @@
                 </div>{{-- /ch-panel-sidebar --}}
             </div>{{-- /ch-panel --}}
         </div>
-    </div>
+    </div>{{-- /courseInfo --}}
 
-</div>
-
-
-<script>
-    (function () {
-        /* ── 1. Toggle text del botón collapse ── */
-        const btn     = document.getElementById('chCollapseBtn');
-        const panel   = document.getElementById('courseInfo');
-        const label   = btn?.querySelector('.ch-collapse-label');
-
-        if (panel && btn) {
-            panel.addEventListener('show.bs.collapse',  () => {
-                btn.setAttribute('aria-expanded', 'true');
-                if (label) label.textContent = 'Ocultar detalles';
-            });
-            panel.addEventListener('hide.bs.collapse',  () => {
-                btn.setAttribute('aria-expanded', 'false');
-                if (label) label.textContent = 'Ver detalles';
-            });
-        }
-
-        /* ── 2. Menú "Gestionar Curso" personalizado ── */
-        const manageBtn  = document.getElementById('chManageBtn');
-        const manageMenu = document.getElementById('chManageMenu');
-
-        manageBtn?.addEventListener('click', function (e) {
-            e.stopPropagation();
-            const open = manageMenu?.classList.toggle('open');
-            manageBtn.classList.toggle('open', open);
-            manageBtn.setAttribute('aria-expanded', String(open));
-        });
-
-        /* Cerrar al hacer click fuera */
-        document.addEventListener('click', function (e) {
-            if (!e.target.closest('.ch-manage-wrap')) {
-                manageMenu?.classList.remove('open');
-                manageBtn?.classList.remove('open');
-                manageBtn?.setAttribute('aria-expanded', 'false');
-            }
-        });
-
-    })();
-</script>
+</div>{{-- /ch-outer --}}
 
 
+{{-- ===================================================
+     MODALES
+     =================================================== --}}
 
-
+{{-- Modal: Descargar Certificado --}}
 <div class="modal fade" id="certificadoModal" tabindex="-1" aria-labelledby="certificadoModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -333,12 +325,12 @@
     </div>
 </div>
 
-{{-- Modal: Subir Nueva Plantilla --}}
+{{-- Modal: Subir Plantilla de Certificado --}}
 <div class="modal fade" id="modalCertificado" tabindex="-1" aria-labelledby="modalCertificadoLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content shadow">
             <form action="{{ route('certificates.store', $cursos->id) }}" method="POST"
-                enctype="multipart/form-data" novalidate>
+                  enctype="multipart/form-data" novalidate>
                 @csrf
                 <div class="modal-header bg-primary text-white">
                     <h1 class="modal-title fs-5" id="modalCertificadoLabel">
@@ -358,8 +350,11 @@
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold">Seleccionar archivo</label>
                                         <input type="file" name="template_front" class="form-control"
-                                            accept="image/*" required onchange="previewImage(this, '#preview-front')">
-                                        <div class="form-text"><i class="bi bi-info-circle me-1"></i>JPG, PNG, GIF (máx. 5MB)</div>
+                                               accept="image/*" required
+                                               onchange="previewImage(this, '#preview-front')">
+                                        <div class="form-text">
+                                            <i class="bi bi-info-circle me-1"></i>JPG, PNG, GIF (máx. 5MB)
+                                        </div>
                                     </div>
                                     <div class="preview-container" id="preview-container-front">
                                         <div class="preview-placeholder">
@@ -367,7 +362,7 @@
                                             Vista previa aparecerá aquí
                                         </div>
                                         <img id="preview-front" class="img-fluid rounded shadow-sm d-none"
-                                            style="max-height:250px;" alt="Vista previa frontal" />
+                                             style="max-height:250px;" alt="Vista previa frontal" />
                                     </div>
                                 </div>
                             </div>
@@ -382,8 +377,11 @@
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold">Seleccionar archivo</label>
                                         <input type="file" name="template_back" class="form-control"
-                                            accept="image/*" required onchange="previewImage(this, '#preview-back')">
-                                        <div class="form-text"><i class="bi bi-info-circle me-1"></i>JPG, PNG, GIF (máx. 5MB)</div>
+                                               accept="image/*" required
+                                               onchange="previewImage(this, '#preview-back')">
+                                        <div class="form-text">
+                                            <i class="bi bi-info-circle me-1"></i>JPG, PNG, GIF (máx. 5MB)
+                                        </div>
                                     </div>
                                     <div class="preview-container" id="preview-container-back">
                                         <div class="preview-placeholder">
@@ -391,13 +389,15 @@
                                             Vista previa aparecerá aquí
                                         </div>
                                         <img id="preview-back" class="img-fluid rounded shadow-sm d-none"
-                                            style="max-height:250px;" alt="Vista previa trasera" />
+                                             style="max-height:250px;" alt="Vista previa trasera" />
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                     <hr class="my-4">
+
                     {{-- Configuración de texto --}}
                     <div class="card">
                         <div class="card-header bg-light">
@@ -411,7 +411,7 @@
                                     </label>
                                     <div class="d-flex align-items-center gap-2">
                                         <input type="color" name="primary_color"
-                                            class="form-control form-control-color" value="#000000">
+                                               class="form-control form-control-color" value="#000000">
                                         <span class="text-muted small color-value">#000000</span>
                                     </div>
                                 </div>
@@ -420,12 +420,9 @@
                                         <i class="bi bi-fonts me-1"></i>Fuente
                                     </label>
                                     <select name="font_family" class="form-select">
-                                        <option value="Arial">Arial</option>
-                                        <option value="Times New Roman">Times New Roman</option>
-                                        <option value="Helvetica">Helvetica</option>
-                                        <option value="Courier New">Courier New</option>
-                                        <option value="Georgia">Georgia</option>
-                                        <option value="Verdana">Verdana</option>
+                                        @foreach(['Arial','Times New Roman','Helvetica','Courier New','Georgia','Verdana'] as $font)
+                                            <option value="{{ $font }}">{{ $font }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="col-md-4">
@@ -433,10 +430,11 @@
                                         <i class="bi bi-text-paragraph me-1"></i>Tamaño de Fuente
                                     </label>
                                     <div class="input-group">
-                                        <input type="range" name="font_size_range" class="form-range font-size-range"
-                                            min="8" max="72" value="14">
-                                        <input type="number" name="font_size" class="form-control font-size-number"
-                                            min="8" max="72" value="14" style="max-width:80px;">
+                                        <input type="range" name="font_size_range"
+                                               class="form-range font-size-range" min="8" max="72" value="14">
+                                        <input type="number" name="font_size"
+                                               class="form-control font-size-number"
+                                               min="8" max="72" value="14" style="max-width:80px;">
                                         <span class="input-group-text">px</span>
                                     </div>
                                 </div>
@@ -457,14 +455,14 @@
     </div>
 </div>
 
-{{-- Modal: Editar Plantilla --}}
-@if ($cursos->certificateTemplate)
+{{-- Modal: Actualizar Plantilla de Certificado --}}
+@if($cursos->certificateTemplate)
     <div class="modal fade" id="modalEditarCertificado" tabindex="-1"
-        aria-labelledby="modalEditarCertificadoLabel" aria-hidden="true">
+         aria-labelledby="modalEditarCertificadoLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content shadow">
                 <form action="{{ route('certificates.update', $cursos->id) }}" method="POST"
-                    enctype="multipart/form-data" novalidate>
+                      enctype="multipart/form-data" novalidate>
                     @csrf
                     <div class="modal-header bg-warning text-dark">
                         <h1 class="modal-title fs-5" id="modalEditarCertificadoLabel">
@@ -475,39 +473,58 @@
                     <div class="modal-body">
                         <div class="alert alert-info d-flex align-items-center" role="alert">
                             <i class="bi bi-info-circle-fill me-2"></i>
-                            <div><strong>Plantillas actuales:</strong> Si no seleccionas nuevos archivos, se mantendrán los actuales.</div>
+                            <div>
+                                <strong>Plantillas actuales:</strong>
+                                Si no seleccionas nuevos archivos, se mantendrán los actuales.
+                            </div>
                         </div>
+
                         <div class="row g-4">
                             {{-- Vistas previas actuales --}}
                             <div class="col-lg-6">
-                                <h6 class="fw-semibold mb-3"><i class="bi bi-eye me-2"></i>Plantilla Frontal Actual</h6>
+                                <h6 class="fw-semibold mb-3">
+                                    <i class="bi bi-eye me-2"></i>Plantilla Frontal Actual
+                                </h6>
                                 <div class="text-center">
                                     <img src="{{ asset('storage/' . ($template->template_front_path ?? '')) }}"
-                                        class="img-fluid rounded shadow-sm mb-2" style="max-height:150px;" alt="Frontal actual">
+                                         class="img-fluid rounded shadow-sm mb-2"
+                                         style="max-height:150px;" alt="Frontal actual">
                                     <div class="text-muted small">Plantilla frontal en uso</div>
                                 </div>
                             </div>
                             <div class="col-lg-6">
-                                <h6 class="fw-semibold mb-3"><i class="bi bi-eye-fill me-2"></i>Plantilla Trasera Actual</h6>
+                                <h6 class="fw-semibold mb-3">
+                                    <i class="bi bi-eye-fill me-2"></i>Plantilla Trasera Actual
+                                </h6>
                                 <div class="text-center">
                                     <img src="{{ asset('storage/' . ($template->template_back_path ?? '')) }}"
-                                        class="img-fluid rounded shadow-sm mb-2" style="max-height:150px;" alt="Trasera actual">
+                                         class="img-fluid rounded shadow-sm mb-2"
+                                         style="max-height:150px;" alt="Trasera actual">
                                     <div class="text-muted small">Plantilla trasera en uso</div>
                                 </div>
                             </div>
-                            {{-- Nuevas plantillas --}}
+
+                            {{-- Nuevas plantillas opcionales --}}
                             <div class="col-lg-6">
                                 <div class="card h-100 border-warning">
                                     <div class="card-header bg-warning bg-opacity-25">
-                                        <h6 class="card-title mb-0"><i class="bi bi-upload me-2"></i>Nueva Parte Frontal (Opcional)</h6>
+                                        <h6 class="card-title mb-0">
+                                            <i class="bi bi-upload me-2"></i>Nueva Parte Frontal (Opcional)
+                                        </h6>
                                     </div>
                                     <div class="card-body">
                                         <input type="file" name="template_front" class="form-control mb-2"
-                                            accept="image/*" onchange="previewImage(this, '#edit-preview-front')">
+                                               accept="image/*"
+                                               onchange="previewImage(this, '#edit-preview-front')">
                                         <div class="form-text mb-3">Deja vacío para mantener la actual</div>
                                         <div class="preview-container">
-                                            <div class="preview-placeholder"><i class="bi bi-cloud-upload fs-3 d-block mb-2"></i>Nueva vista previa</div>
-                                            <img id="edit-preview-front" class="img-fluid rounded shadow-sm d-none" style="max-height:200px;" alt="Nueva frontal">
+                                            <div class="preview-placeholder">
+                                                <i class="bi bi-cloud-upload fs-3 d-block mb-2"></i>
+                                                Nueva vista previa
+                                            </div>
+                                            <img id="edit-preview-front"
+                                                 class="img-fluid rounded shadow-sm d-none"
+                                                 style="max-height:200px;" alt="Nueva frontal">
                                         </div>
                                     </div>
                                 </div>
@@ -515,24 +532,37 @@
                             <div class="col-lg-6">
                                 <div class="card h-100 border-warning">
                                     <div class="card-header bg-warning bg-opacity-25">
-                                        <h6 class="card-title mb-0"><i class="bi bi-upload me-2"></i>Nueva Parte Trasera (Opcional)</h6>
+                                        <h6 class="card-title mb-0">
+                                            <i class="bi bi-upload me-2"></i>Nueva Parte Trasera (Opcional)
+                                        </h6>
                                     </div>
                                     <div class="card-body">
                                         <input type="file" name="template_back" class="form-control mb-2"
-                                            accept="image/*" onchange="previewImage(this, '#edit-preview-back')">
+                                               accept="image/*"
+                                               onchange="previewImage(this, '#edit-preview-back')">
                                         <div class="form-text mb-3">Deja vacío para mantener la actual</div>
                                         <div class="preview-container">
-                                            <div class="preview-placeholder"><i class="bi bi-cloud-upload fs-3 d-block mb-2"></i>Nueva vista previa</div>
-                                            <img id="edit-preview-back" class="img-fluid rounded shadow-sm d-none" style="max-height:200px;" alt="Nueva trasera">
+                                            <div class="preview-placeholder">
+                                                <i class="bi bi-cloud-upload fs-3 d-block mb-2"></i>
+                                                Nueva vista previa
+                                            </div>
+                                            <img id="edit-preview-back"
+                                                 class="img-fluid rounded shadow-sm d-none"
+                                                 style="max-height:200px;" alt="Nueva trasera">
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                         <hr class="my-4">
+
+                        {{-- Configuración de texto --}}
                         <div class="card">
                             <div class="card-header bg-light">
-                                <h6 class="card-title mb-0"><i class="bi bi-type me-2"></i>Configuración del Texto</h6>
+                                <h6 class="card-title mb-0">
+                                    <i class="bi bi-type me-2"></i>Configuración del Texto
+                                </h6>
                             </div>
                             <div class="card-body">
                                 <div class="row g-3">
@@ -540,28 +570,28 @@
                                         <label class="form-label fw-semibold">Color Primario</label>
                                         <div class="d-flex align-items-center gap-2">
                                             <input type="color" name="primary_color"
-                                                class="form-control form-control-color" value="#ff6b35">
+                                                   class="form-control form-control-color" value="#ff6b35">
                                             <span class="text-muted small color-value">#ff6b35</span>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label fw-semibold">Fuente</label>
                                         <select name="font_family" class="form-select">
-                                            <option value="Arial">Arial</option>
-                                            <option value="Times New Roman" selected>Times New Roman</option>
-                                            <option value="Helvetica">Helvetica</option>
-                                            <option value="Courier New">Courier New</option>
-                                            <option value="Georgia">Georgia</option>
-                                            <option value="Verdana">Verdana</option>
+                                            @foreach(['Arial','Times New Roman','Helvetica','Courier New','Georgia','Verdana'] as $font)
+                                                <option value="{{ $font }}" {{ $font === 'Times New Roman' ? 'selected' : '' }}>
+                                                    {{ $font }}
+                                                </option>
+                                            @endforeach
                                         </select>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label fw-semibold">Tamaño de Fuente</label>
                                         <div class="input-group">
-                                            <input type="range" name="font_size_range" class="form-range font-size-range"
-                                                min="8" max="72" value="18">
-                                            <input type="number" name="font_size" class="form-control font-size-number"
-                                                min="8" max="72" value="18" style="max-width:80px;">
+                                            <input type="range" name="font_size_range"
+                                                   class="form-range font-size-range" min="8" max="72" value="18">
+                                            <input type="number" name="font_size"
+                                                   class="form-control font-size-number"
+                                                   min="8" max="72" value="18" style="max-width:80px;">
                                             <span class="input-group-text">px</span>
                                         </div>
                                     </div>
@@ -583,7 +613,7 @@
     </div>
 @endif
 
-{{-- Modal: Horarios --}}
+{{-- Modal: Lista de Horarios --}}
 <div class="modal fade" id="modalHorario" tabindex="-1" aria-labelledby="modalHorarioLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -594,7 +624,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body p-0">
-                @if ($horarios->isEmpty())
+                @if($horarios->isEmpty())
                     <div class="text-center py-5">
                         <i class="bi bi-calendar-x display-4 text-muted"></i>
                         <p class="mt-3 text-muted">No hay horarios registrados para este curso</p>
@@ -608,36 +638,43 @@
                                     <th><i class="bi bi-clock me-1"></i>Hora Inicio</th>
                                     <th><i class="bi bi-clock-fill me-1"></i>Hora Fin</th>
                                     <th><i class="bi bi-hourglass-split me-1"></i>Duración</th>
-                                    @if ($cursos->docente_id == auth()->user()->id || auth()->user()->hasRole('Administrador'))
+                                    @if($cursos->docente_id == auth()->user()->id || auth()->user()->hasRole('Administrador'))
                                         <th class="text-center"><i class="bi bi-gear me-1"></i>Acciones</th>
                                     @endif
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($horarios as $horario)
+                                @foreach($horarios as $horario)
                                     @php
-                                        $inicio  = Carbon\Carbon::parse($horario->horario->hora_inicio);
-                                        $fin     = Carbon\Carbon::parse($horario->horario->hora_fin);
+                                        $inicio   = Carbon\Carbon::parse($horario->horario->hora_inicio);
+                                        $fin      = Carbon\Carbon::parse($horario->horario->hora_fin);
                                         $duracion = $inicio->diff($fin);
                                     @endphp
                                     <tr class="{{ $horario->trashed() ? 'table-warning' : '' }}">
                                         <td class="fw-medium">
-                                            <span class="badge bg-light text-dark border">{{ $horario->horario->dia }}</span>
+                                            <span class="badge bg-light text-dark border">
+                                                {{ $horario->horario->dia }}
+                                            </span>
                                         </td>
-                                        <td><span class="text-success fw-medium">{{ $inicio->format('h:i A') }}</span></td>
-                                        <td><span class="text-danger fw-medium">{{ $fin->format('h:i A') }}</span></td>
-                                        <td><small class="text-muted">{{ $duracion->h }}h {{ $duracion->i }}m</small></td>
-
-                                        @if ($cursos->docente_id == auth()->user()->id || auth()->user()->hasRole('Administrador'))
+                                        <td>
+                                            <span class="text-success fw-medium">{{ $inicio->format('h:i A') }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-danger fw-medium">{{ $fin->format('h:i A') }}</span>
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">{{ $duracion->h }}h {{ $duracion->i }}m</small>
+                                        </td>
+                                        @if($cursos->docente_id == auth()->user()->id || auth()->user()->hasRole('Administrador'))
                                             <td>
                                                 <div class="d-flex gap-2 justify-content-center">
-                                                    @if ($horario->trashed())
+                                                    @if($horario->trashed())
                                                         <span class="badge bg-warning text-dark">
                                                             <i class="bi bi-archive"></i> Eliminado
                                                         </span>
                                                         <form action="{{ route('horarios.restore', ['id' => $horario->id]) }}"
-                                                            method="POST"
-                                                            onsubmit="return confirm('¿Restaurar este horario?')">
+                                                              method="POST"
+                                                              onsubmit="return confirm('¿Restaurar este horario?')">
                                                             @csrf
                                                             <button type="submit" class="btn btn-sm btn-outline-success">
                                                                 <i class="bi bi-arrow-clockwise"></i> Restaurar
@@ -645,17 +682,17 @@
                                                         </form>
                                                     @else
                                                         <button class="btn btn-sm btn-outline-primary btn-editar-horario"
-                                                            data-id="{{ $horario->id }}"
-                                                            data-dia="{{ $horario->horario->dia }}"
-                                                            data-hora-inicio="{{ $horario->horario->hora_inicio }}"
-                                                            data-hora-fin="{{ $horario->horario->hora_fin }}"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#modalEditarHorario">
+                                                                data-id="{{ $horario->id }}"
+                                                                data-dia="{{ $horario->horario->dia }}"
+                                                                data-hora-inicio="{{ $horario->horario->hora_inicio }}"
+                                                                data-hora-fin="{{ $horario->horario->hora_fin }}"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#modalEditarHorario">
                                                             <i class="bi bi-pencil"></i> Editar
                                                         </button>
                                                         <form action="{{ route('horarios.delete', ['id' => $horario->id]) }}"
-                                                            method="POST"
-                                                            onsubmit="return confirm('¿Eliminar este horario? Esta acción se puede revertir.')">
+                                                              method="POST"
+                                                              onsubmit="return confirm('¿Eliminar este horario? Esta acción se puede revertir.')">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="btn btn-sm btn-outline-danger">
@@ -674,9 +711,9 @@
                 @endif
             </div>
             <div class="modal-footer bg-light">
-                @if ($cursos->docente_id == auth()->user()->id || auth()->user()->hasRole('Administrador'))
+                @if($cursos->docente_id == auth()->user()->id || auth()->user()->hasRole('Administrador'))
                     <button type="button" class="btn btn-success"
-                        data-bs-toggle="modal" data-bs-target="#modalCrearHorario">
+                            data-bs-toggle="modal" data-bs-target="#modalCrearHorario">
                         <i class="bi bi-plus-circle me-1"></i>Agregar Horario
                     </button>
                 @endif
@@ -703,7 +740,7 @@
                     <div class="mb-3">
                         <label for="dia" class="form-label">Día</label>
                         <select name="dia" id="dia" class="form-select">
-                            @foreach (['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'] as $dia)
+                            @foreach(['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'] as $dia)
                                 <option value="{{ $dia }}">{{ $dia }}</option>
                             @endforeach
                         </select>
@@ -740,7 +777,7 @@
                     <div class="mb-3">
                         <label for="edit_dia" class="form-label">Día</label>
                         <select name="dia" id="edit_dia" class="form-select" required>
-                            @foreach (['lunes','martes','miércoles','jueves','viernes','sábado','domingo'] as $dia)
+                            @foreach(['lunes','martes','miércoles','jueves','viernes','sábado','domingo'] as $dia)
                                 <option value="{{ $dia }}">{{ ucfirst($dia) }}</option>
                             @endforeach
                         </select>
@@ -764,7 +801,9 @@
 </div>
 
 
-{{-- ===== ESTILOS ===== --}}
+{{-- ===================================================
+     ESTILOS — sin cambios respecto al original
+     =================================================== --}}
 <style>
     /* ---- Modales ---- */
     .modal-header.bg-primary { border-bottom: none; }
@@ -902,3 +941,89 @@
     }
     .dropdown-submenu:hover .dropdown-menu { display: block; }
 </style>
+
+
+{{-- ===================================================
+     SCRIPTS
+     =================================================== --}}
+<script>
+(function () {
+
+    /* ── 1. Toggle collapse (texto + ícono) ── */
+    const btn   = document.getElementById('chCollapseBtn');
+    const panel = document.getElementById('courseInfo');
+    const label = btn?.querySelector('.ch-collapse-label');
+
+    if (panel && btn) {
+        panel.addEventListener('show.bs.collapse', () => {
+            btn.setAttribute('aria-expanded', 'true');
+            if (label) label.textContent = 'Ocultar detalles';
+        });
+        panel.addEventListener('hide.bs.collapse', () => {
+            btn.setAttribute('aria-expanded', 'false');
+            if (label) label.textContent = 'Ver detalles';
+        });
+    }
+
+    /* ── 2. Menú "Gestionar Curso" personalizado ── */
+    const manageBtn  = document.getElementById('chManageBtn');
+    const manageMenu = document.getElementById('chManageMenu');
+
+    manageBtn?.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const open = manageMenu?.classList.toggle('open');
+        manageBtn.classList.toggle('open', open);
+        manageBtn.setAttribute('aria-expanded', String(open));
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest('.ch-manage-wrap')) {
+            manageMenu?.classList.remove('open');
+            manageBtn?.classList.remove('open');
+            manageBtn?.setAttribute('aria-expanded', 'false');
+        }
+    });
+
+    /* ── 3. Modal editar horario — poblar campos ── */
+    document.querySelectorAll('.btn-editar-horario').forEach(btn => {
+        btn.addEventListener('click', function () {
+            document.getElementById('edit_dia').value         = this.dataset.dia;
+            document.getElementById('edit_hora_inicio').value = this.dataset.horaInicio;
+            document.getElementById('edit_hora_fin').value    = this.dataset.horaFin;
+            document.getElementById('formEditarHorario').action =
+                "{{ route('horarios.update', '') }}/" + this.dataset.id;
+        });
+    });
+
+    /* ── 4. Preview de imagen en modales de certificado ── */
+    window.previewImage = function (input, selector) {
+        const img         = document.querySelector(selector);
+        const placeholder = img?.closest('.preview-container')?.querySelector('.preview-placeholder');
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                img.src = e.target.result;
+                img.classList.remove('d-none');
+                if (placeholder) placeholder.style.display = 'none';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+
+    /* ── 5. Sincronización range ↔ number (tamaño de fuente) ── */
+    document.querySelectorAll('.font-size-range').forEach(range => {
+        const num = range.closest('.input-group')?.querySelector('.font-size-number');
+        if (!num) return;
+        range.addEventListener('input', () => { num.value   = range.value; });
+        num.addEventListener('input',   () => { range.value = num.value;   });
+    });
+
+    /* ── 6. Actualizar color hex mostrado ── */
+    document.querySelectorAll('input[type="color"]').forEach(input => {
+        const span = input.closest('.d-flex')?.querySelector('.color-value');
+        if (span) input.addEventListener('input', () => { span.textContent = input.value; });
+    });
+
+})();
+</script>
