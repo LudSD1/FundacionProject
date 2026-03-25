@@ -42,16 +42,177 @@
                 </main>
 
                 <!-- Footer -->
-                <footer class="footer mt-auto py-4 bg-light">
-                    <div class="container">
-                        <div class="row align-items-center">
-                            <div class="col-md-6 text-center text-md-start text-muted">
-                                &copy; <span id="currentYear"></span>
-                                <a href="#" class="text-decoration-none">Fundación Educar para la Vida</a>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+    .ft-footer {
+        background: linear-gradient(135deg, #0d3d6e 0%, #145da0 60%, #1a6db5 100%);
+        font-family: 'DM Sans', sans-serif;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Patrón de puntos sutil */
+    .ft-footer::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(rgba(255,255,255,.06) 1px, transparent 1px);
+        background-size: 24px 24px;
+        pointer-events: none;
+    }
+
+    /* Brillo superior derecho */
+    .ft-footer::after {
+        content: '';
+        position: absolute;
+        top: -40px; right: -40px;
+        width: 260px; height: 260px;
+        background: radial-gradient(circle, rgba(99,190,207,.18) 0%, transparent 65%);
+        pointer-events: none;
+    }
+
+    .ft-inner {
+        position: relative;
+        z-index: 1;
+        padding: 2.75rem 0 1.5rem;
+    }
+
+    /* ── Marca ───────────────────────────────────────────── */
+    .ft-brand-name {
+        font-family: 'Syne', sans-serif;
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #fff;
+        letter-spacing: .02em;
+        margin: 0 0 .4rem;
+    }
+
+    .ft-brand-tagline {
+        font-size: .78rem;
+        color: rgba(255,255,255,.55);
+        margin: 0;
+        line-height: 1.5;
+        max-width: 240px;
+    }
+
+    /* ── Links ───────────────────────────────────────────── */
+    .ft-col-title {
+        font-family: 'Syne', sans-serif;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,.40);
+        margin: 0 0 .85rem;
+    }
+
+    .ft-links {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: .45rem;
+    }
+
+    .ft-links a {
+        font-size: .83rem;
+        color: rgba(255,255,255,.70);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        transition: color .2s, gap .2s;
+    }
+    .ft-links a:hover { color: #fff; gap: .55rem; }
+    .ft-links a i { font-size: .7rem; opacity: .6; }
+
+    /* ── Separador ───────────────────────────────────────── */
+    .ft-divider {
+        border: none;
+        border-top: 1px solid rgba(255,255,255,.10);
+        margin: 2rem 0 1.25rem;
+    }
+
+    /* ── Bottom bar ──────────────────────────────────────── */
+    .ft-bottom {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: .75rem;
+    }
+
+    .ft-copy {
+        font-size: .78rem;
+        color: rgba(255,255,255,.45);
+        margin: 0;
+    }
+    .ft-copy a {
+        color: rgba(255,255,255,.70);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color .2s;
+    }
+    .ft-copy a:hover { color: #fff; }
+
+    /* Redes sociales */
+    .ft-socials {
+        display: flex;
+        gap: .4rem;
+    }
+    .ft-social-btn {
+        width: 32px; height: 32px;
+        border: 1px solid rgba(255,255,255,.15);
+        border-radius: 8px;
+        background: rgba(255,255,255,.07);
+        color: rgba(255,255,255,.60);
+        font-size: .82rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: background .2s, color .2s, border-color .2s, transform .15s;
+    }
+    .ft-social-btn:hover {
+        background: rgba(255,255,255,.18);
+        color: #fff;
+        border-color: rgba(255,255,255,.35);
+        transform: translateY(-2px);
+    }
+
+    /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width: 767px) {
+        .ft-col { margin-bottom: 1.75rem; }
+        .ft-brand-tagline { max-width: 100%; }
+        .ft-bottom { justify-content: center; text-align: center; }
+    }
+</style>
+
+<footer class="ft-footer mt-auto">
+    <div class="container ft-inner">
+
+         <div class="ft-bottom">
+            <p class="ft-copy">
+                &copy; <span id="ftYear"></span>
+                <a href="#">Fundación Educar para la Vida</a>.
+                Todos los derechos reservados.
+            </p>
+            <div class="ft-socials">
+                <a href="#" class="ft-social-btn" title="Facebook"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="ft-social-btn" title="Instagram"><i class="bi bi-instagram"></i></a>
+                <a href="#" class="ft-social-btn" title="YouTube"><i class="bi bi-youtube"></i></a>
+                <a href="#" class="ft-social-btn" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+            </div>
+        </div>
+
+    </div>
+</footer>
+
+<script>
+    document.getElementById('ftYear').textContent = new Date().getFullYear();
+</script>
             </div>
         </div>
 
