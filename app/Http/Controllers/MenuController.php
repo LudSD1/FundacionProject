@@ -260,7 +260,7 @@ class MenuController extends Controller
         // 3. Filtro de visibilidad basado en rol
         $isAdmin = auth()->user() && auth()->user()->hasRole('Administrador');
         if (!$isAdmin) {
-            $query->where('visibilidad', 'Público   ');
+            $query->where('visibilidad', 'Público');
         } elseif ($request->filled('visibilidad')) {
             $query->where('visibilidad', $validated['visibilidad']);
         }
@@ -335,12 +335,12 @@ class MenuController extends Controller
         // 9. Obtener categorías para el filtro (solo las que tienen cursos públicos)
         $categorias = Categoria::whereHas('cursos', function ($q) use ($isAdmin) {
             if (!$isAdmin) {
-                $q->where('visibilidad', 'publico');
+                $q->where('visibilidad', 'Público');
             }
         })
             ->withCount(['cursos' => function ($q) use ($isAdmin) {
                 if (!$isAdmin) {
-                    $q->where('visibilidad', 'publico');
+                    $q->where('visibilidad', 'Público');
                 }
             }])
             ->orderBy('name')

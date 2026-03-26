@@ -234,7 +234,16 @@
         </div>
 
         <div class="literal">
-            SON: {{ \NumberFormatter::create('es', \NumberFormatter::SPELLOUT)->format($factura->monto_final) }} 00/100
+            SON:
+            @php
+                try {
+                    $formatter = new \NumberFormatter('es', \NumberFormatter::SPELLOUT);
+                    echo mb_strtoupper($formatter->format(intval($factura->monto_final)));
+                } catch (\Throwable $e) {
+                    echo number_format($factura->monto_final, 2);
+                }
+            @endphp
+            {{ str_pad(($factura->monto_final * 100) % 100, 2, '0', STR_PAD_LEFT) }}/100
             BOLIVIANOS
         </div>
 

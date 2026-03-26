@@ -2,21 +2,15 @@
 
 @section('content')
 
-{{-- ===== HERO DE NIVEL Y XP ===== --}}
 <div class="ach-outer">
-
     <div class="ach-hero">
         <div class="ach-hero-glow"></div>
         <div class="container ach-hero-body">
-
             <div class="ach-level-wrap">
-                {{-- Avatar de nivel --}}
                 <div class="ach-level-orb">
                     <span class="ach-level-num">{{ $userLevel }}</span>
                     <span class="ach-level-label">NVL</span>
                 </div>
-
-                {{-- Barra XP --}}
                 <div class="ach-xp-block">
                     <div class="d-flex justify-content-between align-items-baseline mb-1">
                         <span class="ach-xp-title">Experiencia</span>
@@ -35,8 +29,6 @@
                         {{ number_format($nextLevelXP - $currentXP) }} XP para el siguiente nivel
                     </div>
                 </div>
-
-                {{-- XP total + ranking --}}
                 <div class="ach-hero-stats">
                     <div class="ach-hero-stat">
                         <span class="ach-hero-stat-val">{{ number_format($totalXP) }}</span>
@@ -52,8 +44,6 @@
 
         </div>
     </div>
-
-    {{-- ===== TARJETAS DE ESTADÍSTICAS ===== --}}
     <div class="container ach-stats-row">
         <div class="ach-stat-card">
             <div class="ach-stat-icon ach-stat-icon--total">

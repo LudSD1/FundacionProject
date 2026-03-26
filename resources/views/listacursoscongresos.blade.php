@@ -126,7 +126,7 @@
                 </form>
 
                 {{-- ── Stats ─────────────────────────────────── --}}
-                <div class="hero-stats">
+                {{-- <div class="hero-stats">
                     <div class="hero-stat">
                         <i class="bi bi-mortarboard-fill"></i>
                         <span><strong>+200</strong> Docentes</span>
@@ -141,7 +141,7 @@
                         <i class="bi bi-patch-check-fill"></i>
                         <span><strong>100%</strong> Certificados</span>
                     </div>
-                </div>
+                </div> --}}
 
             </div>
         </div>
@@ -192,14 +192,75 @@
                         </div>
                         <div class="card-body filters-body">
 
-                            <form id="sidebarFilters"
-                                  method="GET"
-                                  action="{{ route('lista.cursos.congresos') }}">
-                                @foreach (['type', 'sort', 'search', 'categoria'] as $param)
-                                    <input type="hidden" name="{{ $param }}" value="{{ request($param) }}">
-                                @endforeach
-                                {{-- Aquí van tus partials de filtros cuando estén listos --}}
-                            </form>
+                            {{-- Filtro por Tipo --}}
+                            <div class="filter-group mb-3">
+                                <h6 class="filter-group-title">
+                                    <i class="bi bi-tag me-1"></i> Tipo
+                                </h6>
+                                <div class="filter-options">
+                                    <a href="{{ request()->fullUrlWithQuery(['type' => '']) }}"
+                                       class="filter-option {{ !request('type') ? 'active' : '' }}">
+                                        <i class="bi bi-grid me-1"></i> Todos
+                                    </a>
+                                    <a href="{{ request()->fullUrlWithQuery(['type' => 'curso']) }}"
+                                       class="filter-option {{ request('type') === 'curso' ? 'active' : '' }}">
+                                        <i class="bi bi-book me-1"></i> Cursos
+                                    </a>
+                                    <a href="{{ request()->fullUrlWithQuery(['type' => 'congreso']) }}"
+                                       class="filter-option {{ request('type') === 'congreso' ? 'active' : '' }}">
+                                        <i class="bi bi-calendar-event me-1"></i> Congresos
+                                    </a>
+                                </div>
+                            </div>
+
+                            <hr class="filter-divider">
+
+                            {{-- Filtro por Categoría --}}
+                            <div class="filter-group mb-3">
+                                <h6 class="filter-group-title">
+                                    <i class="bi bi-collection me-1"></i> Categorías
+                                </h6>
+                                <div class="filter-options">
+                                    <a href="{{ request()->fullUrlWithQuery(['categoria' => '']) }}"
+                                       class="filter-option {{ !request('categoria') ? 'active' : '' }}">
+                                        Todas las categorías
+                                    </a>
+                                    @foreach ($categorias as $cat)
+                                        <a href="{{ request()->fullUrlWithQuery(['categoria' => $cat->id]) }}"
+                                           class="filter-option {{ request('categoria') == $cat->id ? 'active' : '' }}">
+                                            {{ $cat->name }}
+                                            <span class="filter-count">{{ $cat->cursos_count }}</span>
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <hr class="filter-divider">
+
+                            {{-- Ordenar por --}}
+                            <div class="filter-group mb-3">
+                                <h6 class="filter-group-title">
+                                    <i class="bi bi-sort-down me-1"></i> Ordenar por
+                                </h6>
+                                <div class="filter-options">
+                                    <a href="{{ request()->fullUrlWithQuery(['sort' => '']) }}"
+                                       class="filter-option {{ !request('sort') ? 'active' : '' }}">
+                                        Mejor valorados
+                                    </a>
+                                    <a href="{{ request()->fullUrlWithQuery(['sort' => 'date_desc']) }}"
+                                       class="filter-option {{ request('sort') === 'date_desc' ? 'active' : '' }}">
+                                        Más recientes
+                                    </a>
+                                    <a href="{{ request()->fullUrlWithQuery(['sort' => 'price_asc']) }}"
+                                       class="filter-option {{ request('sort') === 'price_asc' ? 'active' : '' }}">
+                                        Precio: menor a mayor
+                                    </a>
+                                    <a href="{{ request()->fullUrlWithQuery(['sort' => 'price_desc']) }}"
+                                       class="filter-option {{ request('sort') === 'price_desc' ? 'active' : '' }}">
+                                        Precio: mayor a menor
+                                    </a>
+                                </div>
+                            </div>
 
                             <a href="{{ route('lista.cursos.congresos') }}" class="clear-filters-btn">
                                 <i class="bi bi-x-circle me-2"></i>Limpiar filtros

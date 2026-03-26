@@ -492,6 +492,62 @@
   border-color: rgba(220,38,38,0.2);
 }
 
+/* ── Sidebar filter groups ─────────────────────────── */
+.filter-group-title {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--cl-blue);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+.filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.filter-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 10px;
+  border-radius: 9px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--cl-ink);
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+.filter-option:hover {
+  background: var(--cl-bg);
+  text-decoration: none;
+  color: var(--cl-blue);
+}
+.filter-option.active {
+  background: rgba(255,107,0,0.08);
+  color: var(--cl-orange);
+  font-weight: 600;
+}
+.filter-count {
+  font-size: 0.7rem;
+  color: var(--cl-muted);
+  background: var(--cl-bg);
+  padding: 1px 8px;
+  border-radius: 50px;
+  font-weight: 500;
+}
+.filter-option.active .filter-count {
+  background: rgba(255,107,0,0.12);
+  color: var(--cl-orange);
+}
+.filter-divider {
+  border: none;
+  border-top: 1px solid var(--cl-border);
+  margin: 4px 0;
+}
+
 /* ── Newsletter card ────────────────────────────────── */
 .newsletter-card {
   border: none !important;
