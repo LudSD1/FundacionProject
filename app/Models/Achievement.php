@@ -16,9 +16,11 @@ class Achievement extends BaseModel
 
     protected $fillable = [
         'title',
+        'slug',
         'description',
         'icon',
         'type',
+        'category',
         'requirement_value',
         'xp_reward',
         'is_secret'

@@ -147,12 +147,21 @@ class User extends Authenticatable implements MustVerifyEmail
         );
     }
 
+    /**
+     * Logros desbloqueados por el usuario
+     */
+    public function achievements(): BelongsToMany
+    {
+        return $this->belongsToMany(Achievement::class, 'achievement_user', 'user_id', 'achievement_id')
+                    ->withPivot('earned_at')
+                    ->withTimestamps();
+    }
 
-
-
-
-
-
-
-
+    /**
+     * Verifica si el usuario tiene un logro específico
+     */
+    public function hasAchievement($achievementId): bool
+    {
+        return $this->achievements()->where('achievement_id', $achievementId)->exists();
+    }
 }

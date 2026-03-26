@@ -341,10 +341,12 @@
                     $totalXP = $xpHistory->sum('xp');
                     $currentLevel = \App\Models\Level::getCurrentLevel($totalXP);
                     $nextLevel = \App\Models\Level::getNextLevel($totalXP);
-                    $xpDifference = $nextLevel ? $nextLevel->xp_required - $currentLevel->xp_required : 0;
+                    $currentLevelXp = $currentLevel ? $currentLevel->required_xp : 0;
+                    $nextLevelXp = $nextLevel ? $nextLevel->required_xp : 0;
+                    $xpDifference = $nextLevelXp - $currentLevelXp;
                     $progress =
                         $nextLevel && $xpDifference > 0
-                            ? (($totalXP - $currentLevel->xp_required) / $xpDifference) * 100
+                            ? (($totalXP - $currentLevelXp) / $xpDifference) * 100
                             : 100;
                 @endphp
 
@@ -372,8 +374,8 @@
                                     <div class="progress-bar" style="width: {{ $progress }}%"></div>
                                 </div>
                                 <small class="text-center d-block mt-1 opacity-75 text-primary">
-                                    {{ number_format($totalXP - $currentLevel->xp_required) }} /
-                                    {{ number_format($nextLevel->xp_required - $currentLevel->xp_required) }} XP
+                                    {{ number_format($totalXP - $currentLevelXp) }} /
+                                    {{ number_format($nextLevelXp - $currentLevelXp) }} XP
                                 </small>
                             </div>
                         @endif
@@ -459,10 +461,10 @@
                 </div>
 
                 <div class="mt-4">
-                    {{-- <a href="{{ route('') }}" class="btn btn-primary w-100">
+                    <a href="{{ route('perfil.xp') }}" class="btn btn-primary w-100">
                         <i class="fas fa-chart-line me-2"></i>
                         Ver progreso completo
-                    </a> --}}
+                    </a>
                 </div>
             </div>
         </div>

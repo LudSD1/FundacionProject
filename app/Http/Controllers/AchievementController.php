@@ -26,73 +26,113 @@ class AchievementController extends Controller
         $user = Auth::user();
         $inscrito = Inscritos::where('estudiante_id', $user->id)->first();
 
-        if (!$inscrito) {
-            return view('profile.no-achievements', [
-                'message' => 'Necesitas estar inscrito en un curso para ver tus logros.'
-            ]);
-        }
+        // Calcular XP real desde xp_events (fuente de verdad)
+        $totalXP = \DB::table('xp_events')
+            ->where('users_id', $user->id)
+            ->sum('xp');
 
-        // Obtener estadísticas de XP
-        $stats = $this->xpService->getUserStats($inscrito);
+        // Calcular nivel y progreso desde tabla levels
+        $currentLevel = \App\Models\Level::getCurrentLevel($totalXP);
+        $nextLevel = \App\Models\Level::getNextLevel($totalXP);
+
+        $currentLevelNumber = $currentLevel ? $currentLevel->level_number : 1;
+        $currentLevelXp = $currentLevel ? $currentLevel->required_xp : 0;
+        $nextLevelXp = $nextLevel ? $nextLevel->required_xp : 100;
 
         // Obtener todos los logros con progreso
-        $achievements = Achievement::with(['users' => function($query) use ($user) {
-            $query->where('user_id', $user->id);
-        }])->get()->map(function ($achievement) use ($inscrito) {
-            $achievement->isUnlocked = $achievement->users->isNotEmpty();
-            $achievement->current_progress = $this->calculateProgress($achievement, $inscrito);
-            return $achievement;
-        });
+        $achievements = collect();
+        if ($inscrito) {
+            $achievements = Achievement::all()->map(function ($achievement) use ($inscrito) {
+                $achievement->isUnlocked = $achievement->isUnlockedByInscrito($inscrito);
+                $achievement->current_progress = $this->calculateProgress($achievement, $inscrito);
+                return $achievement;
+            });
+        }
 
         $unlockedAchievements = $achievements->where('isUnlocked', true)->count();
         $totalAchievements = $achievements->count();
-        $completionPercentage = round(($unlockedAchievements / $totalAchievements) * 100);
+        $completionPercentage = $totalAchievements > 0
+            ? round(($unlockedAchievements / $totalAchievements) * 100)
+            : 0;
+
+        // Calcular ranking
+        $userRank = $inscrito
+            ? $this->xpService->getUserRank($inscrito)
+            : '-';
 
         return view('profile.achievements', [
-            'userLevel' => $stats['current_level'],
-            'currentXP' => $stats['current_xp'],
-            'nextLevelXP' => $stats['next_level_xp'],
-            'totalXP' => $stats['current_xp'],
+            'userLevel' => $currentLevelNumber,
+            'currentXP' => $totalXP,
+            'nextLevelXP' => $nextLevelXp,
+            'totalXP' => $totalXP,
             'achievements' => $achievements,
             'unlockedAchievements' => $unlockedAchievements,
             'totalAchievements' => $totalAchievements,
             'completionPercentage' => $completionPercentage,
-            'userRank' => $stats['rank']
+            'userRank' => $userRank
         ]);
     }
 
     protected function calculateProgress($achievement, $inscrito)
     {
-        switch ($achievement->type) {
-            case 'QUIZ_MASTER':
-                return $inscrito->perfectQuizzes()->count();
+        try {
+            switch ($achievement->type) {
+                case 'QUIZ_MASTER':
+                    // Cuestionarios aprobados con nota perfecta
+                    return $inscrito->intentosCuestionarios()
+                        ->where('puntaje_obtenido', '>=', \DB::raw('puntaje_total'))
+                        ->count();
 
-            case 'FORUM_CONTRIBUTOR':
-                return $inscrito->forumPosts()->count();
+                case 'FORUM_CONTRIBUTOR':
+                    // Mensajes en foros
+                    return \DB::table('foro_mensajes')
+                        ->where('estudiante_id', $inscrito->estudiante_id)
+                        ->count();
 
-            case 'RESOURCE_EXPLORER':
-                return $inscrito->resourceViews()->count();
+                case 'RESOURCE_EXPLORER':
+                    // Recursos vistos/completados
+                    return $inscrito->actividadCompletions()
+                        ->where('tipo', 'recurso')
+                        ->count();
 
-            case 'EARLY_BIRD':
-                return $inscrito->earlySubmissions()->count();
+                case 'EARLY_BIRD':
+                    // Entregas antes de fecha límite
+                    return $inscrito->notaEntrega()
+                        ->whereColumn('created_at', '<', 'fecha_limite')
+                        ->count();
 
-            case 'STREAK_MASTER':
-                return $inscrito->currentStreak;
+                case 'STREAK_MASTER':
+                    // Días consecutivos con actividad (simplificado)
+                    return 0;
 
-            case 'NIGHT_OWL':
-                return $inscrito->nightActivities()->count();
+                case 'COURSE_COLLECTOR':
+                    // Cursos inscritos del usuario
+                    return Inscritos::where('estudiante_id', $inscrito->estudiante_id)->count();
 
-            case 'SPEED_RUNNER':
-                return $inscrito->speedyQuizzes()->count();
+                case 'COURSE_FINISHER':
+                    // Cursos completados
+                    return Inscritos::where('estudiante_id', $inscrito->estudiante_id)
+                        ->where('completado', true)
+                        ->count();
 
-            case 'FORUM_LIKES':
-                return $inscrito->forumLikes()->count();
+                case 'CONGRESS_PARTICIPANT':
+                    // Congresos inscritos
+                    return Inscritos::where('estudiante_id', $inscrito->estudiante_id)
+                        ->whereHas('cursos', fn($q) => $q->where('tipo', 'congreso'))
+                        ->count();
 
-            case 'DAILY_ACTIVITIES':
-                return $inscrito->todayActivities()->count();
+                case 'MODULE_MASTER':
+                    // Subtemas completados
+                    return \DB::table('subtema_inscritos')
+                        ->where('inscrito_id', $inscrito->id)
+                        ->where('completado', true)
+                        ->count();
 
-            default:
-                return 0;
+                default:
+                    return 0;
+            }
+        } catch (\Exception $e) {
+            return 0;
         }
     }
 

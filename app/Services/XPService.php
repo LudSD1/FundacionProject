@@ -123,7 +123,7 @@ class XPService
      */
     public function getUserStats(Inscritos $inscrito): array
     {
-        $currentXP = $inscrito->xp;
+        $currentXP = $inscrito->xp ?? 0;
         $currentLevel = $this->getCurrentLevel($currentXP);
         $nextLevelXP = $this->getNextLevelXP($currentXP);
 
@@ -131,7 +131,7 @@ class XPService
             'current_xp' => $currentXP,
             'current_level' => $currentLevel,
             'next_level_xp' => $nextLevelXP,
-            'progress_percentage' => ($currentXP / $nextLevelXP) * 100,
+            'progress_percentage' => $nextLevelXP > 0 ? ($currentXP / $nextLevelXP) * 100 : 100,
             'rank' => $this->getUserRank($inscrito)
         ];
     }
