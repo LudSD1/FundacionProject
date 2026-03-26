@@ -115,8 +115,6 @@
                                 <span class="input-group-text bg-light"><i class="bi bi-laptop text-primary"></i></span>
                                 <select name="formato" class="form-select bg-light">
                                     <option value="Virtual" {{ old('formato') == 'Virtual' ? 'selected' : '' }}>💻 Virtual</option>
-                                    <option value="Presencial" {{ old('formato') == 'Presencial' ? 'selected' : '' }}>🏢 Presencial</option>
-                                    <option value="Híbrido" {{ old('formato') == 'Híbrido' ? 'selected' : '' }}>🌓 Híbrido</option>
                                 </select>
                             </div>
                         </div>

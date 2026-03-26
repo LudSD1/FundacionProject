@@ -266,13 +266,6 @@ class UserController extends Controller
         return redirect()->route('Inicio')->with('success', '¡Bienvenido! Tu cuenta ha sido creada y has iniciado sesión.');
     }
 
-
-
-
-
-
-
-
     protected function validatePassword($confirmpassword)
     {
         $password = Auth::user()->password;

@@ -19,7 +19,7 @@ use App\Http\Controllers\ActividadController;
 use App\Http\Controllers\ExpositoresController;
 use App\Http\Controllers\CursoImagenController;
 use App\Http\Controllers\RecursoSubtemaController;
-
+use App\Http\Controllers\UserAchievementsController;
 use App\Models\RecursoSubtema;
 
 Route::group(['middleware' => ['role:Docente|Administrador', 'verified']], function () {
@@ -195,6 +195,14 @@ Route::group(['middleware' => ['role:Docente|Administrador', 'verified']], funct
 
     Route::get('/cursos/{id}/elementos-eliminados', [CursosController::class, 'elementosEliminados'])->name('cursos.elementos-eliminados');
     Route::post('/cursos/restaurar-elemento', [CursosController::class, 'restaurarElemento'])->name('cursos.restaurar-elemento');
+
+    Route::post('/agregarLogro', [UserAchievementsController::class, 'storeLogro'])->name('logro.store');
+    Route::patch('/actualizarLogro/{id}', [UserAchievementsController::class, 'updateLogro'])->name('update.logro');
+    Route::post('/eliminarLogro/{id}', [UserAchievementsController::class, 'deleteLogro'])->name('delete.logro');
+    Route::post('/restaurarLogro/{id}', [UserAchievementsController::class, 'restoreLogro'])->name('restore.logro');
+
+
+
 });
 
 

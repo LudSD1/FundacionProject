@@ -158,7 +158,7 @@
                                                     <span>{{ $item->docente->name }} {{ $item->docente->lastname1 }}</span>
                                                 </div>
                                                 @endif
-                                                <a href="{{ route('Curso', $item->codigoCurso) }}" class="hc-card-btn">
+                                                <a href="{{ route('curso.detalle', $item->codigoCurso) }}" class="hc-card-btn">
                                                     Ver más <i class="bi bi-arrow-right"></i>
                                                 </a>
                                             </div>
@@ -272,7 +272,7 @@
                                     @else
                                         <span class="lp-price">Bs {{ number_format($congreso->precio, 2) }}</span>
                                     @endif
-                                    <a href="{{ route('Curso', $congreso->codigoCurso) }}" class="lp-btn-card">
+                                    <a href="{{ route('curso.detalle', $congreso->codigoCurso) }}" class="lp-btn-card">
                                         Ver evento <i class="bi bi-arrow-right"></i>
                                     </a>
                                 </div>
@@ -378,7 +378,7 @@
                                     @else
                                         <span class="lp-price">Bs {{ number_format($curso->precio, 2) }}</span>
                                     @endif
-                                    <a href="{{ route('Curso', $curso->codigoCurso) }}" class="lp-btn-card">
+                                    <a href="{{ route('curso.detalle', $curso->codigoCurso) }}" class="lp-btn-card">
                                         Ver curso <i class="bi bi-arrow-right"></i>
                                     </a>
                                 </div>
