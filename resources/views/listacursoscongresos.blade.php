@@ -444,12 +444,43 @@
         });
     }
 
+    /* ── Dropdown de categoría (toggle open) ──────── */
+    function initCategoryDropdown() {
+        const drop = document.getElementById('heroCatDrop');
+        if (!drop) return;
+
+        const btn = drop.querySelector('.hero-pill-drop-btn');
+        if (!btn) return;
+
+        // Toggle al hacer clic en el botón
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            drop.classList.toggle('open');
+        });
+
+        // Cerrar al hacer clic fuera
+        document.addEventListener('click', (e) => {
+            if (!drop.contains(e.target)) {
+                drop.classList.remove('open');
+            }
+        });
+
+        // Cerrar con Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                drop.classList.remove('open');
+            }
+        });
+    }
+
     /* ── Init ───────────────────────────────────────── */
     document.addEventListener('DOMContentLoaded', () => {
         initViewToggle();
         initSortSelect();
         initHeroFilters();
         initClearSearch();
+        initCategoryDropdown();
 
         // ── Auto-scroll a resultados si hay búsqueda o filtros ──
         const urlParams = new URLSearchParams(window.location.search);

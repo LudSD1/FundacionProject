@@ -271,7 +271,7 @@ class MenuController extends Controller
                 $q->where('nombreCurso', 'like', '%' . $request->search . '%')
                     ->orWhere('descripcionC', 'like', '%' . $request->search . '%')
                     ->orWhereHas('categorias', function ($catQuery) use ($request) {
-                        $catQuery->where('name', 'like', '%' . $request->search . '%');
+                        $catQuery->where('categoria.name', 'like', '%' . $request->search . '%');
                     });
             });
         }
@@ -291,8 +291,8 @@ class MenuController extends Controller
 
         // 6. Filtro por categoría (relación muchos a muchos)
         if ($request->filled('categoria')) {
-            $query->whereHas('categorias', function ($catQuery) use ($validated) {
-                $catQuery->where('categoria.id', $validated['categoria']);
+            $query->whereHas('categorias', function ($catQuery) use ($request) {
+                $catQuery->where('categoria.id', $request->categoria);
             });
         }
 
@@ -332,15 +332,23 @@ class MenuController extends Controller
             return $curso;
         });
 
-        // 9. Obtener categorías para el filtro (solo las que tienen cursos públicos)
-        $categorias = Categoria::whereHas('cursos', function ($q) use ($isAdmin) {
-            if (!$isAdmin) {
-                $q->where('visibilidad', 'Público');
-            }
-        })
-            ->withCount(['cursos' => function ($q) use ($isAdmin) {
+        // 9. Obtener categorías para el filtro (conteo dinámico)
+        $categorias = Categoria::whereHas('cursos', function ($q) use ($isAdmin, $currentDate, $request) {
+                $q->where('fecha_fin', '>=', $currentDate);
                 if (!$isAdmin) {
                     $q->where('visibilidad', 'Público');
+                }
+                if ($request->filled('type')) {
+                    $q->where('tipo', $request->type);
+                }
+            })
+            ->withCount(['cursos' => function ($q) use ($isAdmin, $currentDate, $request) {
+                $q->where('fecha_fin', '>=', $currentDate);
+                if (!$isAdmin) {
+                    $q->where('visibilidad', 'Público');
+                }
+                if ($request->filled('type')) {
+                    $q->where('tipo', $request->type);
                 }
             }])
             ->orderBy('name')
