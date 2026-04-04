@@ -191,18 +191,43 @@
                             <div class="col-md-6">
                                 <label class="fw-bold mb-1">Tipo</label>
                                 <select name="type" class="form-select" required>
-                                    <option value="QUIZ_MASTER">Maestro de Cuestionarios</option>
-                                    <option value="COURSE_COMPLETER">Completador de Cursos</option>
-                                    <option value="PERFECT_SCORE">Puntuación Perfecta</option>
-                                    <option value="PARTICIPATION_IN_CLASS">Participación en Clase</option>
+                                    <optgroup label="Académicos">
+                                        <option value="QUIZ_MASTER">Maestro de Cuestionarios</option>
+                                        <option value="RESOURCE_EXPLORER">Explorador de Recursos</option>
+                                    </optgroup>
+                                    <optgroup label="Cursos">
+                                        <option value="COURSE_ENROLL">Inscripción a Curso</option>
+                                        <option value="COURSE_COLLECTOR">Coleccionista de Cursos</option>
+                                        <option value="COURSE_FINISHER">Finisher de Cursos</option>
+                                        <option value="MODULE_MASTER">Dominador de Temas</option>
+                                    </optgroup>
+                                    <optgroup label="Eventos">
+                                        <option value="CONGRESS_ENROLL">Inscripción a Congreso</option>
+                                        <option value="CONGRESS_PARTICIPANT">Asistente de Congresos</option>
+                                    </optgroup>
+                                    <optgroup label="Social">
+                                        <option value="FORUM_CONTRIBUTOR">Contribuidor del Foro</option>
+                                    </optgroup>
+                                    <optgroup label="Engagement">
+                                        <option value="EARLY_BIRD">Madrugador</option>
+                                        <option value="STREAK_MASTER">Racha de Constancia</option>
+                                    </optgroup>
+                                    <optgroup label="Especiales">
+                                        <option value="NIGHT_OWL">Explorador Nocturno</option>
+                                        <option value="SPEED_RUNNER">Velocista</option>
+                                        <option value="DAILY_ACTIVITIES">Maratón de Estudio</option>
+                                    </optgroup>
                                 </select>
                             </div>
                             <div class="col-md-6">
                                 <label class="fw-bold mb-1">Categoría</label>
                                 <select name="category" class="form-select" required>
                                     <option value="academic">Académico</option>
-                                    <option value="participation">Participación</option>
+                                    <option value="courses">Cursos</option>
+                                    <option value="events">Eventos</option>
                                     <option value="social">Social</option>
+                                    <option value="engagement">Engagement</option>
+                                    <option value="special">Especial</option>
                                 </select>
                             </div>
                         </div>
@@ -321,18 +346,43 @@
                                 <div class="col-md-6">
                                     <label class="fw-bold mb-1">Tipo</label>
                                     <select name="type" class="form-select" required>
-                                        <option value="QUIZ_MASTER" {{ $achievement->type == 'QUIZ_MASTER' ? 'selected' : '' }}>Maestro de Cuestionarios</option>
-                                        <option value="COURSE_COMPLETER" {{ $achievement->type == 'COURSE_COMPLETER' ? 'selected' : '' }}>Completador de Cursos</option>
-                                        <option value="PERFECT_SCORE" {{ $achievement->type == 'PERFECT_SCORE' ? 'selected' : '' }}>Puntuación Perfecta</option>
-                                        <option value="PARTICIPATION_IN_CLASS" {{ $achievement->type == 'PARTICIPATION_IN_CLASS' ? 'selected' : '' }}>Participación en Clase</option>
+                                        <optgroup label="Académicos">
+                                            <option value="QUIZ_MASTER" {{ $achievement->type == 'QUIZ_MASTER' ? 'selected' : '' }}>Maestro de Cuestionarios</option>
+                                            <option value="RESOURCE_EXPLORER" {{ $achievement->type == 'RESOURCE_EXPLORER' ? 'selected' : '' }}>Explorador de Recursos</option>
+                                        </optgroup>
+                                        <optgroup label="Cursos">
+                                            <option value="COURSE_ENROLL" {{ $achievement->type == 'COURSE_ENROLL' ? 'selected' : '' }}>Inscripción a Curso</option>
+                                            <option value="COURSE_COLLECTOR" {{ $achievement->type == 'COURSE_COLLECTOR' ? 'selected' : '' }}>Coleccionista de Cursos</option>
+                                            <option value="COURSE_FINISHER" {{ $achievement->type == 'COURSE_FINISHER' ? 'selected' : '' }}>Finisher de Cursos</option>
+                                            <option value="MODULE_MASTER" {{ $achievement->type == 'MODULE_MASTER' ? 'selected' : '' }}>Dominador de Temas</option>
+                                        </optgroup>
+                                        <optgroup label="Eventos">
+                                            <option value="CONGRESS_ENROLL" {{ $achievement->type == 'CONGRESS_ENROLL' ? 'selected' : '' }}>Inscripción a Congreso</option>
+                                            <option value="CONGRESS_PARTICIPANT" {{ $achievement->type == 'CONGRESS_PARTICIPANT' ? 'selected' : '' }}>Asistente de Congresos</option>
+                                        </optgroup>
+                                        <optgroup label="Social">
+                                            <option value="FORUM_CONTRIBUTOR" {{ $achievement->type == 'FORUM_CONTRIBUTOR' ? 'selected' : '' }}>Contribuidor del Foro</option>
+                                        </optgroup>
+                                        <optgroup label="Engagement">
+                                            <option value="EARLY_BIRD" {{ $achievement->type == 'EARLY_BIRD' ? 'selected' : '' }}>Madrugador</option>
+                                            <option value="STREAK_MASTER" {{ $achievement->type == 'STREAK_MASTER' ? 'selected' : '' }}>Racha de Constancia</option>
+                                        </optgroup>
+                                        <optgroup label="Especiales">
+                                            <option value="NIGHT_OWL" {{ $achievement->type == 'NIGHT_OWL' ? 'selected' : '' }}>Explorador Nocturno</option>
+                                            <option value="SPEED_RUNNER" {{ $achievement->type == 'SPEED_RUNNER' ? 'selected' : '' }}>Velocista</option>
+                                            <option value="DAILY_ACTIVITIES" {{ $achievement->type == 'DAILY_ACTIVITIES' ? 'selected' : '' }}>Maratón de Estudio</option>
+                                        </optgroup>
                                     </select>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="fw-bold mb-1">Categoría</label>
                                     <select name="category" class="form-select" required>
                                         <option value="academic" {{ $achievement->category == 'academic' ? 'selected' : '' }}>Académico</option>
-                                        <option value="participation" {{ $achievement->category == 'participation' ? 'selected' : '' }}>Participación</option>
+                                        <option value="courses" {{ $achievement->category == 'courses' ? 'selected' : '' }}>Cursos</option>
+                                        <option value="events" {{ $achievement->category == 'events' ? 'selected' : '' }}>Eventos</option>
                                         <option value="social" {{ $achievement->category == 'social' ? 'selected' : '' }}>Social</option>
+                                        <option value="engagement" {{ $achievement->category == 'engagement' ? 'selected' : '' }}>Engagement</option>
+                                        <option value="special" {{ $achievement->category == 'special' ? 'selected' : '' }}>Especial</option>
                                     </select>
                                 </div>
                             </div>

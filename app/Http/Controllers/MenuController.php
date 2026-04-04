@@ -155,10 +155,27 @@ class MenuController extends Controller
     }
     public function index()
     {
+        $hoy = now()->toDateString();
+        
+        // Conteos básicos
         $totalCursos = Cursos::whereNull('deleted_at')->count();
         $totalEstudiantes = User::role('Estudiante')->whereNull('deleted_at')->count();
         $totalDocentes = User::role('Docente')->whereNull('deleted_at')->count();
-        $totalInscritos = Inscritos::whereNull('deleted_at')->count();
+        $totalInscripciones = Inscritos::whereNull('deleted_at')->count();
+        
+        // Nuevas estadísticas
+        $totalCategorias = Categoria::whereNull('deleted_at')->count();
+        $totalCertificados = Certificado::whereNull('deleted_at')->count();
+        $totalForos = Foro::whereNull('deleted_at')->count();
+        $totalActividades = Actividad::whereNull('deleted_at')->count();
+        $cursosActivos = Cursos::whereNull('deleted_at')
+            ->where('fecha_ini', '<=', $hoy)
+            ->where('fecha_fin', '>=', $hoy)
+            ->count();
+        $cursosFinalizados = Cursos::whereNull('deleted_at')
+            ->where('fecha_fin', '<', $hoy)
+            ->count();
+
         $metodosPago = PaymentMethod::all();
         $categorias = Categoria::whereNull('deleted_at')->get();
         $certificados = Certificado::whereNull('deleted_at')->get();
@@ -170,8 +187,6 @@ class MenuController extends Controller
         $inscritos = Inscritos::whereNull('deleted_at')->get();
         $estudiantes = User::role('Estudiante')->whereNull('deleted_at')->get();
         $docentes = User::role('Docente')->whereNull('deleted_at')->get();
-        // $logPath = storage_path('logs/laravel.log');
-        // $logs = file_exists($logPath) ? collect(explode("\n", file_get_contents($logPath)))->take(-100)->implode("\n") : 'No hay logs disponibles.';
 
         return view('Inicio', compact(
             'categorias',
@@ -187,7 +202,13 @@ class MenuController extends Controller
             'totalCursos',
             'totalEstudiantes',
             'totalDocentes',
-            'totalInscritos',
+            'totalInscripciones',
+            'totalCategorias',
+            'totalCertificados',
+            'totalForos',
+            'totalActividades',
+            'cursosActivos',
+            'cursosFinalizados'
         ))->with('metodosPago', $metodosPago);
     }
     public function ListaDeCursos(Request $request)

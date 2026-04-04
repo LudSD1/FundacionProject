@@ -7,6 +7,7 @@ use App\Models\Achievement;
 use App\Models\UserAchievement;
 use App\Events\UserLevelUp;
 use App\Models\Completion;
+use App\Services\AchievementService;
 
 class HandleResourceViewed
 {
@@ -39,45 +40,26 @@ class HandleResourceViewed
 
         $inscrito->save();
 
-        // Verificar y otorgar logros
+        // Verificar y otorgar logros usando AchievementService
         $this->checkResourceAchievements($inscrito);
     }
 
     private function checkResourceAchievements($inscrito)
     {
-        // Contar recursos completados usando el modelo Completion
-        $recursosVistos = Completion::where('inscrito_id', $inscrito->id)
-            ->where('completable_type', 'App\Models\Recurso')
-            ->count();
+        try {
+            // Contar recursos completados usando el modelo Completion
+            $recursosVistos = Completion::where('inscrito_id', $inscrito->id)
+                ->where('completable_type', 'App\Models\Recurso')
+                ->count();
 
-        // Definir los logros relacionados con recursos
-        $achievements = [
-            ['nombre' => 'Primer Recurso', 'descripcion' => 'Has visto tu primer recurso', 'condicion' => 1],
-            ['nombre' => 'Estudiante Dedicado', 'descripcion' => 'Has visto 5 recursos', 'condicion' => 5],
-            ['nombre' => 'Maestro de Recursos', 'descripcion' => 'Has visto 10 recursos', 'condicion' => 10],
-            ['nombre' => 'Experto en Contenido', 'descripcion' => 'Has visto 25 recursos', 'condicion' => 25],
-        ];
+            $achievementService = app(AchievementService::class);
+            $achievementService->checkAndAwardAchievements($inscrito, 'RESOURCE_EXPLORER', $recursosVistos);
 
-        foreach ($achievements as $achievementData) {
-            if ($recursosVistos >= $achievementData['condicion']) {
-                $achievement = Achievement::firstOrCreate([
-                    'nombre' => $achievementData['nombre'],
-                    'descripcion' => $achievementData['descripcion']
-                ]);
-
-                // Verificar si el usuario ya tiene este logro
-                if (!UserAchievement::where('inscrito_id', $inscrito->id)
-                    ->where('achievement_id', $achievement->id)
-                    ->exists()) {
-
-                    // Otorgar el logro
-                    UserAchievement::create([
-                        'inscrito_id' => $inscrito->id,
-                        'achievement_id' => $achievement->id,
-                        'fecha_obtencion' => now()
-                    ]);
-                }
-            }
+            // Verificar racha
+            $streak = $achievementService->calculateStreak($inscrito);
+            $achievementService->checkAndAwardAchievements($inscrito, 'STREAK_MASTER', $streak);
+        } catch (\Exception $e) {
+            \Log::warning('Error checking RESOURCE_EXPLORER achievement: ' . $e->getMessage());
         }
     }
 }

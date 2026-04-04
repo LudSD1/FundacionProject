@@ -12,7 +12,7 @@ trait CalificacionTrait
 {
     protected function marcarActividadCompletada($actividad, $inscripcionId)
     {
-        return ActividadCompletion::updateOrCreate(
+        $completion = ActividadCompletion::updateOrCreate(
             [
                 'completable_type' => Actividad::class,
                 'completable_id' => $actividad->id,
@@ -23,6 +23,27 @@ trait CalificacionTrait
                 'completed_at' => now(),
             ]
         );
+
+        // Verificar logro MODULE_MASTER (actividades/módulos completados)
+        try {
+            $inscrito = \App\Models\Inscritos::find($inscripcionId);
+            if ($inscrito) {
+                $achievementService = app(\App\Services\AchievementService::class);
+
+                $totalCompletadas = ActividadCompletion::where('inscritos_id', $inscripcionId)
+                    ->where('completed', true)
+                    ->count();
+                $achievementService->checkAndAwardAchievements($inscrito, 'MODULE_MASTER', $totalCompletadas);
+
+                // Verificar racha
+                $streak = $achievementService->calculateStreak($inscrito);
+                $achievementService->checkAndAwardAchievements($inscrito, 'STREAK_MASTER', $streak);
+            }
+        } catch (\Exception $e) {
+            \Log::warning('Error checking MODULE_MASTER achievement: ' . $e->getMessage());
+        }
+
+        return $completion;
     }
 
     protected function verificarCalificacionActividad($actividad, $inscripcionId)

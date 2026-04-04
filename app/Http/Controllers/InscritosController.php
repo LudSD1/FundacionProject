@@ -212,6 +212,30 @@ class InscritosController extends Controller
                         $xpBase = $curso->tipo == 'congreso' ? 100 : 50;
                         $this->xpService->addXP($inscrito, $xpBase, "Inscripción en {$curso->nombreCurso}");
 
+                        // Verificar logros de inscripción
+                        $totalInscripciones = Inscritos::where('estudiante_id', $estudiante_id)->count();
+                        $this->achievementService->checkAndAwardAchievements($inscrito, 'COURSE_ENROLL', 1);
+                        $this->achievementService->checkAndAwardAchievements($inscrito, 'COURSE_COLLECTOR', $totalInscripciones);
+
+                        // Logros de congresos
+                        if ($curso->tipo == 'congreso') {
+                            $this->achievementService->checkAndAwardAchievements($inscrito, 'CONGRESS_ENROLL', 1);
+                            $totalCongresos = Inscritos::where('estudiante_id', $estudiante_id)
+                                ->whereHas('cursos', fn($q) => $q->where('tipo', 'congreso'))
+                                ->count();
+                            $this->achievementService->checkAndAwardAchievements($inscrito, 'CONGRESS_PARTICIPANT', $totalCongresos);
+                        }
+
+                        // Verificar racha
+                        $streak = $this->achievementService->calculateStreak($inscrito);
+                        $this->achievementService->checkAndAwardAchievements($inscrito, 'STREAK_MASTER', $streak);
+
+                        // Notificar al estudiante inscrito
+                        $estudianteModel = User::find($estudiante_id);
+                        if ($estudianteModel) {
+                            event(new InscritoEvent($estudianteModel, $curso, 'inscripcion'));
+                        }
+
                         $inscritosExitosos[] = $estudiante_id;
                     } catch (\Exception $e) {
                         $erroresInscripcion[] = [
@@ -353,9 +377,24 @@ class InscritosController extends Controller
         $curso = Cursos::find($cursoId);
         $this->xpService->addXP($inscribir, 100, "Inscripción en congreso - {$curso->nombreCurso}");
 
+        // Verificar logros de inscripción
+        $totalInscripciones = Inscritos::where('estudiante_id', $estudianteId)->count();
+        $this->achievementService->checkAndAwardAchievements($inscribir, 'COURSE_ENROLL', 1);
+        $this->achievementService->checkAndAwardAchievements($inscribir, 'COURSE_COLLECTOR', $totalInscripciones);
+
+        // Logros de congresos
+        $this->achievementService->checkAndAwardAchievements($inscribir, 'CONGRESS_ENROLL', 1);
+        $totalCongresos = Inscritos::where('estudiante_id', $estudianteId)
+            ->whereHas('cursos', fn($q) => $q->where('tipo', 'congreso'))
+            ->count();
+        $this->achievementService->checkAndAwardAchievements($inscribir, 'CONGRESS_PARTICIPANT', $totalCongresos);
+
+        // Verificar racha
+        $streak = $this->achievementService->calculateStreak($inscribir);
+        $this->achievementService->checkAndAwardAchievements($inscribir, 'STREAK_MASTER', $streak);
+
         // Obtener el estudiante y el curso para la notificación
         $estudiante = User::find($estudianteId);
-        $curso = Cursos::find($cursoId);
 
         // Disparar el evento de inscripción
         event(new InscritoEvent($estudiante, $curso, 'inscripcion'));
@@ -422,17 +461,33 @@ class InscritosController extends Controller
 
     public function completado($id)
     {
-
-
         $inscritos = Inscritos::findOrFail($id);
 
         if ($inscritos->cursos->docente_id == auth()->user()->id || auth()->user()->hasRole('administrador')) {
             $inscritos->completado = true;
             $inscritos->progreso = 100;
-
             $inscritos->save();
 
-            return back()->with('success', 'El estudiante a completado el curso');
+            // Otorgar XP por completar el curso
+            $this->xpService->addXP($inscritos, 200, "Curso completado - {$inscritos->cursos->nombreCurso}");
+
+            // Verificar logro COURSE_FINISHER
+            $cursosCompletados = Inscritos::where('estudiante_id', $inscritos->estudiante_id)
+                ->where('completado', true)
+                ->count();
+            $this->achievementService->checkAndAwardAchievements($inscritos, 'COURSE_FINISHER', $cursosCompletados);
+
+            // Verificar racha
+            $streak = $this->achievementService->calculateStreak($inscritos);
+            $this->achievementService->checkAndAwardAchievements($inscritos, 'STREAK_MASTER', $streak);
+
+            // Notificar al estudiante que completó el curso
+            $estudiante = User::find($inscritos->estudiante_id);
+            if ($estudiante) {
+                event(new InscritoEvent($estudiante, $inscritos->cursos, 'completado'));
+            }
+
+            return back()->with('success', 'El estudiante ha completado el curso');
         }
 
         return abort(403);
@@ -501,7 +556,27 @@ class InscritosController extends Controller
         $inscritos->estudiante_id = $usuario->id;
         $inscritos->save();
 
+        // Otorgar XP por inscripción
+        $xpBase = $curso->tipo == 'congreso' ? 100 : 50;
+        $this->xpService->addXP($inscritos, $xpBase, "Inscripción en {$curso->nombreCurso}");
 
+        // Verificar logros de inscripción
+        $totalInscripciones = Inscritos::where('estudiante_id', $usuario->id)->count();
+        $this->achievementService->checkAndAwardAchievements($inscritos, 'COURSE_ENROLL', 1);
+        $this->achievementService->checkAndAwardAchievements($inscritos, 'COURSE_COLLECTOR', $totalInscripciones);
+
+        // Logros de congresos
+        if ($curso->tipo == 'congreso') {
+            $this->achievementService->checkAndAwardAchievements($inscritos, 'CONGRESS_ENROLL', 1);
+            $totalCongresos = Inscritos::where('estudiante_id', $usuario->id)
+                ->whereHas('cursos', fn($q) => $q->where('tipo', 'congreso'))
+                ->count();
+            $this->achievementService->checkAndAwardAchievements($inscritos, 'CONGRESS_PARTICIPANT', $totalCongresos);
+        }
+
+        // Verificar racha
+        $streak = $this->achievementService->calculateStreak($inscritos);
+        $this->achievementService->checkAndAwardAchievements($inscritos, 'STREAK_MASTER', $streak);
 
         return redirect()->route('Curso', $id)->with('success', '¡Te has inscrito correctamente!');
     }
@@ -558,6 +633,11 @@ class InscritosController extends Controller
 
             foreach ($inscripciones as $inscripcion) {
                 try {
+                    // Notificar al estudiante antes del soft delete
+                    if ($inscripcion->estudiantes) {
+                        event(new InscritoEvent($inscripcion->estudiantes, $curso, 'eliminacion'));
+                    }
+
                     // Marcar como eliminado (soft delete)
                     $inscripcion->delete();
 
@@ -692,6 +772,11 @@ class InscritosController extends Controller
                     // Restaurar la inscripción
                     $inscripcion->restore();
 
+                    // Notificar al estudiante restaurado
+                    if ($inscripcion->estudiantes) {
+                        event(new InscritoEvent($inscripcion->estudiantes, $curso, 'restauracion'));
+                    }
+
                     // Registrar el estudiante restaurado
                     $estudiantesRestaurados[] = [
                         'id' => $inscripcion->id,
@@ -798,6 +883,11 @@ class InscritosController extends Controller
                         $inscripcion->restore();
                         $restaurados++;
 
+                        // Notificar al estudiante restaurado
+                        if ($inscripcion->estudiantes) {
+                            event(new InscritoEvent($inscripcion->estudiantes, $curso, 'restauracion'));
+                        }
+
                         Log::info('Inscripción restaurada (todos)', [
                             'inscripcion_id' => $inscripcion->id,
                             'curso_id' => $cursoId,
@@ -854,6 +944,12 @@ class InscritosController extends Controller
             $curso = Cursos::find($inscrito->cursos_id);
             $xpPago = $curso->tipo == 'congreso' ? 150 : 75; // Más XP por pagar un congreso
             $this->xpService->addXP($inscrito, $xpPago, "Pago completado - {$curso->nombreCurso}");
+
+            // Notificar al estudiante que su pago fue confirmado
+            $estudiante = User::find($inscrito->estudiante_id);
+            if ($estudiante && $curso) {
+                event(new InscritoEvent($estudiante, $curso, 'pago_completado'));
+            }
         }
 
         // Redirige con un mensaje de éxito

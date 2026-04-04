@@ -5,15 +5,11 @@
 @section('content')
 <div class="container py-5 profile-container-modern">
     <div class="row g-4">
-
-        {{-- ═══ COLUMNA IZQUIERDA ═══════════════════════════ --}}
         <div class="col-lg-4">
             <div class="profile-card-modern">
 
-                {{-- Cover --}}
                 <div class="profile-cover-section"></div>
 
-                {{-- Avatar --}}
                 <div class="avatar-container">
                     @php
                         $avatarUrl   = $usuario->avatar
@@ -42,7 +38,6 @@
                     </div>
                 </div>
 
-                {{-- Info --}}
                 <div class="profile-info-section">
                     <h3 class="profile-user-name">
                         {{ $usuario->name }} {{ $usuario->lastname1 }}
@@ -53,7 +48,6 @@
                         {{ $usuario->roles->pluck('name')[0] ?? 'Sin rol' }}
                     </span>
 
-                    {{-- Contact --}}
                     <div class="profile-contact-info">
                         <div class="contact-item">
                             <i class="bi bi-geo-alt-fill"></i>
@@ -69,7 +63,6 @@
                         </div>
                     </div>
 
-                    {{-- Actions --}}
                     @if ($isAdmin || $isOwnProfile)
                         <div class="profile-actions">
                             @if($isOwnProfile)
@@ -94,8 +87,7 @@
                         </div>
                     @endif
 
-                    {{-- CV --}}
-                    @if ($isAdmin || $usuario->hasRole('Docente'))
+                    @if ($usuario->hasRole('Docente'))
                         <div class="cv-section">
                             <div class="cv-header">
                                 <i class="bi bi-file-earmark-text-fill"></i>
@@ -121,7 +113,6 @@
             </div>
         </div>
 
-        {{-- ═══ COLUMNA DERECHA ══════════════════════════════ --}}
         <div class="col-lg-8">
 
             {{-- Información Personal --}}
@@ -173,7 +164,6 @@
                 </div>
             </div>
 
-            {{-- Información de Contacto --}}
             <div class="info-card-modern mt-4">
                 <div class="info-card-header">
                     <div class="info-card-title-wrapper">
@@ -205,43 +195,6 @@
                 </div>
             </div>
 
-            {{-- Tutor --}}
-            @if (count($tutor) > 0)
-                @foreach($tutor as $t)
-                    <div class="info-card-modern mt-4">
-                        <div class="info-card-header">
-                            <div class="info-card-title-wrapper">
-                                <i class="bi bi-person-heart"></i>
-                                <h4>Datos del Tutor / Representante</h4>
-                            </div>
-                        </div>
-                        <div class="info-card-body">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="info-field">
-                                        <label class="info-label">Nombre Completo</label>
-                                        <div class="info-value">
-                                            {{ $t->nombreTutor }} {{ $t->appaternoTutor }} {{ $t->apmaternoTutor }}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="info-field">
-                                        <label class="info-label">Cédula de Identidad</label>
-                                        <div class="info-value">{{ $t->CI }}</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="info-field">
-                                        <label class="info-label">Dirección</label>
-                                        <div class="info-value">{{ $t->Direccion }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            @endif
 
             {{-- Datos Profesionales (Docente) --}}
             @if ($usuario->hasRole('Docente') && count($atributosD) > 0)
@@ -312,12 +265,10 @@
 
             @yield('extra_content')
 
-        </div>{{-- /col-lg-8 --}}
-    </div>{{-- /row --}}
-</div>{{-- /container --}}
+        </div>
+    </div>
+</div>
 
-
-{{-- ═══ MODAL AVATAR (solo perfil propio) ════════════════ --}}
 @if($isOwnProfile)
 <div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width:420px;">
@@ -377,6 +328,9 @@
         </div>
     </div>
 </div>
+
+
+{{-- Aqui falta para los estudiante los certificados obtenidos y la gamificacion nivel --}}
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
