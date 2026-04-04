@@ -1,10 +1,4 @@
-{{-- ===================================================
-     PARTIAL: Hero del Curso + Panel de Detalles
-     Incluye: hero, panel colapsable, modales de
-     horarios, certificados y gestión de curso.
-     =================================================== --}}
 
-{{-- ===== HERO ===== --}}
 <div class="container-fluid ch-outer">
     <div class="ch-hero">
         @if($cursos->imagen)
@@ -78,12 +72,9 @@
     </div>
 
 
-    {{-- ===== PANEL COLAPSABLE ===== --}}
     <div id="courseInfo" class="collapse show">
         <div class="container ch-panel-wrap">
             <div class="ch-panel">
-
-                {{-- ── Descripción ── --}}
                 <div class="ch-panel-main">
                     <div class="ch-card">
                         <div class="ch-card-header">
@@ -125,10 +116,7 @@
                     </div>
                 </div>
 
-                {{-- ── Sidebar: Docente + Acciones ── --}}
                 <div class="ch-panel-sidebar">
-
-                    {{-- Docente --}}
                     <div class="ch-card ch-teacher-card">
                         <div class="ch-card-header">
                             <div class="ch-card-icon">
@@ -156,7 +144,6 @@
                         @endif
                     </div>
 
-                    {{-- Acciones Rápidas --}}
                     <div class="ch-card ch-actions-card">
                         <div class="ch-card-header">
                             <div class="ch-card-icon ch-card-icon--orange">
@@ -262,14 +249,21 @@
                                         @endif
 
                                         @if($cursos->estado == 'Activo')
-                                            <form action="{{ route('cursos.activarCertificados', ['id' => $cursos->id]) }}"
-                                                  method="POST">
-                                                @csrf
-                                                <button type="submit" class="ch-manage-item w-100">
-                                                    <i class="bi bi-patch-check text-success"></i>
-                                                    Activar Certificados
-                                                </button>
-                                            </form>
+                                            @if($cursos->registros_habilitados)
+                                                <form action="{{ route('cursos.activarCertificados', ['id' => $cursos->id]) }}"
+                                                      method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="ch-manage-item w-100">
+                                                        <i class="bi bi-patch-check text-success"></i>
+                                                        Activar Certificados
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <div class="ch-manage-item text-muted opacity-75">
+                                                    <i class="bi bi-clock-history"></i>
+                                                    Activación automática en: {{ \Carbon\Carbon::parse($cursos->fecha_fin)->subHour()->diffForHumans() }}
+                                                </div>
+                                            @endif
                                         @endif
 
                                         @if(auth()->user()->hasRole('Administrador') || $esDocente)
@@ -294,26 +288,21 @@
                                             </a>
                                         @endif
 
-                                    </div>{{-- /ch-manage-menu --}}
-                                </div>{{-- /ch-manage-wrap --}}
+                                    </div>
+                                </div>
                             @endif
 
-                        </div>{{-- /ch-action-list --}}
-                    </div>{{-- /ch-actions-card --}}
+                        </div>
+                    </div>
 
-                </div>{{-- /ch-panel-sidebar --}}
-            </div>{{-- /ch-panel --}}
+                </div>
+            </div>
         </div>
-    </div>{{-- /courseInfo --}}
+    </div>
 
-</div>{{-- /ch-outer --}}
+</div>
 
 
-{{-- ===================================================
-     MODALES
-     =================================================== --}}
-
-{{-- Modal: Descargar Certificado --}}
 <div class="modal fade" id="certificadoModal" tabindex="-1" aria-labelledby="certificadoModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -325,485 +314,14 @@
     </div>
 </div>
 
-{{-- Modal: Subir Plantilla de Certificado --}}
-<div class="modal fade" id="modalCertificado" tabindex="-1" aria-labelledby="modalCertificadoLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-        <div class="modal-content shadow">
-            <form action="{{ route('certificates.store', $cursos->id) }}" method="POST"
-                  enctype="multipart/form-data" novalidate>
-                @csrf
-                <div class="modal-header bg-primary text-white">
-                    <h1 class="modal-title fs-5" id="modalCertificadoLabel">
-                        <i class="bi bi-file-earmark-plus me-2"></i>Subir Plantilla de Certificado
-                    </h1>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row g-4">
-                        {{-- Frontal --}}
-                        <div class="col-lg-6">
-                            <div class="card h-100">
-                                <div class="card-header bg-light">
-                                    <h6 class="card-title mb-0"><i class="bi bi-image me-2"></i>Parte Frontal</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="mb-3">
-                                        <label class="form-label fw-semibold">Seleccionar archivo</label>
-                                        <input type="file" name="template_front" class="form-control"
-                                               accept="image/*" required
-                                               onchange="previewImage(this, '#preview-front')">
-                                        <div class="form-text">
-                                            <i class="bi bi-info-circle me-1"></i>JPG, PNG, GIF (máx. 5MB)
-                                        </div>
-                                    </div>
-                                    <div class="preview-container" id="preview-container-front">
-                                        <div class="preview-placeholder">
-                                            <i class="bi bi-cloud-upload fs-1 d-block mb-2"></i>
-                                            Vista previa aparecerá aquí
-                                        </div>
-                                        <img id="preview-front" class="img-fluid rounded shadow-sm d-none"
-                                             style="max-height:250px;" alt="Vista previa frontal" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {{-- Trasera --}}
-                        <div class="col-lg-6">
-                            <div class="card h-100">
-                                <div class="card-header bg-light">
-                                    <h6 class="card-title mb-0"><i class="bi bi-image-fill me-2"></i>Parte Trasera</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="mb-3">
-                                        <label class="form-label fw-semibold">Seleccionar archivo</label>
-                                        <input type="file" name="template_back" class="form-control"
-                                               accept="image/*" required
-                                               onchange="previewImage(this, '#preview-back')">
-                                        <div class="form-text">
-                                            <i class="bi bi-info-circle me-1"></i>JPG, PNG, GIF (máx. 5MB)
-                                        </div>
-                                    </div>
-                                    <div class="preview-container" id="preview-container-back">
-                                        <div class="preview-placeholder">
-                                            <i class="bi bi-cloud-upload fs-1 d-block mb-2"></i>
-                                            Vista previa aparecerá aquí
-                                        </div>
-                                        <img id="preview-back" class="img-fluid rounded shadow-sm d-none"
-                                             style="max-height:250px;" alt="Vista previa trasera" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <hr class="my-4">
-
-                    {{-- Configuración de texto --}}
-                    <div class="card">
-                        <div class="card-header bg-light">
-                            <h6 class="card-title mb-0"><i class="bi bi-type me-2"></i>Configuración del Texto</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="row g-3">
-                                <div class="col-md-4">
-                                    <label class="form-label fw-semibold">
-                                        <i class="bi bi-palette me-1"></i>Color Primario
-                                    </label>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <input type="color" name="primary_color"
-                                               class="form-control form-control-color" value="#000000">
-                                        <span class="text-muted small color-value">#000000</span>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label fw-semibold">
-                                        <i class="bi bi-fonts me-1"></i>Fuente
-                                    </label>
-                                    <select name="font_family" class="form-select">
-                                        @foreach(['Arial','Times New Roman','Helvetica','Courier New','Georgia','Verdana'] as $font)
-                                            <option value="{{ $font }}">{{ $font }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label fw-semibold">
-                                        <i class="bi bi-text-paragraph me-1"></i>Tamaño de Fuente
-                                    </label>
-                                    <div class="input-group">
-                                        <input type="range" name="font_size_range"
-                                               class="form-range font-size-range" min="8" max="72" value="14">
-                                        <input type="number" name="font_size"
-                                               class="form-control font-size-number"
-                                               min="8" max="72" value="14" style="max-width:80px;">
-                                        <span class="input-group-text">px</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        <i class="bi bi-x-circle me-1"></i>Cancelar
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-cloud-upload me-1"></i>Subir Plantilla
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-{{-- Modal: Actualizar Plantilla de Certificado --}}
-@if($cursos->certificateTemplate)
-    <div class="modal fade" id="modalEditarCertificado" tabindex="-1"
-         aria-labelledby="modalEditarCertificadoLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-centered">
-            <div class="modal-content shadow">
-                <form action="{{ route('certificates.update', $cursos->id) }}" method="POST"
-                      enctype="multipart/form-data" novalidate>
-                    @csrf
-                    <div class="modal-header bg-warning text-dark">
-                        <h1 class="modal-title fs-5" id="modalEditarCertificadoLabel">
-                            <i class="bi bi-pencil-square me-2"></i>Actualizar Plantilla de Certificado
-                        </h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="alert alert-info d-flex align-items-center" role="alert">
-                            <i class="bi bi-info-circle-fill me-2"></i>
-                            <div>
-                                <strong>Plantillas actuales:</strong>
-                                Si no seleccionas nuevos archivos, se mantendrán los actuales.
-                            </div>
-                        </div>
-
-                        <div class="row g-4">
-                            {{-- Vistas previas actuales --}}
-                            <div class="col-lg-6">
-                                <h6 class="fw-semibold mb-3">
-                                    <i class="bi bi-eye me-2"></i>Plantilla Frontal Actual
-                                </h6>
-                                <div class="text-center">
-                                    <img src="{{ asset('storage/' . ($template->template_front_path ?? '')) }}"
-                                         class="img-fluid rounded shadow-sm mb-2"
-                                         style="max-height:150px;" alt="Frontal actual">
-                                    <div class="text-muted small">Plantilla frontal en uso</div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <h6 class="fw-semibold mb-3">
-                                    <i class="bi bi-eye-fill me-2"></i>Plantilla Trasera Actual
-                                </h6>
-                                <div class="text-center">
-                                    <img src="{{ asset('storage/' . ($template->template_back_path ?? '')) }}"
-                                         class="img-fluid rounded shadow-sm mb-2"
-                                         style="max-height:150px;" alt="Trasera actual">
-                                    <div class="text-muted small">Plantilla trasera en uso</div>
-                                </div>
-                            </div>
-
-                            {{-- Nuevas plantillas opcionales --}}
-                            <div class="col-lg-6">
-                                <div class="card h-100 border-warning">
-                                    <div class="card-header bg-warning bg-opacity-25">
-                                        <h6 class="card-title mb-0">
-                                            <i class="bi bi-upload me-2"></i>Nueva Parte Frontal (Opcional)
-                                        </h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <input type="file" name="template_front" class="form-control mb-2"
-                                               accept="image/*"
-                                               onchange="previewImage(this, '#edit-preview-front')">
-                                        <div class="form-text mb-3">Deja vacío para mantener la actual</div>
-                                        <div class="preview-container">
-                                            <div class="preview-placeholder">
-                                                <i class="bi bi-cloud-upload fs-3 d-block mb-2"></i>
-                                                Nueva vista previa
-                                            </div>
-                                            <img id="edit-preview-front"
-                                                 class="img-fluid rounded shadow-sm d-none"
-                                                 style="max-height:200px;" alt="Nueva frontal">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="card h-100 border-warning">
-                                    <div class="card-header bg-warning bg-opacity-25">
-                                        <h6 class="card-title mb-0">
-                                            <i class="bi bi-upload me-2"></i>Nueva Parte Trasera (Opcional)
-                                        </h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <input type="file" name="template_back" class="form-control mb-2"
-                                               accept="image/*"
-                                               onchange="previewImage(this, '#edit-preview-back')">
-                                        <div class="form-text mb-3">Deja vacío para mantener la actual</div>
-                                        <div class="preview-container">
-                                            <div class="preview-placeholder">
-                                                <i class="bi bi-cloud-upload fs-3 d-block mb-2"></i>
-                                                Nueva vista previa
-                                            </div>
-                                            <img id="edit-preview-back"
-                                                 class="img-fluid rounded shadow-sm d-none"
-                                                 style="max-height:200px;" alt="Nueva trasera">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <hr class="my-4">
-
-                        {{-- Configuración de texto --}}
-                        <div class="card">
-                            <div class="card-header bg-light">
-                                <h6 class="card-title mb-0">
-                                    <i class="bi bi-type me-2"></i>Configuración del Texto
-                                </h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="row g-3">
-                                    <div class="col-md-4">
-                                        <label class="form-label fw-semibold">Color Primario</label>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <input type="color" name="primary_color"
-                                                   class="form-control form-control-color" value="#ff6b35">
-                                            <span class="text-muted small color-value">#ff6b35</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label fw-semibold">Fuente</label>
-                                        <select name="font_family" class="form-select">
-                                            @foreach(['Arial','Times New Roman','Helvetica','Courier New','Georgia','Verdana'] as $font)
-                                                <option value="{{ $font }}" {{ $font === 'Times New Roman' ? 'selected' : '' }}>
-                                                    {{ $font }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label fw-semibold">Tamaño de Fuente</label>
-                                        <div class="input-group">
-                                            <input type="range" name="font_size_range"
-                                                   class="form-range font-size-range" min="8" max="72" value="18">
-                                            <input type="number" name="font_size"
-                                                   class="form-control font-size-number"
-                                                   min="8" max="72" value="18" style="max-width:80px;">
-                                            <span class="input-group-text">px</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer bg-light">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                            <i class="bi bi-x-circle me-1"></i>Cancelar
-                        </button>
-                        <button type="submit" class="btn btn-warning">
-                            <i class="bi bi-arrow-repeat me-1"></i>Actualizar Plantilla
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-@endif
-
-{{-- Modal: Lista de Horarios --}}
-<div class="modal fade" id="modalHorario" tabindex="-1" aria-labelledby="modalHorarioLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title d-flex align-items-center" id="modalHorarioLabel">
-                    <i class="bi bi-calendar3 me-2"></i>Lista de Horarios
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            <div class="modal-body p-0">
-                @if($horarios->isEmpty())
-                    <div class="text-center py-5">
-                        <i class="bi bi-calendar-x display-4 text-muted"></i>
-                        <p class="mt-3 text-muted">No hay horarios registrados para este curso</p>
-                    </div>
-                @else
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th><i class="bi bi-calendar-day me-1"></i>Día</th>
-                                    <th><i class="bi bi-clock me-1"></i>Hora Inicio</th>
-                                    <th><i class="bi bi-clock-fill me-1"></i>Hora Fin</th>
-                                    <th><i class="bi bi-hourglass-split me-1"></i>Duración</th>
-                                    @if($cursos->docente_id == auth()->user()->id || auth()->user()->hasRole('Administrador'))
-                                        <th class="text-center"><i class="bi bi-gear me-1"></i>Acciones</th>
-                                    @endif
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($horarios as $horario)
-                                    @php
-                                        $inicio   = Carbon\Carbon::parse($horario->horario->hora_inicio);
-                                        $fin      = Carbon\Carbon::parse($horario->horario->hora_fin);
-                                        $duracion = $inicio->diff($fin);
-                                    @endphp
-                                    <tr class="{{ $horario->trashed() ? 'table-warning' : '' }}">
-                                        <td class="fw-medium">
-                                            <span class="badge bg-light text-dark border">
-                                                {{ $horario->horario->dia }}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span class="text-success fw-medium">{{ $inicio->format('h:i A') }}</span>
-                                        </td>
-                                        <td>
-                                            <span class="text-danger fw-medium">{{ $fin->format('h:i A') }}</span>
-                                        </td>
-                                        <td>
-                                            <small class="text-muted">{{ $duracion->h }}h {{ $duracion->i }}m</small>
-                                        </td>
-                                        @if($cursos->docente_id == auth()->user()->id || auth()->user()->hasRole('Administrador'))
-                                            <td>
-                                                <div class="d-flex gap-2 justify-content-center">
-                                                    @if($horario->trashed())
-                                                        <span class="badge bg-warning text-dark">
-                                                            <i class="bi bi-archive"></i> Eliminado
-                                                        </span>
-                                                        <form action="{{ route('horarios.restore', ['id' => $horario->id]) }}"
-                                                              method="POST"
-                                                              onsubmit="return confirm('¿Restaurar este horario?')">
-                                                            @csrf
-                                                            <button type="submit" class="btn btn-sm btn-outline-success">
-                                                                <i class="bi bi-arrow-clockwise"></i> Restaurar
-                                                            </button>
-                                                        </form>
-                                                    @else
-                                                        <button class="btn btn-sm btn-outline-primary btn-editar-horario"
-                                                                data-id="{{ $horario->id }}"
-                                                                data-dia="{{ $horario->horario->dia }}"
-                                                                data-hora-inicio="{{ $horario->horario->hora_inicio }}"
-                                                                data-hora-fin="{{ $horario->horario->hora_fin }}"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#modalEditarHorario">
-                                                            <i class="bi bi-pencil"></i> Editar
-                                                        </button>
-                                                        <form action="{{ route('horarios.delete', ['id' => $horario->id]) }}"
-                                                              method="POST"
-                                                              onsubmit="return confirm('¿Eliminar este horario? Esta acción se puede revertir.')">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                                <i class="bi bi-trash"></i> Eliminar
-                                                            </button>
-                                                        </form>
-                                                    @endif
-                                                </div>
-                                            </td>
-                                        @endif
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @endif
-            </div>
-            <div class="modal-footer bg-light">
-                @if($cursos->docente_id == auth()->user()->id || auth()->user()->hasRole('Administrador'))
-                    <button type="button" class="btn btn-success"
-                            data-bs-toggle="modal" data-bs-target="#modalCrearHorario">
-                        <i class="bi bi-plus-circle me-1"></i>Agregar Horario
-                    </button>
-                @endif
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="bi bi-x-circle me-1"></i>Cerrar
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-{{-- Modal: Crear Horario --}}
-<div class="modal fade" id="modalCrearHorario" tabindex="-1" aria-labelledby="modalCrearHorarioLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form action="{{ route('horarios.store') }}" id="formCrearHorario" method="POST">
-                @csrf
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalCrearHorarioLabel">Agregar Horario</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" name="curso_id" value="{{ $cursos->id }}">
-                    <div class="mb-3">
-                        <label for="dia" class="form-label">Día</label>
-                        <select name="dia" id="dia" class="form-select">
-                            @foreach(['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'] as $dia)
-                                <option value="{{ $dia }}">{{ $dia }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="hora_inicio" class="form-label">Hora de Inicio</label>
-                        <input type="time" name="hora_inicio" id="hora_inicio" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="hora_fin" class="form-label">Hora de Fin</label>
-                        <input type="time" name="hora_fin" id="hora_fin" class="form-control" required>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-{{-- Modal: Editar Horario --}}
-<div class="modal fade" id="modalEditarHorario" tabindex="-1" aria-labelledby="modalEditarHorarioLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalEditarHorarioLabel">Editar Horario</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            <div class="modal-body">
-                <form id="formEditarHorario" action="" method="POST">
-                    @csrf
-                    <div class="mb-3">
-                        <label for="edit_dia" class="form-label">Día</label>
-                        <select name="dia" id="edit_dia" class="form-select" required>
-                            @foreach(['lunes','martes','miércoles','jueves','viernes','sábado','domingo'] as $dia)
-                                <option value="{{ $dia }}">{{ ucfirst($dia) }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="edit_hora_inicio" class="form-label">Hora de Inicio</label>
-                        <input type="time" name="hora_inicio" id="edit_hora_inicio" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="edit_hora_fin" class="form-label">Hora de Fin</label>
-                        <input type="time" name="hora_fin" id="edit_hora_fin" class="form-control" required>
-                    </div>
-                    <div class="modal-footer px-0 pb-0">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
 
-{{-- ===================================================
-     ESTILOS — sin cambios respecto al original
-     =================================================== --}}
+
+@include('partials.cursos.modals.certificadosPlantilla')
+@include('partials.cursos.modals.horario')
+
+
+
 <style>
     /* ---- Modales ---- */
     .modal-header.bg-primary { border-bottom: none; }
@@ -943,9 +461,7 @@
 </style>
 
 
-{{-- ===================================================
-     SCRIPTS
-     =================================================== --}}
+
 <script>
 (function () {
 

@@ -193,50 +193,62 @@
                                                     </div>
                                                 </div>
 
-                                                @if ($cursos->certificados_disponibles == true)
-                                                    <!-- Contador de tiempo -->
-                                                    <div class="text-center mb-4">
-                                                        <h5 class="text-primary fw-bold mb-3">
-                                                            <i class="bi bi-clock-history me-2"></i>Tiempo Disponible
-                                                        </h5>
-                                                        <div id="countdown-timer"></div>
-                                                    </div>
+                                                @if ($cursos->registros_habilitados)
+                                                    @if ($cursos->certificados_disponibles == true)
+                                                        <!-- Contador de tiempo -->
+                                                        <div class="text-center mb-4">
+                                                            <h5 class="text-primary fw-bold mb-3">
+                                                                <i class="bi bi-clock-history me-2"></i>Tiempo Disponible
+                                                            </h5>
+                                                            <div id="countdown-timer"></div>
+                                                        </div>
 
-                                                    @if (!$cursos->esCuposIlimitados() && $cursos->cuposDisponibles() <= 0)
-                                                        {{-- Cupos agotados para congreso --}}
-                                                        <button class="btn btn-secondary w-100 py-3 fw-bold fs-5" disabled>
-                                                            <i class="bi bi-x-circle-fill me-2"></i>
-                                                            Cupos Agotados
-                                                        </button>
-                                                        <p class="text-muted text-center mt-2 small">
-                                                            <i class="bi bi-info-circle me-1"></i>
-                                                            No hay cupos disponibles para este evento.
-                                                        </p>
-                                                    @elseif (auth()->user())
-                                                        <form
-                                                            action="{{ route('certificados.obtener', encrypt($cursos->id)) }}"
-                                                            method="POST">
-                                                            @csrf
-                                                            <input type="hidden" name="congreso_id"
-                                                                value="{{ $cursos->id }}">
-                                                            <button type="submit"
-                                                                class="btn btn-success w-100 py-3 fw-bold fs-5">
-                                                                <i class="bi bi-award-fill me-2"></i>
-                                                                Obtener Mi Certificado Ahora
+                                                        @if (!$cursos->esCuposIlimitados() && $cursos->cuposDisponibles() <= 0)
+                                                            {{-- Cupos agotados para congreso --}}
+                                                            <button class="btn btn-secondary w-100 py-3 fw-bold fs-5" disabled>
+                                                                <i class="bi bi-x-circle-fill me-2"></i>
+                                                                Cupos Agotados
                                                             </button>
-                                                        </form>
+                                                            <p class="text-muted text-center mt-2 small">
+                                                                <i class="bi bi-info-circle me-1"></i>
+                                                                No hay cupos disponibles para este evento.
+                                                            </p>
+                                                        @elseif (auth()->user())
+                                                            <form
+                                                                action="{{ route('certificados.obtener', encrypt($cursos->id)) }}"
+                                                                method="POST">
+                                                                @csrf
+                                                                <input type="hidden" name="congreso_id"
+                                                                    value="{{ $cursos->id }}">
+                                                                <button type="submit"
+                                                                    class="btn btn-success w-100 py-3 fw-bold fs-5">
+                                                                    <i class="bi bi-award-fill me-2"></i>
+                                                                    Obtener Mi Certificado Ahora
+                                                                </button>
+                                                            </form>
+                                                        @else
+                                                            <button class="btn btn-primary w-100 py-3 fw-bold fs-5"
+                                                                data-bs-toggle="modal" data-bs-target="#opcionesRegistroModal">
+                                                                <i class="bi bi-person-plus-fill me-2"></i>
+                                                                Registrarse Ahora
+                                                            </button>
+                                                        @endif
                                                     @else
-                                                        <button class="btn btn-primary w-100 py-3 fw-bold fs-5"
-                                                            data-bs-toggle="modal" data-bs-target="#opcionesRegistroModal">
-                                                            <i class="bi bi-person-plus-fill me-2"></i>
-                                                            Registrarse Ahora
+                                                        <button class="btn btn-secondary w-100 py-3 fw-bold" disabled>
+                                                            <i class="bi bi-lock-fill me-2"></i>
+                                                            El certificado no está disponible
                                                         </button>
                                                     @endif
                                                 @else
-                                                    <button class="btn btn-secondary w-100 py-3 fw-bold" disabled>
-                                                        <i class="bi bi-lock-fill me-2"></i>
-                                                        El certificado no está disponible
-                                                    </button>
+                                                    {{-- Registro no habilitado aún (Congresos) --}}
+                                                    <div class="alert alert-info border-0 shadow-sm text-center mb-0 py-3">
+                                                        <i class="bi bi-clock-history fs-3 d-block mb-2"></i>
+                                                        <h6 class="fw-bold mb-1">Registro Próximamente</h6>
+                                                        <p class="small mb-0">Los registros se habilitarán automáticamente 1 hora antes de finalizar el evento.</p>
+                                                        <div class="mt-2 fw-bold text-primary">
+                                                            Habilitación: {{ \Carbon\Carbon::parse($cursos->fecha_fin)->subHour()->format('d/m/Y H:i') }}
+                                                        </div>
+                                                    </div>
                                                 @endif
                                             @endif
                                         </div>

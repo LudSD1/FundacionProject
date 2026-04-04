@@ -59,7 +59,25 @@ class Cursos extends BaseModel
         'duracion_formateada',
         'url', // URL amigable del curso
         'cupos_texto', // Texto descriptivo de cupos disponibles
+        'registros_habilitados', // Habilitación automática de registros
     ];
+
+    /**
+     * Determina si los registros están habilitados automáticamente (1 hora antes de finalizar)
+     */
+    public function getRegistrosHabilitadosAttribute(): bool
+    {
+        if ($this->tipo !== 'congreso' || !$this->fecha_fin) {
+            return true; // Cursos normales siempre habilitados o sin fecha fin
+        }
+
+        $fechaFin = Carbon::parse($this->fecha_fin);
+        $unaHoraAntes = $fechaFin->copy()->subHour();
+        $ahora = now();
+
+        // Habilitar si ya estamos dentro de la última hora o si el evento ya terminó
+        return $ahora->greaterThanOrEqualTo($unaHoraAntes);
+    }
 
     /**
      * Obtiene la URL amigable del curso/congreso usando codigoCurso como slug
@@ -136,6 +154,12 @@ class Cursos extends BaseModel
     {
         return $this->hasMany(Inscritos::class,  'cursos_id', 'id');
     }
+
+    public function certificados(): HasMany
+    {
+        return $this->hasMany(Certificado::class, 'curso_id');
+    }
+
     public function foros(): HasMany
     {
         return $this->hasMany(Foro::class,  'id', 'cursos_id');

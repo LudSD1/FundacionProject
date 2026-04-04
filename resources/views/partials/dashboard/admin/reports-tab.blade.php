@@ -3,12 +3,14 @@
     $q      = request('q');
 
     // Optimizamos la consulta con select para traer solo lo necesario
-    $query  = \App\Models\Cursos::select('id', 'nombreCurso', 'codigoCurso', 'docente_id', 'imagen', 'fecha_ini', 'fecha_fin', 'precio')
+    $query  = \App\Models\Cursos::select('id', 'nombreCurso', 'codigoCurso', 'docente_id', 'imagen', 'fecha_ini', 'fecha_fin', 'precio', 'tipo')
         ->with(['docente' => function($d) {
             $d->select('id', 'name', 'lastname1', 'lastname2');
         }])
         ->withCount(['inscritos' => function($i) {
             $i->whereNull('deleted_at');
+        }, 'certificados' => function($c) {
+            $c->whereNull('deleted_at');
         }])
         ->withAvg(['inscritos as promedio_progreso' => function($i) {
             $i->whereNull('deleted_at');
@@ -133,47 +135,58 @@
          ║  RESUMEN RÁPIDO                     ║
          ╚══════════════════════════════════════╝ --}}
     <div class="row g-3 mb-4">
-        <div class="col-xl-3 col-md-6">
+        <div class="col-xl-2 col-md-4 col-6">
             <div class="rpt-metric-card shadow-sm">
                 <div class="rpt-metric-icon bg-primary-subtle text-primary">
                     <i class="bi bi-journal-text"></i>
                 </div>
                 <div class="flex-grow-1">
-                    <div class="small text-muted fw-medium">Cursos Totales</div>
-                    <div class="fw-bold fs-4 text-dark">{{ \App\Models\Cursos::count() }}</div>
+                    <div class="small text-muted fw-medium">Cursos</div>
+                    <div class="fw-bold fs-5 text-dark">{{ \App\Models\Cursos::where('tipo', 'curso')->count() }}</div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-md-6">
+        <div class="col-xl-2 col-md-4 col-6">
+            <div class="rpt-metric-card shadow-sm">
+                <div class="rpt-metric-icon bg-info-subtle text-info">
+                    <i class="bi bi-megaphone"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="small text-muted fw-medium">Congresos</div>
+                    <div class="fw-bold fs-5 text-dark">{{ \App\Models\Cursos::where('tipo', 'congreso')->count() }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-4">
             <div class="rpt-metric-card shadow-sm">
                 <div class="rpt-metric-icon bg-success-subtle text-success">
                     <i class="bi bi-people"></i>
                 </div>
                 <div class="flex-grow-1">
                     <div class="small text-muted fw-medium">Total Inscritos</div>
-                    <div class="fw-bold fs-4 text-dark">{{ \App\Models\Inscritos::count() }}</div>
+                    <div class="fw-bold fs-5 text-dark">{{ \App\Models\Inscritos::count() }}</div>
                 </div>
             </div>
         </div>
         <div class="col-xl-3 col-md-6">
             <div class="rpt-metric-card shadow-sm">
                 <div class="rpt-metric-icon bg-warning-subtle text-warning">
-                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-patch-check-fill"></i>
                 </div>
                 <div class="flex-grow-1">
-                    <div class="small text-muted fw-medium">Rating Promedio</div>
-                    <div class="fw-bold fs-4 text-dark">{{ number_format(\App\Models\CursoCalificacion::avg('puntuacion') ?? 0, 1) }}</div>
+                    <div class="small text-muted fw-medium">Certificados Emitidos</div>
+                    <div class="fw-bold fs-5 text-dark">{{ \App\Models\Certificado::count() }}</div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-md-6">
+        <div class="col-xl-2 col-md-6">
             <div class="rpt-metric-card shadow-sm">
-                <div class="rpt-metric-icon bg-info-subtle text-info">
+                <div class="rpt-metric-icon bg-danger-subtle text-danger">
                     <i class="bi bi-graph-up-arrow"></i>
                 </div>
                 <div class="flex-grow-1">
-                    <div class="small text-muted fw-medium">Progreso Global</div>
-                    <div class="fw-bold fs-4 text-dark">{{ number_format(\App\Models\Inscritos::avg('progreso') ?? 0, 1) }}%</div>
+                    <div class="small text-muted fw-medium">Progreso</div>
+                    <div class="fw-bold fs-5 text-dark">{{ number_format(\App\Models\Inscritos::avg('progreso') ?? 0, 1) }}%</div>
                 </div>
             </div>
         </div>
@@ -255,12 +268,12 @@
                 <tr>
                     <th width="25%">
                         <div class="th-content">
-                            <i class="bi bi-book-fill"></i><span>Curso</span>
+                            <i class="bi bi-book-fill"></i><span>Curso / Congreso</span>
                         </div>
                     </th>
-                    <th width="15%">
+                    <th width="18%">
                         <div class="th-content text-center w-100">
-                            <i class="bi bi-people-fill"></i><span>Inscritos</span>
+                            <i class="bi bi-people-fill"></i><span>Participación</span>
                         </div>
                     </th>
                     <th width="15%">
@@ -268,17 +281,17 @@
                             <i class="bi bi-graph-up"></i><span>Progreso Prom.</span>
                         </div>
                     </th>
-                    <th width="12%">
+                    <th width="14%">
                         <div class="th-content">
                             <i class="bi bi-person-badge-fill"></i><span>Instructor</span>
                         </div>
                     </th>
-                    <th width="10%">
+                    <th width="13%">
                         <div class="th-content">
                             <i class="bi bi-circle-half"></i><span>Estado</span>
                         </div>
                     </th>
-                    <th width="13%" class="text-center">
+                    <th width="15%" class="text-center">
                         <div class="th-content justify-content-center">
                             <i class="bi bi-gear-fill"></i><span>Acciones</span>
                         </div>
@@ -301,6 +314,8 @@
                     };
                     $progreso = round($curso->promedio_progreso ?? 0);
                     $totalInscritos = $curso->inscritos_count;
+                    $totalCertificados = $curso->certificados_count;
+                    $isCongreso = $curso->tipo === 'congreso';
                 @endphp
                 <tr data-estado="{{ $estadoCurso }}"
                     data-nombre="{{ strtolower($curso->nombreCurso) }}">
@@ -320,6 +335,11 @@
                                 </span>
                                 <div class="d-flex align-items-center gap-2">
                                     <small class="text-muted fw-mono" style="font-size: 0.65rem;">{{ $curso->codigoCurso }}</small>
+                                    @if($isCongreso)
+                                        <span class="rpt-stat-badge bg-info-subtle text-info" style="font-size: 0.6rem;">
+                                            <i class="bi bi-megaphone-fill"></i> Congreso
+                                        </span>
+                                    @endif
                                     @if($curso->precio > 0)
                                         <span class="rpt-stat-badge bg-light text-dark border">
                                             <i class="bi bi-tag-fill text-primary"></i>Bs.{{ number_format($curso->precio, 0) }}
@@ -332,13 +352,26 @@
                         </div>
                     </td>
 
-                    {{-- Inscritos con badge --}}
+                    {{-- Participación (Inscritos y Certificados) --}}
                     <td class="text-center">
-                        <div class="d-inline-flex flex-column align-items-center">
-                            <div class="fw-bold text-dark fs-5">{{ $totalInscritos }}</div>
-                            <span class="rpt-stat-badge bg-primary-subtle text-primary" style="font-size: 0.6rem;">
-                                <i class="bi bi-people-fill"></i> Alumnos
-                            </span>
+                        <div class="d-flex justify-content-center gap-3">
+                            {{-- Participantes --}}
+                            <div class="d-inline-flex flex-column align-items-center">
+                                <div class="fw-bold text-dark fs-5">{{ $totalInscritos }}</div>
+                                <span class="rpt-stat-badge bg-primary-subtle text-primary" style="font-size: 0.6rem;" title="Total inscritos">
+                                    <i class="bi bi-people-fill"></i> Inscritos
+                                </span>
+                            </div>
+
+                            {{-- Certificados (Diferenciados para Congresos) --}}
+                            @if($isCongreso || $totalCertificados > 0)
+                            <div class="d-inline-flex flex-column align-items-center">
+                                <div class="fw-bold text-dark fs-5">{{ $totalCertificados }}</div>
+                                <span class="rpt-stat-badge bg-warning-subtle text-warning" style="font-size: 0.6rem;" title="Certificados emitidos">
+                                    <i class="bi bi-patch-check-fill"></i> Certif.
+                                </span>
+                            </div>
+                            @endif
                         </div>
                     </td>
 

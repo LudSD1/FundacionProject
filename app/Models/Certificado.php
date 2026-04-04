@@ -14,7 +14,7 @@ class Certificado extends BaseModel
 
     public function curso()
     {
-        return $this->belongsTo(Cursos::class, 'inscrito_id');
+        return $this->belongsTo(Cursos::class, 'curso_id');
     }
 
     public function inscrito()
