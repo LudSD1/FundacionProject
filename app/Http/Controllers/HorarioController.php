@@ -29,7 +29,9 @@ class HorarioController extends Controller
             'horario_id' => $horario->id,
         ]);
 
-        return redirect()->route('Curso', $request->curso_id)
+        $curso = \App\Models\Cursos::find($request->curso_id);
+
+        return redirect()->route('Curso', $curso->codigoCurso ?? $request->curso_id)
             ->with('success', 'Horario agregado correctamente.');
     }
 

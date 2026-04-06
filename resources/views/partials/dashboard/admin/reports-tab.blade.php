@@ -430,7 +430,7 @@
                             </a>
                             <a class="btn-action-modern"
                                style="background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0;"
-                               href="{{ route('Curso', $curso->codigoCurso) }}"
+                               href="{{ route('Curso', $curso->codigoCurso ?? $curso->id) }}"
                                target="_blank"
                                data-bs-toggle="tooltip"
                                data-bs-placement="top"

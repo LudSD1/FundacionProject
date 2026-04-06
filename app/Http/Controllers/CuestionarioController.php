@@ -40,13 +40,27 @@ class CuestionarioController extends Controller
 
 
         if ($cuestionario->preguntas->isEmpty()) {
-            return redirect()->route('Curso', encrypt($cuestionario->actividad->subtema->tema->curso->id))
+            return redirect()->route('Curso', $cuestionario->actividad->subtema->tema->curso->codigoCurso ?? $cuestionario->actividad->subtema->tema->curso->id)
                 ->with('error', 'Este cuestionario no tiene preguntas disponibles.');
         }
 
         $inscripcion = Inscritos::where('estudiante_id', Auth::id())
             ->where('cursos_id', $cuestionario->actividad->subtema->tema->curso->id)
             ->firstOrFail();
+
+        // Verificar si ya existe un intento en progreso para este estudiante
+        $intentoEnProgreso = IntentoCuestionario::where('cuestionario_id', $id)
+            ->where('inscrito_id', $inscripcion->id)
+            ->whereNull('finalizado_en')
+            ->first();
+
+        if ($intentoEnProgreso) {
+            return view('Estudiante.cuestionario_resolve', [
+                'cuestionario' => $cuestionario,
+                'inscripcion' => $inscripcion,
+                'nuevoIntento' => $intentoEnProgreso
+            ]);
+        }
 
         // Obtener el número de intentos realizados
         $intentosRealizados = IntentoCuestionario::where('cuestionario_id', $id)
@@ -55,7 +69,7 @@ class CuestionarioController extends Controller
 
         // Verificar si se alcanzó el número máximo de intentos
         if ($intentosRealizados >= $cuestionario->max_intentos) {
-            return redirect()->route('Curso', encrypt($cuestionario->actividad->subtema->tema->curso->id))
+            return redirect()->route('Curso', $cuestionario->actividad->subtema->tema->curso->codigoCurso ?? $cuestionario->actividad->subtema->tema->curso->id)
                 ->with('error', 'Has alcanzado el número máximo de intentos para este cuestionario.');
         }
 

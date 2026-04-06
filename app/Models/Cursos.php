@@ -89,7 +89,7 @@ class Cursos extends BaseModel
     }
 
     /**
-     * Obtiene la clave de ruta para model binding (usa codigoCurso como slug)
+     * Obtiene la clave de ruta para model binding (usa estrictamente codigoCurso)
      */
     public function getRouteKeyName()
     {
@@ -97,13 +97,25 @@ class Cursos extends BaseModel
     }
 
     /**
-     * Resolver el route model binding por codigoCurso
-     * Solo acepta codigoCurso, no IDs numéricos
+     * Obtiene el valor de la clave de ruta para el modelo.
+     */
+    public function getRouteKey()
+    {
+        return $this->codigoCurso;
+    }
+
+    /**
+     * Resolver el route model binding por codigoCurso o ID (como fallback de seguridad)
      */
     public function resolveRouteBinding($value, $field = null)
     {
-        // Buscar SOLO por codigoCurso
+        // Primero intentamos buscar por codigoCurso (preferido por seguridad/slugs)
         $curso = $this->where('codigoCurso', $value)->first();
+
+        // Si no se encuentra, intentamos por ID numérico como último recurso para evitar errores 500 en rutas existentes
+        if (!$curso && is_numeric($value)) {
+            $curso = $this->where('id', $value)->first();
+        }
 
         return $curso ?? abort(404);
     }

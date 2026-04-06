@@ -33,22 +33,18 @@ class ForoNotification extends Notification
 
     public function toDatabase($notifiable)
     {
-
-        // dd([
-        //     'estudiante' => $this->estudiante,
-        //     'curso' => $this->curso,
-        //     'tipoAccion' => $this->tipoAccion,
-        // ]);
+        $this->foro->loadMissing('cursos');
+        $curso = $this->foro->cursos;
 
         $tiempo = Carbon::now()->diffForHumans();
 
         if ($this->action == 'crear') {
-            $mensaje = 'Foro ' . $this->foro->nombreForo . ' creada en el curso ' . $this->foro->cursos->nombreCurso . '!';
+            $mensaje = 'Foro ' . $this->foro->nombreForo . ' creada en el curso ' . ($curso->nombreCurso ?? 'N/A') . '!';
         }
 
         return [
-            'message' => $mensaje,
-            'action' => route('Curso', $this->foro->cursos_id),
+            'message' => $mensaje ?? 'Nuevo foro disponible',
+            'action' => $curso ? route('Curso', $curso->codigoCurso ?? $curso->id) : '#',
             'time' => $tiempo,
         ];
     }
@@ -59,7 +55,7 @@ class ForoNotification extends Notification
      * @param  mixed  $notifiable
      * @return array
      */
-  
+
 
     /**
      * Get the mail representation of the notification.

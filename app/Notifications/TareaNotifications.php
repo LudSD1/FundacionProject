@@ -40,22 +40,18 @@ class TareaNotifications extends Notification
 
     public function toDatabase($notifiable)
     {
-
-        // dd([
-        //     'estudiante' => $this->estudiante,
-        //     'curso' => $this->curso,
-        //     'tipoAccion' => $this->tipoAccion,
-        // ]);
+        $this->tarea->loadMissing('cursos');
+        $curso = $this->tarea->cursos;
 
         $tiempo = Carbon::now()->diffForHumans();
 
         if ($this->action == 'crear') {
-            $mensaje = 'Tarea ' . $this->tarea->titulo_tarea . ' creada en el curso ' . $this->tarea->cursos->nombreCurso . '!';
+            $mensaje = 'Tarea ' . $this->tarea->titulo_tarea . ' creada en el curso ' . ($curso->nombreCurso ?? 'N/A') . '!';
         }
 
         return [
-            'message' => $mensaje,
-            'action' => route('Curso', $this->tarea->cursos_id),
+            'message' => $mensaje ?? 'Nueva tarea disponible',
+            'action' => $curso ? route('Curso', $curso->codigoCurso ?? $curso->id) : '#',
             'time' => $tiempo,
         ];
     }

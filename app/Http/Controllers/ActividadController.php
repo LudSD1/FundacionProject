@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Services\XPService;
 use App\Services\AchievementService;
+use App\Notifications\ActividadNotification;
+use App\Models\User;
 use Carbon\Carbon;
 
 class ActividadController extends Controller
@@ -211,7 +213,7 @@ class ActividadController extends Controller
             ]);
 
             if (!$notaEntrega) {
-                return back()->with('error', 'Esta actividad debe ser calificada por el docente antes de marcarla como completada. (Inscrito ID: ' . $inscritoId . ', Actividad ID: ' . $actividad->id . ')');
+                return back()->with('error', 'Esta actividad debe ser calificada por el docente antes de marcarla como completada. ');
             }
 
             // Si tiene calificación, marcar como completada
@@ -346,6 +348,18 @@ class ActividadController extends Controller
 
         $actividad = Actividad::create($data);
 
+        // Notificar a todos los inscritos
+        try {
+            $inscritos = Inscritos::where('cursos_id', $cursoId)->with('estudiantes')->get();
+            foreach ($inscritos as $inscrito) {
+                if ($inscrito->estudiantes) {
+                    $inscrito->estudiantes->notify(new ActividadNotification($actividad, 'creada'));
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('Error al notificar nueva actividad: ' . $e->getMessage());
+        }
+
         foreach ($data['tipos_evaluacion'] as $tipoEvaluacion) {
             DB::table('actividad_tipos_evaluacion')->insert([
                 'actividad_id' => $actividad->id,
@@ -360,7 +374,7 @@ class ActividadController extends Controller
 
 
 
-        return redirect()->route('Curso', encrypt($cursoId))
+        return back()
             ->with('success', 'Actividad creada exitosamente.');
     }
 

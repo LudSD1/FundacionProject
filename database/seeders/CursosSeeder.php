@@ -24,9 +24,7 @@ class CursosSeeder extends Seeder
                 'fecha_fin' => Carbon::now()->addMonth(),
                 'archivoContenidodelCurso' => null,
                 'notaAprobacion' => 60,
-                'formato' => 'online',
-                // 'estado' usa valor por defecto 'Activo'
-                // 'tipo' usa valor por defecto 'curso'
+                'formato' => 'virtual',
                 'docente_id' => 2,
                 'edad_dirigida' => 'Adultos',
                 'nivel' => 'Principiante',
@@ -46,7 +44,7 @@ class CursosSeeder extends Seeder
                 'fecha_fin' => Carbon::now()->addWeeks(8),
                 'archivoContenidodelCurso' => 'docs/escritura_creativa.pdf',
                 'notaAprobacion' => 70,
-                'formato' => 'presencial',
+                'formato' => 'virtual',
                 'docente_id' => 2,
                 'edad_dirigida' => 'Adolescentes',
                 'nivel' => 'Intermedio',
@@ -66,7 +64,7 @@ class CursosSeeder extends Seeder
                 'fecha_fin' => Carbon::now()->addDays(37),
                 'archivoContenidodelCurso' => null,
                 'notaAprobacion' => 75,
-                'formato' => 'mixto',
+                'formato' => 'virtual',
                 'docente_id' => 2,
                 'edad_dirigida' => 'Adultos',
                 'nivel' => 'Avanzado',

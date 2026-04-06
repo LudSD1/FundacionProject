@@ -69,7 +69,7 @@
                                         <div class="card-body course-price-panel">
                                             @if ($cursos->tipo == 'curso')
                                                 <a class="btn btn-success w-100 py-3 fw-bold"
-                                                    href="{{ route('Curso', encrypt($cursos->id)) }}">
+                                                    href="{{ route('Curso', $cursos->codigoCurso ?? $cursos->id) }}">
                                                     <i class="bi bi-door-open me-2"></i>Ir al Curso
                                                 </a>
                                             @else

@@ -37,22 +37,18 @@ class EvaluacionNotification extends Notification
     }
     public function toDatabase($notifiable)
     {
-
-        // dd([
-        //     'estudiante' => $this->estudiante,
-        //     'curso' => $this->curso,
-        //     'tipoAccion' => $this->tipoAccion,
-        // ]);
+        $this->evaluacion->loadMissing('cursos');
+        $curso = $this->evaluacion->cursos;
 
         $tiempo = Carbon::now()->diffForHumans();
 
         if ($this->action == 'crear') {
-            $mensaje = 'Evaluación ' . $this->evaluacion->titulo_evaluacion . ' creada en el curso ' . $this->evaluacion->cursos->nombreCurso . '!';
+            $mensaje = 'Evaluación ' . $this->evaluacion->titulo_evaluacion . ' creada en el curso ' . ($curso->nombreCurso ?? 'N/A') . '!';
         }
 
         return [
-            'message' => $mensaje,
-            'action' => route('Curso', $this->evaluacion->cursos_id),
+            'message' => $mensaje ?? 'Nueva evaluación disponible',
+            'action' => $curso ? route('Curso', $curso->codigoCurso ?? $curso->id) : '#',
             'time' => $tiempo,
         ];
     }

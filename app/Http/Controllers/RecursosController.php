@@ -57,8 +57,11 @@ class RecursosController extends Controller
         // Guardar el recurso en la base de datos
         $recurso->save();
 
+        // Obtener el curso para la redirección
+        $curso = Cursos::find($id);
+
         // Redirigir con un mensaje de éxito
-        return redirect(route('Curso', encrypt($id)))->with('success', 'Recurso creado con éxito');
+        return redirect(route('Curso', $curso->codigoCurso ?? $id))->with('success', 'Recurso creado con éxito');
     }
 
     private function procesarDescripcionConIframe(string $descripcion): string

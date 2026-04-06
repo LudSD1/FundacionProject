@@ -8,7 +8,7 @@
         {{-- Hero Header --}}
         <div class="tbl-card-hero">
             <div class="tbl-hero-left">
-                <a href="{{ route('Curso', $curso->codigoCurso ) }}" class="btn-modern btn-accent-custom mb-3" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">
+                <a href="{{ route('Curso', $curso->codigoCurso ?? $curso->id ) }}" class="btn-modern btn-accent-custom mb-3" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">
                     <i class="bi bi-arrow-left"></i> Volver al Curso
                 </a>
                 <div class="tbl-hero-eyebrow">

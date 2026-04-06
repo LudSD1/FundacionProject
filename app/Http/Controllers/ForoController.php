@@ -57,7 +57,9 @@ class ForoController extends Controller
         event(new ForoEvent($foro, 'crear'));
         $foro->save();
 
-        return redirect(route('Curso', encrypt($request->curso_id)))->with('success', 'Foro Creado Correctamente');
+        $curso = Cursos::find($request->curso_id);
+
+        return redirect(route('Curso', $curso->codigoCurso ?? $request->curso_id))->with('success', 'Foro Creado Correctamente');
 
 
     }

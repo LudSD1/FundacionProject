@@ -441,7 +441,7 @@
                         </p>
                     </div>
                     <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                        <a href="{{ route('Curso', $actividades->subtema->tema->curso->codigoCurso) }}"
+                        <a href="{{ route('Curso', $actividades->subtema->tema->curso->codigoCurso ?? $actividades->subtema->tema->curso->id) }}"
                            class="da-back-btn">
                             <i class="bi bi-arrow-left-circle"></i> Volver al Curso
                         </a>

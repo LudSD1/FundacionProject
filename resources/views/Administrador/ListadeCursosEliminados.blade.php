@@ -145,7 +145,7 @@
                         <div class="action-buttons-cell">
                             {{-- FIX 10: codigoCurso igual que el resto del proyecto --}}
                             <a class="btn-action-modern btn-view"
-                               href="{{ route('Curso', $curso->codigoCurso) }}"
+                               href="{{ route('Curso', $curso->codigoCurso ?? $curso->id) }}"
                                data-bs-toggle="tooltip"
                                title="Ver Curso">
                                 <i class="bi bi-eye-fill"></i>

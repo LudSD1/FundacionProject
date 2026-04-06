@@ -230,7 +230,7 @@
                                     <i class="bi bi-trash-fill"></i>
                                 </a>
                                 <a class="btn-action-modern btn-view"
-                                   href="{{ route('Curso', $curso->codigoCurso) }}"
+                                   href="{{ route('Curso', $curso->codigoCurso ?? $curso->id) }}"
                                    data-bs-toggle="tooltip" title="Ver detalles">
                                     <i class="bi bi-eye-fill"></i>
                                 </a>
@@ -280,7 +280,7 @@
                     && $inscrito->cursos
                     && $inscrito->cursos->deleted_at === null)
                 <div class="col-lg-4 col-md-6 col-12 curso-card-item">
-                    <a href="{{ route('Curso', $inscrito->cursos_id) }}"
+                    <a href="{{ route('Curso', $inscrito->cursos->codigoCurso ?? $inscrito->cursos->id) }}"
                        class="text-decoration-none">
                         <div class="curso-card-rol">
                             <div class="curso-card-icon-wrap">
@@ -321,7 +321,7 @@
                 @forelse($cursos as $curso)
                 @if(auth()->user()->id == $curso->docente_id)
                 <div class="col-lg-4 col-md-6 col-12 curso-card-item">
-                    <a href="{{ route('Curso', $curso->codigoCurso) }}"
+                    <a href="{{ route('Curso', $curso->codigoCurso ?? $curso->id) }}"
                        class="text-decoration-none">
                         <div class="curso-card-rol curso-card-docente">
                             <div class="curso-card-icon-wrap">
@@ -407,7 +407,7 @@
                 <button type="button" class="cc-btn cc-btn-outline" data-bs-dismiss="modal">
                     <i class="bi bi-x-circle me-1"></i>Cerrar
                 </button>
-                <a href="{{ route('Curso', $curso->codigoCurso) }}" class="cc-btn cc-btn-primary">
+                <a href="{{ route('Curso', $curso->codigoCurso ?? $curso->id) }}" class="cc-btn cc-btn-primary">
                     <i class="bi bi-eye-fill me-1"></i>Ver Curso
                 </a>
             </div>
@@ -468,5 +468,5 @@
     });
 })();
 </script>
-@endpush 
+@endpush
 @include('layout')

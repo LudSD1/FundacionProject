@@ -9,7 +9,7 @@
         {{-- ===== HERO ===== --}}
         <div class="tbl-card-hero">
             <div class="tbl-hero-left">
-                <a href="{{ route('Curso', $foro->cursos->codigoCurso) }}"
+                <a href="{{ route('Curso', $foro->cursos->codigoCurso ?? $foro->cursos->id) }}"
                    class="tbl-hero-btn tbl-hero-btn-glass prt-back-btn mb-2">
                     <i class="bi bi-arrow-left-circle-fill"></i> Volver al Curso
                 </a>

@@ -39,22 +39,18 @@ class RecursosNotification extends Notification
 
     public function toDatabase($notifiable)
     {
-
-        // dd([
-        //     'estudiante' => $this->estudiante,
-        //     'curso' => $this->curso,
-        //     'tipoAccion' => $this->tipoAccion,
-        // ]);
+        $this->recurso->loadMissing('cursos');
+        $curso = $this->recurso->cursos;
 
         $tiempo = Carbon::now()->diffForHumans();
 
         if ($this->action == 'crear') {
-            $mensaje = 'Recurso ' . $this->recurso->nombreRecurso . ' creada en el curso ' . $this->recurso->cursos->nombreCurso . '!';
+            $mensaje = 'Recurso ' . $this->recurso->nombreRecurso . ' creada en el curso ' . ($curso->nombreCurso ?? 'N/A') . '!';
         }
 
         return [
-            'message' => $mensaje,
-            'action' => route('Curso', $this->recurso->cursos_id),
+            'message' => $mensaje ?? 'Nuevo recurso disponible',
+            'action' => $curso ? route('Curso', $curso->codigoCurso ?? $curso->id) : '#',
             'time' => $tiempo,
         ];
     }

@@ -7,7 +7,7 @@
         <div class="tbl-card shadow-lg">
             <div class="tbl-card-hero">
                 <div class="tbl-hero-left">
-                    <a href="{{ route('Curso', $cursos->codigoCurso) }}"
+                    <a href="{{ route('Curso', $cursos->codigoCurso ?? $cursos->id) }}"
                         class="tbl-hero-btn tbl-hero-btn-glass prt-back-btn mb-2">
                         <i class="bi bi-arrow-left-circle-fill"></i> Volver al Curso
                     </a>
@@ -197,7 +197,7 @@
                             <div class="col-md-6">
                                 <label class="form-label fw-bold text-muted small text-uppercase">Tipo de Actividad</label>
                                 @if (auth()->user()->hasRole('Administrador'))
-                                    <select name="tipo" class="form-select bg-light">
+                                    <select name="tipo" class="form-select bg-light" onchange="toggleCodigoCurso(this.value)">
                                         <option value="curso" {{ $cursos->tipo == 'curso' ? 'selected' : '' }}>📚 Curso
                                             Regular</option>
                                         <option value="congreso" {{ $cursos->tipo == 'congreso' ? 'selected' : '' }}>📅
@@ -208,6 +208,18 @@
                                     <input type="text" class="form-control bg-light"
                                         value="{{ $cursos->tipo == 'congreso' ? 'Evento' : 'Curso' }}" disabled>
                                 @endif
+                            </div>
+
+                            <div class="col-12" id="codigoCursoGroup" style="display: {{ $cursos->tipo == 'congreso' || $cursos->codigoCurso ? 'block' : 'none' }};">
+                                <label class="form-label fw-bold text-muted small text-uppercase">Código del Curso/Congreso (Slug para URL)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-link-45deg text-primary"></i></span>
+                                    <input type="text" name="codigoCurso" id="codigoCursoInput" class="form-control bg-light"
+                                        value="{{ old('codigoCurso', $cursos->codigoCurso) }}"
+                                        placeholder="ej: curso-programacion-basica"
+                                        {{ $cursos->tipo == 'congreso' ? 'required' : '' }}>
+                                </div>
+                                <small class="text-muted">Este código se usará para la URL amigable. Debe ser único y sin espacios.</small>
                             </div>
                         </div>
                     </div>
@@ -716,6 +728,18 @@
                 input.required = true;
                 hidden.disabled = true;
                 input.focus();
+            }
+        }
+
+        function toggleCodigoCurso(tipo) {
+            const group = document.getElementById('codigoCursoGroup');
+            const input = document.getElementById('codigoCursoInput');
+            if (tipo === 'congreso') {
+                group.style.display = 'block';
+                input.required = true;
+            } else {
+                group.style.display = 'none';
+                input.required = false;
             }
         }
 

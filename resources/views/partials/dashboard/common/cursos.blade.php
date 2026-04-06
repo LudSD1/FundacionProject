@@ -410,7 +410,7 @@
 
                                         <div class="dc-card-actions">
                                             @if ($inscrito->pago_completado)
-                                                <a href="{{ route('Curso', $inscrito->cursos->codigoCurso) }}"
+                                                <a href="{{ route('Curso', $inscrito->cursos) }}"
                                                     class="dc-btn dc-btn-primary">
                                                     <i class="bi bi-play-circle-fill me-2"></i>Continuar Curso
                                                 </a>
@@ -588,7 +588,7 @@
                                         </div>
 
                                         <div class="dc-card-actions">
-                                            <a href="{{ route('Curso', $curso->codigoCurso) }}"
+                                            <a href="{{ route('Curso', $curso->codigoCurso ?? $curso->id) }}"
                                                 class="dc-btn dc-btn-primary">
                                                 <i class="bi bi-gear-fill me-2"></i>Gestionar Curso
                                             </a>
@@ -656,9 +656,9 @@
                                         </div>
 
                                         <div class="dc-card-actions">
-                                            <a href="{{ route('Curso', encrypt($curso->id)) }}"
+                                            <a href="{{ route('Curso', $curso->codigoCurso) }}"
                                                 class="dc-btn dc-btn-success">
-                                                <i class="bi bi-gear-fill me-2"></i>Gestionar Congreso
+                                                <i class="bi bi-gear-fill me-2"></i>Gestionar Evento
                                             </a>
                                         </div>
                                     </div>
