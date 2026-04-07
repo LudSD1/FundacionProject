@@ -563,6 +563,20 @@
     flex-shrink:     0;
 }
 
+/* Avatar with image */
+.tbl-avatar-img {
+    width:        34px;
+    height:       34px;
+    border-radius: 50%;
+    object-fit:   cover;
+    flex-shrink:  0;
+    border:       2px solid #e2eaf4;
+    transition:   border-color .2s ease;
+}
+.table-modern tbody tr:hover .tbl-avatar-img {
+    border-color: var(--tbl-primary-l);
+}
+
 /* Badges de fecha */
 .date-badge {
     display:     inline-flex;

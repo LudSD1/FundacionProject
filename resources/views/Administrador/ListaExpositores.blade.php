@@ -7,12 +7,7 @@
 @section('content')
 <div class="container my-4">
     <div class="tbl-card">
-
-        {{-- ╔══════════════════════════════════════╗
-             ║  HERO                               ║
-             ╚══════════════════════════════════════╝ --}}
         <div class="tbl-card-hero">
-
             <div class="tbl-hero-left">
                 <div class="tbl-hero-eyebrow">
                     <i class="bi bi-mic-fill"></i> Gestión
@@ -28,8 +23,6 @@
                         data-bs-target="#crearExpositorModal">
                     <i class="bi bi-person-plus-fill"></i> Crear Expositor
                 </button>
-
-                {{-- Buscador --}}
                 <form id="formBusquedaExpositores"
                       action="{{ route('ListaExpositores') }}"
                       method="GET">
@@ -43,10 +36,7 @@
                     </div>
                 </form>
             </div>
-
-        </div>{{-- /tbl-card-hero --}}
-
-        {{-- Filtro activo --}}
+        </div>
         @if(request('search'))
         <div class="tbl-filter-bar">
             <div class="tbl-filter-bar-left">
@@ -58,10 +48,6 @@
             </a>
         </div>
         @endif
-
-        {{-- ╔══════════════════════════════════════╗
-             ║  TABLA                              ║
-             ╚══════════════════════════════════════╝ --}}
         <div class="table-container-modern">
             <table class="table-modern">
                 <thead>
@@ -102,18 +88,19 @@
                     @forelse($expositores as $expositor)
                     <tr>
                         <td><span class="row-number">{{ $loop->iteration }}</span></td>
-
-                        {{-- Nombre con avatar --}}
                         <td>
+                            @php
+                                $imgListaExp = ($expositor->imagen && file_exists(public_path('storage/'.$expositor->imagen)))
+                                    ? asset('storage/'.$expositor->imagen)
+                                    : asset('assets2/img/talker.png');
+                            @endphp
                             <div class="teacher-cell">
-                                <div class="tbl-avatar">
-                                    {{ strtoupper(substr($expositor->nombre, 0, 1)) }}
-                                </div>
+                                <img src="{{ $imgListaExp }}"
+                                     alt="{{ $expositor->nombre }}"
+                                     class="tbl-avatar-img">
                                 <span>{{ $expositor->nombre }}</span>
                             </div>
                         </td>
-
-                        {{-- Especialidad --}}
                         <td>
                             <div class="teacher-cell">
                                 <i class="bi bi-briefcase-fill"></i>
@@ -121,7 +108,6 @@
                             </div>
                         </td>
 
-                        {{-- Empresa --}}
                         <td>
                             <div class="teacher-cell">
                                 <i class="bi bi-building"></i>
@@ -129,7 +115,6 @@
                             </div>
                         </td>
 
-                        {{-- Estado — FIX 5: status-badge del sistema --}}
                         <td>
                             @if($expositor->trashed())
                                 <span class="status-badge status-inactive">
@@ -141,8 +126,6 @@
                                 </span>
                             @endif
                         </td>
-
-                        {{-- Acciones --}}
                         <td>
                             <div class="action-buttons-cell">
 
@@ -154,7 +137,6 @@
                                 </button>
 
                                 @if($expositor->trashed())
-                                {{-- Activar --}}
                                 <form id="form-activar-{{ $expositor->id }}"
                                       method="POST"
                                       action="{{ route('expositores.restore', encrypt($expositor->id)) }}"
@@ -169,7 +151,6 @@
                                     </button>
                                 </form>
                                 @else
-                                {{-- Desactivar --}}
                                 <form id="form-eliminar-{{ $expositor->id }}"
                                       method="POST"
                                       action="{{ route('expositores.destroy', encrypt($expositor->id)) }}"
@@ -207,18 +188,16 @@
             </table>
         </div>
 
-        {{-- Paginación (si aplica) --}}
         @if(isset($expositores) && method_exists($expositores, 'hasPages') && $expositores->hasPages())
         <div class="tbl-pagination">
             {{ $expositores->appends(['search' => request('search')])->links('custom-pagination') }}
         </div>
         @endif
 
-    </div>{{-- /tbl-card --}}
-    </div>{{-- /container --}}
+    </div>
+    </div>
 
 
-    <!-- MODAL: Crear Expositor -->
     <div class="modal fade" id="crearExpositorModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border-0 rounded-4 shadow overflow-hidden">
@@ -273,7 +252,6 @@
         </div>
     </div>
 
-    <!-- MODAL: Editar Expositor -->
     <div class="modal fade" id="editarExpositorModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border-0 rounded-4 shadow overflow-hidden">
@@ -330,17 +308,12 @@
         </div>
     </div>
 
-    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- Scripts -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Inicializar tooltips Bootstrap 5
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.forEach(function (tooltipTriggerEl) { new bootstrap.Tooltip(tooltipTriggerEl); });
-
-            // Buscador en tiempo real (opcional, adicional al envío de formulario)
             const searchInput = document.querySelector('.tbl-hero-search-input');
             if (searchInput) {
                 searchInput.addEventListener('input', function() {
@@ -354,7 +327,6 @@
             }
         });
 
-        // Función para cargar datos en el modal de edición
         function editarExpositor(id) {
             Swal.fire({
                 title: 'Cargando...',
