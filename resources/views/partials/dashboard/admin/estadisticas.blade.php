@@ -1,8 +1,6 @@
 
 <div class="container py-2">
     <div class="row g-3">
-
-        {{-- Cursos --}}
         <div class="col-xl-3 col-md-6">
             <div class="st-card st-card--red">
                 <div class="st-card-body">
@@ -21,7 +19,6 @@
             </div>
         </div>
 
-        {{-- Estudiantes --}}
         <div class="col-xl-3 col-md-6">
             <div class="st-card st-card--orange">
                 <div class="st-card-body">
@@ -38,7 +35,6 @@
             </div>
         </div>
 
-        {{-- Docentes --}}
         <div class="col-xl-3 col-md-6">
             <div class="st-card st-card--blue">
                 <div class="st-card-body">
@@ -54,8 +50,6 @@
                 <div class="st-bar st-bar--blue"></div>
             </div>
         </div>
-
-        {{-- Inscripciones --}}
         <div class="col-xl-3 col-md-6">
             <div class="st-card st-card--green">
                 <div class="st-card-body">
@@ -71,10 +65,6 @@
                 <div class="st-bar st-bar--green"></div>
             </div>
         </div>
-
-        {{-- Nuevas Estadísticas --}}
-        
-        {{-- Actividades --}}
         <div class="col-xl-3 col-md-6">
             <div class="st-card" style="border-left: 4px solid #6f42c1;">
                 <div class="st-card-body">

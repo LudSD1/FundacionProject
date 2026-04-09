@@ -1,14 +1,10 @@
-@extends('layout')
-
-@section('titulo', 'Editar Curso')
-
-@section('content')
+  
     <div class="container my-4">
 
         {{-- Errores de validación --}}
         @if ($errors->any())
             <div class="alert alert-danger rounded-4 border-0 shadow-sm mb-4">
-                <div class="d-flex align-items-center mb-2">  
+                <div class="d-flex align-items-center mb-2">
                     <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
                     <strong>Por favor corrige los siguientes errores:</strong>
                 </div>

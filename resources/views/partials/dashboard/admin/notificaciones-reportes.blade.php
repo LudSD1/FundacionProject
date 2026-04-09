@@ -74,13 +74,6 @@
             <div class="tab-content">
 
                 <div class="tab-pane fade show active"
-                     id="tab-notifications"
-                     role="tabpanel"
-                     aria-labelledby="btn-tab-notifications">
-                    @include('partials.dashboard.admin.notifications-tab')
-                </div>
-
-                <div class="tab-pane fade"
                      id="tab-reports"
                      role="tabpanel"
                      aria-labelledby="btn-tab-reports">
