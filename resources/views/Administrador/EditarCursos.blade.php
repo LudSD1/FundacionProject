@@ -1,4 +1,6 @@
-  
+    @extends ('layout')
+
+    @section('content')
     <div class="container my-4">
 
         {{-- Errores de validación --}}

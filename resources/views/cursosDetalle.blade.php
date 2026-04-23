@@ -100,6 +100,17 @@
                                             </h4>
                                         </div>
                                         <div class="card-body">
+                                            @if(auth()->check() && auth()->user()->hasRole('Docente'))
+                                                {{-- Los docentes no pueden inscribirse --}}
+                                                <div class="text-center py-4">
+                                                    <i class="bi bi-info-circle-fill text-primary" style="font-size: 2.5rem;"></i>
+                                                    <h5 class="mt-3 fw-bold text-primary">Área de Inscripción</h5>
+                                                    <p class="text-muted mb-0">
+                                                        La inscripción está disponible únicamente para estudiantes.
+                                                        Como docente, puedes gestionar este curso desde el panel de administración.
+                                                    </p>
+                                                </div>
+                                            @else
                                             {{-- Indicador de cupos disponibles --}}
                                             @if (!$cursos->esCuposIlimitados())
                                                 @php
@@ -251,6 +262,7 @@
                                                     </div>
                                                 @endif
                                             @endif
+                                            @endif {{-- end Docente check --}}
                                         </div>
                                     @endif
                                 </div>

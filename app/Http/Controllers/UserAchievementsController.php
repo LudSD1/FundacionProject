@@ -44,7 +44,7 @@ class UserAchievementsController extends Controller
 
 
 
-        $validated['is_secret'] = $request->has('is_secret');
+        $validated['is_secret']  = $request->has('is_secret');
 
         $logro = new Achievement();
         $logro->title = $validated['title'];

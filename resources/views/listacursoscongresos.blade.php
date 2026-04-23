@@ -6,7 +6,6 @@
 
 <section class="search-hero-section">
 
-    {{-- Decoración de fondo --}}
     <div class="hero-blob-left"></div>
     <div class="hero-blob-right"></div>
     <div class="hero-grid"></div>
@@ -148,7 +147,6 @@
     </div>
 </section>
 
-{{-- Ancla para scroll --}}
 <div id="courses-results-anchor"></div>
 
 <div class="courses-listing-container">
@@ -354,21 +352,13 @@
 </div>
 
 
-{{-- ═══════════════════════════════════════════════════════
-     PARTIALS INLINE  (mueve a resources/views/partials/)
-═══════════════════════════════════════════════════════ --}}
 
-{{-- partial: _course-card-grid --}}
 @once
 <template id="tpl-course-card-grid">
-    {{-- Referencia de estructura — el partial real está en partials/_course-card-grid.blade.php --}}
 </template>
 @endonce
 
 
-{{-- ═══════════════════════════════════════════════════════
-     SCRIPTS
-═══════════════════════════════════════════════════════ --}}
 <script>
 (() => {
     'use strict';
