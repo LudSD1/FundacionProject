@@ -11,9 +11,14 @@ use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ExpositoresController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\EnrollmentTrendsController;
 
 
     Route::group(['middleware' => ['role:Administrador', 'verified']], function () {
+
+        // ── Tendencias de inscripción (JSON API) ──
+        Route::get('/admin/enrollment-trends', [EnrollmentTrendsController::class, 'getData'])
+            ->name('admin.enrollment-trends');
 
         Route::post('/HabilitarCurso/{id}', [AportesController::class, 'habilitarCurso'])->name('habilitar.curso');
         Route::post('/cambiar-rol/{usuario}', [AdministradorController::class, 'cambiarRol'])->name('CambiarRolUser');

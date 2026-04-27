@@ -4,26 +4,9 @@
         <div class="adm-tabs-header">
             <ul class="adm-tabs-nav" role="tablist">
 
+            
                 <li role="presentation">
                     <button class="adm-tab active"
-                            data-bs-toggle="tab"
-                            data-bs-target="#tab-notifications"
-                            type="button"
-                            role="tab"
-                            id="btn-tab-notifications">
-                        <i class="bi bi-bell-fill"></i>
-                        Notificaciones
-                        @php $unread = auth()->user()->unreadNotifications->count(); @endphp
-                        @if($unread > 0)
-                        <span class="adm-notif-badge">
-                            {{ $unread > 99 ? '99+' : $unread }}
-                        </span>
-                        @endif
-                    </button>
-                </li>
-
-                <li role="presentation">
-                    <button class="adm-tab"
                             data-bs-toggle="tab"
                             data-bs-target="#tab-reports"
                             type="button"
@@ -31,6 +14,18 @@
                             id="btn-tab-reports">
                         <i class="bi bi-file-earmark-bar-graph-fill"></i>
                         Reportes de Cursos
+                    </button>
+                </li>
+
+                <li role="presentation">
+                    <button class="adm-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#tab-trends"
+                            type="button"
+                            role="tab"
+                            id="btn-tab-trends">
+                        <i class="bi bi-graph-up"></i>
+                        Tendencias
                     </button>
                 </li>
 
@@ -78,6 +73,13 @@
                      role="tabpanel"
                      aria-labelledby="btn-tab-reports">
                     @include('partials.dashboard.admin.reports-tab')
+                </div>
+
+                <div class="tab-pane fade"
+                     id="tab-trends"
+                     role="tabpanel"
+                     aria-labelledby="btn-tab-trends">
+                    @include('partials.dashboard.admin.enrollment-trends-tab')
                 </div>
 
                 <div class="tab-pane fade"
