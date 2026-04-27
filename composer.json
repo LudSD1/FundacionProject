@@ -30,7 +30,7 @@
         "spatie/simple-excel": "^3.2"
     },
     "require-dev": {
-        "beyondcode/laravel-er-diagram-generator": "^4.0",
+        "beyondcode/laravel-er-diagram-generator": "^6.0",
         "fakerphp/faker": "^1.24",
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.0.1",
