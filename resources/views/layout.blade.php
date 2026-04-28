@@ -200,10 +200,10 @@
                 Todos los derechos reservados.
             </p>
             <div class="ft-socials">
-                <a href="#" class="ft-social-btn" title="Facebook"><i class="bi bi-facebook"></i></a>
-                <a href="#" class="ft-social-btn" title="Instagram"><i class="bi bi-instagram"></i></a>
-                <a href="#" class="ft-social-btn" title="YouTube"><i class="bi bi-youtube"></i></a>
-                <a href="#" class="ft-social-btn" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                <a href="https://www.facebook.com/profile.php?id=100063510101095" class="ft-social-btn" title="Facebook"><i class="bi bi-facebook"></i></a>
+                <a href="https://www.instagram.com/fundeducarparalavida/" class="ft-social-btn" title="Instagram"><i class="bi bi-instagram"></i></a>
+                <a href="https://x.com/FUNDVIDA2" class="ft-social-btn" title="YouTube"><i class="bi bi-twitter-x"></i></a>
+                <a href="https://wa.me/59172087186" class="ft-social-btn" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>
             </div>
         </div>
 

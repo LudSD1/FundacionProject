@@ -15,12 +15,20 @@ use App\Models\Foro;
 use App\Models\Inscritos;
 use App\Models\PaymentMethod;
 use App\Models\Tareas;
+use App\Services\RecommendationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class MenuController extends Controller
 {
+    protected $recommendationService;
+
+    public function __construct(RecommendationService $recommendationService)
+    {
+        $this->recommendationService = $recommendationService;
+    }
+
     public function detalle(Cursos $curso)
     {
         // Cargar TODAS las relaciones necesarias de una sola vez para evitar N+1 queries
@@ -156,13 +164,13 @@ class MenuController extends Controller
     public function index()
     {
         $hoy = now()->toDateString();
-        
+
         // Conteos básicos
         $totalCursos = Cursos::whereNull('deleted_at')->count();
         $totalEstudiantes = User::role('Estudiante')->whereNull('deleted_at')->count();
         $totalDocentes = User::role('Docente')->whereNull('deleted_at')->count();
         $totalInscripciones = Inscritos::whereNull('deleted_at')->count();
-        
+
         // Nuevas estadísticas
         $totalCategorias = Categoria::whereNull('deleted_at')->count();
         $totalCertificados = Certificado::whereNull('deleted_at')->count();
@@ -255,10 +263,12 @@ class MenuController extends Controller
             'type' => 'nullable|in:curso,congreso',
             'sort' => 'nullable|in:price_asc,price_desc,date_desc,rating_desc',
             'search' => 'nullable|string|max:255',
-            'formato' => 'nullable|in:Presencial,Virtual,Híbrido',
+            'formato' => 'nullable|string',
             'nivel' => 'nullable|string',
+            'precio' => 'nullable|in:gratis,pago',
+            'mes' => 'nullable|integer|between:1,12',
             'visibilidad' => 'nullable|in:publico,privado',
-            'categoria' => 'nullable|exists:categoria,id' // Filtro por categoría
+            'categoria' => 'nullable|exists:categoria,id'
         ]);
 
         // 2. Crear la consulta base con todas las relaciones necesarias
@@ -279,9 +289,16 @@ class MenuController extends Controller
         $query->where('fecha_fin', '>=', $currentDate);
 
         // 3. Filtro de visibilidad basado en rol
-        $isAdmin = auth()->user() && auth()->user()->hasRole('Administrador');
+        $isLoggedIn = auth()->check();
+        $isAdmin = $isLoggedIn && auth()->user()->hasRole('Administrador');
+
         if (!$isAdmin) {
-            $query->where('visibilidad', 'Público');
+            // Usuarios no admin ven Público, y si están logueados también Solo Registrados
+            if ($isLoggedIn) {
+                $query->whereIn('visibilidad', ['Público', 'Solo Registrados']);
+            } else {
+                $query->where('visibilidad', 'Público');
+            }
         } elseif ($request->filled('visibilidad')) {
             $query->where('visibilidad', $validated['visibilidad']);
         }
@@ -308,6 +325,18 @@ class MenuController extends Controller
 
         if ($request->filled('nivel')) {
             $query->where('nivel', $request->nivel);
+        }
+
+        if ($request->filled('precio')) {
+            if ($request->precio === 'gratis') {
+                $query->where('precio', 0);
+            } else {
+                $query->where('precio', '>', 0);
+            }
+        }
+
+        if ($request->filled('mes')) {
+            $query->whereMonth('fecha_ini', $request->mes);
         }
 
         // 6. Filtro por categoría (relación muchos a muchos)
@@ -343,7 +372,13 @@ class MenuController extends Controller
         // 8. Paginación
         $cursos = $query->paginate(9)->withQueryString();
 
-        // NUEVO: Marcar cursos que están por comenzar
+        // 9. Recomendaciones personalizadas para estudiantes
+        $recommendations = collect();
+        if (auth()->user() && auth()->user()->hasRole('Estudiante')) {
+            $recommendations = $this->recommendationService->getRecommendations(auth()->user(), 3);
+        }
+
+        // 10. Marcar cursos que están por comenzar
         $cursos->getCollection()->transform(function ($curso) use ($currentDate) {
             if ($curso->fecha_ini > $currentDate) {
                 $curso->proximamente = true;
@@ -353,39 +388,73 @@ class MenuController extends Controller
             return $curso;
         });
 
-        // 9. Obtener categorías para el filtro (conteo dinámico)
-        $categorias = Categoria::whereHas('cursos', function ($q) use ($isAdmin, $currentDate, $request) {
+        // 11. Obtener categorías para el filtro (conteo dinámico)
+        // Mostramos categorías que tengan cursos activos y visibles para el usuario actual
+        $categorias = Categoria::whereHas('cursos', function ($q) use ($isAdmin, $isLoggedIn, $currentDate) {
                 $q->where('fecha_fin', '>=', $currentDate);
                 if (!$isAdmin) {
-                    $q->where('visibilidad', 'Público');
-                }
-                if ($request->filled('type')) {
-                    $q->where('tipo', $request->type);
+                    if ($isLoggedIn) {
+                        $q->whereIn('visibilidad', ['Público', 'Solo Registrados']);
+                    } else {
+                        $q->where('visibilidad', 'Público');
+                    }
                 }
             })
-            ->withCount(['cursos' => function ($q) use ($isAdmin, $currentDate, $request) {
+            ->withCount(['cursos' => function ($q) use ($isAdmin, $isLoggedIn, $currentDate, $request) {
                 $q->where('fecha_fin', '>=', $currentDate);
                 if (!$isAdmin) {
-                    $q->where('visibilidad', 'Público');
+                    if ($isLoggedIn) {
+                        $q->whereIn('visibilidad', ['Público', 'Solo Registrados']);
+                    } else {
+                        $q->where('visibilidad', 'Público');
+                    }
                 }
                 if ($request->filled('type')) {
                     $q->where('tipo', $request->type);
+                }
+                if ($request->filled('formato')) {
+                    $q->where('formato', $request->formato);
+                }
+                if ($request->filled('nivel')) {
+                    $q->where('nivel', $request->nivel);
+                }
+                if ($request->filled('precio')) {
+                    if ($request->precio === 'gratis') $q->where('precio', 0);
+                    else $q->where('precio', '>', 0);
+                }
+                if ($request->filled('mes')) {
+                    $q->whereMonth('fecha_ini', $request->mes);
+                }
+                if ($request->filled('search')) {
+                    $q->where(function($sq) use ($request) {
+                        $sq->where('nombreCurso', 'like', '%' . $request->search . '%')
+                          ->orWhere('descripcionC', 'like', '%' . $request->search . '%')
+                          ->orWhereHas('categorias', function ($catQuery) use ($request) {
+                              $catQuery->where('categoria.name', 'like', '%' . $request->search . '%');
+                          });
+                    });
                 }
             }])
             ->orderBy('name')
             ->get();
 
-        // 10. Estadísticas adicionales para la vista
+        // 12. Estadísticas adicionales para la vista
         $stats = [
             'total_cursos' => $cursos->total(),
             'promedio_general' => $cursos->avg('calificaciones_avg_puntuacion'),
             'categorias_disponibles' => $categorias->count()
         ];
 
-        // 11. Retornar la vista con los datos
+        // 13. Retornar la vista con los datos
+        \Illuminate\Support\Facades\Log::info('Categorias found in controller: ' . $categorias->count());
+        if ($cursos->isNotEmpty()) {
+            \Illuminate\Support\Facades\Log::info('First course categories: ' . $cursos->first()->categorias->count());
+        }
+
         return view('listacursoscongresos', [
             'cursos' => $cursos,
             'categorias' => $categorias,
+            'recommendations' => $recommendations,
             'filters' => $validated,
             'stats' => $stats
         ]);

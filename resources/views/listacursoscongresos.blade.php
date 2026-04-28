@@ -4,6 +4,8 @@
 @section('main')
 
 
+
+
 <section class="search-hero-section">
 
     <div class="hero-blob-left"></div>
@@ -33,11 +35,33 @@
                     diseñados para impulsar tu carrera
                 </p>
 
-                {{-- ── Buscador ──────────────────────────────── --}}
                 <form method="GET"
                       action="{{ route('lista.cursos.congresos') }}"
                       class="search-hero-form"
                       id="heroSearchForm">
+
+                    {{-- Campos ocultos para preservar filtros al buscar --}}
+                    @if(request('type'))
+                        <input type="hidden" name="type" value="{{ request('type') }}">
+                    @endif
+                    @if(request('categoria'))
+                        <input type="hidden" name="categoria" value="{{ request('categoria') }}">
+                    @endif
+                    @if(request('sort'))
+                        <input type="hidden" name="sort" value="{{ request('sort') }}">
+                    @endif
+                    @if(request('formato'))
+                        <input type="hidden" name="formato" value="{{ request('formato') }}">
+                    @endif
+                    @if(request('nivel'))
+                        <input type="hidden" name="nivel" value="{{ request('nivel') }}">
+                    @endif
+                    @if(request('precio'))
+                        <input type="hidden" name="precio" value="{{ request('precio') }}">
+                    @endif
+                    @if(request('mes'))
+                        <input type="hidden" name="mes" value="{{ request('mes') }}">
+                    @endif
 
                     <div class="search-input-wrapper">
                         <div class="search-icon-side">
@@ -71,7 +95,7 @@
                             <span class="hero-pill-label">
                                 <i class="bi bi-tag"></i> Tipo:
                             </span>
-                            <a href="{{ request()->fullUrlWithQuery(['type' => '']) }}"
+                            <a href="{{ request()->fullUrlWithQuery(['type' => null]) }}"
                                class="hero-pill {{ !request('type') ? 'active' : '' }}">
                                 Todos
                             </a>
@@ -102,7 +126,7 @@
                                 </button>
                                 <ul class="hero-pill-drop-menu">
                                     <li>
-                                        <a href="{{ request()->fullUrlWithQuery(['categoria' => '']) }}"
+                                        <a href="{{ request()->fullUrlWithQuery(['categoria' => null]) }}"
                                            class="hero-pill-drop-item {{ !request('categoria') ? 'active' : '' }}">
                                             Todas las categorías
                                         </a>
@@ -196,7 +220,7 @@
                                     <i class="bi bi-tag me-1"></i> Tipo
                                 </h6>
                                 <div class="filter-options">
-                                    <a href="{{ request()->fullUrlWithQuery(['type' => '']) }}"
+                                    <a href="{{ request()->fullUrlWithQuery(['type' => null]) }}"
                                        class="filter-option {{ !request('type') ? 'active' : '' }}">
                                         <i class="bi bi-grid me-1"></i> Todos
                                     </a>
@@ -219,11 +243,12 @@
                                     <i class="bi bi-collection me-1"></i> Categorías
                                 </h6>
                                 <div class="filter-options">
-                                    <a href="{{ request()->fullUrlWithQuery(['categoria' => '']) }}"
+                                    <a href="{{ request()->fullUrlWithQuery(['categoria' => null]) }}"
                                        class="filter-option {{ !request('categoria') ? 'active' : '' }}">
                                         Todas las categorías
                                     </a>
                                     @foreach ($categorias as $cat)
+                                        <!-- DEBUG: Category ID {{ $cat->id }} Name {{ $cat->name }} Count {{ $cat->cursos_count }} -->
                                         <a href="{{ request()->fullUrlWithQuery(['categoria' => $cat->id]) }}"
                                            class="filter-option {{ request('categoria') == $cat->id ? 'active' : '' }}">
                                             {{ $cat->name }}
@@ -235,13 +260,113 @@
 
                             <hr class="filter-divider">
 
+                            {{-- Filtro por Nivel --}}
+                            <div class="filter-group mb-3">
+                                <h6 class="filter-group-title">
+                                    <i class="bi bi-bar-chart me-1"></i> Nivel
+                                </h6>
+                                <div class="filter-options">
+                                    <a href="{{ request()->fullUrlWithQuery(['nivel' => null]) }}"
+                                       class="filter-option {{ !request('nivel') ? 'active' : '' }}">
+                                        Todos los niveles
+                                    </a>
+                                    @foreach(['Principiante', 'Intermedio', 'Avanzado'] as $nivel)
+                                        <a href="{{ request()->fullUrlWithQuery(['nivel' => $nivel]) }}"
+                                           class="filter-option {{ request('nivel') === $nivel ? 'active' : '' }}">
+                                            {{ $nivel }}
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <hr class="filter-divider">
+
+                            {{-- Filtro por Formato --}}
+                            <div class="filter-group mb-3">
+                                <h6 class="filter-group-title">
+                                    <i class="bi bi-laptop me-1"></i> Formato
+                                </h6>
+                                <div class="filter-options">
+                                    <a href="{{ request()->fullUrlWithQuery(['formato' => null]) }}"
+                                       class="filter-option {{ !request('formato') ? 'active' : '' }}">
+                                        Todos los formatos
+                                    </a>
+                                    @foreach(['Presencial', 'Virtual', 'Online'] as $formato)
+                                        <a href="{{ request()->fullUrlWithQuery(['formato' => $formato]) }}"
+                                           class="filter-option {{ request('formato') === $formato ? 'active' : '' }}">
+                                            {{ $formato }}
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <hr class="filter-divider">
+
+                            {{-- Filtro por Precio --}}
+                            <div class="filter-group mb-3">
+                                <h6 class="filter-group-title">
+                                    <i class="bi bi-cash-stack me-1"></i> Inversión
+                                </h6>
+                                <div class="filter-options">
+                                    <a href="{{ request()->fullUrlWithQuery(['precio' => null]) }}"
+                                       class="filter-option {{ !request('precio') ? 'active' : '' }}">
+                                        Todos
+                                    </a>
+                                    <a href="{{ request()->fullUrlWithQuery(['precio' => 'gratis']) }}"
+                                       class="filter-option {{ request('precio') === 'gratis' ? 'active' : '' }}">
+                                        Gratuitos
+                                    </a>
+                                    <a href="{{ request()->fullUrlWithQuery(['precio' => 'pago']) }}"
+                                       class="filter-option {{ request('precio') === 'pago' ? 'active' : '' }}">
+                                        De pago
+                                    </a>
+                                </div>
+                            </div>
+
+                            <hr class="filter-divider">
+
+                            {{-- Filtro por Mes --}}
+                            <div class="filter-group mb-3">
+                                <h6 class="filter-group-title">
+                                    <i class="bi bi-calendar3 me-1"></i> Mes de inicio
+                                </h6>
+                                <div class="filter-options">
+                                    <a href="{{ request()->fullUrlWithQuery(['mes' => null]) }}"
+                                       class="filter-option {{ !request('mes') ? 'active' : '' }}">
+                                        Cualquier mes
+                                    </a>
+                                    @php
+                                        $meses = [
+                                            1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril',
+                                            5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
+                                            9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
+                                        ];
+                                        // Solo mostrar meses que tengan sentido (actual y futuros del año) o todos?
+                                        // Vamos a mostrar todos por ahora.
+                                    @endphp
+                                    <div class="row g-1">
+                                        @foreach($meses as $num => $nombre)
+                                            <div class="col-6">
+                                                <a href="{{ request()->fullUrlWithQuery(['mes' => $num]) }}"
+                                                   class="filter-option py-1 {{ request('mes') == $num ? 'active' : '' }}"
+                                                   style="font-size: 0.85rem;">
+                                                    {{ $nombre }}
+                                                </a>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="filter-divider">
+
                             {{-- Ordenar por --}}
                             <div class="filter-group mb-3">
                                 <h6 class="filter-group-title">
                                     <i class="bi bi-sort-down me-1"></i> Ordenar por
                                 </h6>
                                 <div class="filter-options">
-                                    <a href="{{ request()->fullUrlWithQuery(['sort' => '']) }}"
+                                    <a href="{{ request()->fullUrlWithQuery(['sort' => null]) }}"
                                        class="filter-option {{ !request('sort') ? 'active' : '' }}">
                                         Mejor valorados
                                     </a>
@@ -267,34 +392,14 @@
                         </div>
                     </div>
 
-                    {{-- Newsletter --}}
-                    <div class="card newsletter-card">
-                        <div class="card-body newsletter-body">
-                            <h5 class="newsletter-title">
-                                <i class="bi bi-envelope-heart me-2"></i>¿Quieres recibir nuevos cursos?
-                            </h5>
-                            <p class="newsletter-text">
-                                Suscríbete para recibir actualizaciones sobre nuevos cursos y ofertas especiales.
-                            </p>
-                            <div class="input-group">
-                                <input type="email"
-                                       class="form-control newsletter-input"
-                                       placeholder="Tu correo electrónico"
-                                       aria-label="Correo para suscripción">
-                                <button class="btn newsletter-btn" type="button">
-                                    Suscribirse
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    {{-- Recomendaciones para el usuario --}}
+                    @include('partials._recomendaciones_widget')
 
                 </aside>
             </div>
 
-            {{-- ── CURSOS ───────────────────────────────── --}}
             <div class="col-lg-9" id="courses-results">
 
-                {{-- Vista Grid --}}
                 <div class="row g-4" id="gridView">
                     @forelse ($cursos as $curso)
                         @php

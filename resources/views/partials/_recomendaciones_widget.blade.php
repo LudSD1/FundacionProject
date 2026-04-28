@@ -1,17 +1,18 @@
-{{--
-    Widget compacto de recomendaciones.
-    Uso: @include('partials._recomendaciones_widget')
-    Requiere: usuario autenticado con rol Estudiante.
---}}
 
 @auth
 @if(auth()->user()->hasRole('Estudiante'))
 @php
-    $recomService = app(\App\Services\RecommendationService::class);
-    $widgetRecs = $recomService->getRecommendations(auth()->user(), 3);
+    if (!isset($widgetRecs)) {
+        if (isset($recommendations) && $recommendations->isNotEmpty()) {
+            $widgetRecs = $recommendations;
+        } else {
+            $recomService = app(\App\Services\RecommendationService::class);
+            $widgetRecs = $recomService->getRecommendations(auth()->user(), 3);
+        }
+    }
 @endphp
 
-@if($widgetRecs->isNotEmpty())
+@if($widgetRecs && $widgetRecs->isNotEmpty())
 <div class="recom-widget">
     <div class="recom-widget-header">
         <h5 class="recom-widget-title">

@@ -3,8 +3,6 @@
     <div class="adm-panel">
         <div class="adm-tabs-header">
             <ul class="adm-tabs-nav" role="tablist">
-
-            
                 <li role="presentation">
                     <button class="adm-tab active"
                             data-bs-toggle="tab"
@@ -42,10 +40,6 @@
                 </li>
 
             </ul>
-
-            {{-- ── Links externos (páginas separadas) ──
-                 FIX 4: separados de los tabs internos
-                 FIX 5+6: sin class="{{ route() }}" ni onclick inline --}}
             <div class="adm-tabs-links">
                 <a href="{{ route('admin.logs') }}"
                    class="adm-tab-link {{ request()->routeIs('admin.logs') ? 'adm-tab-link--active' : '' }}">
@@ -92,7 +86,7 @@
             </div>
         </div>
 
-    </div>{{-- /adm-panel --}}
+    </div>
     </div>
 
 
