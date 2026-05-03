@@ -1,8 +1,6 @@
 <footer id="footer" role="contentinfo" aria-labelledby="footer-heading">
     <div class="footer-top py-5">
         <div class="container">
-
-            <!-- Encabezado centrado -->
             <div class="row mb-5">
                 <div class="col-12 footer-brand">
                     <h3 id="footer-heading" class="footer-title mb-3">Aprendo Hoy</h3>
@@ -11,11 +9,7 @@
                     </p>
                 </div>
             </div>
-
-            <!-- 3 columnas uniformes -->
             <div class="row g-4">
-
-                <!-- Contacto -->
                 <section class="col-lg-4 col-md-6 footer-contact" aria-label="Contacto">
                     <h4 class="footer-title mb-4">Contacto</h4>
                     <div class="contact-item">
@@ -31,8 +25,6 @@
                         </div>
                     </div>
                 </section>
-
-                <!-- Enlaces -->
                 <nav class="col-lg-4 col-md-6 footer-links" aria-label="Enlaces asociados">
                     <h4 class="footer-title mb-4">Links Asociados</h4>
                     <ul class="list-unstyled">
@@ -61,8 +53,6 @@
                         </li>
                     </ul>
                 </nav>
-
-                <!-- Redes Sociales -->
                 <section class="col-lg-4 col-md-6 footer-social" aria-label="Redes sociales">
                     <h4 class="footer-title mb-4">Síguenos</h4>
                     <p class="footer-description mb-4">
@@ -92,9 +82,6 @@
             </div>
         </div>
     </div>
-
-
-    <!-- Parte inferior -->
     <div class="footer-bottom py-4">
         <div class="container">
             <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
@@ -106,12 +93,9 @@
                         </a>. Todos los derechos reservados.
                     </span>
                 </div>
-
-
             </div>
         </div>
     </div>
-
     <script>
         document.getElementById('copyright-year').textContent = new Date().getFullYear();
     </script>

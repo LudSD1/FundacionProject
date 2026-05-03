@@ -1,9 +1,5 @@
-/* Dashboard CSS - Main Entry Point */
-
-/* Sidebar component (already separated) */
 @import url(components/sidebar/sidebar.css);
 
-/* System Components */
 @import url(components/variables.css);
 @import url(components/animations.css);
 @import url(components/base.css);
@@ -23,11 +19,9 @@
 @import url(components/achievements.css);
 
 
-/* Feature Specific Styles */
 @import url(components/profile.css);
 @import url(components/wizard.css);
 @import url(components/course.css);
 @import url(components/logs.css);
 
-/* Miscellaneous and Helpers */
 @import url(components/misc.css);
