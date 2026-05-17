@@ -67,7 +67,7 @@
                                                         </form>
                                                     @else
                                                         <button class="btn btn-sm btn-outline-primary btn-editar-horario"
-                                                                data-id="{{ $horario->id }}"
+                                                                data-id="{{ $horario->horario_id }}"
                                                                 data-dia="{{ $horario->horario->dia }}"
                                                                 data-hora-inicio="{{ $horario->horario->hora_inicio }}"
                                                                 data-hora-fin="{{ $horario->horario->hora_fin }}"
@@ -162,8 +162,8 @@
                     <div class="mb-3">
                         <label for="edit_dia" class="form-label">Día</label>
                         <select name="dia" id="edit_dia" class="form-select" required>
-                            @foreach(['lunes','martes','miércoles','jueves','viernes','sábado','domingo'] as $dia)
-                                <option value="{{ $dia }}">{{ ucfirst($dia) }}</option>
+                            @foreach(['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'] as $dia)
+                                <option value="{{ $dia }}">{{ $dia }}</option>
                             @endforeach
                         </select>
                     </div>

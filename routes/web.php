@@ -197,13 +197,8 @@ Route::group(['middleware' => ['auth']], function () {
         //ENDESTUDIANTE
         Route::post('/guardar-resultados', [NotaEntregaController::class, 'CuestionarioResultado'])->name('guardar.resultados');
         Route::post('/actividad/{actividad}/completar', [ActividadController::class, 'completarActividad'])->name('actividad.completar');
-
-        // ── GAMIFICACIÓN ──────────────────────────────────────────
-        // Perfil de XP del estudiante (nivel, historial, logros)
         Route::get('/perfil/xp', [XPController::class, 'index'])->name('perfil.xp');
-        // Vista completa de logros del estudiante
         Route::get('/profile/achievements', [AchievementController::class, 'index'])->name('profile.achievements');
-
         //CAMBIARCONTRASEÑA
         Route::get('CambiarContrasena/{id}', [UserController::class, 'EditPasswordIndex'])->name('CambiarContrasena');
         Route::post('CambiarContrasena/{id}', [UserController::class, 'CambiarContrasena'])->name('cambiarContrasenaPost');

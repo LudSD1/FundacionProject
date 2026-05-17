@@ -34,9 +34,14 @@ class CuestionarioController extends Controller
 
     public function mostrarCuestionario($id)
     {
+        // Soportar IDs encriptados (desde calendario) y planos
+        try {
+            $decryptedId = decrypt($id);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            $decryptedId = $id;
+        }
 
-
-        $cuestionario = Cuestionario::with(['preguntas.respuestas'])->findOrFail($id);
+        $cuestionario = Cuestionario::with(['preguntas.respuestas'])->findOrFail($decryptedId);
 
 
         if ($cuestionario->preguntas->isEmpty()) {

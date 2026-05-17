@@ -13,8 +13,6 @@ use App\Http\Controllers\RecommendationController;
         Route::post('/foros/{id}/completar', [ActividadCompletionController::class, 'marcarForoCompletado'])->name('foros.completar');
         Route::post('/evaluaciones/{id}/completar', [ActividadCompletionController::class, 'marcarEvaluacionCompletada'])->name('evaluaciones.completar');
         Route::post('/recursos/{id}/completar', [ActividadCompletionController::class, 'marcarRecursoCompletado'])->name('recursos.completar');
-
-        // Recomendaciones personalizadas
         Route::get('/mis-recomendaciones', [RecommendationController::class, 'index'])->name('recomendaciones.index');
         Route::get('/api/recomendaciones', [RecommendationController::class, 'getRecommendationsJson'])->name('recomendaciones.json');
         Route::post('/recomendaciones/click', [RecommendationController::class, 'trackClick'])->name('recomendaciones.click');

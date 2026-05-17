@@ -219,7 +219,6 @@
         <div class="container">
             <div class="row align-items-center g-4">
 
-                {{-- Título --}}
                 <div class="col-lg-5">
                     <div class="dc-header-text">
                         <div class="dc-header-eyebrow">
@@ -237,10 +236,8 @@
                     </div>
                 </div>
 
-                {{-- Controles --}}
                 <div class="col-lg-7">
                     <div class="dc-controls">
-                        {{-- Buscador --}}
                         <div class="dc-search">
                             <i class="bi bi-search dc-search-icon"></i>
                             <input type="search" id="dcSearch" placeholder="Buscar curso o evento..."
@@ -248,7 +245,6 @@
                         </div>
 
                         <div class="dc-controls-row">
-                            {{-- Filtro --}}
                             <div class="dc-select-wrap">
                                 <select id="dcFilter" class="dc-select">
                                     <option value="all">Todos</option>
@@ -260,7 +256,6 @@
                                 <i class="bi bi-chevron-down dc-select-icon"></i>
                             </div>
 
-                            {{-- Toggle vista --}}
                             <div class="dc-view-toggle">
                                 <button id="dcBtnGrid" class="dc-view-btn active" title="Vista cuadrícula">
                                     <i class="bi bi-grid-3x3-gap-fill"></i>
@@ -302,9 +297,7 @@
                 @endif
             </div>
         @else
-            {{-- ╔═══════════════════════════════════════╗
-             ║  TABS                                 ║
-             ╚═══════════════════════════════════════╝ --}}
+
             @php
                 $tabPrefix = $userRole === 'Estudiante' ? 'est' : 'doc';
             @endphp
@@ -315,33 +308,18 @@
                         data-bs-target="#{{ $tabPrefix }}-cursos" type="button" role="tab">
                         <i class="bi bi-book me-2"></i>
                         {{ $userRole === 'Estudiante' ? 'Cursos' : 'Mis Cursos' }}
-                        <span class="dc-tab-badge dc-badge-blue">
-                            @if ($userRole === 'Estudiante')
-                                {{ $inscritos->where('cursos.tipo', '!=', 'congreso')->count() }}
-                            @else
-                                {{ $cursos->where('tipo', '!=', 'congreso')->where('docente_id', auth()->user()->id)->count() }}
-                            @endif
-                        </span>
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="dc-tab-btn nav-link" data-bs-toggle="tab"
                         data-bs-target="#{{ $tabPrefix }}-congresos" type="button" role="tab">
                         <i class="bi bi-calendar-event me-2"></i>Eventos
-                        <span class="dc-tab-badge dc-badge-orange">
-                            @if ($userRole === 'Estudiante')
-                                {{ $inscritos->where('cursos.tipo', 'congreso')->count() }}
-                            @else
-                                {{ $cursos->where('tipo', 'congreso')->where('docente_id', auth()->user()->id)->count() }}
-                            @endif
-                        </span>
                     </button>
                 </li>
             </ul>
 
             <div class="tab-content">
 
-                {{-- ── ESTUDIANTE: TAB CURSOS ── --}}
                 @if ($userRole === 'Estudiante')
                     <div class="tab-pane fade show active" id="est-cursos" role="tabpanel">
                         <div class="dc-grid" id="dcGrid">

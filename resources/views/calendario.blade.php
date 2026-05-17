@@ -4,20 +4,17 @@
 
 @section('content')
 
-{{-- Datos del servidor pasados al JS --}}
 <script>
     window.CAL_DATA = {
         eventos    : @json($eventos),
         estadisticas: @json($estadisticas),
+        esDocente  : @json($esDocente ?? false),
     };
 </script>
 
 <div class="cv2-wrap">
     <div class="container-fluid cv2-container">
 
-        {{-- ╔══════════════════════════════════════╗
-             ║  STATS BAR                          ║
-             ╚══════════════════════════════════════╝ --}}
         <div class="cv2-stats">
             <div class="cv2-stat cv2-stat--blue">
                 <i class="bi bi-clipboard2-check-fill cv2-stat-icon"></i>
@@ -30,7 +27,7 @@
                 <i class="bi bi-check-circle-fill cv2-stat-icon"></i>
                 <div>
                     <div class="cv2-stat-num" id="statEnt">{{ $estadisticas['entregadas'] }}</div>
-                    <div class="cv2-stat-lbl">Entregadas</div>
+                    <div class="cv2-stat-lbl">{{ $esDocente ? 'Completadas (≥80%)' : 'Completadas' }}</div>
                 </div>
             </div>
             <div class="cv2-stat cv2-stat--orange">
@@ -46,13 +43,6 @@
                     <div class="cv2-stat-num" id="statProx">{{ $estadisticas['proximasVencer'] }}</div>
                     <div class="cv2-stat-lbl">Urgentes</div>
                 </div>
-            </div>
-
-            {{-- Acciones --}}
-            <div class="cv2-stats-actions">
-                <button class="cc-btn cc-btn-primary cv2-export-btn" id="cv2ExportBtn">
-                    <i class="bi bi-download me-1"></i>Exportar
-                </button>
             </div>
         </div>
 
@@ -76,11 +66,6 @@
 
         @else
 
-        {{-- ╔══════════════════════════════════════╗
-             ║  LAYOUT PRINCIPAL                   ║
-             ║  Izquierda: cuadrícula mes          ║
-             ║  Derecha:   agenda del día/semana   ║
-             ╚══════════════════════════════════════╝ --}}
         <div class="cv2-layout">
 
             {{-- ── PANEL IZQUIERDO: Calendario ── --}}
@@ -110,7 +95,10 @@
                         <span class="cv2-filter-dot cv2-dot--red"></span>Urgentes
                     </button>
                     <button class="cv2-filter" data-filter="entregada">
-                        <span class="cv2-filter-dot cv2-dot--green"></span>Entregadas
+                        <span class="cv2-filter-dot cv2-dot--green"></span>Completadas
+                    </button>
+                    <button class="cv2-filter" data-filter="incompleta">
+                        <span class="cv2-filter-dot cv2-dot--gray"></span>Incompletas
                     </button>
                 </div>
 
@@ -126,13 +114,16 @@
                 {{-- Leyenda --}}
                 <div class="cv2-legend">
                     <span class="cv2-legend-item">
-                        <span class="cv2-dot cv2-dot--green"></span>Entregada
+                        <span class="cv2-dot cv2-dot--green"></span>Completada
                     </span>
-                    <span class="cv2-legend-item">
+                     <span class="cv2-legend-item">
                         <span class="cv2-dot cv2-dot--orange"></span>Pendiente
                     </span>
                     <span class="cv2-legend-item">
                         <span class="cv2-dot cv2-dot--red"></span>Urgente
+                    </span>
+                    <span class="cv2-legend-item">
+                        <span class="cv2-dot cv2-dot--gray"></span>Incompleta (vencida)
                     </span>
                     <span class="cv2-legend-item">
                         <span class="cv2-dot cv2-dot--blue"></span>Hoy
@@ -140,10 +131,8 @@
                 </div>
             </div>
 
-            {{-- ── PANEL DERECHO: Agenda ── --}}
             <div class="cv2-agenda-panel">
 
-                {{-- Header agenda --}}
                 <div class="cv2-agenda-header">
                     <div>
                         <div class="cv2-agenda-day-num" id="cv2AgendaDayNum">—</div>
@@ -152,7 +141,6 @@
                     <div class="cv2-agenda-count" id="cv2AgendaCount"></div>
                 </div>
 
-                {{-- Lista de eventos del día seleccionado --}}
                 <div class="cv2-agenda-list" id="cv2AgendaList">
                     <div class="cv2-agenda-placeholder">
                         <i class="bi bi-hand-index-thumb"></i>
@@ -160,7 +148,6 @@
                     </div>
                 </div>
 
-                {{-- Separador: próximos eventos --}}
                 <div class="cv2-upcoming-header">
                     <i class="bi bi-clock-history me-2"></i>Próximos a vencer
                 </div>
@@ -173,9 +160,6 @@
     </div>
 </div>
 
-{{-- ╔══════════════════════════════════════╗
-     ║  MODAL DETALLE EVENTO              ║
-     ╚══════════════════════════════════════╝ --}}
 <div class="modal fade" id="cv2Modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content cc-modal">
@@ -212,6 +196,14 @@
                             <div id="cv2ModalEstado">—</div>
                         </div>
                     </div>
+                    {{-- Porcentaje de compleción (solo docente) --}}
+                    <div class="cv2-mf" id="cv2ModalPorcentajeWrap" style="display:none">
+                        <div class="cv2-mf-icon"><i class="bi bi-people-fill"></i></div>
+                        <div class="flex-1">
+                            <div class="cv2-mf-label">Compleción de estudiantes</div>
+                            <div id="cv2ModalPorcentaje">—</div>
+                        </div>
+                    </div>
                     <div class="cv2-mf cv2-mf--full">
                         <div class="cv2-mf-icon"><i class="bi bi-file-text-fill"></i></div>
                         <div class="flex-1">
@@ -231,11 +223,6 @@
     </div>
 </div>
 
-@endsection
-
-
-
-
 <script>
 (function () {
     /* ════════════════════════════════════
@@ -243,16 +230,17 @@
     ════════════════════════════════════ */
     const EVENTOS = (window.CAL_DATA?.eventos || []).map(ev => ({
         ...ev,
-        _date: ev.start ? ev.start.split('T')[0] : null,   // 'YYYY-MM-DD'
+        _date: ev.start ? ev.start.split('T')[0] : null,
     }));
+    const ES_DOCENTE = window.CAL_DATA?.esDocente || false;
 
     /* ════════════════════════════════════
        ESTADO
     ════════════════════════════════════ */
     const state = {
         year    : new Date().getFullYear(),
-        month   : new Date().getMonth(),      // 0-indexed
-        selected: null,                        // 'YYYY-MM-DD' o null
+        month   : new Date().getMonth(),
+        selected: null,
         filter  : 'all',
     };
 
@@ -263,10 +251,22 @@
     /* ════════════════════════════════════
        HELPERS
     ════════════════════════════════════ */
-    function tipoClase(ev) {
+    function diasRestantes(dateStr) {
+        const hoy   = new Date(); hoy.setHours(0,0,0,0);
+        const fecha = new Date(dateStr + 'T00:00:00');
+        return Math.ceil((fecha - hoy) / 86400000);
+    }
+
+    /**
+     * Determina el estado visual real del evento.
+     * Retorna: 'done' | 'urgent' | 'overdue' | 'pending'
+     */
+    function estadoReal(ev) {
         const p = ev.extendedProps || {};
-        if (p.estado === 'entregada') return 'done';
-        if (p.urgente) return 'urgent';
+        if (p.completada || p.estado === 'entregada') return 'done';
+        const dias = diasRestantes(ev._date);
+        if (dias < 0) return 'overdue';       // vencida sin entregar
+        if (dias <= 2) return 'urgent';        // ≤2 días
         return 'pending';
     }
 
@@ -280,27 +280,69 @@
         return m[(tipo||'').toLowerCase()] || 'bi-calendar-event';
     }
 
-    function badgeHTML(ev) {
-        const p = ev.extendedProps || {};
-        if (p.estado === 'entregada')
-            return `<span class="cv2-event-badge cv2-badge--done">Entregada</span>`;
-        if (p.urgente)
-            return `<span class="cv2-event-badge cv2-badge--urgent">Urgente</span>`;
-        return `<span class="cv2-event-badge cv2-badge--pending">Pendiente</span>`;
+    function dotColor(est) {
+        return { done:'green', urgent:'red', overdue:'gray', pending:'orange' }[est] || 'orange';
     }
 
-    function diasRestantes(dateStr) {
-        const hoy   = new Date(); hoy.setHours(0,0,0,0);
-        const fecha = new Date(dateStr + 'T00:00:00');
-        return Math.ceil((fecha - hoy) / 86400000);
+    function badgeHTML(ev) {
+        const est = estadoReal(ev);
+        const p   = ev.extendedProps || {};
+
+        if (est === 'done') {
+            if (ES_DOCENTE && p.porcentajeCompletado !== null) {
+                return `<span class="cv2-event-badge cv2-badge--done">
+                    <i class="bi bi-check-circle-fill me-1"></i>${p.porcentajeCompletado}% completado
+                </span>`;
+            }
+            return `<span class="cv2-event-badge cv2-badge--done">
+                <i class="bi bi-check-circle-fill me-1"></i>Completada
+            </span>`;
+        }
+        if (est === 'overdue') {
+            return `<span class="cv2-event-badge cv2-badge--overdue">
+                <i class="bi bi-x-circle-fill me-1"></i>Incompleta
+            </span>`;
+        }
+        if (est === 'urgent') {
+            const dias = diasRestantes(ev._date);
+            const txt = dias === 0 ? '¡Hoy!' : dias === 1 ? '¡Mañana!' : `${dias} días`;
+            return `<span class="cv2-event-badge cv2-badge--urgent">
+                <i class="bi bi-alarm-fill me-1"></i>${txt}
+            </span>`;
+        }
+        // pending
+        if (ES_DOCENTE && p.porcentajeCompletado !== null) {
+            return `<span class="cv2-event-badge cv2-badge--pending">
+                <i class="bi bi-hourglass-split me-1"></i>${p.porcentajeCompletado}%
+            </span>`;
+        }
+        return `<span class="cv2-event-badge cv2-badge--pending">
+            <i class="bi bi-hourglass-split me-1"></i>Pendiente
+        </span>`;
+    }
+
+    /** Barra de progreso para docentes */
+    function progressBarHTML(porcentaje) {
+        if (porcentaje === null || porcentaje === undefined) return '';
+        const color = porcentaje >= 80 ? '#16a34a' :
+                      porcentaje >= 50 ? '#f59e0b' :
+                      porcentaje >= 25 ? '#f97316' : '#dc2626';
+        return `<div class="cv2-progress-wrap">
+            <div class="cv2-progress-bar">
+                <div class="cv2-progress-fill" style="width:${porcentaje}%;background:${color}"></div>
+            </div>
+            <span class="cv2-progress-text">${porcentaje}%</span>
+        </div>`;
     }
 
     function filtrarEvento(ev) {
-        const p = ev.extendedProps || {};
-        if (state.filter === 'all')       return true;
-        if (state.filter === 'entregada') return p.estado === 'entregada';
-        if (state.filter === 'pendiente') return p.estado !== 'entregada';
-        if (state.filter === 'urgente')   return p.urgente && p.estado !== 'entregada';
+        const p   = ev.extendedProps || {};
+        const est = estadoReal(ev);
+        if (state.filter === 'all')        return true;
+        if (state.filter === 'entregada')  return est === 'done';
+        if (state.filter === 'pendiente')  return est === 'pending' || est === 'urgent';
+        if (state.filter === 'urgente')    return est === 'urgent';
+        if (state.filter === 'incompleta') return est === 'overdue';
         return true;
     }
 
@@ -316,7 +358,6 @@
 
         const hoyStr    = new Date().toISOString().split('T')[0];
         const primerDia = new Date(state.year, state.month, 1);
-        // Ajuste: lunes=0 … domingo=6
         let offset      = primerDia.getDay() - 1;
         if (offset < 0) offset = 6;
 
@@ -351,8 +392,8 @@
 
             // Puntos (máx 4)
             const dotsHTML = evsDia.slice(0, 4).map(ev => {
-                const cls = tipoClase(ev);
-                return `<span class="cv2-dot cv2-dot--${cls === 'done' ? 'green' : cls === 'urgent' ? 'red' : 'orange'}"></span>`;
+                const est = estadoReal(ev);
+                return `<span class="cv2-dot cv2-dot--${dotColor(est)}"></span>`;
             }).join('');
 
             html += `<div class="cv2-day
@@ -380,7 +421,7 @@
         grid.querySelectorAll('.cv2-day:not(.cv2-day--other-month)').forEach(el => {
             el.addEventListener('click', function () {
                 state.selected = this.getAttribute('data-date');
-                renderGrid();       // re-render para reflejar selected
+                renderGrid();
                 renderAgenda(state.selected);
             });
         });
@@ -419,9 +460,10 @@
 
         list.innerHTML = evs.map(ev => {
             const p   = ev.extendedProps || {};
-            const cls = tipoClase(ev);
+            const est = estadoReal(ev);
+            const estClass = { done:'done', urgent:'urgent', overdue:'overdue', pending:'pending' }[est];
             return `
-            <div class="cv2-event-card cv2-event-card--${cls}" data-event-title="${ev.title}">
+            <div class="cv2-event-card cv2-event-card--${estClass}" data-event-title="${ev.title}">
                 <div class="cv2-event-icon">
                     <i class="bi ${tipoIcono(p.tipo)}"></i>
                 </div>
@@ -433,6 +475,7 @@
                         </span>
                         ${badgeHTML(ev)}
                     </div>
+                    ${ES_DOCENTE ? progressBarHTML(p.porcentajeCompletado) : ''}
                 </div>
                 <i class="bi bi-chevron-right cv2-event-arrow"></i>
             </div>`;
@@ -451,12 +494,10 @@
         const list = document.getElementById('cv2UpcomingList');
         if (!list) return;
 
-        const hoy = new Date(); hoy.setHours(0,0,0,0);
-
         const proximos = EVENTOS
             .filter(ev => {
-                const p = ev.extendedProps || {};
-                if (p.estado === 'entregada') return false;
+                const est = estadoReal(ev);
+                if (est === 'done') return false;
                 if (!ev._date) return false;
                 const d = diasRestantes(ev._date);
                 return d >= 0 && d <= 14;
@@ -488,6 +529,9 @@
                 <div class="cv2-upcoming-info">
                     <div class="cv2-upcoming-title">${ev.title}</div>
                     <div class="cv2-upcoming-curso">${p.curso || '—'}</div>
+                    ${ES_DOCENTE && p.porcentajeCompletado !== null
+                        ? `<div class="cv2-upcoming-pct">${p.totalCompletados}/${p.totalInscritos} estudiantes (${p.porcentajeCompletado}%)</div>`
+                        : ''}
                 </div>
                 <span class="cv2-upcoming-dias cv2-upcoming-dias--${urgClass}">${diasText}</span>
             </div>`;
@@ -511,7 +555,8 @@
        MODAL
     ════════════════════════════════════ */
     function abrirModal(ev) {
-        const p = ev.extendedProps || {};
+        const p   = ev.extendedProps || {};
+        const est = estadoReal(ev);
 
         document.getElementById('cv2ModalTitle').textContent  = ev.title;
         document.getElementById('cv2ModalCurso').textContent  = p.curso || '—';
@@ -521,16 +566,37 @@
             : '—';
         document.getElementById('cv2ModalDesc').textContent   = p.descripcion || 'Sin descripción';
 
-        // Estado
-        const cls = tipoClase(ev);
-        const estadoMap = {
-            done   : ['cv2-badge--done',    '<i class="bi bi-check-circle-fill me-1"></i>Entregada'],
+        // Estado badge
+        const estadoLabels = {
+            done   : ['cv2-badge--done',    '<i class="bi bi-check-circle-fill me-1"></i>Completada'],
             urgent : ['cv2-badge--urgent',  '<i class="bi bi-alarm-fill me-1"></i>Urgente'],
+            overdue: ['cv2-badge--overdue', '<i class="bi bi-x-circle-fill me-1"></i>Incompleta (vencida)'],
             pending: ['cv2-badge--pending', '<i class="bi bi-hourglass-split me-1"></i>Pendiente'],
         };
-        const [badgeCls, badgeTxt] = estadoMap[cls];
+        const [badgeCls, badgeTxt] = estadoLabels[est];
         document.getElementById('cv2ModalEstado').innerHTML =
             `<span class="cv2-event-badge ${badgeCls}">${badgeTxt}</span>`;
+
+        // Porcentaje de compleción (solo docentes)
+        const pctWrap = document.getElementById('cv2ModalPorcentajeWrap');
+        const pctEl   = document.getElementById('cv2ModalPorcentaje');
+        if (ES_DOCENTE && p.porcentajeCompletado !== null) {
+            pctWrap.style.display = '';
+            const color = p.porcentajeCompletado >= 80 ? '#16a34a' :
+                          p.porcentajeCompletado >= 50 ? '#f59e0b' : '#dc2626';
+            pctEl.innerHTML = `
+                <div style="display:flex;align-items:center;gap:.75rem;margin-top:.35rem">
+                    <div class="cv2-progress-bar" style="flex:1">
+                        <div class="cv2-progress-fill" style="width:${p.porcentajeCompletado}%;background:${color}"></div>
+                    </div>
+                    <strong style="color:${color}">${p.porcentajeCompletado}%</strong>
+                </div>
+                <small style="color:#6b7280;margin-top:.25rem;display:block">
+                    ${p.totalCompletados} de ${p.totalInscritos} estudiantes completaron
+                </small>`;
+        } else {
+            pctWrap.style.display = 'none';
+        }
 
         // Header color dinámico
         const header = document.getElementById('cv2ModalHeader');
@@ -538,24 +604,37 @@
         const gradients = {
             done   : 'linear-gradient(135deg,#15803d,#16a34a)',
             urgent : 'linear-gradient(135deg,#b91c1c,#dc2626)',
+            overdue: 'linear-gradient(135deg,#4b5563,#6b7280)',
             pending: 'linear-gradient(135deg,#0d2244,#145da0)',
         };
-        header.style.background = gradients[cls];
+        header.style.background = gradients[est];
         icon.innerHTML = {
             done   : '<i class="bi bi-check-circle-fill"></i>',
             urgent : '<i class="bi bi-alarm-fill"></i>',
+            overdue: '<i class="bi bi-x-circle-fill"></i>',
             pending: '<i class="bi bi-calendar-event-fill"></i>',
-        }[cls];
+        }[est];
 
         // Botón acción
         const btn = document.getElementById('cv2ModalBtn');
-        btn.href      = p.url || '#';
-        btn.innerHTML = p.estado === 'entregada'
-            ? '<i class="bi bi-eye-fill me-1"></i>Ver Entrega'
-            : '<i class="bi bi-box-arrow-up-right me-1"></i>Ver Actividad';
-        btn.className = p.estado === 'entregada'
-            ? 'cc-btn cc-btn-success'
-            : 'cc-btn cc-btn-primary';
+        btn.href  = p.url || '#';
+
+        if (ES_DOCENTE) {
+            btn.innerHTML = p.esCuestionario
+                ? '<i class="bi bi-ui-checks me-1"></i>Ver Cuestionario'
+                : '<i class="bi bi-list-check me-1"></i>Ver Entregas';
+            btn.className = 'cc-btn cc-btn-primary';
+        } else if (p.esCuestionario) {
+            btn.innerHTML = est === 'done'
+                ? '<i class="bi bi-eye-fill me-1"></i>Ver Resultados'
+                : '<i class="bi bi-pencil-square me-1"></i>Resolver Cuestionario';
+            btn.className = est === 'done' ? 'cc-btn cc-btn-success' : 'cc-btn cc-btn-primary';
+        } else {
+            btn.innerHTML = est === 'done'
+                ? '<i class="bi bi-eye-fill me-1"></i>Ver Entrega'
+                : '<i class="bi bi-box-arrow-up-right me-1"></i>Ver Actividad';
+            btn.className = est === 'done' ? 'cc-btn cc-btn-success' : 'cc-btn cc-btn-primary';
+        }
 
         bootstrap.Modal.getOrCreateInstance(
             document.getElementById('cv2Modal')
@@ -578,9 +657,7 @@
         });
     }
 
-    /* ════════════════════════════════════
-       NAVEGACIÓN MES
-    ════════════════════════════════════ */
+
     function bindNav() {
         document.getElementById('cv2PrevBtn')?.addEventListener('click', () => {
             if (state.month === 0) { state.month = 11; state.year--; }
@@ -620,36 +697,6 @@
         </div>`;
     }
 
-    /* ════════════════════════════════════
-       EXPORTAR
-    ════════════════════════════════════ */
-    function exportar() {
-        const data = EVENTOS.map(ev => ({
-            titulo : ev.title,
-            fecha  : ev._date,
-            curso  : ev.extendedProps?.curso,
-            tipo   : ev.extendedProps?.tipo,
-            estado : ev.extendedProps?.estado,
-        }));
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
-        const url  = URL.createObjectURL(blob);
-        const a    = Object.assign(document.createElement('a'), {
-            href    : url,
-            download: `calendario-${new Date().toISOString().split('T')[0]}.json`,
-        });
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        if (typeof Swal !== 'undefined') {
-            Swal.fire({ toast:true, position:'bottom-end', icon:'success',
-                title:'Calendario exportado', timer:2200, showConfirmButton:false });
-        }
-    }
-
-    /* ════════════════════════════════════
-       SYNC TOP (igual que el resto del proyecto)
-    ════════════════════════════════════ */
     function syncTop() {
         const header  = document.getElementById('header');
         const authNav = document.getElementById('authNavbar');
@@ -660,11 +707,8 @@
         panel.style.top = (hH + anH + 16) + 'px';
     }
 
-    /* ════════════════════════════════════
-       INIT
-    ════════════════════════════════════ */
+
     document.addEventListener('DOMContentLoaded', function () {
-        // Abrir hoy por defecto
         state.selected = new Date().toISOString().split('T')[0];
 
         renderGrid();
@@ -673,8 +717,6 @@
         bindFiltros();
         bindNav();
 
-        document.getElementById('cv2ExportBtn')?.addEventListener('click', exportar);
-
         syncTop();
         window.addEventListener('resize', syncTop);
         window.addEventListener('scroll', syncTop, { passive:true });
@@ -682,3 +724,5 @@
 
 })();
 </script>
+
+@endsection

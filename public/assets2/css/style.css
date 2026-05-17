@@ -1,10 +1,7 @@
-/* Main Style Entry Point */
 
-/* Global & Base */
 @import url(components/animations.css);
 @import url(components/base.css);
 
-/* UI Components */
 @import url(components/components.css);
 @import url(components/hero.css);
 @import url(components/sections.css);
@@ -15,8 +12,6 @@
 @import url(components/listacursos.css);
 @import url(components/dashboard.css);
 
-/* Miscellaneous */
 @import url(components/misc.css);
 
-/* Page-specific */
 @import url(components/cursos.css);

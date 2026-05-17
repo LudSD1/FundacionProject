@@ -1,14 +1,3 @@
-{{-- ═══════════════════════════════════════════════════════════════
-     LISTADO DE CURSOS — con nuevo sistema tbl-card
-     Usa:
-       cards.css            → animaciones, tokens base
-       table.css            → table-modern, table-container-modern,
-                              th-content, row-number
-       table-complement.css → btn-action-modern, type-badge, date-badge,
-                              course-name-cell, empty-state-table, etc.
-       table-card.css       → tbl-card, tbl-card-hero, tbl-hero-*
-                              (reemplaza card-modern + card-header-modern)
-═══════════════════════════════════════════════════════════════ --}}
 
 @section('titulo') Lista de Cursos @endsection
 
@@ -17,12 +6,7 @@
 
     <div class="tbl-card">
 
-        {{-- ╔══════════════════════════════════════╗
-             ║  HERO — CABECERA AZUL               ║
-             ╚══════════════════════════════════════╝ --}}
         <div class="tbl-card-hero">
-
-            {{-- Izquierda: título --}}
             <div class="tbl-hero-left">
                 <div class="tbl-hero-eyebrow">
                     <i class="bi bi-book-fill"></i>
@@ -116,9 +100,7 @@
         @endrole
 
 
-        {{-- ╔══════════════════════════════════════╗
-             ║  TABLA ADMINISTRADOR                ║
-             ╚══════════════════════════════════════╝ --}}
+
         @hasrole('Administrador')
         <div class="table-container-modern">
             <table class="table-modern">
@@ -139,9 +121,7 @@
                         <th width="11%">
                             <div class="th-content"><i class="bi bi-calendar-x"></i><span>Fin</span></div>
                         </th>
-                        <th width="10%">
-                            <div class="th-content"><i class="bi bi-display"></i><span>Formato</span></div>
-                        </th>
+
                         <th width="8%">
                             <div class="th-content"><i class="bi bi-tags-fill"></i><span>Tipo</span></div>
                         </th>
@@ -203,12 +183,6 @@
                             </span>
                         </td>
 
-                        <td>
-                            <span class="format-badge">
-                                <i class="bi bi-laptop"></i>
-                                {{ $curso->formato ?? 'N/A' }}
-                            </span>
-                        </td>
 
                         <td>
                             <span class="type-badge type-{{ $tipoSlug }}">

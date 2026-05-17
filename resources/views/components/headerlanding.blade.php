@@ -88,13 +88,51 @@
                         </form>
                         <ul class="hd-mobile-nav">
                             @auth
+                                {{-- ── Links auth integrados en mobile ── --}}
                                 <li>
                                     <a class="hd-mobile-link" href="{{ route('Inicio') }}">
-                                        <i class="bi bi-house-door"></i> Mi aprendizaje
+                                        <i class="bi bi-house-door"></i> Inicio
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="hd-mobile-link" href="{{ route('perfil', Auth::user()->id) }}">
+                                    <a class="hd-mobile-link" href="{{ route('calendario') }}">
+                                        <i class="bi bi-calendar-event"></i> Calendario
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="hd-mobile-link" href="{{ route('notificationes') }}">
+                                        <i class="bi bi-bell"></i> Notificaciones
+                                        @if (auth()->user()->unreadNotifications->count() > 0)
+                                            <span class="hd-mobile-badge">
+                                                {{ auth()->user()->unreadNotifications->count() > 9 ? '9+' : auth()->user()->unreadNotifications->count() }}
+                                            </span>
+                                        @endif
+                                    </a>
+                                </li>
+                                @if (auth()->user()->hasRole('Docente'))
+                                    <li>
+                                        <a class="hd-mobile-link" href="{{ route('sumario') }}">
+                                            <i class="bi bi-bar-chart-line"></i> Sumario
+                                        </a>
+                                    </li>
+                                @endif
+                                @if (auth()->user()->hasRole('Estudiante'))
+                                    <li>
+                                        <a class="hd-mobile-link" href="{{ route('lista.cursos.congresos') }}">
+                                            <i class="bi bi-collection"></i> Cursos/Congresos
+                                        </a>
+                                    </li>
+                                @endif
+                                <li>
+                                    <a class="hd-mobile-link" href="{{ route('pagos') }}">
+                                        <i class="bi bi-credit-card-2-front"></i> Pagos
+                                    </a>
+                                </li>
+
+                                <li class="hd-mobile-divider"></li>
+
+                                <li>
+                                    <a class="hd-mobile-link" href="{{ route('Miperfil') }}">
                                         <i class="bi bi-person-circle"></i> Mi perfil
                                     </a>
                                 </li>
@@ -129,12 +167,9 @@
 
 
 @auth
-    <nav id="authNavbar" class="auth-navbar">
+    {{-- Auth navbar: solo visible en desktop (md+), mobile usa el menú unificado de arriba --}}
+    <nav id="authNavbar" class="auth-navbar d-none d-md-block">
         <div class="auth-navbar-container">
-
-            <button class="auth-navbar-toggler" id="authNavToggler" type="button" aria-expanded="false">
-                <i class="bi bi-list auth-navbar-toggler-icon"></i>
-            </button>
 
             <div class="auth-navbar-content" id="authNavContent">
                 <ul class="auth-navbar-menu">
@@ -256,16 +291,14 @@
     (function() {
         /* ── 1. Calcular top del auth-navbar según altura del #header ── */
         const authNav = document.getElementById('authNavbar');
-        const landingHd = document.getElementById('header'); // header de la landing
+        const landingHd = document.getElementById('header');
 
         function setAuthNavTop() {
             if (!authNav) return;
             if (landingHd) {
-                // Existe el header de la landing: posicionar justo debajo
                 const hdH = landingHd.getBoundingClientRect().height;
                 authNav.style.top = hdH + 'px';
             } else {
-                // No hay landing header: va pegado arriba
                 authNav.style.top = '0px';
             }
         }
@@ -277,23 +310,12 @@
         window.addEventListener('scroll', function() {
             if (!authNav) return;
             authNav.classList.toggle('an-scrolled', window.scrollY > 10);
-
-            // Si hay landing header, el top cambia con scroll (header puede estar scrolled/oculto)
             if (landingHd) setAuthNavTop();
         }, {
             passive: true
         });
 
-        /* ── 3. Toggler mobile ── */
-        const toggler = document.getElementById('authNavToggler');
-        const content = document.getElementById('authNavContent');
-
-        toggler?.addEventListener('click', function() {
-            const isOpen = content?.classList.toggle('show');
-            toggler.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-        });
-
-        /* ── 4. Dropdowns: abrir/cerrar con data-an-toggle ── */
+        /* ── 3. Dropdowns: abrir/cerrar con data-an-toggle ── */
         document.querySelectorAll('[data-an-toggle]').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -310,21 +332,14 @@
             });
         });
 
-        /* ── 5. Click outside cierra dropdowns y menú mobile ── */
+        /* ── 4. Click outside cierra dropdowns ── */
         document.addEventListener('click', function(e) {
-            // Cerrar dropdowns
             if (!e.target.closest('.auth-dropdown')) {
                 document.querySelectorAll('.auth-dropdown.show').forEach(d => d.classList.remove('show'));
             }
-
-            // Cerrar menú mobile si click fuera del nav
-            if (!e.target.closest('#authNavbar')) {
-                content?.classList.remove('show');
-                toggler?.setAttribute('aria-expanded', 'false');
-            }
         });
 
-        /* ── 6. Marcar notificaciones como leídas al hacer click ── */
+        /* ── 5. Marcar notificaciones como leídas al hacer click ── */
         document.querySelectorAll('.auth-notification-item.unread').forEach(item => {
             item.addEventListener('click', function() {
                 this.classList.remove('unread');

@@ -283,6 +283,31 @@
 .hd-mobile-danger       { color:#dc2626!important; }
 .hd-mobile-danger:hover { background:rgba(220,38,38,.07)!important; }
 
+/* Badge de notificación en mobile */
+.hd-mobile-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 .4rem;
+    background: linear-gradient(135deg, var(--nav-orange), var(--nav-orange-d));
+    color: #fff;
+    font-size: .7rem;
+    font-weight: 700;
+    border-radius: 50px;
+    margin-left: auto;
+    box-shadow: 0 2px 8px rgba(255,165,0,.3);
+}
+
+/* Divisor visual en mobile nav */
+.hd-mobile-divider {
+    height: 1px;
+    background: #e2eaf4;
+    margin: .5rem 0;
+    list-style: none;
+}
+
 @media (max-width:767px) {
     #header::before { background: linear-gradient(145deg, transparent 52%, var(--nav-blue) 48%); }
 }

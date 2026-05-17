@@ -531,6 +531,7 @@ class MenuController extends Controller
     public function calendario()
     {
         $user = Auth::user();
+        $esDocente = $user->hasRole('Docente');
         $cursos = $this->obtenerCursosPorRol($user);
 
         // Si no hay cursos, mostrar calendario vacío con mensaje
@@ -538,6 +539,7 @@ class MenuController extends Controller
             return view('calendario', [
                 'cursos' => collect(),
                 'eventos' => [],
+                'esDocente' => $esDocente,
                 'estadisticas' => [
                     'total' => 0,
                     'entregadas' => 0,
@@ -547,51 +549,172 @@ class MenuController extends Controller
             ])->with('warning', 'No tienes cursos asignados.');
         }
 
-        $fechaInicio = now()->subMonths(1);
+        $fechaInicio = now()->subMonths(6);
         $fechaFin = now()->addMonths(6);
 
         $actividades = $this->obtenerActividadesPorCursos($cursos, $fechaInicio, $fechaFin);
-        $eventos = $this->formatearEventosParaFullCalendar($actividades);
-        $estadisticas = $this->calcularEstadisticas($actividades, auth()->user());
+        $eventos = $this->formatearEventosParaFullCalendar($actividades, $user);
+        $estadisticas = $this->calcularEstadisticas($actividades, $user);
 
-        return view('calendario', compact('cursos', 'eventos', 'estadisticas'));
+        return view('calendario', compact('cursos', 'eventos', 'estadisticas', 'esDocente'));
     }
 
-    private function formatearEventosParaFullCalendar($actividades)
+    private function formatearEventosParaFullCalendar($actividades, $user)
     {
-        return $actividades->map(function ($actividad) {
-            $fechaVencimiento = \Carbon\Carbon::parse($actividad->fecha_vencimiento);
+        $esDocente = $user->hasRole('Docente');
+
+        // Obtener el inscrito_id del usuario para verificar completitud
+        $inscritoIds = [];
+        if (!$esDocente) {
+            $inscritoIds = Inscritos::where('estudiante_id', $user->id)
+                ->pluck('id')
+                ->toArray();
+        }
+
+        // Para docentes: pre-calcular total de inscritos por curso
+        $inscritosPorCurso = [];
+        if ($esDocente) {
+            $cursosIds = $actividades->map(function ($a) {
+                return $a->subtema?->tema?->curso?->id;
+            })->filter()->unique();
+
+            foreach ($cursosIds as $cursoId) {
+                $inscritosPorCurso[$cursoId] = Inscritos::where('cursos_id', $cursoId)
+                    ->whereNull('deleted_at')
+                    ->count();
+            }
+        }
+
+        return $actividades->map(function ($actividad) use ($inscritoIds, $esDocente, $inscritosPorCurso) {
+            $fechaLimite = $actividad->fecha_limite;
+            if (!$fechaLimite) return null;
+
             $ahora = now();
 
+            // Determinar si fue completada/entregada por el usuario
+            $entregada = false;
+            $completada = false;
+            $porcentajeCompletado = null;
+            $totalInscritos = 0;
+            $totalCompletados = 0;
+
+            if (!$esDocente) {
+                // ESTUDIANTE: verificar completitud individual
+                foreach ($inscritoIds as $inscritoId) {
+                    if ($actividad->isCompletedByInscrito($inscritoId)) {
+                        $completada = true;
+                        $entregada = true;
+                        break;
+                    }
+                }
+
+                // También verificar si tiene entregas (archivos entregados)
+                if (!$entregada && $actividad->entregas && $actividad->entregas->isNotEmpty()) {
+                    $entregada = true;
+                }
+            } else {
+                // DOCENTE: calcular porcentaje de completitud
+                $cursoId = $actividad->subtema?->tema?->curso?->id;
+                $totalInscritos = $inscritosPorCurso[$cursoId] ?? 0;
+
+                if ($totalInscritos > 0) {
+                    $totalCompletados = $actividad->completions()
+                        ->where('completed', true)
+                        ->count();
+                    $porcentajeCompletado = round(($totalCompletados / $totalInscritos) * 100);
+                } else {
+                    $porcentajeCompletado = 0;
+                }
+
+                // Para docente: considerar "completada" si >80% entregaron
+                $completada = $porcentajeCompletado >= 80;
+                $entregada = $completada;
+            }
+
+            $estado = $entregada ? 'entregada' : 'pendiente';
+            $diasRestantes = $fechaLimite->diffInDays($ahora, false);
+            $urgente = !$entregada && $diasRestantes >= -2 && $diasRestantes <= 2;
+
             // Determinar color según estado y urgencia
-            $color = $this->determinarColorEvento($actividad, $fechaVencimiento, $ahora);
+            $actividadConEstado = (object)[
+                'estado' => $estado,
+            ];
+            $color = $this->determinarColorEvento($actividadConEstado, $fechaLimite, $ahora);
+
+            // Nombre del tipo de actividad
+            $tipoNombre = $actividad->tipoActividad
+                ? $actividad->tipoActividad->nombre
+                : 'Actividad';
+
+            // Curso asociado
+            $cursoNombre = '—';
+            if ($actividad->subtema && $actividad->subtema->tema && $actividad->subtema->tema->curso) {
+                $cursoNombre = $actividad->subtema->tema->curso->nombreCurso;
+            }
+
+            // Determinar si tiene cuestionario
+            $tieneCuestionario = $actividad->cuestionario !== null;
+
+            // Generar URL según rol y tipo
+            $url = $this->generarUrlActividad($actividad, $esDocente, $tieneCuestionario);
 
             return [
                 'id' => $actividad->id,
-                'title' => $actividad->titulo,
-                'start' => $fechaVencimiento->format('Y-m-d'),
-                'end' => $fechaVencimiento->format('Y-m-d'),
+                'title' => $actividad->titulo ?? 'Sin título',
+                'start' => $fechaLimite->format('Y-m-d'),
+                'end' => $fechaLimite->format('Y-m-d'),
                 'color' => $color,
                 'textColor' => '#ffffff',
                 'extendedProps' => [
-                    'curso' => $actividad->subtema->tema->curso->nombreCurso,
-                    'tipo' => $actividad->tipo,
-                    'estado' => $actividad->estado,
-                    'descripcion' => $actividad->descripcion,
-                    'urgente' => $fechaVencimiento->diffInDays($ahora) <= 2,
-                    'entregada' => $actividad->estado === 'entregada'
+                    'curso' => $cursoNombre,
+                    'tipo' => $tipoNombre,
+                    'estado' => $estado,
+                    'descripcion' => $actividad->descripcion ?? 'Sin descripción',
+                    'urgente' => $urgente,
+                    'entregada' => $entregada,
+                    'completada' => $completada,
+                    'esCuestionario' => $tieneCuestionario,
+                    'esDocente' => $esDocente,
+                    'porcentajeCompletado' => $porcentajeCompletado,
+                    'totalInscritos' => $totalInscritos,
+                    'totalCompletados' => $totalCompletados,
+                    'url' => $url,
                 ]
             ];
-        });
+        })->filter()->values()->toArray();
     }
 
-    private function determinarColorEvento($actividad, $fechaVencimiento, $ahora)
+    /**
+     * Genera la URL correcta según el rol del usuario y el tipo de actividad.
+     */
+    private function generarUrlActividad($actividad, $esDocente, $tieneCuestionario)
+    {
+        try {
+            if ($esDocente) {
+                // Docente: va a calificar o a ver el cuestionario
+                if ($tieneCuestionario && $actividad->cuestionario) {
+                    return route('cuestionarios.index', $actividad->cuestionario->id);
+                }
+                return route('calificarT', $actividad->id);
+            }
+
+            // Estudiante: va a resolver cuestionario o ver actividad
+            if ($tieneCuestionario && $actividad->cuestionario) {
+                return route('cuestionario.mostrar', encrypt($actividad->cuestionario->id));
+            }
+            return route('actividad.show', encrypt($actividad->id));
+        } catch (\Exception $e) {
+            return '#';
+        }
+    }
+
+    private function determinarColorEvento($actividad, $fechaLimite, $ahora)
     {
         if ($actividad->estado === 'entregada') {
             return '#28a745'; // Verde para entregadas
         }
 
-        $diasRestantes = $fechaVencimiento->diffInDays($ahora, false);
+        $diasRestantes = $ahora->diffInDays($fechaLimite, false);
 
         if ($diasRestantes < 0) {
             return '#dc3545'; // Rojo para vencidas
@@ -619,7 +742,6 @@ class MenuController extends Controller
 
             return Cursos::with(['docente', 'temas.subtemas.actividades'])
                 ->whereIn('id', $cursosIds)
-                ->where('estado', 'Activo')
                 ->get();
         }
 
@@ -629,14 +751,32 @@ class MenuController extends Controller
     private function obtenerActividadesPorCursos($cursos, $fechaInicio, $fechaFin)
     {
         $cursosIds = $cursos->pluck('id');
+        $user = Auth::user();
+        $esDocente = $user->hasRole('Docente');
 
-        return Actividad::with([
+        // Relaciones base (siempre necesarias)
+        $relaciones = [
             'subtema.tema.curso',
             'tipoActividad',
-            'entregas' => function ($query) {
-                $query->where('user_id', Auth::id());
-            }
-        ])
+            'cuestionario', // Para determinar URL según tipo
+        ];
+
+        // Para estudiantes: cargar entregas y completions filtradas
+        if (!$esDocente) {
+            $inscritoIds = Inscritos::where('estudiante_id', $user->id)
+                ->pluck('id')
+                ->toArray();
+
+            $relaciones['entregas'] = function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            };
+            $relaciones['completions'] = function ($query) use ($inscritoIds) {
+                $query->whereIn('inscritos_id', $inscritoIds)
+                    ->where('completed', true);
+            };
+        }
+
+        return Actividad::with($relaciones)
             ->whereHas('subtema.tema', function ($query) use ($cursosIds) {
                 $query->whereIn('curso_id', $cursosIds);
             })
@@ -755,12 +895,68 @@ class MenuController extends Controller
 
     private function calcularEstadisticas($actividades, $user)
     {
-        $inscritoId = $user->inscrito->id ?? 0;
+        $esDocente = $user->hasRole('Docente');
         $total = $actividades->count();
-        $entregadas = $actividades->filter(fn($a) => $a->isCompletedByInscrito($inscritoId))->count();
+
+        if ($esDocente) {
+            // Para docentes: estadísticas basadas en porcentaje de compleción
+            $entregadas = 0;
+            $proximasVencer = 0;
+
+            foreach ($actividades as $a) {
+                if (!$a->fecha_limite) continue;
+
+                $cursoId = $a->subtema?->tema?->curso?->id;
+                $totalInscritos = $cursoId ? Inscritos::where('cursos_id', $cursoId)->whereNull('deleted_at')->count() : 0;
+
+                if ($totalInscritos > 0) {
+                    $completados = $a->completions()->where('completed', true)->count();
+                    $porcentaje = ($completados / $totalInscritos) * 100;
+                    if ($porcentaje >= 80) $entregadas++;
+                }
+
+                // Urgentes: actividades con menos de 3 días y bajo porcentaje
+                if ($a->fecha_limite->isBetween(now(), now()->addDays(3))) {
+                    $proximasVencer++;
+                }
+            }
+
+            $pendientes = $total - $entregadas;
+            return compact('total', 'entregadas', 'pendientes', 'proximasVencer');
+        }
+
+        // Para estudiantes
+        $inscritoIds = Inscritos::where('estudiante_id', $user->id)
+            ->pluck('id')
+            ->toArray();
+
+        $entregadas = $actividades->filter(function ($a) use ($inscritoIds) {
+            foreach ($inscritoIds as $inscritoId) {
+                if ($a->isCompletedByInscrito($inscritoId)) {
+                    return true;
+                }
+            }
+            if ($a->entregas && $a->entregas->isNotEmpty()) {
+                return true;
+            }
+            return false;
+        })->count();
+
         $pendientes = $total - $entregadas;
-        $proximasVencer = $actividades->filter(function ($a) use ($inscritoId) {
-            return $a->fecha_limite->isBetween(now(), now()->addDays(3)) && !$a->isCompletedByInscrito($inscritoId);
+
+        $proximasVencer = $actividades->filter(function ($a) use ($inscritoIds) {
+            if (!$a->fecha_limite) return false;
+            $completada = false;
+            foreach ($inscritoIds as $inscritoId) {
+                if ($a->isCompletedByInscrito($inscritoId)) {
+                    $completada = true;
+                    break;
+                }
+            }
+            if (!$completada && $a->entregas && $a->entregas->isNotEmpty()) {
+                $completada = true;
+            }
+            return !$completada && $a->fecha_limite->isBetween(now(), now()->addDays(3));
         })->count();
 
         return compact('total', 'entregadas', 'pendientes', 'proximasVencer');

@@ -35,11 +35,16 @@ class ActividadController extends Controller
 
     public function index($id)
     {
-        $actividades = Actividad::with(['entregas'])->findOrFail($id);
-        $notas = NotaEntrega::where('actividad_id', $id)->get();
+        // Desencriptar el ID (soportar IDs encriptados y planos por compatibilidad)
+        try {
+            $decryptedId = decrypt($id);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            $decryptedId = $id;
+        }
+
+        $actividades = Actividad::with(['entregas'])->findOrFail($decryptedId);
+        $notas = NotaEntrega::where('actividad_id', $decryptedId)->get();
         $inscritos = Inscritos::all();
-
-
 
         return view('Estudiante.Actividad',)->with('actividades', $actividades)
             ->with('inscritos', $inscritos)

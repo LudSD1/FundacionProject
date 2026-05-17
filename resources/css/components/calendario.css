@@ -217,6 +217,7 @@
 .cv2-dot--orange { background: #ffa500; }
 .cv2-dot--red    { background: #dc2626; }
 .cv2-dot--blue   { background: #145da0; }
+.cv2-dot--gray   { background: #9ca3af; }
 
 /* Leyenda */
 .cv2-legend {
@@ -330,6 +331,7 @@
 .cv2-event-card--done::before    { background: #16a34a; }
 .cv2-event-card--urgent::before  { background: #dc2626; }
 .cv2-event-card--pending::before { background: #ffa500; }
+.cv2-event-card--overdue::before { background: #9ca3af; }
 
 .cv2-event-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.09); transform: translateX(3px); }
 
@@ -341,9 +343,10 @@
     flex-shrink: 0;
     margin-top: .1rem;
 }
-.cv2-event-card--done   .cv2-event-icon { background: rgba(22,163,74,.10);  color: #16a34a; }
-.cv2-event-card--urgent .cv2-event-icon { background: rgba(220,38,38,.10);  color: #dc2626; }
-.cv2-event-card--pending .cv2-event-icon{ background: rgba(255,165,0,.12);  color: #d97706; }
+.cv2-event-card--done    .cv2-event-icon { background: rgba(22,163,74,.10);  color: #16a34a; }
+.cv2-event-card--urgent  .cv2-event-icon { background: rgba(220,38,38,.10);  color: #dc2626; }
+.cv2-event-card--pending .cv2-event-icon { background: rgba(255,165,0,.12);  color: #d97706; }
+.cv2-event-card--overdue .cv2-event-icon { background: rgba(107,114,128,.10); color: #6b7280; }
 
 .cv2-event-body { flex: 1; min-width: 0; }
 .cv2-event-title {
@@ -377,6 +380,43 @@
 .cv2-badge--done    { background: rgba(22,163,74,.12);  color: #16a34a; }
 .cv2-badge--pending { background: rgba(255,165,0,.12);  color: #d97706; }
 .cv2-badge--urgent  { background: rgba(220,38,38,.12);  color: #dc2626; }
+.cv2-badge--overdue { background: rgba(107,114,128,.12); color: #6b7280; }
+
+/* ════════════════════
+   BARRA DE PROGRESO (DOCENTE)
+════════════════════ */
+.cv2-progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin-top: .35rem;
+}
+.cv2-progress-bar {
+    flex: 1;
+    height: 6px;
+    background: #e5e7eb;
+    border-radius: 99px;
+    overflow: hidden;
+}
+.cv2-progress-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width .35s ease;
+}
+.cv2-progress-text {
+    font-size: .7rem;
+    font-weight: 700;
+    color: #64748b;
+    min-width: 28px;
+    text-align: right;
+}
+
+/* Info extra en próximos */
+.cv2-upcoming-pct {
+    font-size: .7rem;
+    color: #6b7280;
+    margin-top: .15rem;
+}
 
 .cv2-event-arrow { color: #c5d0dc; font-size: .75rem; align-self: center; flex-shrink: 0; }
 
@@ -507,6 +547,129 @@
 .cv2-empty h4   { font-size: 1.2rem; font-weight: 700; color: #374151; margin-bottom: .45rem; }
 .cv2-empty p    { color: #94a3b8; margin-bottom: 1.3rem; }
 .cv2-empty .cc-btn { width: auto; padding: .65rem 1.8rem; }
+
+/* ════════════════════
+   MODAL CALENDARIO
+════════════════════ */
+.cc-modal {
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,.18);
+}
+.cc-modal-header {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    padding: 1rem 1.2rem;
+    background: linear-gradient(135deg, #0d2244, #145da0);
+    color: #fff;
+    border-bottom: none;
+}
+.cc-modal-header .btn-close {
+    filter: invert(1);
+    opacity: .7;
+    transition: opacity .2s ease;
+}
+.cc-modal-header .btn-close:hover { opacity: 1; }
+
+.cc-modal-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+    backdrop-filter: blur(4px);
+}
+.cc-modal-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.3;
+    color: #fff;
+}
+.cc-modal-header small {
+    opacity: .75;
+    font-size: .75rem;
+    display: block;
+    margin-top: .1rem;
+}
+
+.cc-modal-footer {
+    padding: .85rem 1.2rem;
+    background: #f8fafc;
+    border-top: 1.5px solid #e8f0f8;
+    display: flex;
+    justify-content: flex-end;
+    gap: .5rem;
+}
+
+/* ════════════════════
+   BOTONES CALENDARIO
+════════════════════ */
+.cc-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: .6rem 1.2rem;
+    border-radius: 50px;
+    font-size: .85rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    transition: all .22s ease;
+    font-family: inherit;
+    white-space: nowrap;
+}
+.cc-btn:hover { transform: translateY(-2px); }
+
+.cc-btn-primary {
+    background: linear-gradient(135deg, #0d2244, #145da0);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(20,93,160,.25);
+}
+.cc-btn-primary:hover {
+    box-shadow: 0 6px 20px rgba(20,93,160,.35);
+    color: #fff;
+}
+
+.cc-btn-success {
+    background: linear-gradient(135deg, #15803d, #16a34a);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(22,163,74,.22);
+}
+.cc-btn-success:hover {
+    box-shadow: 0 6px 18px rgba(22,163,74,.32);
+    color: #fff;
+}
+
+.cc-btn-outline {
+    background: transparent;
+    color: #64748b;
+    border: 1.5px solid #d1dce8;
+}
+.cc-btn-outline:hover {
+    border-color: #145da0;
+    color: #145da0;
+    background: rgba(20,93,160,.05);
+    transform: none;
+}
+
+/* ════════════════════
+   UTILIDADES MODAL
+════════════════════ */
+.min-width-0 { min-width: 0; }
+.flex-1      { flex: 1; }
+.opacity-75  { opacity: .75; }
+.ms-auto     { margin-left: auto; }
+.me-1        { margin-right: .25rem; }
+.me-2        { margin-right: .5rem; }
+.p-4         { padding: 1.5rem; }
 
 /* ════════════════════
    RESPONSIVE
