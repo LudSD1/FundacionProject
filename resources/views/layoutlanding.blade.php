@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="{{ asset('assets2/css/style.css') }}" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -46,16 +47,8 @@
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center">
         <i class="bi bi-arrow-up-short"></i>
     </a>
-
-    {{-- ===== JS — en orden: primero Bootstrap, luego librerías, luego app ===== --}}
-
-    {{-- FIX: Bootstrap JS cargado explícitamente desde CDN --}}
-    {{-- Si app.js ya importa bootstrap, elimina esta línea para evitar carga doble --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-    {{-- FIX: Swiper cargado una sola vez (antes se cargaba 2 veces con versiones distintas) --}}
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-
     <script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -66,10 +59,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
 
-            // ── AOS ──
             if (typeof AOS !== 'undefined') AOS.init();
 
-            // ── Header scroll ──
             const header = document.getElementById('header');
             let ticking = false;
 
@@ -87,10 +78,7 @@
                 }
             });
 
-            updateHeader(); // estado inicial
-
-            // ── Modales: limpiar backdrop sobrante ──
-            // FIX: bloque duplicado unificado en uno solo
+            updateHeader();
             document.querySelectorAll('.modal').forEach(function (modal) {
                 modal.addEventListener('hidden.bs.modal', function () {
                     document.querySelectorAll('.modal-backdrop').forEach(function (b) { b.remove(); });
@@ -100,7 +88,6 @@
                 });
             });
 
-            // Backdrop click directo
             document.addEventListener('click', function (event) {
                 if (event.target.classList.contains('modal-backdrop')) {
                     document.querySelectorAll('.modal.show').forEach(function (modal) {
@@ -110,7 +97,6 @@
                 }
             });
 
-            // ── Swiper: congresos ──
             const congresosEl = document.querySelector('.congresos-slider');
             if (congresosEl) {
                 new Swiper(congresosEl, {

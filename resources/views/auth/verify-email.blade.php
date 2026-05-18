@@ -94,7 +94,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Auto-hide alerts after 5 seconds
     const alerts = document.querySelectorAll('.alert');
     alerts.forEach(alert => {
         setTimeout(() => {
@@ -104,7 +103,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 5000);
     });
 
-    // SweetAlert Notifications
     @if (session('resent'))
         Swal.fire({
             icon: 'success',

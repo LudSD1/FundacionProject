@@ -9,7 +9,6 @@
     <div class="container" style="max-width: 890px;">
         <div class="create-user-card">
 
-            {{-- Header --}}
             <div class="create-user-header">
                 <a href="{{ route('ListaUsuarios') }}" class="btn-back-create">
                     <i class="bi bi-arrow-left"></i> Volver
@@ -20,13 +19,11 @@
                 </h5>
             </div>
 
-            {{-- Body --}}
             <div class="create-user-body">
                 @if(auth()->user()->hasRole('Administrador'))
                     <form method="POST" action="{{ route('CrearDocentePost') }}" novalidate>
                         @csrf
 
-                        {{-- Sección: Datos personales --}}
                         <div class="form-section-title"><i class="bi bi-person"></i> Datos Personales</div>
 
                         <div class="row g-3 mb-3">
@@ -44,7 +41,6 @@
                             </div>
                         </div>
 
-                        {{-- Sección: Identificación --}}
                         <div class="form-section-title"><i class="bi bi-card-text"></i> Identificación</div>
 
                         <div class="row g-3 mb-3">
@@ -62,7 +58,6 @@
                             </div>
                         </div>
 
-                        {{-- Sección: Ubicación --}}
                         <div class="form-section-title"><i class="bi bi-geo-alt"></i> Ubicación</div>
 
                         <div class="row g-3 mb-3">
@@ -76,7 +71,6 @@
                             </div>
                         </div>
 
-                        {{-- Sección: Contacto --}}
                         <div class="form-section-title"><i class="bi bi-envelope"></i> Contacto</div>
 
                         <div class="row g-3 mb-3">
@@ -86,7 +80,6 @@
                             </div>
                         </div>
 
-                        {{-- Sección: Rol --}}
                         <div class="form-section-title"><i class="bi bi-shield"></i> Rol del Usuario</div>
 
                         <div class="role-grid mb-4">
@@ -116,8 +109,6 @@
                             </button>
                         </div>
                     </form>
-
-                    {{-- Errores --}}
                     @if($errors->any())
                         <div class="errors-box">
                             <div class="errors-title">

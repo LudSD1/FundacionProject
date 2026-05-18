@@ -1,5 +1,4 @@
 <style>
-    /* ===== LOGO APRENDO HOY ===== */
 .logo-aprendo {
     font-family: "Inter", sans-serif;
     font-size: 2.2rem;
@@ -33,10 +32,8 @@
     <div class="header-top py-3">
         <div class="container">
 
-            {{-- ===== DESKTOP ===== --}}
             <div class="d-none d-md-flex align-items-center justify-content-between">
 
-                {{-- Logo --}}
                 <div class="logo-section">
                     <a href="{{ route('home') }}" class="logo-aprendo">
                         APRENDO <span class="logo-h-special">H</span>OY
@@ -44,7 +41,7 @@
                 </div>
 
                 {{-- Buscador --}}
-                {{-- <div class="search-section">
+                <div class="search-section">
                     <form action="{{ route('lista.cursos.congresos') }}" method="GET" class="search-form">
                         <div class="input-group">
                             <input type="text" name="search"
@@ -56,9 +53,8 @@
                             </button>
                         </div>
                     </form>
-                </div> --}}
+                </div>
 
-                {{-- Navegación + logo fundación --}}
                 <div class="nav-section d-flex align-items-center">
                     <nav id="navbar" class="navbar">
                         <ul class="d-flex align-items-center mb-0 me-4">
@@ -104,7 +100,6 @@
 
                     </div>
 
-                    {{-- Logo fundación --}}
                     <div class="logo-fundacion-mobile" style="flex:0 0 auto;">
                         <img src="{{ asset('assets/img/logof.png') }}" alt="Logo Fundación" class="img-fluid">
                     </div>

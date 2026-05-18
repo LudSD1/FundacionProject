@@ -5,11 +5,7 @@
 <div class="container my-4">
 <div class="tbl-card">
 
-    {{-- ╔══════════════════════════════════════╗
-         ║  HERO                               ║
-         ╚══════════════════════════════════════╝ --}}
     <div class="tbl-card-hero">
-
         <div class="tbl-hero-left">
             <div class="tbl-hero-eyebrow">
                 <i class="bi bi-people-fill"></i> Administración
@@ -19,8 +15,6 @@
         </div>
 
         <div class="tbl-hero-controls">
-
-            {{-- Botones --}}
             <a href="{{ route('CrearUsuario') }}"
                class="tbl-hero-btn tbl-hero-btn-primary"
                data-bs-toggle="tooltip" title="Crear nuevo usuario">
@@ -32,7 +26,6 @@
                 <i class="bi bi-trash-fill"></i> Eliminados
             </a>
 
-            {{-- Filtro rol --}}
             <form action="{{ route('ListaUsuarios') }}" method="GET" id="roleFilterForm">
                 <input type="hidden" name="search" value="{{ request('search') }}">
                 <div class="tbl-hero-select-wrap">
@@ -52,7 +45,6 @@
                 </div>
             </form>
 
-            {{-- Buscador --}}
             <form action="{{ route('ListaUsuarios') }}" method="GET">
                 <input type="hidden" name="role" value="{{ request('role') }}">
                 <div class="tbl-hero-search">
@@ -66,10 +58,9 @@
             </form>
 
         </div>
-    </div>{{-- /tbl-card-hero --}}
+    </div>
 
 
-    {{-- Filtros activos --}}
     @if(request('search') || request('role'))
     <div class="tbl-filter-bar">
         <div class="tbl-filter-bar-left">
@@ -90,9 +81,6 @@
     @endif
 
 
-    {{-- ╔══════════════════════════════════════╗
-         ║  TABLA                              ║
-         ╚══════════════════════════════════════╝ --}}
     <div class="table-container-modern">
         <table class="table-modern">
             <thead>
@@ -136,7 +124,6 @@
 
                     <td><span class="row-number">{{ $loop->iteration }}</span></td>
 
-                    {{-- Nombre --}}
                     <td>
                         <div class="teacher-cell">
                             <div class="tbl-avatar">
@@ -150,7 +137,6 @@
                         </div>
                     </td>
 
-                    {{-- Rol — FIX 2: sin badge Bootstrap --}}
                     <td>
                         @if($rol === 'Administrador')
                             <span class="role-badge role-badge--admin">
@@ -171,7 +157,6 @@
                         @endif
                     </td>
 
-                    {{-- Celular --}}
                     <td>
                         <div class="teacher-cell">
                             <i class="bi bi-telephone-fill"></i>
@@ -179,15 +164,12 @@
                         </div>
                     </td>
 
-                    {{-- Email --}}
                     <td>
                         <div class="teacher-cell">
                             <i class="bi bi-envelope-fill"></i>
                             <span class="tbl-email">{{ $usuario->email }}</span>
                         </div>
                     </td>
-
-                    {{-- Acciones --}}
                     <td>
                         <div class="action-buttons-cell">
                             <a class="btn-action-modern btn-view"
@@ -200,7 +182,6 @@
                                data-bs-toggle="tooltip" title="Editar usuario">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
-                            {{-- FIX 9: form con clase para SweetAlert --}}
                             <form action="{{ route('deleteUser', encrypt($usuario->id)) }}"
                                   method="POST"
                                   class="usr-delete-form">
@@ -245,47 +226,13 @@
         </table>
     </div>
 
-    {{-- Paginación --}}
     <div class="tbl-pagination">
         {{ $usuarios->appends(['search' => request('search'), 'role' => request('role')])->links('custom-pagination') }}
     </div>
 
-</div>{{-- /tbl-card --}}
-</div>{{-- /container --}}
+</div>
+</div>
 @endsection
-
-
-<style>
-/* ── Badges de rol (solo esta vista los usa) ── */
-.role-badge {
-    display:       inline-flex;
-    align-items:   center;
-    gap:           .3rem;
-    font-size:     .73rem;
-    font-weight:   700;
-    padding:       .24rem .7rem;
-    border-radius: 50px;
-    white-space:   nowrap;
-}
-.role-badge i { font-size: .7rem; }
-
-.role-badge--admin      { background: rgba(220,38,38,.10);  color: #dc2626; }
-.role-badge--docente    { background: rgba(22,163,74,.10);  color: #16a34a; }
-.role-badge--estudiante { background: rgba(20,93,160,.10);  color: #145da0; }
-.role-badge--none       { background: rgba(100,116,139,.09);color: #64748b; }
-
-/* Email truncado */
-.tbl-email {
-    max-width:     180px;
-    overflow:      hidden;
-    text-overflow: ellipsis;
-    white-space:   nowrap;
-    display:       inline-block;
-    vertical-align: middle;
-    font-size:     .85rem;
-    color:         #64748b;
-}
-</style>
 
 
 <script>

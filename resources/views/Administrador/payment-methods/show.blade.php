@@ -224,7 +224,6 @@
     </div>
 </div>
 
-<!-- Modal para mostrar QR en grande -->
 @if($paymentMethod->qr_image)
     <div class="modal fade" id="qrModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">

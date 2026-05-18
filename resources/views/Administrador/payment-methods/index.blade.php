@@ -386,7 +386,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Confirmación Eliminar
     document.querySelectorAll('.btn-delete-pm').forEach(btn => {
         btn.addEventListener('click', function() {
             const form = this.closest('form');
@@ -410,7 +409,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Confirmación Restaurar
     document.querySelectorAll('.btn-restore-pm').forEach(btn => {
         btn.addEventListener('click', function() {
             const form = this.closest('form');

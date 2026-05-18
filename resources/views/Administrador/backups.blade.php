@@ -4,9 +4,7 @@
 
 @section('content')
 <div class="container-fluid py-5">
-    {{-- Estructura tbl-card moderna --}}
     <div class="tbl-card">
-        {{-- Cabecera con lenguaje visual moderno --}}
         <div class="tbl-card-hero">
             <div class="tbl-hero-left">
                 <div class="tbl-hero-eyebrow">
@@ -26,7 +24,6 @@
         </div>
 
         <div class="card-body p-4">
-            <!-- Sección de creación rápida -->
             <div class="row g-4 mb-5">
                 <div class="col-lg-8">
                     <div class="alert alert-info border-0 shadow-sm rounded-4 p-4 d-flex align-items-center mb-0 h-100">
@@ -58,7 +55,6 @@
                 </div>
             </div>
 
-            <!-- Lista de backups -->
             <div class="mb-4">
                 <h5 class="fw-bold text-dark mb-3"><i class="fas fa-history me-2 text-primary"></i>Backups Disponibles</h5>
                 @if(empty($backups))
@@ -130,7 +126,6 @@
                         </table>
                     </div>
 
-                    <!-- Estadísticas Rápidas -->
                     <div class="row g-4 mt-4">
                         <div class="col-md-4">
                             <div class="bg-primary bg-opacity-10 border-0 rounded-4 p-4 text-center h-100">
@@ -160,7 +155,6 @@
     </div>
 </div>
 
-<!-- Modal de confirmación para eliminar -->
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 rounded-4 shadow overflow-hidden">
@@ -207,7 +201,7 @@ function confirmDelete(filename) {
 @if(!empty($backups))
     setTimeout(() => {
         location.reload();
-    }, 60000); // Aumentado a 60 segundos para evitar recargas constantes
+    }, 60000); 
 @endif
 </script>
 

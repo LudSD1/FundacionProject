@@ -360,7 +360,6 @@
                 });
         }
 
-        // Manejar envío de formulario de creación vía AJAX (opcional, para mejor UX)
         document.getElementById('formCrearExpositor').addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
@@ -390,7 +389,6 @@
             });
         });
 
-        // Manejar envío de formulario de edición vía AJAX
         document.getElementById('formEditarExpositor').addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
@@ -423,7 +421,6 @@
             });
         });
 
-        // Confirmación para desactivar
         function confirmarDesactivacion(id) {
             Swal.fire({
                 title: '¿Desactivar expositor?',
@@ -442,7 +439,6 @@
             });
         }
 
-        // Confirmación para activar
         function confirmarActivacion(id) {
             Swal.fire({
                 title: '¿Activar expositor?',

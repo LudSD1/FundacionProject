@@ -23,6 +23,7 @@
 
 @if ($userRole === 'Estudiante')
     @include('partials.dashboard.common.modal-pago')
+    @include('components.achievements')
 @endif
 
 

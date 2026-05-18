@@ -34,7 +34,6 @@
 
         <div class="p-4 p-md-5">
             <div class="row g-4">
-                {{-- Instrucciones del Formato --}}
                 <div class="col-lg-5">
                     <div class="st-card h-100 p-4 border-0 bg-light rounded-4">
                         <div class="d-flex align-items-center mb-3">

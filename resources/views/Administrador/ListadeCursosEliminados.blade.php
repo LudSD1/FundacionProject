@@ -6,10 +6,6 @@
 
 <div class="container my-4">
 <div class="tbl-card">
-
-    {{-- ╔══════════════════════════════════════╗
-         ║  HERO                               ║
-         ╚══════════════════════════════════════╝ --}}
     <div class="tbl-card-hero">
 
         <div class="tbl-hero-left">
@@ -32,7 +28,6 @@
             </a>
             @endif
 
-            {{-- Buscador --}}
             <div class="tbl-hero-search">
                 <i class="bi bi-search tbl-hero-search-icon"></i>
                 <input type="text"
@@ -42,12 +37,9 @@
             </div>
         </div>
 
-    </div>{{-- /tbl-card-hero --}}
+    </div>
 
 
-    {{-- ╔══════════════════════════════════════╗
-         ║  TABLA (solo Admin)                 ║
-         ╚══════════════════════════════════════╝ --}}
     @if(auth()->user()->hasRole('Administrador'))
     <div class="table-container-modern">
         <table class="table-modern" id="ceTable">
@@ -143,21 +135,18 @@
 
                     <td>
                         <div class="action-buttons-cell">
-                            {{-- FIX 10: codigoCurso igual que el resto del proyecto --}}
                             <a class="btn-action-modern btn-view"
                                href="{{ route('Curso', $curso->codigoCurso ?? $curso->id) }}"
                                data-bs-toggle="tooltip"
                                title="Ver Curso">
                                 <i class="bi bi-eye-fill"></i>
                             </a>
-                            {{-- FIX 8: btn-info para Detalles --}}
                             <button class="btn-action-modern btn-info"
                                     data-bs-toggle="modal"
                                     data-bs-target="#ceModal{{ $curso->id }}"
                                     title="Detalles">
                                 <i class="bi bi-info-circle-fill"></i>
                             </button>
-                            {{-- FIX 6: btn-view (verde) para Restaurar, no btn-delete --}}
                             <a class="btn-action-modern btn-restore-ce"
                                href="{{ route('restaurarCurso', encrypt($curso->id)) }}"
                                data-bs-toggle="tooltip"
@@ -189,18 +178,16 @@
     </div>
     @endif
 
-</div>{{-- /tbl-card --}}
-</div>{{-- /container --}}
+</div>
+</div>
 
 
-{{-- FIX 7: modales fuera del tbody — HTML válido --}}
 @if(auth()->user()->hasRole('Administrador'))
 @foreach($cursos as $curso)
 <div class="modal fade" id="ceModal{{ $curso->id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content cc-modal">
 
-            {{-- FIX 5: cc-modal-header del sistema --}}
             <div class="cc-modal-header">
                 <div class="cc-modal-icon">
                     <i class="bi bi-book-half"></i>
@@ -238,7 +225,6 @@
                 </div>
             </div>
 
-            {{-- FIX 5: cc-modal-footer del sistema --}}
             <div class="cc-modal-footer">
                 <button type="button" class="cc-btn cc-btn-outline" data-bs-dismiss="modal">
                     <i class="bi bi-x-circle me-1"></i>Cerrar
@@ -258,24 +244,10 @@
 @endsection
 
 
-<style>
-/* btn-restore-ce: verde para restaurar (semánticamente correcto) */
-.btn-restore-ce {
-    background: rgba(20,93,160,.09);
-    color:      #145da0;
-}
-.btn-restore-ce:hover {
-    background: #145da0;
-    color:      #fff;
-    box-shadow: 0 4px 10px rgba(20,93,160,.28);
-    transform:  scale(1.15);
-}
-</style>
 <script>
 (function () {
     document.addEventListener('DOMContentLoaded', function () {
 
-        /* Búsqueda client-side */
         document.getElementById('ceSearchInput')
             ?.addEventListener('input', function () {
                 const q = this.value.toLowerCase();
@@ -285,7 +257,6 @@
                 });
             });
 
-        /* Tooltips */
         document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
             new bootstrap.Tooltip(el);
         });

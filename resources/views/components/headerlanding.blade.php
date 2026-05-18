@@ -88,7 +88,6 @@
                         </form>
                         <ul class="hd-mobile-nav">
                             @auth
-                                {{-- ── Links auth integrados en mobile ── --}}
                                 <li>
                                     <a class="hd-mobile-link" href="{{ route('Inicio') }}">
                                         <i class="bi bi-house-door"></i> Inicio
@@ -167,7 +166,6 @@
 
 
 @auth
-    {{-- Auth navbar: solo visible en desktop (md+), mobile usa el menú unificado de arriba --}}
     <nav id="authNavbar" class="auth-navbar d-none d-md-block">
         <div class="auth-navbar-container">
 
@@ -289,7 +287,6 @@
 
 <script>
     (function() {
-        /* ── 1. Calcular top del auth-navbar según altura del #header ── */
         const authNav = document.getElementById('authNavbar');
         const landingHd = document.getElementById('header');
 

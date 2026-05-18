@@ -55,7 +55,6 @@
         <form id="wizardForm" action="{{ route('CrearCursoPost') }}" method="POST">
             @csrf
             <div class="p-4 p-md-5">
-                <!-- Step 1: Datos Básicos -->
                 <div class="form-step active" data-step="1">
                     <div class="step-header mb-4">
                         <h4 class="text-primary fw-bold mb-1">
@@ -99,7 +98,6 @@
                     </div>
                 </div>
 
-                <!-- Step 2: Configuración -->
                 <div class="form-step" data-step="2" style="display: none;">
                     <div class="step-header mb-4">
                         <h4 class="text-primary fw-bold mb-1">
@@ -109,7 +107,7 @@
                     </div>
 
                     <div class="row g-4">
-                        <div class="col-md-4">
+                        <div class="col-md-4 hidden">
                             <label class="form-label fw-bold text-muted small text-uppercase">Formato</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light"><i class="bi bi-laptop text-primary"></i></span>
@@ -152,7 +150,6 @@
                     </div>
                 </div>
 
-                <!-- Step 3: Público Objetivo -->
                 <div class="form-step" data-step="3" style="display: none;">
                     <div class="step-header mb-4">
                         <h4 class="text-primary fw-bold mb-1">
@@ -189,7 +186,6 @@
                     </div>
                 </div>
 
-                <!-- Step 4: Detalles Finales -->
                 <div class="form-step" data-step="4" style="display: none;">
                     <div class="step-header mb-4">
                         <h4 class="text-primary fw-bold mb-1">
@@ -232,7 +228,6 @@
                     </div>
                 </div>
 
-                <!-- Wizard Buttons -->
                 <div class="d-flex justify-content-between mt-5 pt-4 border-top">
                     <button type="button" class="btn btn-light rounded-pill px-4 py-2 fw-bold" id="prevBtn" style="display: none;">
                         <i class="bi bi-arrow-left me-2"></i> Anterior
@@ -249,45 +244,6 @@
     </div>
 </div>
 
-<style>
-    .wizard-steps-nav { gap: 0.5rem; padding: 1rem; }
-    .step-nav-item {
-        display: flex; align-items: center; gap: 0.75rem;
-        padding: 0.6rem 1.25rem; border-radius: 50px;
-        background: #f8fafc; border: 1.5px solid #e2eaf4;
-        color: #64748b; font-weight: 700; font-size: 0.82rem;
-        white-space: nowrap; cursor: default; transition: all 0.3s;
-    }
-    .step-nav-item.active {
-        background: rgba(20, 93, 160, 0.08); border-color: #145da0; color: #145da0;
-    }
-    .step-nav-item.completed {
-        background: #f0fdf4; border-color: #16a34a; color: #16a34a;
-    }
-    .step-num {
-        width: 24px; height: 24px; border-radius: 50%;
-        background: currentColor; color: #fff;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 0.7rem;
-    }
-    .ec-role-badge {
-        background: rgba(255,165,0,0.15); color: #ffa500;
-        padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.7rem; font-weight: 800;
-        border: 1px solid rgba(255,165,0,0.3);
-    }
-    .form-control, .form-select {
-        border-radius: 12px; border: 1.5px solid #e2eaf4; padding: 0.6rem 1rem;
-        transition: all 0.2s; font-size: 0.88rem;
-    }
-    .form-control:focus, .form-select:focus {
-        border-color: #145da0; box-shadow: 0 0 0 4px rgba(20, 93, 160, 0.1);
-        background: #fff !important;
-    }
-    .input-group-text {
-        border-radius: 12px 0 0 12px; border: 1.5px solid #e2eaf4; border-right: none;
-    }
-    .input-group .form-control, .input-group .form-select { border-radius: 0 12px 12px 0; }
-</style>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>

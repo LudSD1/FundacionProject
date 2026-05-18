@@ -1,5 +1,4 @@
 @auth
-    <!-- Estilos para el sistema de XP -->
     <style>
         .xbox-xp-notification {
             position: fixed;

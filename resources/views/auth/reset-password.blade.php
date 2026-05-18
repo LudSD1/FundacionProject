@@ -29,7 +29,6 @@
                         @csrf
                         <input type="hidden" name="token" value="{{ $token }}">
 
-                        <!-- Email (oculto) -->
                         <div class="mb-4">
                             <label for="email" class="form-label fw-semibold fs-5 mb-3">Correo electrónico</label>
                             <div class="input-group input-group-lg">
@@ -41,7 +40,6 @@
                             </div>
                         </div>
 
-                        <!-- Nueva Contraseña -->
                         <div class="mb-4">
                             <label for="password" class="form-label fw-semibold fs-5 mb-3">Nueva Contraseña</label>
                             <div class="input-group input-group-lg">
@@ -59,7 +57,6 @@
                             </div>
                         </div>
 
-                        <!-- Confirmar Contraseña -->
                         <div class="mb-4">
                             <label for="password_confirmation" class="form-label fw-semibold fs-5 mb-3">Confirmar Contraseña</label>
                             <div class="input-group input-group-lg">
@@ -94,16 +91,13 @@
 </section>
 @include('layoutlanding')
 
-<!-- Script para cambiar la visibilidad de la contraseña -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Obtener elementos
         const togglePassword = document.getElementById('togglePassword');
         const togglePasswordConfirmation = document.getElementById('togglePasswordConfirmation');
         const passwordField = document.getElementById('password');
         const passwordConfirmationField = document.getElementById('password_confirmation');
 
-        // Añadir evento de clic al botón de contraseña
         if (togglePassword) {
             togglePassword.addEventListener('click', function() {
                 const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -113,7 +107,6 @@
             });
         }
 
-        // Añadir evento de clic al botón de confirmación de contraseña
         if (togglePasswordConfirmation) {
             togglePasswordConfirmation.addEventListener('click', function() {
                 const type = passwordConfirmationField.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -123,7 +116,6 @@
             });
         }
 
-        // Password match validation
         if (passwordConfirmationField) {
             passwordConfirmationField.addEventListener('input', function() {
                 if (this.value !== passwordField.value) {
@@ -134,7 +126,6 @@
             });
         }
 
-        // SweetAlert Notifications
         @if (session('success'))
             Swal.fire({
                 icon: 'success',

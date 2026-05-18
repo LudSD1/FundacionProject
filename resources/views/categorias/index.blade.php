@@ -8,9 +8,7 @@
 
 @section('content')
 <div class="container-fluid py-5">
-    {{-- Estructura tbl-card moderna --}}
     <div class="tbl-card">
-        {{-- Cabecera con lenguaje visual moderno --}}
         <div class="tbl-card-hero">
             <div class="tbl-hero-left">
                 <div class="tbl-hero-eyebrow">
@@ -27,7 +25,6 @@
         </div>
 
         <div class="card-body p-4">
-            <!-- Barra de búsqueda y filtros -->
             <div class="row g-3 align-items-center mb-4">
                 <div class="col-md-8">
                     <form action="{{ route('categorias.index') }}" method="GET" class="search-box-table w-100">
@@ -47,7 +44,6 @@
                     </form>
                 </div>
                 <div class="col-md-4">
-                    {{-- Tabs integrados --}}
                     <div class="adm-tabs-container">
                         <div class="adm-tabs-links">
                             <a class="adm-tab-link {{ request('tab', 'activas') === 'activas' ? 'active' : '' }}"
@@ -180,7 +176,6 @@
     </div>
 </div>
 
-<!-- Modal Crear Mejorado -->
 <div class="modal fade" id="crearCategoriaModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 rounded-4 shadow overflow-hidden">
@@ -234,7 +229,6 @@
     </div>
 </div>
 
-<!-- Modal Editar Mejorado -->
 <div class="modal fade" id="editarCategoriaModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 rounded-4 shadow overflow-hidden">

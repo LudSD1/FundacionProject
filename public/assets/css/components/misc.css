@@ -472,3 +472,302 @@
 		text-align: center;
 	}
 }
+
+
+.ec-tabs-header {
+	background: #f8fafc;
+	border-bottom: 2px solid #e2eaf4;
+	padding: 0;
+}
+
+.ec-tabs-nav {
+	display: flex;
+	overflow-x: auto;
+	gap: 0;
+	padding: 0 1rem;
+}
+
+.ec-tabs-nav::-webkit-scrollbar {
+	height: 0;
+}
+
+.ec-tab-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: .5rem;
+	padding: .85rem 1.25rem;
+	background: none;
+	border: none;
+	border-bottom: 3px solid transparent;
+	color: #64748b;
+	font-size: .82rem;
+	font-weight: 700;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: all .2s ease;
+	position: relative;
+}
+
+.ec-tab-btn:hover {
+	color: #145da0;
+	background: rgba(20, 93, 160, .03);
+}
+
+.ec-tab-btn.active {
+	color: #145da0;
+	border-bottom-color: #145da0;
+	background: rgba(20, 93, 160, .04);
+}
+
+.ec-tab-btn i {
+	font-size: .92rem;
+}
+
+/* ── Tab panes ── */
+.ec-tab-pane {
+	display: none;
+}
+
+.ec-tab-pane.active {
+	display: block;
+}
+
+/* ── Section headers ── */
+.ec-section-header {
+	display: flex;
+	align-items: flex-start;
+	gap: .75rem;
+	padding-bottom: .75rem;
+	border-bottom: 2px solid rgba(20, 93, 160, .08);
+}
+
+.ec-section-header>i {
+	font-size: 1.3rem;
+	color: #145da0;
+	margin-top: .15rem;
+}
+
+.ec-section-title {
+	font-size: 1rem;
+	font-weight: 800;
+	color: #0f172a;
+	margin: 0;
+}
+
+.ec-section-sub {
+	font-size: .8rem;
+	color: #64748b;
+	margin: 0;
+}
+
+/* ── Tab footer ── */
+.ec-tab-footer {
+	display: flex;
+	justify-content: flex-end;
+	padding-top: 1.5rem;
+	margin-top: 1.5rem;
+	border-top: 1.5px solid #e2eaf4;
+}
+
+/* ── Role badge ── */
+.ec-role-badge {
+	background: rgba(255, 165, 0, .15);
+	color: #ffa500;
+	padding: .25rem .75rem;
+	border-radius: 50px;
+	font-size: .7rem;
+	font-weight: 800;
+	border: 1px solid rgba(255, 165, 0, .3);
+}
+
+/* ── Category grid ── */
+.ec-cat-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+	gap: .75rem;
+	max-height: 350px;
+	overflow-y: auto;
+	padding: .5rem;
+}
+
+.ec-cat-grid::-webkit-scrollbar {
+	width: 5px;
+}
+
+.ec-cat-grid::-webkit-scrollbar-track {
+	background: #f1f5f9;
+}
+
+.ec-cat-grid::-webkit-scrollbar-thumb {
+	background: #cbd5e1;
+	border-radius: 10px;
+}
+
+.ec-cat-item {
+	padding: .75rem;
+	border-radius: 12px;
+	background: #fff;
+	border: 1.5px solid #e2eaf4;
+	cursor: pointer;
+	transition: all .2s;
+	display: flex;
+	align-items: center;
+	gap: .75rem;
+}
+
+.ec-cat-item:hover {
+	border-color: #145da0;
+	background: #f8fafc;
+}
+
+.ec-cat-item.checked {
+	border-color: #145da0;
+	background: rgba(20, 93, 160, .05);
+}
+
+.ec-cat-check {
+	width: 20px;
+	height: 20px;
+	border-radius: 6px;
+	border: 2px solid #cbd5e1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: .8rem;
+	color: #fff;
+	flex-shrink: 0;
+	transition: all .2s;
+}
+
+.ec-cat-item.checked .ec-cat-check {
+	background: #145da0;
+	border-color: #145da0;
+}
+
+.ec-cat-name {
+	font-size: .82rem;
+	font-weight: 600;
+	color: #334155;
+}
+
+/* ── Form inputs ── */
+.ec-tab-pane .form-control,
+.ec-tab-pane .form-select {
+	border-radius: 12px;
+	border: 1.5px solid #e2eaf4;
+	padding: .6rem 1rem;
+	transition: all .2s;
+	font-size: .88rem;
+}
+
+.ec-tab-pane .form-control:focus,
+.ec-tab-pane .form-select:focus {
+	border-color: #145da0;
+	box-shadow: 0 0 0 4px rgba(20, 93, 160, .1);
+	background: #fff !important;
+}
+
+.ec-tab-pane .input-group-text {
+	border-radius: 12px 0 0 12px;
+	border: 1.5px solid #e2eaf4;
+	border-right: none;
+}
+
+.ec-tab-pane .input-group .form-control,
+.ec-tab-pane .input-group .form-select {
+	border-radius: 0 12px 12px 0;
+}
+
+@media (max-width: 576px) {
+	.ec-tab-btn {
+		padding: .7rem .9rem;
+		font-size: .76rem;
+	}
+
+	.ec-tab-btn span {
+		display: none;
+	}
+
+	.ec-tab-btn i {
+		font-size: 1.1rem;
+	}
+}
+
+.btn-restore-ce {
+    background: rgba(20,93,160,.09);
+    color:      #145da0;
+}
+.btn-restore-ce:hover {
+    background: #145da0;
+    color:      #fff;
+    box-shadow: 0 4px 10px rgba(20,93,160,.28);
+    transform:  scale(1.15);
+}
+
+   .wizard-steps-nav { gap: 0.5rem; padding: 1rem; }
+    .step-nav-item {
+        display: flex; align-items: center; gap: 0.75rem;
+        padding: 0.6rem 1.25rem; border-radius: 50px;
+        background: #f8fafc; border: 1.5px solid #e2eaf4;
+        color: #64748b; font-weight: 700; font-size: 0.82rem;
+        white-space: nowrap; cursor: default; transition: all 0.3s;
+    }
+    .step-nav-item.active {
+        background: rgba(20, 93, 160, 0.08); border-color: #145da0; color: #145da0;
+    }
+    .step-nav-item.completed {
+        background: #f0fdf4; border-color: #16a34a; color: #16a34a;
+    }
+    .step-num {
+        width: 24px; height: 24px; border-radius: 50%;
+        background: currentColor; color: #fff;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.7rem;
+    }
+    .ec-role-badge {
+        background: rgba(255,165,0,0.15); color: #ffa500;
+        padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.7rem; font-weight: 800;
+        border: 1px solid rgba(255,165,0,0.3);
+    }
+    .form-control, .form-select {
+        border-radius: 12px; border: 1.5px solid #e2eaf4; padding: 0.6rem 1rem;
+        transition: all 0.2s; font-size: 0.88rem;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #145da0; box-shadow: 0 0 0 4px rgba(20, 93, 160, 0.1);
+        background: #fff !important;
+    }
+    .input-group-text {
+        border-radius: 12px 0 0 12px; border: 1.5px solid #e2eaf4; border-right: none;
+    }
+    .input-group .form-control, .input-group .form-select { border-radius: 0 12px 12px 0; }
+
+	.role-badge {
+    display:       inline-flex;
+    align-items:   center;
+    gap:           .3rem;
+    font-size:     .73rem;
+    font-weight:   700;
+    padding:       .24rem .7rem;
+    border-radius: 50px;
+    white-space:   nowrap;
+}
+.role-badge i { font-size: .7rem; }
+
+.role-badge--admin      { background: rgba(220,38,38,.10);  color: #dc2626; }
+.role-badge--docente    { background: rgba(22,163,74,.10);  color: #16a34a; }
+.role-badge--estudiante { background: rgba(20,93,160,.10);  color: #145da0; }
+.role-badge--none       { background: rgba(100,116,139,.09);color: #64748b; }
+
+/* Email truncado */
+.tbl-email {
+    max-width:     180px;
+    overflow:      hidden;
+    text-overflow: ellipsis;
+    white-space:   nowrap;
+    display:       inline-block;
+    vertical-align: middle;
+    font-size:     .85rem;
+    color:         #64748b;
+}
+

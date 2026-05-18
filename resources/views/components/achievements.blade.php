@@ -1,4 +1,3 @@
-<!-- Floating XP Button -->
 <style>
 
     .floating-xp-container .floating-xp-button {

@@ -4,9 +4,7 @@
 
 @section('content')
 <div class="container-fluid py-5">
-    {{-- Estructura tbl-card moderna --}}
     <div class="tbl-card">
-        {{-- Cabecera con lenguaje visual moderno --}}
         <div class="tbl-card-hero">
             <div class="tbl-hero-left">
                 <div class="tbl-hero-eyebrow">
@@ -26,7 +24,6 @@
             <form action="{{ route('inscribir') }}" method="POST" id="formulario-inscripcion">
                 @csrf
                 <div class="row g-4">
-                    {{-- Selección de Curso --}}
                     <div class="col-lg-5">
                         <div class="card border-0 shadow-sm rounded-4 h-100 bg-light bg-opacity-50">
                             <div class="card-body p-4">
@@ -47,8 +44,6 @@
                                         <div class="invalid-feedback ps-2">{{ $message }}</div>
                                     @enderror
                                 </div>
-
-                                {{-- Detalles del curso seleccionado (se llenan por JS o se muestran dinámicamente) --}}
                                 <div id="curso-info-extra" class="mt-4 p-3 bg-white rounded-3 shadow-sm d-none">
                                     <div class="d-flex align-items-center mb-2">
                                         <i class="fas fa-calendar-alt text-primary me-2"></i>
@@ -63,7 +58,6 @@
                         </div>
                     </div>
 
-                    {{-- Selección de Estudiantes --}}
                     <div class="col-lg-7">
                         <div class="card border-0 shadow-sm rounded-4 h-100">
                             <div class="card-body p-4">

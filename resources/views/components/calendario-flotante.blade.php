@@ -1,5 +1,5 @@
 <!-- Botón flotante principal -->
-<div id="floating-calendar-toggle" class="floating-calendar-btn {{ $posicion }}">
+<div id="floating-calendar-toggle" class="floating-calendar-btn ">
     <div class="floating-btn-content">
         <i class="fas fa-calendar-alt"></i>
         <span class="badge-notification" id="urgent-count" style="display: none;"></span>
@@ -8,7 +8,7 @@
 </div>
 
 <!-- Panel flotante del calendario -->
-<div id="floating-calendar-panel" class="floating-calendar-panel {{ $posicion }}">
+<div id="floating-calendar-panel" class="floating-calendar-panel ">
     <!-- Header del panel -->
     <div class="floating-panel-header">
         <div class="d-flex justify-content-between align-items-center">

@@ -4,9 +4,7 @@
 
 @section('content')
 <div class="container-fluid py-5">
-    {{-- Estructura tbl-card moderna --}}
     <div class="tbl-card">
-        {{-- Cabecera con lenguaje visual moderno --}}
         <div class="tbl-card-hero">
             <div class="tbl-hero-left">
                 <div class="tbl-hero-eyebrow">
@@ -23,7 +21,6 @@
         </div>
 
         <div class="card-body p-4">
-            <!-- Barra de búsqueda y filtros -->
             <div class="row g-3 mb-4">
                 <div class="col-lg-8">
                     <form action="{{ route('ListaUsuariosEliminados') }}" method="GET" class="search-box-table w-100">

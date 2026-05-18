@@ -165,7 +165,6 @@
                             @enderror
                         </div>
 
-                        <!-- Preview de la nueva imagen -->
                         <div id="image-preview" class="mt-3" style="display: none;">
                             <p class="text-muted mb-2">Nueva imagen:</p>
                             <img id="preview-img" src="" alt="Preview" class="img-thumbnail" style="max-width: 150px;">

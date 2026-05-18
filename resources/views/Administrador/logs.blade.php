@@ -48,7 +48,6 @@
                     </button>
                 </div>
             @else
-                <!-- Barra de Estadísticas & Filtros -->
                 <div class="row g-3 align-items-center mb-4 bg-light p-3 rounded-4 border">
                     <div class="col-md-6">
                         <div class="d-flex flex-wrap gap-3">
@@ -81,7 +80,6 @@
                     </div>
                 </div>
 
-                <!-- Contenedor de logs con scroll personalizado -->
                 <div class="log-scroll-container rounded-4 border bg-dark p-3" style="max-height: 600px; overflow-y: auto;">
                     @php
                         $filteredLogs = array_filter($logs);
@@ -127,7 +125,6 @@
                     @endforeach
                 </div>
 
-                <!-- Footer de Controles -->
                 <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
                     <div class="d-flex gap-2">
                         <button onclick="scrollToTop()" class="btn btn-light btn-sm rounded-pill px-3 border">
@@ -146,31 +143,6 @@
     </div>
 </div>
 
-<style>
-    .ec-role-badge {
-        background: rgba(255,165,0,0.15); color: #ffa500;
-        padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.7rem; font-weight: 800;
-        border: 1px solid rgba(255,165,0,0.3);
-    }
-
-    /* Estilos para las entradas de Log */
-    .log-entry-modern { background: rgba(255,255,255,0.03); transition: all 0.2s; }
-    .log-entry-modern:hover { background: rgba(255,255,255,0.06); }
-
-    .log-entry-modern.error { border-color: #ef4444 !important; background: rgba(239, 68, 68, 0.05); }
-    .log-entry-modern.warning { border-color: #f59e0b !important; background: rgba(245, 158, 11, 0.05); }
-    .log-entry-modern.info { border-color: #3b82f6 !important; background: rgba(59, 130, 246, 0.05); }
-    .log-entry-modern.success { border-color: #10b981 !important; background: rgba(16, 185, 129, 0.05); }
-    .log-entry-modern.default { border-color: #64748b !important; }
-
-    .filter-badge.active { background: #145da0 !important; color: #fff !important; }
-
-    /* Scrollbar personalizado para los logs */
-    .log-scroll-container::-webkit-scrollbar { width: 8px; }
-    .log-scroll-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 10px; }
-    .log-scroll-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-    .log-scroll-container::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
-</style>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>

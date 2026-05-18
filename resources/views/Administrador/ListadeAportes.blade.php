@@ -2,9 +2,7 @@
 
 @section('content')
 <div class="container-fluid py-5">
-    {{-- Estructura tbl-card moderna --}}
     <div class="tbl-card">
-        {{-- Cabecera con lenguaje visual moderno --}}
         <div class="tbl-card-hero">
             <div class="tbl-hero-left">
                 <div class="tbl-hero-eyebrow">
@@ -205,7 +203,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
-            /* ── Búsqueda en tiempo real ──────────────────────── */
             document.getElementById('searchInput').addEventListener('input', function() {
                 const q = this.value.toLowerCase();
                 document.querySelectorAll('tbody tr').forEach(tr => {
@@ -213,7 +210,6 @@
                 });
             });
 
-            /* ── Helper: loading Swal ────────────────────────── */
             const swalLoading = (title, text) =>
                 Swal.fire({
                     title,
@@ -223,7 +219,6 @@
                     didOpen: () => Swal.showLoading()
                 });
 
-            /* ── Eliminar pago ───────────────────────────────── */
             document.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const id = this.dataset.id;
@@ -257,7 +252,6 @@
                 });
             });
 
-            /* ── Confirmar pago ──────────────────────────────── */
             document.querySelectorAll('.confirm-pago-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const {
@@ -318,7 +312,6 @@
                 });
             });
 
-            /* ── Reenviar email ──────────────────────────────── */
             document.querySelectorAll('.reenviar-email-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const {
