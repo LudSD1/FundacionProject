@@ -5,9 +5,6 @@
 @section('content')
 <div class="container my-4">
     <div class="tbl-card shadow-lg">
-        {{-- ╔══════════════════════════════════════╗
-             ║  HERO — CABECERA AZUL               ║
-             ╚══════════════════════════════════════╝ --}}
         <div class="tbl-card-hero">
             <div class="tbl-hero-left">
                 <a href="{{ route('Curso', $cuestionario->actividad->subtema->tema->curso->codigoCurso) }}"
@@ -37,8 +34,7 @@
             </div>
         </div>
 
-        {{-- Pestañas de Navegación Modernizadas --}}
-        <div class="adm-tabs-header bg-light border-bottom">
+        <div class="adm-tabs-header bg-light border-bottom p-0">
             <ul class="nav adm-tabs-nav" id="preguntasRespuestasTabs" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="adm-tab active" id="preguntas-tab" data-bs-toggle="tab" data-bs-target="#preguntas"
@@ -57,7 +53,6 @@
 
         <div class="p-0">
             <div class="tab-content" id="preguntasRespuestasContent">
-                {{-- Pestaña de Preguntas --}}
                 <div class="tab-pane fade show active p-4 p-md-5" id="preguntas" role="tabpanel" aria-labelledby="preguntas-tab">
                     <div class="mb-4 d-flex justify-content-between align-items-center">
                         <div>
@@ -70,130 +65,21 @@
                     </div>
                 </div>
 
-                {{-- Pestaña de Respuestas --}}
                 <div class="tab-pane fade p-4 p-md-5" id="respuestas" role="tabpanel" aria-labelledby="respuestas-tab">
-                    <div class="mb-4 d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="text-primary fw-bold mb-1"><i class="bi bi-check2-all me-2"></i>Opciones de Respuesta</h5>
-                            <p class="text-muted small">Define las alternativas correctas e incorrectas.</p>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        @include('partials.respuestas', ['preguntas' => $cuestionario->preguntas])
-                    </div>
+                    @include('partials.respuestas', ['preguntas' => $cuestionario->preguntas])
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-{{-- Modal Crear Respuesta Modernizado (Fuera del container para evitar conflictos) --}}
-<div class="modal fade" id="crearRespuestaModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            <form method="POST" action="">
-                @csrf
-                <div class="modal-header bg-light border-bottom-0 p-4">
-                    <h5 class="modal-title fw-bold text-primary">
-                        <i class="bi bi-plus-circle-fill me-2"></i>Nueva Respuesta
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <input type="hidden" name="pregunta_id" id="pregunta_id" value="">
-
-                    <div class="mb-4">
-                        <label class="form-label fw-bold text-muted small text-uppercase">Texto de la Respuesta</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light"><i class="bi bi-chat-left-text text-primary"></i></span>
-                            <input type="text" class="form-control bg-light" name="respuesta"
-                                placeholder="Escribe la respuesta aquí..." required>
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label fw-bold text-muted small text-uppercase d-block">¿Es la opción correcta?</label>
-                        <div class="d-flex gap-4 mt-2">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="radio" name="es_correcta" id="verdadero" value="1" required>
-                                <label class="form-check-label fw-semibold text-success" for="verdadero">
-                                    <i class="bi bi-check-circle-fill me-1"></i> Correcta
-                                </label>
-                            </div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="radio" name="es_correcta" id="falso" value="0">
-                                <label class="form-check-label fw-semibold text-danger" for="falso">
-                                    <i class="bi bi-x-circle-fill me-1"></i> Incorrecta
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-2">
-                        <label class="form-label fw-bold text-muted small text-uppercase">Puntaje (opcional)</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light"><i class="bi bi-star text-primary"></i></span>
-                            <input type="number" class="form-control bg-light" name="puntos" min="0" placeholder="0">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer border-top-0 p-4 pt-0">
-                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="tbl-hero-btn tbl-hero-btn-primary px-4">
-                        <i class="bi bi-save-fill me-2"></i>Guardar Opción
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<style>
-    .ec-role-badge {
-        background: rgba(255,165,0,0.15); color: #ffa500;
-        padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.7rem; font-weight: 800;
-        border: 1px solid rgba(255,165,0,0.3);
-    }
-
-    .adm-tab {
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.75rem;
-        letter-spacing: 0.5px;
-    }
-
-    .form-control, .form-select {
-        border-radius: 12px; border: 1.5px solid #e2eaf4; padding: 0.75rem 1rem;
-        transition: all 0.2s;
-    }
-    .form-control:focus, .form-select:focus {
-        border-color: #145da0; box-shadow: 0 0 0 4px rgba(20, 93, 160, 0.1);
-        background: #fff !important;
-    }
-    .input-group-text {
-        border-radius: 12px 0 0 12px; border: 1.5px solid #e2eaf4; border-right: none;
-    }
-    .input-group .form-control { border-radius: 0 12px 12px 0; }
-
-    .table-modern thead th {
-        background-color: #f8fafc !important;
-        color: #64748b !important;
-        font-size: 0.75rem !important;
-        font-weight: 700 !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.05em !important;
-        padding: 1rem 0.75rem !important;
-        border-bottom: 2px solid #e2eaf4 !important;
-    }
-</style>
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Confirmación de eliminación con SweetAlert2
         document.querySelectorAll('.form-eliminar').forEach(form => {
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
+                const self = this;
                 Swal.fire({
                     title: '¿Estás seguro?',
                     text: "¡No podrás revertir esta acción!",
@@ -204,16 +90,14 @@
                     confirmButtonText: 'Sí, eliminar',
                     cancelButtonText: 'Cancelar',
                     reverseButtons: true
-                }).then((result) => {
-                    if (result.isConfirmed) this.submit();
-                });
+                }).then((result) => { if (result.isConfirmed) self.submit(); });
             });
         });
 
-        // Confirmación de restauración
         document.querySelectorAll('.form-restaurar').forEach(form => {
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
+                const self = this;
                 Swal.fire({
                     title: '¿Restaurar pregunta?',
                     text: "¿Quieres habilitar esta pregunta nuevamente?",
@@ -224,13 +108,10 @@
                     confirmButtonText: 'Sí, restaurar',
                     cancelButtonText: 'Cancelar',
                     reverseButtons: true
-                }).then((result) => {
-                    if (result.isConfirmed) this.submit();
-                });
+                }).then((result) => { if (result.isConfirmed) self.submit(); });
             });
         });
 
-        // Animación suave de pestañas
         const tabButtons = document.querySelectorAll('.adm-tab');
         tabButtons.forEach(button => {
             button.addEventListener('show.bs.tab', () => {
@@ -245,6 +126,12 @@
             });
         });
     });
+
+    @if(session('success'))
+        Swal.fire({ icon: 'success', title: 'Éxito', text: "{{ session('success') }}" });
+    @endif
+    @if(session('error'))
+        Swal.fire({ icon: 'error', title: 'Error', text: "{{ session('error') }}" });
+    @endif
 </script>
 @endsection
-
