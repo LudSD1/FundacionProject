@@ -11,9 +11,17 @@ class HorarioController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'dia' => 'required|string|in:Lunes,Martes,Miércoles,Jueves,Viernes,Sábado,Domingo',
+            'dia'         => 'required|string|in:Lunes,Martes,Miércoles,Jueves,Viernes,Sábado,Domingo',
             'hora_inicio' => 'required|date_format:H:i',
-            'hora_fin' => 'required|date_format:H:i|after:hora_inicio',
+            'hora_fin'    => 'required|date_format:H:i|after:hora_inicio',
+        ], [
+            'dia.required'        => 'El día es obligatorio.',
+            'dia.in'              => 'El día seleccionado no es válido.',
+            'hora_inicio.required'    => 'La hora de inicio es obligatoria.',
+            'hora_inicio.date_format' => 'La hora de inicio debe tener el formato HH:MM.',
+            'hora_fin.required'       => 'La hora de fin es obligatoria.',
+            'hora_fin.date_format'    => 'La hora de fin debe tener el formato HH:MM.',
+            'hora_fin.after'          => 'La hora de fin debe ser posterior a la hora de inicio.',
         ]);
 
         // Crear el horario
@@ -64,16 +72,16 @@ class HorarioController extends Controller
             'hora_fin.after' => 'La Hora de Fin debe ser posterior a la Hora de Inicio.',
         ]);
 
-            $horario = Horario::findOrFail($id);
+        $horario = Horario::findOrFail($id);
 
-            $horario->dia = $request->dia;
-            $horario->hora_inicio = $request->hora_inicio;
-            $horario->hora_fin = $request->hora_fin;
-            $horario->save();
+        $horario->dia = $request->dia;
+        $horario->hora_inicio = $request->hora_inicio;
+        $horario->hora_fin = $request->hora_fin;
+        $horario->save();
 
-            // Redireccionar con un mensaje de éxito
-            return redirect()->back()->with('success', 'Horario actualizado correctamente.');
-            // Manejar cualquier excepción que ocurra durante el proceso
+        // Redireccionar con un mensaje de éxito
+        return redirect()->back()->with('success', 'Horario actualizado correctamente.');
+        // Manejar cualquier excepción que ocurra durante el proceso
     }
 
     /**
@@ -94,5 +102,4 @@ class HorarioController extends Controller
 
         return redirect()->back()->with('success', 'Horario restaurado correctamente.');
     }
-
 }
