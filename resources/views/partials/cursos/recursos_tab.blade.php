@@ -64,108 +64,122 @@
             </div>
         </div>
 
-        <div class="p-4">
+        <div class="p-3">
             @if ($recursos->count() > 0)
-                <div class="row g-4" id="resourcesGrid">
-                    @foreach ($recursos as $recurso)
-                        @php
-                            $tipo = $recurso->tipoRecurso;
-                            $cat = 'document';
-                            if (in_array($tipo, ['video', 'youtube', 'audio'])) $cat = 'media';
-                            if (in_array($tipo, ['enlace', 'drive', 'docs', 'kahoot', 'canva', 'forms'])) $cat = 'link';
 
-                            $iconos = [
-                                'pdf' => 'bi-file-earmark-pdf-fill',
-                                'word' => 'bi-file-earmark-word-fill',
-                                'excel' => 'bi-file-earmark-excel-fill',
-                                'powerpoint' => 'bi-file-earmark-ppt-fill',
-                                'video' => 'bi-play-circle-fill',
-                                'youtube' => 'bi-youtube',
-                                'imagen' => 'bi-image-fill',
-                                'enlace' => 'bi-link-45deg',
-                                'drive' => 'bi-google',
-                                'docs' => 'bi-file-earmark-text-fill',
-                                'audio' => 'bi-mic-fill',
-                            ];
-                            $icono = $iconos[$tipo] ?? 'bi-file-earmark-fill';
+                @php
+                    $iconosRec = [
+                        'pdf' => 'bi-file-earmark-pdf-fill', 'word' => 'bi-file-earmark-word-fill',
+                        'excel' => 'bi-file-earmark-excel-fill', 'powerpoint' => 'bi-file-earmark-ppt-fill',
+                        'video' => 'bi-play-circle-fill', 'youtube' => 'bi-youtube',
+                        'imagen' => 'bi-image-fill', 'enlace' => 'bi-link-45deg',
+                        'drive' => 'bi-google', 'docs' => 'bi-file-earmark-text-fill',
+                        'audio' => 'bi-mic-fill', 'forms' => 'bi-ui-checks',
+                        'kahoot' => 'bi-controller', 'canva' => 'bi-brush-fill',
+                        'archivos-adjuntos' => 'bi-file-earmark-zip-fill',
+                    ];
+                    $coloresRec = [
+                        'pdf' => '#ef4444', 'word' => '#2b6cb0', 'excel' => '#10b981',
+                        'powerpoint' => '#f97316', 'video' => '#f59e0b', 'youtube' => '#ff0000',
+                        'enlace' => '#6366f1', 'drive' => '#34a853', 'imagen' => '#8e24aa',
+                        'audio' => '#00897b', 'docs' => '#4285f4', 'forms' => '#00897b',
+                        'kahoot' => '#46178f', 'canva' => '#00c4cc',
+                        'archivos-adjuntos' => '#5d4037',
+                    ];
+                @endphp
 
-                            $colores = [
-                                'pdf' => '#ef4444',
-                                'word' => '#2b6cb0',
-                                'excel' => '#10b981',
-                                'powerpoint' => '#f97316',
-                                'video' => '#f59e0b',
-                                'youtube' => '#ff0000',
-                                'enlace' => '#6366f1',
-                                'drive' => '#34a853',
-                            ];
-                            $color = $colores[$tipo] ?? '#1a4789';
-                        @endphp
+                {{-- Table-style list --}}
+                <div class="table-container-modern">
+                    <table class="table-modern" id="recursosTable">
+                        <thead>
+                            <tr>
+                                <th class="th-content" style="width:40%">Recurso</th>
+                                <th class="th-content" style="width:15%">Tipo</th>
+                                <th class="th-content" style="width:20%">Descripción</th>
+                                <th class="th-content" style="width:12%">Fecha</th>
+                                <th class="th-content" style="width:13%">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($recursos as $recurso)
+                                @php
+                                    $tipo  = $recurso->tipoRecurso;
+                                    $cat   = 'document';
+                                    if (in_array($tipo, ['video', 'youtube', 'audio'])) $cat = 'media';
+                                    if (in_array($tipo, ['enlace', 'drive', 'docs', 'kahoot', 'canva', 'forms'])) $cat = 'link';
+                                    $icono = $iconosRec[$tipo] ?? 'bi-file-earmark-fill';
+                                    $color = $coloresRec[$tipo] ?? '#145da0';
+                                @endphp
 
-                        <div class=" resource-card-item"
-                             data-resource-name="{{ strtolower($recurso->nombreRecurso) }}"
-                             data-resource-type="{{ $cat }}">
+                                <tr class="resource-table-row"
+                                    data-resource-name="{{ strtolower($recurso->nombreRecurso) }}"
+                                    data-resource-type="{{ $cat }}">
 
-                            <div class="modern-recurso-card">
-                                <div class="recurso-card-body">
-                                    <div class="d-flex justify-content-between align-items-start mb-4">
-                                        <div class="recurso-icon-box" style="background: {{ $color }}15; color: {{ $color }};">
-                                            <i class="bi {{ $icono }}"></i>
+                                    {{-- Recurso (ícono + nombre) --}}
+                                    <td>
+                                        <div class="si-item-row" style="border:none;padding:0">
+                                            <div class="si-item-icon" style="color:{{ $color }}">
+                                                <i class="bi {{ $icono }}"></i>
+                                            </div>
+                                            <span class="si-item-name">{{ $recurso->nombreRecurso }}</span>
                                         </div>
-                                        <div class="recurso-badge">
-                                            <span class="badge rounded-pill shadow-sm" style="background: {{ $color }}10; color: {{ $color }}; border: 1px solid {{ $color }}30;">
-                                                {{ ucfirst($tipo) }}
-                                            </span>
-                                        </div>
-                                    </div>
+                                    </td>
 
-                                    <h6 class="recurso-title mb-2">
-                                        {{ $recurso->nombreRecurso }}
-                                    </h6>
+                                    {{-- Tipo badge --}}
+                                    <td>
+                                        <span class="cl-lesson-badge cl-badge--open">
+                                            {{ ucfirst($tipo) }}
+                                        </span>
+                                    </td>
 
-                                    <div class="recurso-description text-secondary mb-3">
-                                        {!! Str::limit(strip_tags($recurso->descripcionRecursos), 80) !!}
-                                    </div>
+                                    {{-- Descripción --}}
+                                    <td>
+                                        <span class="si-item-type">
+                                            {!! Str::limit(strip_tags($recurso->descripcionRecursos), 60) !!}
+                                        </span>
+                                    </td>
 
-                                    <div class="recurso-meta mt-auto">
-                                        <i class="bi bi-calendar3 me-1"></i>
-                                        {{ $recurso->created_at ? $recurso->created_at->format('d/m/Y') : 'Sin fecha' }}
-                                    </div>
-                                </div>
+                                    {{-- Fecha --}}
+                                    <td>
+                                        <span class="si-item-type">
+                                            {{ $recurso->created_at ? $recurso->created_at->format('d/m/Y') : '—' }}
+                                        </span>
+                                    </td>
 
-                                <div class="recurso-card-footer">
-                                    <div class="d-flex justify-content-between align-items-center w-100">
-                                        @if ($recurso->archivoRecurso)
-                                            <a href="{{ route('recursos.descargar', encrypt($recurso->id)) }}" class="btn-download-modern">
-                                                <i class="bi bi-cloud-arrow-down-fill me-1"></i> Descargar
-                                            </a>
-                                        @else
-                                            <span class="text-muted small">Solo lectura</span>
-                                        @endif
+                                    {{-- Acciones --}}
+                                    <td>
+                                        <div class="si-item-actions">
+                                            @if ($recurso->archivoRecurso)
+                                                <a href="{{ route('recursos.descargar', encrypt($recurso->id)) }}"
+                                                   class="si-action-link" title="Descargar">
+                                                    <i class="bi bi-download"></i>
+                                                </a>
+                                            @endif
 
-                                        @if (auth()->user()->hasRole('Docente') || auth()->user()->hasRole('Administrador'))
-                                            <div class="recurso-admin-actions">
-                                                <button class="btn-action-modern btn-info" data-bs-toggle="modal"
+                                            @if (auth()->user()->hasRole('Docente') || auth()->user()->hasRole('Administrador'))
+                                                <button class="si-action-btn" data-bs-toggle="modal"
                                                     data-bs-target="#modalEditarRecurso-{{ $recurso->id }}"
                                                     title="Editar recurso">
-                                                    <i class="bi bi-pencil-square"></i>
+                                                    <i class="bi bi-pencil"></i>
                                                 </button>
-                                                <form class="d-inline ntf-form-delete-rec" action="{{ route('quitarRecurso', encrypt($recurso->id)) }}" method="POST">
+                                                <form class="d-inline ntf-form-delete-rec"
+                                                      action="{{ route('quitarRecurso', encrypt($recurso->id)) }}" method="POST">
                                                     @csrf
-                                                    <button type="submit" class="btn-action-modern btn-delete" title="Eliminar recurso">
-                                                        <i class="bi bi-trash-fill"></i>
+                                                    <button type="submit" class="si-action-btn si-action-btn--danger"
+                                                            title="Eliminar recurso">
+                                                        <i class="bi bi-trash"></i>
                                                     </button>
                                                 </form>
-                                            </div>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
+                                            @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
 
-                {{-- Mensaje de "No se encontraron resultados" --}}
+                {{-- No results message --}}
                 <div id="noResourcesResults" class="empty-state-table py-5 d-none">
                     <div class="empty-icon-table">
                         <i class="bi bi-search"></i>
@@ -199,125 +213,28 @@
     </div>
 </div>
 
-<style>
-    /* Modern Recurso Cards */
-    .modern-recurso-card {
-        background: #fff;
-        border-radius: 16px;
-        border: 1px solid #edf2f7;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .modern-recurso-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        border-color: #cbd5e0;
-    }
-
-    .recurso-card-body {
-        padding: 1.5rem;
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .recurso-icon-box {
-        width: 44px;
-        height: 44px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.4rem;
-    }
-
-    .recurso-title {
-        font-weight: 700;
-        color: #1a202c;
-        line-height: 1.4;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    .recurso-description {
-        font-size: 0.85rem;
-        line-height: 1.5;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    .recurso-meta {
-        font-size: 0.75rem;
-        color: #a0aec0;
-        font-weight: 600;
-    }
-
-    .recurso-card-footer {
-        padding: 1rem 1.5rem;
-        background: #f8fafc;
-        border-top: 1px solid #edf2f7;
-        border-radius: 0 0 16px 16px;
-    }
-
-    .btn-download-modern {
-        color: #10b981;
-        font-weight: 700;
-        font-size: 0.8rem;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        transition: opacity 0.2s;
-    }
-
-    .btn-download-modern:hover {
-        opacity: 0.8;
-        color: #059669;
-    }
-
-    .recurso-admin-actions {
-        display: flex;
-        gap: 0.25rem;
-    }
-</style>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const searchInput = document.getElementById('searchResources');
-        const typeFilter = document.getElementById('typeFilter');
-        const resourceItems = document.querySelectorAll('.resource-card-item');
-        const noResultsMsg = document.getElementById('noResourcesResults');
+        const searchInput   = document.getElementById('searchResources');
+        const typeFilter    = document.getElementById('typeFilter');
+        const resourceRows  = document.querySelectorAll('.resource-table-row');
+        const noResultsMsg  = document.getElementById('noResourcesResults');
 
         function applyFilters() {
-            const q = searchInput.value.toLowerCase().trim();
-            const type = typeFilter.value;
-            let visibleCount = 0;
+            const q    = searchInput?.value.toLowerCase().trim() || '';
+            const type = typeFilter?.value || 'all';
+            let count  = 0;
 
-            resourceItems.forEach(item => {
-                const name = item.getAttribute('data-resource-name');
-                const cat = item.getAttribute('data-resource-type');
-
-                let matchesSearch = name.includes(q);
-                let matchesType = (type === 'all' || cat === type);
-
-                if (matchesSearch && matchesType) {
-                    item.style.display = 'block';
-                    visibleCount++;
-                } else {
-                    item.style.display = 'none';
-                }
+            resourceRows.forEach(row => {
+                const name = row.getAttribute('data-resource-name');
+                const cat  = row.getAttribute('data-resource-type');
+                const show = name.includes(q) && (type === 'all' || cat === type);
+                row.style.display = show ? '' : 'none';
+                if (show) count++;
             });
 
             if (noResultsMsg) {
-                if (visibleCount === 0) noResultsMsg.classList.remove('d-none');
-                else noResultsMsg.classList.add('d-none');
+                noResultsMsg.classList.toggle('d-none', count > 0);
             }
         }
 
@@ -327,27 +244,30 @@
             applyFilters();
         };
 
-        if (searchInput) searchInput.addEventListener('input', applyFilters);
-        if (typeFilter) typeFilter.addEventListener('change', applyFilters);
+        searchInput?.addEventListener('input', applyFilters);
+        typeFilter?.addEventListener('change', applyFilters);
 
-        // Confirmación para eliminar
+        // Delete confirmation
         document.querySelectorAll('.ntf-form-delete-rec').forEach(form => {
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
-                Swal.fire({
-                    title: '¿Eliminar recurso?',
-                    text: "Esta acción enviará el recurso a la papelera.",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#dc3545',
-                    cancelButtonColor: '#64748b',
-                    confirmButtonText: 'Sí, eliminar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) this.submit();
-                });
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: '¿Eliminar recurso?',
+                        text: "Esta acción enviará el recurso a la papelera.",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#dc3545',
+                        cancelButtonColor: '#64748b',
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) this.submit();
+                    });
+                } else {
+                    if (confirm('¿Eliminar?')) this.submit();
+                }
             });
         });
     });
 </script>
-

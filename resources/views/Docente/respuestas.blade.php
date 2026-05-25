@@ -61,7 +61,7 @@
                         </small>
                         <div style="width: 80px; height: 5px; background: rgba(255,255,255,.2); border-radius: 50px; overflow: hidden;">
                             <div style="width: {{ $porcentaje }}%; height: 100%; background: {{ $porcentaje === 100 ? '#16a34a' : '#ffa500' }}; border-radius: 50px; transition: width 0.6s ease;"></div>
-                        </div>
+                        </div> 
                     </div>
                 @endif
             </div>
