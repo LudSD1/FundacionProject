@@ -381,7 +381,6 @@
                         </div>
                     </div>
 
-                    {{-- Script para manejar el carousel y video --}}
 
 
                 </div>
@@ -461,7 +460,6 @@
             });
         </script>
 
-        <!-- MODALES -->
 
 
         @guest
@@ -565,10 +563,6 @@
         </style>
 
         @if ($cursos->tipo == 'congreso' && $cursos->certificados_disponibles)
-
-            {{-- ================================================
-         MODAL 1: OPCIONES DE REGISTRO
-    ================================================ --}}
             <div class="modal fade" id="opcionesRegistroModal" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
@@ -1025,7 +1019,6 @@
 
 
 
-        <!-- SCRIPTS -->
         <script>
             // Fecha de finalización del curso/congreso
             const endDate = new Date("{{ $cursos->fecha_fin }}".replace(' ', 'T')).getTime();
@@ -1091,9 +1084,7 @@
             }, 1000);
         </script>
 
-        {{-- ================================================
-     SCRIPT 2: TOGGLE PASSWORD Y CARGA DE PAÍSES
-================================================ --}}
+
         <script>
             document.addEventListener('DOMContentLoaded', function() {
 
@@ -1208,9 +1199,7 @@
             });
         </script>
 
-        {{-- ================================================
-     ESTILOS ADICIONALES PARA LOS SCRIPTS
-================================================ --}}
+
         <style>
             /* Animación de fade in para los modales */
             .modal.fade .modal-dialog {
@@ -1327,9 +1316,7 @@
             }
         </style>
 
-        {{-- ================================================
-     SCRIPT OPCIONAL: LOADING EN BOTONES DE SUBMIT
-================================================ --}}
+
         <script>
             // Agregar loading spinner a botones de submit
             document.querySelectorAll('form').forEach(form => {
@@ -1651,7 +1638,6 @@
         </div>
     </section>
 
-    <!-- Modal para Editar Valoración -->
     <div class="modal fade" id="editarCalificacionModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -1692,8 +1678,6 @@
         </div>
     </div>
 
-    <!-- Scripts para manejar la edición -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function editarCalificacion(id, puntuacion, comentario) {
             // Actualizar la acción del formulario

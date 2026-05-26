@@ -40,13 +40,30 @@ class CertificadoController extends Controller
 
     public function store(Request $request, $id)
     {
-        $request->validate([
-            'template_front' => 'required|image|mimes:png,jpg,jpeg|max:2048',
-            'template_back' => 'required|image|mimes:png,jpg,jpeg|max:2048',
-            'primary_color' => 'nullable|string',
-            'font_family' => 'nullable|string',
-            'font_size' => 'nullable|integer|min:6|max:108',
-        ]);
+        try {
+            $request->validate([
+                'template_front' => 'required|image|mimes:png,jpg,jpeg|max:2048',
+                'template_back' => 'required|image|mimes:png,jpg,jpeg|max:2048',
+                'primary_color' => 'nullable|string',
+                'font_family' => 'nullable|string',
+                'font_size' => 'nullable|integer|min:6|max:108',
+            ], [
+                'template_front.required' => 'La imagen frontal es obligatoria.',
+                'template_front.image' => 'El archivo frontal debe ser una imagen.',
+                'template_front.mimes' => 'La imagen frontal debe ser PNG, JPG o JPEG.',
+                'template_front.max' => 'La imagen frontal no puede superar los 2MB.',
+                
+                'template_back.required' => 'La imagen trasera es obligatoria.',
+                'template_back.image' => 'El archivo trasero debe ser una imagen.',
+                'template_back.mimes' => 'La imagen trasera debe ser PNG, JPG o JPEG.',
+                'template_back.max' => 'La imagen trasera no puede superar los 2MB.',
+                
+                'font_size.min' => 'El tamaño de fuente mínimo es 6px.',
+                'font_size.max' => 'El tamaño de fuente máximo es 108px.',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->with('error', $e->validator->errors()->first());
+        }
 
         $pathFront = $request->file('template_front')->store('certificates/templates', 'public');
         $pathBack = $request->file('template_back')->store('certificates/templates', 'public');
@@ -107,13 +124,28 @@ class CertificadoController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'template_front' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
-            'template_back' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
-            'primary_color' => 'nullable|string',
-            'font_family' => 'nullable|string',
-            'font_size' => 'nullable|integer|min:6|max:108',
-        ]);
+        try {
+            $request->validate([
+                'template_front' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+                'template_back' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+                'primary_color' => 'nullable|string',
+                'font_family' => 'nullable|string',
+                'font_size' => 'nullable|integer|min:6|max:108',
+            ], [
+                'template_front.image' => 'El archivo frontal debe ser una imagen.',
+                'template_front.mimes' => 'La imagen frontal debe ser PNG, JPG o JPEG.',
+                'template_front.max' => 'La imagen frontal no puede superar los 2MB.',
+                
+                'template_back.image' => 'El archivo trasero debe ser una imagen.',
+                'template_back.mimes' => 'La imagen trasera debe ser PNG, JPG o JPEG.',
+                'template_back.max' => 'La imagen trasera no puede superar los 2MB.',
+                
+                'font_size.min' => 'El tamaño de fuente mínimo es 6px.',
+                'font_size.max' => 'El tamaño de fuente máximo es 108px.',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->with('error', $e->validator->errors()->first());
+        }
 
         $certificateTemplate = CertificateTemplate::where('curso_id', $id)->firstOrFail();
 
@@ -314,6 +346,10 @@ class CertificadoController extends Controller
         $plantilla = CertificateTemplate::select('template_front_path', 'template_back_path', 'primary_color', 'font_family', 'font_size')
             ->where('curso_id', $certificado->curso_id)
             ->first();
+
+        if (!$plantilla) {
+            return back()->with('error', 'Aún no se ha subido una plantilla de certificado. Por favor, comunícate con el organizador del evento para que la suba.');
+        }
 
         // Verificar si ya existe un QR guardado en el servidor
         $qrPath = "certificados/{$curso->id}/qrcode_{$inscrito->id}.svg";
