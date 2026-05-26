@@ -191,16 +191,19 @@ class CursosController extends Controller
                 'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
                 'eliminar_archivo' => 'nullable|boolean',
                 'eliminar_imagen' => 'nullable|boolean',
-                'fecha_ini' => 'required|date_format:Y-m-d\TH:i',
-                'fecha_fin' => 'required|date_format:Y-m-d\TH:i|after_or_equal:fecha_ini',
             ];
 
-            // Reglas extra solo para admins
+            // Fechas y campos admin: obligatorios solo para admins
             if ($user->hasRole('Administrador')) {
+                $validationRules['fecha_ini'] = 'required|date_format:Y-m-d\TH:i';
+                $validationRules['fecha_fin'] = 'required|date_format:Y-m-d\TH:i|after_or_equal:fecha_ini';
                 $validationRules['docente_id'] = 'required|exists:users,id';
                 $validationRules['duracion'] = 'required|integer|min:1';
                 $validationRules['cupos'] = 'required|integer|min:0';
                 $validationRules['precio'] = 'required|numeric|min:0';
+            } else {
+                $validationRules['fecha_ini'] = 'nullable|date_format:Y-m-d\TH:i';
+                $validationRules['fecha_fin'] = 'nullable|date_format:Y-m-d\TH:i';
             }
 
             $request->validate($validationRules, [
@@ -283,9 +286,11 @@ class CursosController extends Controller
             ]);
 
             return back()->with('success', 'Curso actualizado correctamente');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e; // Let Laravel handle validation errors normally
         } catch (\Exception $e) {
             AdminLogger::error('Error al editar curso', $e);
-            return back()->withErrors(['info' => 'Ocurrió un error al actualizar el curso.']);
+            return back()->withErrors(['info' => 'Ocurrió un error al actualizar el curso: ' . $e->getMessage()]);
         }
     }
 

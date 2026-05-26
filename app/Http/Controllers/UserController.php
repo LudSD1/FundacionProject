@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Events\UsuarioEvent;
 use App\Models\atributosDocente;
+use App\Models\Certificado;
 use App\Models\DocentesTrabajos;
+use App\Models\Inscritos;
 use App\Models\TutorRepresentanteLegal;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -107,11 +109,34 @@ class UserController extends Controller
         $tutor = TutorRepresentanteLegal::where('estudiante_id', $usuario->id)->get();
         $atributosD = atributosDocente::where('docente_id', $usuario->id)->get();
 
+        // Certificados y cursos cursados (solo perfil propio)
+        $certificados = collect();
+        $cursosCompletados = collect();
+        if (auth()->user()->id === $usuario->id) {
+            $inscripciones = Inscritos::where('estudiante_id', $usuario->id)
+                ->with(['cursos', 'certificado'])
+                ->get();
+
+            $certificados = $inscripciones
+                ->filter(fn($i) => $i->certificado !== null)
+                ->map(fn($i) => $i->certificado->load('curso'));
+
+            $cursosCompletados = $inscripciones
+                ->filter(fn($i) => $i->completado == 1 || $i->progreso >= 100)
+                ->map(fn($i) => (object)[
+                    'curso' => $i->cursos,
+                    'progreso' => $i->progreso,
+                    'fecha_inscripcion' => $i->created_at,
+                ]);
+        }
+
         return view('PerfilUsuario', [
             'usuario' => $usuario,
             'atributosD' => $atributosD,
             'trabajos' => $trabajos,
             'tutor' => $tutor,
+            'certificados' => $certificados,
+            'cursosCompletados' => $cursosCompletados,
         ]);
     }
 
@@ -123,11 +148,30 @@ class UserController extends Controller
         $trabajos = DocentesTrabajos::where('docente_id', $usuario->id)->get();
         $tutor = TutorRepresentanteLegal::where('estudiante_id', $usuario->id)->get();
 
+        // Certificados y cursos cursados (siempre se muestra en el perfil propio)
+        $inscripciones = Inscritos::where('estudiante_id', $usuario->id)
+            ->with(['cursos', 'certificado'])
+            ->get();
+
+        $certificados = $inscripciones
+            ->filter(fn($i) => $i->certificado !== null)
+            ->map(fn($i) => $i->certificado->load('curso'));
+
+        $cursosCompletados = $inscripciones
+            ->filter(fn($i) => $i->completado == 1 || $i->progreso >= 100)
+            ->map(fn($i) => (object)[
+                'curso' => $i->cursos,
+                'progreso' => $i->progreso,
+                'fecha_inscripcion' => $i->created_at,
+            ]);
+
         return view('PerfilUsuario', [
             'usuario' => $usuario,
             'atributosD' => $atributosD,
             'tutor' => $tutor,
-            'trabajos' => $trabajos
+            'trabajos' => $trabajos,
+            'certificados' => $certificados,
+            'cursosCompletados' => $cursosCompletados,
         ]);
     }
 

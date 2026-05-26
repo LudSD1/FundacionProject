@@ -1,5 +1,9 @@
     @extends ('layout')
 
+    @section('titulo')
+    Editar Curso
+    @endsection
+
     @section('content')
     <div class="container my-4">
 
@@ -503,7 +507,7 @@
         </div>{{-- /tbl-card --}}
     </div>
 
-   
+
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>

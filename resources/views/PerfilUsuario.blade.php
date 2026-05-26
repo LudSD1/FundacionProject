@@ -263,6 +263,132 @@
                 </div>
             @endif
 
+            {{-- Certificados obtenidos (solo perfil personal) --}}
+            @if ($isOwnProfile && isset($certificados) && $certificados->count() > 0)
+                <div class="info-card-modern mt-4" id="certificados-section">
+                    <div class="info-card-header">
+                        <div class="info-card-title-wrapper">
+                            <i class="bi bi-award-fill"></i>
+                            <h4>Mis Certificados</h4>
+                        </div>
+                        <span class="cert-count-badge">
+                            <i class="bi bi-trophy-fill me-1"></i>{{ $certificados->count() }}
+                        </span>
+                    </div>
+                    <div class="info-card-body">
+                        <div class="row g-3">
+                            @foreach ($certificados as $cert)
+                                <div class="col-md-6">
+                                    <div class="cert-card">
+                                        <div class="cert-card-icon">
+                                            <i class="bi bi-patch-check-fill"></i>
+                                        </div>
+                                        <div class="cert-card-body">
+                                            <h6 class="cert-card-title">
+                                                {{ $cert->curso->nombreCurso ?? 'Curso' }}
+                                            </h6>
+                                            <div class="cert-card-meta">
+                                                <span class="cert-code">
+                                                    <i class="bi bi-upc-scan me-1"></i>{{ $cert->codigo_certificado }}
+                                                </span>
+                                                <span class="cert-date">
+                                                    <i class="bi bi-calendar-check me-1"></i>{{ \Carbon\Carbon::parse($cert->fecha_emision ?? $cert->created_at)->format('d/m/Y') }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <a href="{{ asset('storage/' . $cert->ruta_certificado) }}"
+                                           target="_blank"
+                                           class="cert-download-btn"
+                                           title="Ver certificado">
+                                            <i class="bi bi-download"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            @elseif ($isOwnProfile && isset($certificados) && $certificados->count() === 0)
+                <div class="info-card-modern mt-4" id="certificados-section">
+                    <div class="info-card-header">
+                        <div class="info-card-title-wrapper">
+                            <i class="bi bi-award-fill"></i>
+                            <h4>Mis Certificados</h4>
+                        </div>
+                    </div>
+                    <div class="info-card-body">
+                        <div class="cert-empty-state">
+                            <i class="bi bi-mortarboard"></i>
+                            <p>Aún no tienes certificados. ¡Completa tus cursos para obtener uno!</p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            {{-- Cursos completados (solo perfil personal) --}}
+            @if ($isOwnProfile && isset($cursosCompletados) && $cursosCompletados->count() > 0)
+                <div class="info-card-modern mt-4" id="cursos-completados-section">
+                    <div class="info-card-header">
+                        <div class="info-card-title-wrapper">
+                            <i class="bi bi-journal-check"></i>
+                            <h4>Cursos Cursados</h4>
+                        </div>
+                        <span class="cert-count-badge cert-count-courses">
+                            <i class="bi bi-book-fill me-1"></i>{{ $cursosCompletados->count() }}
+                        </span>
+                    </div>
+                    <div class="info-card-body">
+                        <div class="cursos-completados-list">
+                            @foreach ($cursosCompletados as $item)
+                                @if ($item->curso)
+                                    <div class="curso-completado-item">
+                                        <div class="curso-completado-icon">
+                                            <i class="bi bi-check-circle-fill"></i>
+                                        </div>
+                                        <div class="curso-completado-info">
+                                            <h6 class="curso-completado-name">
+                                                {{ $item->curso->nombreCurso }}
+                                            </h6>
+                                            <div class="curso-completado-details">
+                                                @if ($item->curso->tipo)
+                                                    <span class="curso-completado-tipo">
+                                                        <i class="bi bi-tag-fill me-1"></i>{{ ucfirst($item->curso->tipo) }}
+                                                    </span>
+                                                @endif
+                                                <span class="curso-completado-fecha">
+                                                    <i class="bi bi-calendar3 me-1"></i>Inscrito: {{ \Carbon\Carbon::parse($item->fecha_inscripcion)->format('d/m/Y') }}
+                                                </span>
+                                            </div>
+                                            <div class="curso-completado-progress">
+                                                <div class="progress-bar-bg">
+                                                    <div class="progress-bar-fill" style="width: {{ min($item->progreso, 100) }}%"></div>
+                                                </div>
+                                                <span class="progress-text">{{ round($item->progreso) }}%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            @elseif ($isOwnProfile && isset($cursosCompletados) && $cursosCompletados->count() === 0)
+                <div class="info-card-modern mt-4" id="cursos-completados-section">
+                    <div class="info-card-header">
+                        <div class="info-card-title-wrapper">
+                            <i class="bi bi-journal-check"></i>
+                            <h4>Cursos Cursados</h4>
+                        </div>
+                    </div>
+                    <div class="info-card-body">
+                        <div class="cert-empty-state">
+                            <i class="bi bi-journal-richtext"></i>
+                            <p>Aún no has completado ningún curso. ¡Sigue aprendiendo!</p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             @yield('extra_content')
 
         </div>
@@ -328,9 +454,6 @@
         </div>
     </div>
 </div>
-
-
-{{-- Aqui falta para los estudiante los certificados obtenidos y la gamificacion nivel --}}
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
