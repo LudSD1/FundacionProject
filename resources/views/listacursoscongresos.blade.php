@@ -27,7 +27,7 @@
                 {{-- Título --}}
                 <h1 class="search-hero-title text-center">
                     Encuentra tu próximo<br>
-                    <span class="hero-title-highlight">curso o congreso</span>
+                    <span class="hero-title-highlight">curso o evento</span>
                 </h1>
 
                 <p class="search-hero-subtitle text-center">
@@ -71,7 +71,7 @@
                                name="search"
                                id="heroSearchInput"
                                class="search-input-main"
-                               placeholder="Buscar cursos, congresos o temas…"
+                               placeholder="Buscar cursos, eventos o temas…"
                                value="{{ request('search') }}"
                                autocomplete="off">
                         @if(request('search'))
@@ -230,7 +230,7 @@
                                     </a>
                                     <a href="{{ request()->fullUrlWithQuery(['type' => 'congreso']) }}"
                                        class="filter-option {{ request('type') === 'congreso' ? 'active' : '' }}">
-                                        <i class="bi bi-calendar-event me-1"></i> Congresos
+                                        <i class="bi bi-calendar-event me-1"></i> Eventos
                                     </a>
                                 </div>
                             </div>

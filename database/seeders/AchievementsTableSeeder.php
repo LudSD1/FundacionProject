@@ -123,10 +123,10 @@ class AchievementsTableSeeder extends Seeder
         ],
         [
             'title' => 'Sabio del Foro',
-            'description' => 'Obtén 50 "me gusta" en tus respuestas del foro',
+            'description' => 'Ayuda a otros respondiendo 50 mensajes en el foro',
             'icon' => '👑',
             'xp_reward' => 1500,
-            'type' => 'FORUM_LIKES',
+            'type' => 'FORUM_HELPER',
             'requirement_value' => 50,
             'category' => 'social'
         ],

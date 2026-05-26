@@ -104,6 +104,14 @@ class AchievementService
             'icons' => ['📄', '📄📄', '📄📄📄', '📂'],
             'category' => 'courses'
         ],
+        'CERTIFICATE_EARNED' => [
+            'title' => 'Coleccionista de Certificados',
+            'description' => 'Obtén {value} certificado(s)',
+            'values' => [1, 3, 5, 10],
+            'xp_rewards' => [200, 500, 1000, 2000],
+            'icons' => ['📜', '📜📜', '📜📜📜', '🏆'],
+            'category' => 'academic'
+        ],
         // Logros Secretos
         'NIGHT_OWL' => [
             'title' => 'Explorador Nocturno',

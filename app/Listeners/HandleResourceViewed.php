@@ -4,7 +4,6 @@ namespace App\Listeners;
 
 use App\Events\ResourceViewed;
 use App\Models\Achievement;
-use App\Models\UserAchievement;
 use App\Events\UserLevelUp;
 use App\Models\Completion;
 use App\Services\AchievementService;

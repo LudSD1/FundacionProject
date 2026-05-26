@@ -39,11 +39,13 @@ class AchievementController extends Controller
         $currentLevelXp = $currentLevel ? $currentLevel->required_xp : 0;
         $nextLevelXp = $nextLevel ? $nextLevel->required_xp : 100;
 
-        // Obtener todos los logros con progreso
+        // Obtener todos los logros con progreso (eager load para evitar N+1)
         $achievements = collect();
         if ($inscrito) {
-            $achievements = Achievement::all()->map(function ($achievement) use ($inscrito) {
-                $achievement->isUnlocked = $achievement->isUnlockedByInscrito($inscrito);
+            $achievements = Achievement::with(['inscritos' => function ($query) use ($inscrito) {
+                $query->where('inscrito_id', $inscrito->id);
+            }])->get()->map(function ($achievement) use ($inscrito) {
+                $achievement->isUnlocked = $achievement->inscritos->isNotEmpty();
                 $achievement->current_progress = $this->calculateProgress($achievement, $inscrito);
                 return $achievement;
             });

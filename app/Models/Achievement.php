@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\AchievementUnlocked;
 use App\Services\XPService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -53,34 +54,6 @@ class Achievement extends BaseModel
     }
 
     /**
-     * Verifica si un usuario ha desbloqueado este logro
-     */
-    public function isUnlockedBy(User $user)
-    {
-        return $this->users()->where('user_id', $user->id)->exists();
-    }
-
-    /**
-     * Desbloquea el logro para un usuario
-     */
-    public function unlockFor(User $user)
-    {
-        if (!$this->isUnlockedBy($user)) {
-            $this->users()->attach($user->id, [
-                'earned_at' => now()
-            ]);
-
-            // Si el usuario tiene XP, le añadimos la recompensa
-            if ($user->userXP) {
-                $user->userXP->addXP($this->xp_reward, 'achievement');
-            }
-
-            // Aquí podrías disparar eventos o notificaciones
-            // event(new AchievementUnlocked($this, $user));
-        }
-    }
-
-    /**
      * Verifica si un inscrito ha desbloqueado este logro
      */
     public function isUnlockedByInscrito(Inscritos $inscrito)
@@ -104,8 +77,8 @@ class Achievement extends BaseModel
                 app(XPService::class)->addXP($inscrito, $this->xp_reward, "Logro desbloqueado: {$this->title}");
             }
 
-            // Aquí podrías disparar eventos o notificaciones si lo necesitas
-            // event(new AchievementUnlocked($this, $inscrito));
+            // Disparar evento de logro desbloqueado (broadcast en tiempo real)
+            event(new AchievementUnlocked($inscrito, $this));
         }
     }
 

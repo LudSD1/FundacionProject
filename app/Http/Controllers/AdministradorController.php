@@ -131,8 +131,6 @@ class AdministradorController extends Controller
                 break;
         }
 
-        $user->assignRole('Estudiante');
-
         $user->sendEmailVerificationNotification();
 
         // Log de actividad del administrador

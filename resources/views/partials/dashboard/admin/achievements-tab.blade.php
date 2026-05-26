@@ -1,6 +1,6 @@
 @php
-    $achievements = \App\Models\Achievement::with(['users', 'inscritos'])
-        ->withCount(['users', 'inscritos'])
+    $achievements = \App\Models\Achievement::with(['inscritos'])
+        ->withCount(['inscritos'])
         ->withTrashed()
         ->get();
 
@@ -12,7 +12,7 @@
     // Calcular total de usuarios que han ganado logros
     $totalUsersWithAchievements = 0;
     foreach ($achievements as $ach) {
-        $totalUsersWithAchievements += ($ach->users_count ?? 0) + ($ach->inscritos_count ?? 0);
+        $totalUsersWithAchievements += $ach->inscritos_count ?? 0;
     }
 @endphp
 
@@ -272,7 +272,7 @@
             <div class="ach-grid" id="achGrid">
                 @forelse ($achievements as $achievement)
                     @php
-                        $totalUsers = ($achievement->users_count ?? 0) + ($achievement->inscritos_count ?? 0);
+                        $totalUsers = $achievement->inscritos_count ?? 0;
                         $req         = $achievement->requirement_value ?? 1;
                         $progress    = $req > 1 ? min(100, round(($totalUsers / $req) * 100)) : null;
                         $isSecret    = $achievement->is_secret;
@@ -290,7 +290,7 @@
                         <div class="ach-card-body">
                             <div class="ach-card-head">
                                 <div class="ach-icon-wrap">
-                                    <span style="font-size: 1.5rem;">{{ in_array($achievement->icon, ['🏆', '🏅']) ? $achievement->icon : '🏆' }}</span>
+                                    <span style="font-size: 1.5rem;">{{ $achievement->icon }}</span>
                                 </div>
                                 <div class="ach-card-meta">
                                     <h5 class="ach-card-title" title="{{ $achievement->title }}">
@@ -488,6 +488,21 @@
                             <select name="icon" class="form-select bg-light" required>
                                 <option value="🏆">🏆 Trofeo</option>
                                 <option value="🏅">🏅 Medalla</option>
+                                <option value="🎯">🎯 Diana</option>
+                                <option value="💭">💭 Diálogo</option>
+                                <option value="📚">📚 Libros</option>
+                                <option value="🌅">🌅 Amanecer</option>
+                                <option value="🔥">🔥 Fuego</option>
+                                <option value="🎓">🎓 Graduación</option>
+                                <option value="📘">📘 Libro</option>
+                                <option value="✅">✅ Check</option>
+                                <option value="📄">📄 Documento</option>
+                                <option value="📜">📜 Pergamino</option>
+                                <option value="🌙">🌙 Luna</option>
+                                <option value="⚡">⚡ Rayo</option>
+                                <option value="🏃">🏃 Corredor</option>
+                                <option value="👑">👑 Corona</option>
+                                <option value="⭐">⭐ Estrella</option>
                             </select>
                         </div>
                     </div>
@@ -520,7 +535,7 @@
                 </div>
                 <div class="modal-body p-4 text-center">
                     <div class="mb-3">
-                        <span style="font-size: 4rem;">{{ in_array($achievement->icon, ['🏆', '🏅']) ? $achievement->icon : '🏆' }}</span>
+                        <span style="font-size: 4rem;">{{ $achievement->icon }}</span>
                     </div>
                     <h4 class="fw-bold text-dark mb-2">{{ $achievement->title }}</h4>
                     <p class="text-muted mb-4">{{ $achievement->description }}</p>
@@ -655,8 +670,22 @@
                             <div class="input-group">
                                 <span class="input-group-text bg-light"><i class="bi bi-trophy text-primary"></i></span>
                                 <select name="icon" class="form-select bg-light" required>
-                                    <option value="🏆" {{ $achievement->icon == '🏆' ? 'selected' : '' }}>🏆 Trofeo</option>
-                                    <option value="🏅" {{ $achievement->icon == '🏅' ? 'selected' : '' }}>🏅 Medalla</option>
+                                    @php
+                                        $iconOptions = [
+                                            '🏆' => 'Trofeo', '🏅' => 'Medalla', '🎯' => 'Diana',
+                                            '💭' => 'Diálogo', '📚' => 'Libros', '🌅' => 'Amanecer',
+                                            '🔥' => 'Fuego', '🎓' => 'Graduación', '📘' => 'Libro',
+                                            '✅' => 'Check', '📄' => 'Documento', '📜' => 'Pergamino',
+                                            '🌙' => 'Luna', '⚡' => 'Rayo', '🏃' => 'Corredor',
+                                            '👑' => 'Corona', '⭐' => 'Estrella',
+                                        ];
+                                    @endphp
+                                    @foreach($iconOptions as $emoji => $label)
+                                        <option value="{{ $emoji }}" {{ $achievement->icon == $emoji ? 'selected' : '' }}>{{ $emoji }} {{ $label }}</option>
+                                    @endforeach
+                                    @if(!array_key_exists($achievement->icon, $iconOptions))
+                                        <option value="{{ $achievement->icon }}" selected>{{ $achievement->icon }} (personalizado)</option>
+                                    @endif
                                 </select>
                             </div>
                         </div>

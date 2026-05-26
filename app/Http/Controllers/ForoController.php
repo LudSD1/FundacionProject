@@ -141,6 +141,13 @@ class ForoController extends Controller
             $totalMensajes = ForoMensaje::where('estudiante_id', $request->estudiante_id)->count();
             $this->achievementService->checkAndAwardAchievements($inscrito, 'FORUM_CONTRIBUTOR', $totalMensajes);
 
+            if ($request->respuesta_a) {
+                $totalRespuestas = ForoMensaje::where('estudiante_id', $request->estudiante_id)
+                                              ->whereNotNull('respuesta_a')
+                                              ->count();
+                $this->achievementService->checkAndAwardAchievements($inscrito, 'FORUM_HELPER', $totalRespuestas);
+            }
+
             // Verificar racha
             $streak = $this->achievementService->calculateStreak($inscrito);
             $this->achievementService->checkAndAwardAchievements($inscrito, 'STREAK_MASTER', $streak);
