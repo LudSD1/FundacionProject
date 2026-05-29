@@ -454,7 +454,8 @@
     min-width: 295px;
     display: none;
     z-index: 1050;
-    overflow: hidden;
+    overflow: hidden auto;
+    max-height: 420px;
     animation: anIn .22s ease both;
     padding: 0;
 }

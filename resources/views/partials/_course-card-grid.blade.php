@@ -13,11 +13,11 @@
 
             <span class="course-type-badge">{{ ucfirst($curso->tipo) }}</span>
 
-            <button class="course-favorite-btn"
+            {{-- <button class="course-favorite-btn"
                     type="button"
                     aria-label="Guardar en favoritos">
                 <i class="bi bi-heart"></i>
-            </button>
+            </button> --}}
 
             @role('Administrador')
                 @if($curso->visibilidad === 'privado')
@@ -89,14 +89,13 @@
                     </span>
                     <span>
                         <i class="bi bi-ticket-perforated"></i>
-                        {{ $curso->cupos_texto }} cupos
+                        Cupos: {{ $curso->cupos_texto }}
                     </span>
                 @endif
             </div>
 
         </div>
 
-        {{-- ── Footer ────────────────────────────────── --}}
         <div class="card-footer course-card-footer">
             <div class="course-instructor">
                 <img src="{{ $avatar }}"

@@ -87,7 +87,6 @@
                         </button>
                     </div>
 
-                    {{-- ── Pills de filtro rápido ─────────────── --}}
                     <div class="hero-filter-pills">
 
                         {{-- Tipo --}}
@@ -147,24 +146,6 @@
                     </div>
 
                 </form>
-
-                {{-- ── Stats ─────────────────────────────────── --}}
-                {{-- <div class="hero-stats">
-                    <div class="hero-stat">
-                        <i class="bi bi-mortarboard-fill"></i>
-                        <span><strong>+200</strong> Docentes</span>
-                    </div>
-                    <div class="hero-stat-divider"></div>
-                    <div class="hero-stat">
-                        <i class="bi bi-people-fill"></i>
-                        <span><strong>+5.000</strong> Estudiantes</span>
-                    </div>
-                    <div class="hero-stat-divider"></div>
-                    <div class="hero-stat">
-                        <i class="bi bi-patch-check-fill"></i>
-                        <span><strong>100%</strong> Certificados</span>
-                    </div>
-                </div> --}}
 
             </div>
         </div>
@@ -302,7 +283,6 @@
 
                             <hr class="filter-divider">
 
-                            {{-- Filtro por Precio --}}
                             <div class="filter-group mb-3">
                                 <h6 class="filter-group-title">
                                     <i class="bi bi-cash-stack me-1"></i> Inversión
@@ -325,7 +305,6 @@
 
                             <hr class="filter-divider">
 
-                            {{-- Filtro por Mes --}}
                             <div class="filter-group mb-3">
                                 <h6 class="filter-group-title">
                                     <i class="bi bi-calendar3 me-1"></i> Mes de inicio
@@ -341,8 +320,6 @@
                                             5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
                                             9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
                                         ];
-                                        // Solo mostrar meses que tengan sentido (actual y futuros del año) o todos?
-                                        // Vamos a mostrar todos por ahora.
                                     @endphp
                                     <div class="row g-1">
                                         @foreach($meses as $num => $nombre)

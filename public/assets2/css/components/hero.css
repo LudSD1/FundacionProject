@@ -145,7 +145,7 @@
   /* Fondo propio — NO hereda de #hero */
   background: #06112b;
   padding: 80px 0 76px;
-  overflow: hidden;
+  overflow: visible;
   /* Asegura que se pinte por encima del layout base */
   z-index: 0;
 }
@@ -377,7 +377,7 @@
 .hero-pill-drop-menu {
   position: absolute;
   top: calc(100% + 8px);
-  left: 0;
+  right: 0;
   min-width: 210px;
   background: #0f1f3d;
   border: 1px solid rgba(255, 255, 255, 0.10);

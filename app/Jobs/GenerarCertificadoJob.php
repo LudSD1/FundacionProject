@@ -154,20 +154,15 @@ class GenerarCertificadoJob implements ShouldQueue
 
         // Actualizar registro del certificado con la ruta del PDF
         Certificado::where('codigo_certificado', $this->codigoCertificado)
-            ->update(['archivo_pdf' => $pdfPath]);
+            ->update(['ruta_certificado' => $pdfPath]);
 
         Log::info("PDF generado y guardado en: {$pdfPath}");
     }
 
-    /**
-     * Manejar el fallo del job después de todos los reintentos
-     */
     public function failed(\Throwable $exception)
     {
         Log::error("Job de certificado falló definitivamente: {$this->codigoCertificado}");
         Log::error("Error: " . $exception->getMessage());
 
-        // Aquí podrías notificar a un administrador o marcar el certificado como fallido
-        // Por ejemplo: enviar email a admin, actualizar estado en BD, etc.
     }
 }

@@ -123,7 +123,7 @@ class AportesController extends Controller
         }
     }
 
-    public function verificarReciboPorCodigo($codigo)
+    public function  verificarReciboPorCodigo($codigo)
     {
         try {
             // Buscar por codigopago o por ID si es numérico

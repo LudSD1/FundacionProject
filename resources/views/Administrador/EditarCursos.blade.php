@@ -82,7 +82,7 @@
                     {{-- Hidden fields for non-visible tabs --}}
                     <input type="hidden" name="fecha_ini" value="{{ $cursos->fecha_ini ? \Carbon\Carbon::parse($cursos->fecha_ini)->format('Y-m-d\TH:i') : '' }}">
                     <input type="hidden" name="fecha_fin" value="{{ $cursos->fecha_fin ? \Carbon\Carbon::parse($cursos->fecha_fin)->format('Y-m-d\TH:i') : '' }}">
-                    <input type="hidden" name="formato" value="{{ $cursos->formato }}">
+                    <input type="hidden" name="formato" value="Virtual">
                     <input type="hidden" name="tipo" value="{{ $cursos->tipo }}">
                     @if (!auth()->user()->hasRole('Administrador'))
                         <input type="hidden" name="docente_id" value="{{ auth()->user()->id }}">
@@ -219,18 +219,8 @@
 
                             <div class="col-md-6">
                                 <label class="form-label fw-bold text-muted small text-uppercase">Formato de Impartición</label>
-                                @if (auth()->user()->hasRole('Administrador'))
-                                    <select name="formato" class="form-select bg-light @error('formato') is-invalid @enderror">
-                                        @foreach (['Virtual'] as $fmt)
-                                            <option value="{{ $fmt }}" {{ old('formato', $cursos->formato) == $fmt ? 'selected' : '' }}>
-                                                {{ $fmt == 'Virtual' ? '💻 Virtual' : $fmt }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                @else
-                                    <input type="hidden" name="formato" value="{{ $cursos->formato }}">
-                                    <input type="text" class="form-control bg-light" value="{{ $cursos->formato }}" disabled>
-                                @endif
+                                <input type="hidden" name="formato" value="Virtual">
+                                <input type="text" class="form-control bg-light" value="💻 Virtual" disabled>
                             </div>
 
                             <div class="col-md-6">
@@ -280,7 +270,7 @@
                         <input type="hidden" name="nivel_id" value="{{ $cursos->nivel }}">
                         <input type="hidden" name="fecha_ini" value="{{ $cursos->fecha_ini ? \Carbon\Carbon::parse($cursos->fecha_ini)->format('Y-m-d\TH:i') : '' }}">
                         <input type="hidden" name="fecha_fin" value="{{ $cursos->fecha_fin ? \Carbon\Carbon::parse($cursos->fecha_fin)->format('Y-m-d\TH:i') : '' }}">
-                        <input type="hidden" name="formato" value="{{ $cursos->formato }}">
+                        <input type="hidden" name="formato" value="Virtual">
                         <input type="hidden" name="tipo" value="{{ $cursos->tipo }}">
 
                         <div class="p-4 p-md-5">
@@ -374,7 +364,7 @@
                     <input type="hidden" name="nivel_id" value="{{ $cursos->nivel }}">
                     <input type="hidden" name="fecha_ini" value="{{ $cursos->fecha_ini ? \Carbon\Carbon::parse($cursos->fecha_ini)->format('Y-m-d\TH:i') : '' }}">
                     <input type="hidden" name="fecha_fin" value="{{ $cursos->fecha_fin ? \Carbon\Carbon::parse($cursos->fecha_fin)->format('Y-m-d\TH:i') : '' }}">
-                    <input type="hidden" name="formato" value="{{ $cursos->formato }}">
+                    <input type="hidden" name="formato" value="Virtual">
                     <input type="hidden" name="tipo" value="{{ $cursos->tipo }}">
                     @if (!auth()->user()->hasRole('Administrador'))
                         <input type="hidden" name="docente_id" value="{{ auth()->user()->id }}">
@@ -512,6 +502,9 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         // ── Tab navigation ──
+        const courseId = "{{ $cursos->id ?? 'new' }}";
+        const storageKey = 'activeEditTab_' + courseId;
+
         document.querySelectorAll('.ec-tab-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 const tab = this.dataset.tab;
@@ -520,7 +513,12 @@
                 document.querySelectorAll('.ec-tab-pane').forEach(p => p.classList.remove('active'));
                 // Activate clicked
                 this.classList.add('active');
-                document.querySelector(`[data-tab-content="${tab}"]`).classList.add('active');
+                const contentPane = document.querySelector(`[data-tab-content="${tab}"]`);
+                if (contentPane) {
+                    contentPane.classList.add('active');
+                }
+                // Save state
+                localStorage.setItem(storageKey, tab);
             });
         });
 
@@ -611,7 +609,17 @@
             });
         });
 
-        document.addEventListener('DOMContentLoaded', () => actualizarNiveles());
+        document.addEventListener('DOMContentLoaded', () => {
+            actualizarNiveles();
+            // Restore active tab
+            if (typeof storageKey !== 'undefined') {
+                const activeTab = localStorage.getItem(storageKey);
+                if (activeTab) {
+                    const btn = document.querySelector(`.ec-tab-btn[data-tab="${activeTab}"]`);
+                    if (btn) btn.click();
+                }
+            }
+        });
 
         @if (session('success'))
             Swal.fire({ icon: 'success', title: 'Éxito', text: "{{ session('success') }}" });

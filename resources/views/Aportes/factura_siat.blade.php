@@ -165,14 +165,14 @@
         <div class="header">
             <div class="company-info">
                 <div class="company-name">{{ $factura->razon_social_emisor }}</div>
-                <div>Casa Matriz: Pilot House</div>
+                <div>Casa Matriz</div>
                 <div>{{ $factura->direccion_emisor }}</div>
-                <div>Teléfono: 2-123456</div>
+                <div>Teléfono: +591 72087186</div>
                 <div>La Paz - Bolivia</div>
             </div>
             <div class="invoice-details">
                 <div><strong>NIT:</strong> {{ $factura->nit_emisor }}</div>
-                <div><strong>No. GACTURA:</strong> {{ $factura->numero_factura }}</div>
+                <div><strong>No. FACTURA:</strong> {{ $factura->numero_factura }}</div>
                 <div><strong>COD. AUTORIZACIÓN:</strong> <span class="cuf-box">{{ $factura->cuf }}</span></div>
             </div>
         </div>

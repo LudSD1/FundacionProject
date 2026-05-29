@@ -200,21 +200,23 @@
                             <div class="auth-dropdown-header">
                                 <i class="bi bi-bell-fill me-2"></i>Notificaciones Recientes
                             </div>
-                            @forelse(auth()->user()->notifications()->latest()->take(5)->get() as $notif)
-                                <div class="auth-notification-item {{ $notif->read_at ? '' : 'unread' }}">
-                                    <p class="auth-notification-message">
-                                        {{ $notif->data['message'] ?? 'Sin mensaje' }}
-                                    </p>
-                                    <span class="auth-notification-time">
-                                        <i class="bi bi-clock me-1"></i>{{ $notif->created_at->diffForHumans() }}
-                                    </span>
-                                </div>
-                            @empty
-                                <div class="auth-notification-empty">
-                                    <i class="bi bi-inbox"></i>
-                                    <span>No hay notificaciones</span>
-                                </div>
-                            @endforelse
+                            <div style="max-height: 300px; overflow-y: auto;">
+                                @forelse(auth()->user()->notifications()->latest()->take(5)->get() as $notif)
+                                    <div class="auth-notification-item {{ $notif->read_at ? '' : 'unread' }}">
+                                        <p class="auth-notification-message">
+                                            {{ $notif->data['message'] ?? 'Sin mensaje' }}
+                                        </p>
+                                        <span class="auth-notification-time">
+                                            <i class="bi bi-clock me-1"></i>{{ $notif->created_at->diffForHumans() }}
+                                        </span>
+                                    </div>
+                                @empty
+                                    <div class="auth-notification-empty">
+                                        <i class="bi bi-inbox"></i>
+                                        <span>No hay notificaciones</span>
+                                    </div>
+                                @endforelse
+                            </div>
                             @if (auth()->user()->notifications->count() > 0)
                                 <div class="auth-dropdown-footer">
                                     <a href="{{ route('notificationes') }}" class="auth-view-all-link">

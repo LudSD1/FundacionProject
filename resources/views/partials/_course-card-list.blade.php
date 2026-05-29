@@ -62,7 +62,7 @@
                             </span>
                             <span>
                                 <i class="bi bi-ticket-perforated"></i>
-                                cupos disponibles: {{ $curso->cupos_texto }} cupos
+                                Cupos: {{ $curso->cupos_texto }}
                             </span>
                         @endif
                     </div>

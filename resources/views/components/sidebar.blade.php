@@ -1,9 +1,6 @@
 @php
-    // ✅ Asignar usuario una sola vez (evita 8+ llamadas a auth()->user())
     $user = auth()->user();
     $userRole = $user->getRoleNames()->first();
-
-    // ✅ Eager-load de notificaciones para evitar N+1 queries
     $unreadCount = $user->unreadNotifications->count();
     $recentNotifications = $user->notifications()->latest()->take(5)->get();
     $totalNotifications = $user->notifications()->count();
@@ -43,7 +40,7 @@
 @endphp
 
 <!-- Mobile Toggle Button -->
-<button class="mobile-toggle" id="mobileToggle" aria-label="Abrir menú">
+<button  class="mobile-toggle mt-5" id="mobileToggle" aria-label="Abrir menú">
     <i class="bi bi-list"></i>
 </button>
 

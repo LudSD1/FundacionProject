@@ -94,6 +94,10 @@
                                             class="btn btn-sm btn-outline-info rounded-pill px-2" title="Ver recibo">
                                             <i class="fas fa-file-invoice"></i>
                                         </a>
+                                        <a href="{{ route('factura.siat', encrypt($aporte->id)) }}" target="_blank"
+                                            class="btn btn-sm btn-outline-success rounded-pill px-2" title="Ver Factura SIAT">
+                                            <i class="fas fa-file-invoice-dollar"></i>
+                                        </a>
                                         <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2 reenviar-email-btn"
                                             data-id="{{ $aporte->id }}"
                                             data-estudiante="{{ $aporte->user->name }} {{ $aporte->user->lastname1 }}"
@@ -120,6 +124,7 @@
                                     <button type="button" class="btn btn-sm btn-primary rounded-pill px-3 confirm-pago-btn"
                                         style="background: var(--gradient-primary) !important; border: none;"
                                         data-id="{{ $aporte->id }}"
+                                        data-encrypt-id="{{ encrypt($aporte->id) }}"
                                         data-estudiante="{{ $aporte->user->name }} {{ $aporte->user->lastname1 }}"
                                         data-curso="{{ $aporte->curso->nombreCurso }}" title="Confirmar pago">
                                         <i class="fas fa-check-circle me-1"></i> Confirmar
@@ -256,6 +261,7 @@
                 btn.addEventListener('click', function() {
                     const {
                         id,
+                        encryptId,
                         estudiante,
                         curso
                     } = this.dataset;
@@ -300,10 +306,15 @@
                                 title: '¡Pago Confirmado!',
                                 html: `<div class="text-start">
                                    <p>✅ Pago confirmado exitosamente</p>
-                                   <p>📄 Recibo abierto en nueva ventana</p>
+                                   <p>📄 Factura SIAT y Recibo listos para visualizar</p>
                                    <p>📧 Email enviado al estudiante</p>
                                    <p><strong>Estudiante:</strong> ${estudiante}</p>
                                    <p><strong>Curso:</strong> ${curso}</p>
+                                   <div class="mt-3 text-center">
+                                       <a href="/factura-siat/${encryptId}" target="_blank" class="btn btn-sm btn-success border-0 shadow-sm" style="background: #198754;">
+                                           <i class="fas fa-file-invoice-dollar me-1"></i> Ver Factura SIAT
+                                       </a>
+                                   </div>
                                </div>`,
                                 confirmButtonText: 'Entendido'
                             }).then(() => location.reload());

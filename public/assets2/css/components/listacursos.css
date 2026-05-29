@@ -6,7 +6,7 @@
   align-items: center;
   background: #112d58;
   padding: 80px 0 76px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .hero-grid {

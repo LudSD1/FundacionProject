@@ -15,8 +15,8 @@ class SiatSimulationService
 {
     // Mock Configuration for the "Issuer" (The Foundation)
     protected $nitEmisor = '1020304050'; // Example NIT
-    protected $razonSocialEmisor = 'FUNDACION EDUCACION FUTURO';
-    protected $direccionEmisor = 'Av. 6 de Agosto Nro. 123, La Paz, Bolivia';
+    protected $razonSocialEmisor = 'FUNDACIÓN EDUCAR PARA LA VIDA';
+    protected $direccionEmisor = 'La Paz, Bolivia';
     protected $codigoPuntoVenta = 0; // 0 for main office
     protected $codigoSucursal = 0; // 0 for main office
 
