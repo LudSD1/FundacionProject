@@ -20,10 +20,10 @@
                 @if($curso->youtube_url)
                     <div class="mt-4" style="max-width: 400px;">
                         <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow-sm border border-white-50">
-                            <iframe src="{{ $curso->youtube_url }}" 
-                                    title="YouTube video player" 
-                                    frameborder="0" 
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                            <iframe src="{{ $curso->youtube_url }}"
+                                    title="YouTube video player"
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                     allowfullscreen>
                             </iframe>
                         </div>
@@ -46,7 +46,7 @@
             </div>
         </div>
 
-        <div class="p-4 p-lg-5">
+        <div class="">
             {{-- Listado de Imágenes --}}
             <div class="table-responsive">
                 <table class=" table-modern ">
@@ -67,7 +67,8 @@
                                         <img src="{{ asset($imagen->url) }}"
                                              class="rounded-3 shadow-sm object-fit-cover w-100"
                                              style="height:70px;"
-                                             alt="{{ $imagen->titulo }}">
+                                             alt="{{ $imagen->titulo }}"
+                                             loading="lazy">
                                     </div>
                                 </td>
                                 <td>
@@ -87,9 +88,17 @@
                                 </td>
                                 <td>
                                     <div class="d-flex justify-content-center gap-2">
-                                        <button class="btn-action-modern btn-edit"
+                                        <button type="button" class="btn-action-modern btn-edit"
                                                 data-bs-toggle="modal"
-                                                data-bs-target="#editarImagenModal{{ $imagen->id }}">
+                                                data-bs-target="#editarImagenModalGlobal"
+                                                data-id="{{ $imagen->id }}"
+                                                data-url="{{ asset($imagen->url) }}"
+                                                data-titulo="{{ $imagen->titulo }}"
+                                                data-descripcion="{{ $imagen->descripcion }}"
+                                                data-orden="{{ $imagen->orden }}"
+                                                data-activo="{{ $imagen->activo ? 1 : 0 }}"
+                                                data-action="{{ route('curso-imagenes.update', $imagen->id) }}"
+                                                title="Editar">
                                             <i class="bi bi-pencil"></i>
                                         </button>
 
@@ -116,74 +125,6 @@
                                     </div>
                                 </td>
                             </tr>
-
-                            {{-- Modal Editar Imagen --}}
-                            <div class="modal fade" id="editarImagenModal{{ $imagen->id }}" tabindex="-1" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered modal-lg">
-                                    <form method="POST" action="{{ route('curso-imagenes.update', $imagen) }}" enctype="multipart/form-data">
-                                        @csrf
-                                        @method('PUT')
-                                        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-                                            <div class="modal-header bg-primary text-white p-4 border-0">
-                                                <h5 class="modal-title fw-bold">
-                                                    <i class="bi bi-pencil-square me-2"></i>Actualizar Imagen
-                                                </h5>
-                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                            </div>
-                                            <div class="modal-body p-4 p-lg-5">
-                                                <div class="row g-4">
-                                                    <div class="col-md-5">
-                                                        <div class="text-center">
-                                                            <p class="fw-bold text-start mb-2">Vista Previa Actual</p>
-                                                            <img src="{{ asset($imagen->url) }}"
-                                                                 class="img-fluid rounded-4 shadow-sm mb-4 w-100 object-fit-cover"
-                                                                 style="height:200px;"
-                                                                 id="preview-edit-{{ $imagen->id }}">
-                                                            <label class="btn btn-outline-primary w-100 py-2 cursor-pointer">
-                                                                <i class="bi bi-camera me-2"></i>Cambiar Imagen
-                                                                <input type="file" name="imagen" class="d-none" accept="image/*"
-                                                                       onchange="previewEditImage(this, 'preview-edit-{{ $imagen->id }}')">
-                                                            </label>
-                                                            <div class="form-text mt-2 small">Formatos: JPG, PNG, GIF (Máx 5MB)</div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-7">
-                                                        <div class="mb-3">
-                                                            <label class="fw-bold mb-2">Título de la Imagen</label>
-                                                            <input type="text" name="titulo" class="form-control"
-                                                                   value="{{ $imagen->titulo }}" placeholder="Ej: Banner Principal">
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label class="fw-bold mb-2">Descripción</label>
-                                                            <textarea name="descripcion" class="form-control" rows="3"
-                                                                      placeholder="Escribe una breve descripción...">{{ $imagen->descripcion }}</textarea>
-                                                        </div>
-                                                        <div class="row g-3">
-                                                            <div class="col-6">
-                                                                <label class="fw-bold mb-2">Orden</label>
-                                                                <input type="number" name="orden" class="form-control"
-                                                                       value="{{ $imagen->orden }}" min="0">
-                                                            </div>
-                                                            <div class="col-6 d-flex align-items-end">
-                                                                <div class="form-check form-switch mb-2">
-                                                                    <input type="checkbox" name="activo" value="1"
-                                                                           class="form-check-input" id="activo-{{ $imagen->id }}"
-                                                                           {{ $imagen->activo ? 'checked' : '' }}>
-                                                                    <label class="form-check-label fw-bold" for="activo-{{ $imagen->id }}">Activa</label>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer bg-light p-4 border-0">
-                                                <button type="button" class="btn btn-link text-muted fw-bold text-decoration-none" data-bs-dismiss="modal">Cancelar</button>
-                                                <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold text-white">Guardar Cambios</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
                         @empty
                             <tr>
                                 <td colspan="5">
@@ -207,10 +148,13 @@
     </div>
 </div>
 
+@endsection
+
+@push('modals')
 {{-- Modal Agregar Imagen --}}
 <div class="modal fade" id="crearImagenModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-        <form method="POST" action="{{ route('curso-imagenes.store', $curso) }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('curso-imagenes.store', $curso->codigoCurso) }}" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="curso_id" value="{{ $curso->id }}">
             <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
@@ -259,10 +203,78 @@
     </div>
 </div>
 
+{{-- Modal Editar Imagen (Único) --}}
+<div class="modal fade" id="editarImagenModalGlobal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <form id="form-editar-global" method="POST" action="" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="modal-header bg-primary text-white p-4 border-0">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-pencil-square me-2"></i>Actualizar Imagen
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 p-lg-5">
+                    <div class="row g-4">
+                        <div class="col-md-5">
+                            <div class="text-center">
+                                <p class="fw-bold text-start mb-2">Vista Previa Actual</p>
+                                <img src=""
+                                     class="img-fluid rounded-4 shadow-sm mb-4 w-100 object-fit-cover"
+                                     style="height:200px;"
+                                     id="preview-edit-global"
+                                     loading="lazy">
+                                <label class="btn btn-outline-primary w-100 py-2 cursor-pointer">
+                                    <i class="bi bi-camera me-2"></i>Cambiar Imagen
+                                    <input type="file" name="imagen" class="d-none" accept="image/*"
+                                           onchange="previewEditImage(this, 'preview-edit-global')">
+                                </label>
+                                <div class="form-text mt-2 small">Formatos: JPG, PNG, GIF (Máx 5MB)</div>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="mb-3">
+                                <label class="fw-bold mb-2">Título de la Imagen</label>
+                                <input type="text" id="edit-titulo" name="titulo" class="form-control"
+                                       value="" placeholder="Ej: Banner Principal">
+                            </div>
+                            <div class="mb-3">
+                                <label class="fw-bold mb-2">Descripción</label>
+                                <textarea id="edit-descripcion" name="descripcion" class="form-control" rows="3"
+                                          placeholder="Escribe una breve descripción..."></textarea>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <label class="fw-bold mb-2">Orden</label>
+                                    <input type="number" id="edit-orden" name="orden" class="form-control"
+                                           value="" min="0">
+                                </div>
+                                <div class="col-6 d-flex align-items-end">
+                                    <div class="form-check form-switch mb-2">
+                                        <input type="checkbox" id="edit-activo" name="activo" value="1"
+                                               class="form-check-input">
+                                        <label class="form-check-label fw-bold" for="edit-activo">Activa</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light p-4 border-0">
+                    <button type="button" class="btn btn-link text-muted fw-bold text-decoration-none" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold text-white">Guardar Cambios</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 {{-- Modal Video YouTube --}}
 <div class="modal fade" id="editarYoutubeModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-        <form method="POST" action="{{ route('cursos.updateYoutube', encrypt($curso->id)) }}">
+        <form method="POST" action="{{ route('cursos.updateYoutube', $curso->codigoCurso) }}">
             @csrf
             <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
                 <div class="modal-header bg-danger text-white p-4 border-0">
@@ -287,7 +299,7 @@
                     <div id="yt-preview-container" class="{{ $curso->youtube_url ? '' : 'd-none' }}">
                         <p class="fw-bold mb-2"><i class="bi bi-play-circle me-2"></i>Vista Previa</p>
                         <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow-sm">
-                            <iframe id="yt-preview-iframe" src="{{ $curso->youtube_url ?? '' }}" allowfullscreen></iframe>
+                            <iframe id="yt-preview-iframe" src="{{ $curso->youtube_url ?? '' }}" allowfullscreen loading="lazy"></iframe>
                         </div>
                     </div>
 
@@ -304,8 +316,9 @@
         </form>
     </div>
 </div>
+@endpush
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@push('scripts')
 <script>
     function confirmarInactivacion(id) {
         Swal.fire({
@@ -350,6 +363,20 @@
         }
     }
 
+    const modalEdit = document.getElementById('editarImagenModalGlobal');
+    if (modalEdit) {
+        modalEdit.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            
+            document.getElementById('form-editar-global').action = button.getAttribute('data-action');
+            document.getElementById('preview-edit-global').src = button.getAttribute('data-url');
+            document.getElementById('edit-titulo').value = button.getAttribute('data-titulo') || '';
+            document.getElementById('edit-descripcion').value = button.getAttribute('data-descripcion') || '';
+            document.getElementById('edit-orden').value = button.getAttribute('data-orden');
+            document.getElementById('edit-activo').checked = (button.getAttribute('data-activo') == 1);
+        });
+    }
+
     function actualizarPreviewYT(url) {
         const iframe = document.getElementById('yt-preview-iframe');
         const container = document.getElementById('yt-preview-container');
@@ -376,4 +403,4 @@
         return null;
     }
 </script>
-@endsection
+@endpush

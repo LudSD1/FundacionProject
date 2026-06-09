@@ -23,33 +23,28 @@ class AdministradorController extends Controller
     public function cambiarRol(Request $request, $usuarioEncriptado)
     {
         try {
-            // Desencriptar el ID del usuario
             $usuarioId = $usuarioEncriptado; // aquí podrías usar decrypt() si realmente viene encriptado
-
-            // Validar los datos
             $request->validate([
                 'nuevo_rol' => 'required|string|in:Estudiante,Docente,Administrador',
                 'confirmar_cambio' => 'required|accepted'
+            ], [
+                'nuevo_rol.required' => 'Debe seleccionar un rol.',
+                'nuevo_rol.string' => 'El rol seleccionado no es válido.',
+                'nuevo_rol.in' => 'El rol seleccionado no existe.',
+                'confirmar_cambio.required' => 'Debe confirmar el cambio de rol.',
+                'confirmar_cambio.accepted' => 'Debe aceptar la confirmación para continuar.'
             ]);
 
-            // Buscar el usuario
             $usuario = User::findOrFail($usuarioId);
             $nuevoRol = $request->nuevo_rol;
-
-            // Guardar rol anterior para el mensaje
             $rolAnterior = $usuario->getRoleNames()->first() ?? 'Sin rol';
-
-            // Remover todos los roles actuales y asignar el nuevo
             $usuario->syncRoles([$nuevoRol]);
-
-            // Registrar en logs de administración
             AdminLogger::info('Cambio de rol realizado', [
                 'usuario_id'   => $usuario->id,
                 'usuario_name' => $usuario->name . ' ' . $usuario->lastname1,
                 'rol_anterior' => $rolAnterior,
                 'rol_nuevo'    => $nuevoRol,
             ]);
-
             // Mensaje de éxito
             $mensaje = "El rol de {$usuario->name} {$usuario->lastname1} ha sido cambiado de '{$rolAnterior}' a '{$nuevoRol}'.";
 
@@ -134,7 +129,7 @@ class AdministradorController extends Controller
         $user->sendEmailVerificationNotification();
 
         // Log de actividad del administrador
-        Log::channel('admin')->info($request->role.'creado por administrador', [
+        Log::channel('admin')->info($request->role . 'creado por administrador', [
             'admin_id' => auth()->id(),
             'admin_name' => auth()->user()->name ?? 'Sistema',
             'action' => 'create_student',
@@ -151,8 +146,6 @@ class AdministradorController extends Controller
         ]);
 
         return redirect()->route('ListaEstudiantes')->with('success', 'Editado exitosamente!');
-
-
     }
 
 

@@ -283,8 +283,13 @@
                                     $videoId = null;
 
                                     if ($youtubeUrl) {
-                                        preg_match('/(?:v=|\/)([0-9A-Za-z_-]{11})/', $youtubeUrl, $matches);
-                                        $videoId = $matches[1] ?? null;
+                                        // Extraer el ID correctamente para cualquier formato de YouTube (embed, watch, youtu.be, etc.)
+                                        if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/\s]{11})%i', $youtubeUrl, $matches)) {
+                                            $videoId = $matches[1];
+                                        } elseif (preg_match('/(?:v=|\/)([0-9A-Za-z_-]{11})/', $youtubeUrl, $matches)) {
+                                            // Fallback
+                                            $videoId = $matches[1] ?? null;
+                                        }
                                     }
 
                                     $hasVideo = !empty($videoId);
@@ -299,7 +304,7 @@
                                 {{-- Video con thumbnail (NO se carga hasta hacer clic) --}}
                                 @if ($hasVideo)
                                     <div class="carousel-item hero-carousel-item active" data-type="video">
-                                        <div class="hero-youtube-container" data-video-id="{{ $videoId }}">
+                                        <div class="hero-youtube-container hero-media rounded-4 ratio ratio-16x9" data-video-id="{{ $videoId }}">
                                             {{-- Thumbnail del video --}}
                                             <div class="hero-youtube-preview">
                                                 <img src="https://i.ytimg.com/vi/{{ $videoId }}/maxresdefault.jpg"

@@ -1,15 +1,4 @@
-{{-- ═══════════════════════════════════════════════════════════════
-     TOMA DE ASISTENCIA
-     Fixes:
-     1.  <style> y <script> fuera de @section → @push con @once
-     2.  <script src="sweetalert2"> CDN → eliminado (ya es global)
-     3.  status-badge redefinida con !important × 4 → variantes att-* propias
-     4.  input-group bg-primary border-primary Bootstrap → att-date-wrap del sistema
-     5.  btn-group btn-outline-success/danger/secondary → tbl-hero-btn del sistema
-     6.  badge bg-primary rounded-pill → att-counter del sistema
-     7.  tbl-filter-bar bg-light border-bottom → tbl-filter-bar solo (ya tiene sus estilos)
-     8.  form-select form-select-sm rounded-pill Bootstrap → att-select del sistema
-═══════════════════════════════════════════════════════════════ --}}
+
 
 @extends('layout')
 
@@ -20,9 +9,11 @@
 <div class="container my-4">
 <div class="tbl-card">
 
-    {{-- ╔══════════════════════════════════════╗
-         ║  HERO                               ║
-         ╚══════════════════════════════════════╝ --}}
+@php
+    $inscritosCurso = collect($inscritos)->where('cursos_id', $cursos->id);
+    $totalEstudiantes = $inscritosCurso->count();
+@endphp
+
     <div class="tbl-card-hero">
 
         <div class="tbl-hero-left">
@@ -58,7 +49,7 @@
 
             <div class="tbl-hero-eyebrow" style="margin-top:.4rem">
                 <i class="bi bi-people-fill"></i>
-                {{ $inscritos->where('cursos_id', $cursos->id)->count() }} Estudiantes
+                {{ $totalEstudiantes }} Estudiantes
             </div>
 
         </div>
@@ -140,8 +131,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($inscritos as $index => $inscrito)
-                    @if($inscrito->cursos_id == $cursos->id)
+                    @forelse($inscritosCurso as $index => $inscrito)
                     <tr class="att-row">
 
                         <td><span class="row-number">{{ $loop->iteration }}</span></td>
@@ -192,7 +182,6 @@
                         </td>
 
                     </tr>
-                    @endif
                     @empty
                     <tr>
                         <td colspan="4">
@@ -211,7 +200,7 @@
         {{-- Pie: botón guardar --}}
         @if(auth()->user()->hasRole('Docente')
             && (!$cursos->fecha_fin || now() <= $cursos->fecha_fin)
-            && $inscritos->where('cursos_id', $cursos->id)->count() > 0)
+            && $totalEstudiantes > 0)
         <div class="att-save-bar">
             <div class="att-save-inner">
                 <button type="submit"
@@ -220,7 +209,7 @@
                         disabled>
                     <i class="bi bi-floppy-fill me-2"></i>
                     <span id="attSaveTxt">
-                        Guardar Asistencias (0/{{ $inscritos->where('cursos_id', $cursos->id)->count() }})
+                        Guardar Asistencias (0/{{ $totalEstudiantes }})
                     </span>
                 </button>
                 <p class="att-save-hint">
@@ -239,6 +228,7 @@
 @endsection
 
 
+@push('css')
 <style>
 /* ════════════════════
    BARRA DE HERRAMIENTAS
@@ -395,9 +385,10 @@
     .att-btn-sm span { display: none; }
 }
 </style>
-
+@endpush
 
 {{-- FIX 1+2: @push, sin CDN sweetalert2 --}}
+@push('scripts')
 <script>
 (function () {
     document.addEventListener('DOMContentLoaded', function () {
@@ -406,7 +397,7 @@
         const counter     = document.getElementById('attCounter');
         const saveTxt     = document.getElementById('attSaveTxt');
         const saveBtn     = document.getElementById('attSaveBtn');
-        const total       = {{ $inscritos->where('cursos_id', $cursos->id)->count() }};
+        const total       = {{ $totalEstudiantes }};
 
         /* ── Mapa de estados ── */
         const STATES = {
@@ -515,3 +506,4 @@
     });
 })();
 </script>
+@endpush

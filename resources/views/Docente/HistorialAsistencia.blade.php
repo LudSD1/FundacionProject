@@ -6,6 +6,13 @@
 
 <div class="container my-4">
     <div class="tbl-card">
+@php
+    $usr = auth()->user();
+    $esDocenteAdmin = $usr->hasAnyRole(['Docente', 'Administrador']);
+    $esDocente = $usr->hasRole('Docente');
+    $esEstudiante = $usr->hasRole('Estudiante');
+    $usrId = $usr->id;
+@endphp
 
         {{-- ╔══════════════════════════════════════╗
              ║  HERO — CABECERA AZUL               ║
@@ -31,7 +38,7 @@
 
             <div class="tbl-hero-controls">
                 <div class="d-flex gap-2 flex-wrap justify-content-end align-items-center">
-                    @if (auth()->user()->hasAnyRole(['Docente', 'Administrador']))
+                    @if ($esDocenteAdmin)
                         <a href="{{ route('repA', encrypt($cursos->id)) }}" class="tbl-hero-btn tbl-hero-btn-primary">
                             <i class="bi bi-file-earmark-pdf-fill"></i> <span>Reporte</span>
                         </a>
@@ -138,14 +145,14 @@
                                         </a>
                                     </div>
                                 </th>
-                                @if (auth()->user()->hasAnyRole(['Docente', 'Administrador']))
+                                @if ($esDocenteAdmin)
                                     <th width="15%"><div class="th-content justify-content-center"><i class="bi bi-gear-fill"></i><span>Acciones</span></div></th>
                                 @endif
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($asistencias as $index => $asistencia)
-                                @if ($asistencia->curso_id == $cursos->id && (auth()->user()->hasAnyRole(['Docente', 'Administrador']) || (auth()->user()->hasRole('Estudiante') && auth()->user()->id == $asistencia->inscritos->estudiantes->id)))
+                                @if ($asistencia->curso_id == $cursos->id && ($esDocenteAdmin || ($esEstudiante && $usrId == $asistencia->inscritos->estudiantes->id)))
                                     <tr>
                                         <td><span class="row-number">{{ ($asistencias->currentPage() - 1) * $asistencias->perPage() + $loop->iteration }}</span></td>
                                         <td>
@@ -164,7 +171,7 @@
                                             </div>
                                         </td>
 
-                                        @if (auth()->user()->hasAnyRole(['Docente', 'Administrador']))
+                                        @if ($esDocenteAdmin)
                                             <td>
                                                 <input type="hidden" name="asistencia[{{ $asistencia->id }}][id]" value="{{ $asistencia->id }}">
                                                 <select name="asistencia[{{ $asistencia->id }}][tipo_asistencia]" class="form-select form-select-sm rounded-pill attendance-select">
@@ -207,7 +214,7 @@
                                             </small>
                                         </td>
 
-                                        @if (auth()->user()->hasAnyRole(['Docente', 'Administrador']))
+                                        @if ($esDocenteAdmin)
                                             <td class="text-center">
                                                 <div class="action-buttons-cell justify-content-center">
                                                     <button type="button" class="btn-action-modern btn-view" data-bs-toggle="tooltip" title="Ver detalles">
@@ -220,7 +227,7 @@
                                 @endif
                             @empty
                                 <tr>
-                                    <td colspan="{{ auth()->user()->hasAnyRole(['Docente', 'Administrador']) ? 5 : 4 }}">
+                                    <td colspan="{{ $esDocenteAdmin ? 5 : 4 }}">
                                         <div class="empty-state-table">
                                             <div class="empty-icon-table"><i class="bi bi-clipboard-x"></i></div>
                                             <h5 class="empty-title-table">No hay registros de asistencia</h5>
@@ -243,7 +250,7 @@
                         {{ $asistencias->appends(request()->query())->links('custom-pagination') }}
                     </div>
 
-                    @if (auth()->user()->hasRole('Docente') && (!$cursos->fecha_fin || now() <= $cursos->fecha_fin))
+                    @if ($esDocente && (!$cursos->fecha_fin || now() <= $cursos->fecha_fin))
                         <button type="submit" class="tbl-hero-btn tbl-hero-btn-primary" id="saveBtn">
                             <i class="bi bi-save-fill"></i> Guardar Cambios
                             <span class="badge bg-white text-primary ms-1" id="changesCount">0</span>
@@ -257,6 +264,7 @@
 
 @endsection
 
+@push('css')
 <style>
     .tbl-hero-search-input { padding-left: 2.5rem !important; }
     .tbl-hero-search-icon { left: 1rem !important; }
@@ -280,8 +288,9 @@
         box-shadow: 0 0 0 0.2rem rgba(20, 93, 160, 0.15);
     }
 </style>
+@endpush
 
-
+@push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             let changesCount = 0;
@@ -383,3 +392,4 @@
             });
         });
     </script>
+@endpush

@@ -83,9 +83,9 @@
                                     <!-- Fecha de Nacimiento y CI -->
                                     <div class="row mb-3">
                                         <div class="col-md-6">
-                                            <label for="fechadenac" class="form-label">Fecha de Nacimiento</label>
+                                            <label for="fechadenac" class="form-label">Fecha de Nacimiento <span class="text-danger">*</span></label>
                                             <input type="date" class="form-control" value="{{ $usuario->fechadenac }}"
-                                                name="fechadenac">
+                                                name="fechadenac" required max="{{ date('Y-m-d', strtotime('-5 years')) }}" min="{{ date('Y-m-d', strtotime('-100 years')) }}">
                                         </div>
                                         <div class="col-md-6">
                                             <label for="CI" class="form-label">Cédula de Identidad</label>
@@ -98,8 +98,12 @@
                                     <div class="row mb-3">
                                         <div class="col-md-6">
                                             <label for="PaisReside" class="form-label">País</label>
-                                            <input type="text" class="form-control" value="{{ $usuario->PaisReside }}"
-                                                name="PaisReside">
+                                            <select name="PaisReside" class="form-select">
+                                                <option value="" disabled {{ $usuario->PaisReside ? '' : 'selected' }}>Seleccione su país</option>
+                                                @foreach(['Argentina', 'Bolivia', 'Chile', 'Colombia', 'Costa Rica', 'Cuba', 'Ecuador', 'El Salvador', 'España', 'Guatemala', 'Guinea Ecuatorial', 'Honduras', 'México', 'Nicaragua', 'Panamá', 'Paraguay', 'Perú', 'Puerto Rico', 'República Dominicana', 'Uruguay', 'Venezuela'] as $pais)
+                                                    <option value="{{ $pais }}" {{ $usuario->PaisReside == $pais ? 'selected' : '' }}>{{ $pais }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                         <div class="col-md-6">
                                             <label for="CiudadReside" class="form-label">Ciudad</label>

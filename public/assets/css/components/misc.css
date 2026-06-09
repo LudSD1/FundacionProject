@@ -738,7 +738,7 @@
         background: #fff !important;
     }
     .input-group-text {
-        border-radius: 12px 0 0 12px; border: 1.5px solid #e2eaf4; border-right: none;
+	        border-radius: 12px 0 0 12px; border: 1.5px solid #e2eaf4; border-right: none;
     }
     .input-group .form-control, .input-group .form-select { border-radius: 0 12px 12px 0; }
 
@@ -771,3 +771,4 @@
     color:         #64748b;
 }
 
+  

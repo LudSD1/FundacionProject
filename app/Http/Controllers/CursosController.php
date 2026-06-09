@@ -186,6 +186,7 @@ class CursosController extends Controller
                 'descripcion' => 'nullable|string',
                 'formato' => 'required|in:Presencial,Virtual,Híbrido',
                 'tipo' => 'required|in:curso,congreso',
+                'codigoCurso' => 'nullable|string|max:255',
                 'nota' => 'nullable|numeric|min:0|max:100',
                 'archivo' => 'nullable|file|mimes:pdf|max:20480',
                 'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
@@ -195,15 +196,15 @@ class CursosController extends Controller
 
             // Fechas y campos admin: obligatorios solo para admins
             if ($user->hasRole('Administrador')) {
-                $validationRules['fecha_ini'] = 'required|date_format:Y-m-d\TH:i';
-                $validationRules['fecha_fin'] = 'required|date_format:Y-m-d\TH:i|after_or_equal:fecha_ini';
+                $validationRules['fecha_ini'] = 'required|date';
+                $validationRules['fecha_fin'] = 'required|date|after_or_equal:fecha_ini';
                 $validationRules['docente_id'] = 'required|exists:users,id';
                 $validationRules['duracion'] = 'required|integer|min:1';
                 $validationRules['cupos'] = 'required|integer|min:0';
                 $validationRules['precio'] = 'required|numeric|min:0';
             } else {
-                $validationRules['fecha_ini'] = 'nullable|date_format:Y-m-d\TH:i';
-                $validationRules['fecha_fin'] = 'nullable|date_format:Y-m-d\TH:i';
+                $validationRules['fecha_ini'] = 'nullable|date';
+                $validationRules['fecha_fin'] = 'nullable|date|after_or_equal:fecha_ini';
             }
 
             $request->validate($validationRules, [
@@ -222,9 +223,9 @@ class CursosController extends Controller
                 'imagen.mimes' => 'La imagen debe ser de tipo jpeg, png, jpg o gif.',
                 'imagen.max' => 'La imagen no puede superar los 2MB.',
                 'fecha_ini.required' => 'La fecha de inicio es obligatoria.',
-                'fecha_ini.date_format' => 'La fecha de inicio debe tener el formato válido.',
+                'fecha_ini.date' => 'La fecha de inicio debe tener el formato válido.',
                 'fecha_fin.required' => 'La fecha de fin es obligatoria.',
-                'fecha_fin.date_format' => 'La fecha de fin debe tener el formato válido.',
+                'fecha_fin.date' => 'La fecha de fin debe tener el formato válido.',
                 'fecha_fin.after_or_equal' => 'La fecha de fin debe ser posterior o igual a la fecha de inicio.',
             ]);
 
@@ -236,6 +237,9 @@ class CursosController extends Controller
             $curso->descripcionC = $request->descripcion ?? null;
             $curso->formato = $request->formato;
             $curso->tipo = $request->tipo;
+            if ($request->has('codigoCurso')) {
+                $curso->codigoCurso = $request->codigoCurso;
+            }
             $curso->notaAprobacion = $request->nota ?? null;
             $curso->edad_dirigida = $request->edad_id ?? null;
             $curso->nivel = $request->nivel_id ?? null;
@@ -262,12 +266,15 @@ class CursosController extends Controller
                 $curso->imagen = null;
             }
 
-            // Solo admin puede modificar fechas y demás
-            if ($user->hasRole('Administrador')) {
-                $curso->fecha_ini = Carbon::createFromFormat('Y-m-d\TH:i', $request->fecha_ini)->format('Y-m-d H:i:s');
-                $curso->fecha_fin = Carbon::createFromFormat('Y-m-d\TH:i', $request->fecha_fin)->format('Y-m-d H:i:s');
+            // Fechas disponibles para guardar siempre si el request las incluye
+            if ($request->filled('fecha_ini') && $request->filled('fecha_fin')) {
+                $curso->fecha_ini = Carbon::parse($request->fecha_ini)->format('Y-m-d H:i:s');
+                $curso->fecha_fin = Carbon::parse($request->fecha_fin)->format('Y-m-d H:i:s');
                 $curso->estado = Carbon::parse($request->fecha_fin)->isFuture() ? 'Activo' : 'Expirado';
+            }
 
+            // Solo admin puede modificar demás (Administración pura)
+            if ($user->hasRole('Administrador')) {
                 $curso->docente_id = $request->docente_id;
                 $curso->duracion = $request->duracion;
                 $curso->cupos = $request->cupos;

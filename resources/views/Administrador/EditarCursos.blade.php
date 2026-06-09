@@ -71,15 +71,10 @@
                     </button>
                 </nav>
             </div>
-
-            {{-- ════ CONTENIDO DE TABS ════ --}}
-
-            {{-- ── TAB 1: General ── --}}
             <div class="ec-tab-pane active" data-tab-content="general">
                 <form action="{{ route('editarCursoPost', $cursos->id) }}" method="POST"
                     enctype="multipart/form-data" class="ec-tab-form" data-confirm="¿Guardar los cambios generales?">
                     @csrf
-                    {{-- Hidden fields for non-visible tabs --}}
                     <input type="hidden" name="fecha_ini" value="{{ $cursos->fecha_ini ? \Carbon\Carbon::parse($cursos->fecha_ini)->format('Y-m-d\TH:i') : '' }}">
                     <input type="hidden" name="fecha_fin" value="{{ $cursos->fecha_fin ? \Carbon\Carbon::parse($cursos->fecha_fin)->format('Y-m-d\TH:i') : '' }}">
                     <input type="hidden" name="formato" value="Virtual">

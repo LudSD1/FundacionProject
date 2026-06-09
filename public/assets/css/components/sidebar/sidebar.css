@@ -369,6 +369,113 @@
     font-size: 0.8rem;
 }
 
+/* ── Course inner sidebar (injected via @section('nav')) ── */
+.csb-header {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.5rem 1.5rem 1.25rem;
+    font-size: 0.88rem; font-weight: 700; color: #fff;
+    opacity: 0.9;
+}
+.csb-header i { font-size: 1.1rem; }
+
+.csb-link {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 0.875rem 1.5rem !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent !important;
+    margin: 0.25rem 0.75rem !important;
+    border-radius: 0.5rem !important;
+}
+.csb-link i { font-size: 1.25rem; width: 30px; text-align: center; }
+.csb-link:hover, .csb-link.active {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: white !important;
+    border-left-color: var(--orange-accent) !important;
+}
+
+.csb-tema-group { margin-bottom: 0.25rem; }
+.csb-tema-toggle {
+    display: flex; align-items: center; justify-content: space-between;
+    width: calc(100% - 1.5rem); margin: 0.25rem 0.75rem;
+    padding: 0.875rem 1rem;
+    background: transparent; border: none;
+    border-radius: 0.5rem; color: rgba(255, 255, 255, 0.9);
+    font-weight: 600; font-size: 0.85rem; text-align: left;
+    transition: background 0.3s ease;
+}
+.csb-tema-toggle:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+.csb-tema-left { display: flex; align-items: center; gap: 0.85rem; }
+.csb-tema-left i { font-size: 1.1rem; color: var(--orange-accent); width: 24px; text-align: center; }
+.csb-chevron { font-size: 0.75rem; transition: transform 0.3s ease; color: rgba(255, 255, 255, 0.7); }
+.csb-tema-toggle[aria-expanded="true"] .csb-chevron { transform: rotate(180deg); color: #fff; }
+
+.csb-sub {
+    padding: 0.65rem 1rem 0.65rem 3.5rem !important;
+    font-size: 0.8rem !important;
+    color: rgba(255, 255, 255, 0.75) !important;
+    display: flex !important; align-items: center !important; gap: 0.75rem !important;
+    margin: 0 0.75rem !important;
+}
+.csb-sub:hover { color: #fff !important; background: rgba(255, 255, 255, 0.05) !important; }
+.csb-sub i { font-size: 1rem; color: rgba(255, 255, 255, 0.5); }
+.csb-locked { opacity: 0.5; pointer-events: none; }
+.csb-empty { opacity: 0.5; font-style: italic; pointer-events: none; }
+
+.csb-section { margin-top: 1.25rem; }
+.csb-section-header {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.5rem 1.5rem; font-size: 0.75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,0.6);
+}
+.csb-empty-msg {
+    padding: 0.75rem 1.5rem; font-size: 0.78rem; color: rgba(255, 255, 255, 0.5);
+    display: flex; align-items: center; gap: 0.5rem; font-style: italic;
+}
+
+.csb-activity {
+    display: flex; align-items: flex-start; gap: 0.85rem;
+    padding: 0.75rem 1rem; margin: 0.25rem 0.75rem;
+    border-radius: 0.5rem; text-decoration: none;
+    background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.25s ease;
+}
+.csb-activity:hover {
+    background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.15);
+}
+.csb-activity i { font-size: 1.25rem; color: var(--color-secondary); flex-shrink: 0; margin-top: 0.1rem; }
+.csb-activity-info { display: flex; flex-direction: column; gap: 0.2rem; }
+.csb-activity-title { font-size: 0.8rem; font-weight: 600; color: #fff; line-height: 1.3; }
+.csb-activity-date { display: flex; align-items: center; gap: 0.35rem; font-size: 0.7rem; color: rgba(255, 255, 255, 0.6); }
+
+.csb-activity--urgent { background: rgba(220, 38, 38, 0.15); border-color: rgba(220, 38, 38, 0.3); }
+.csb-activity--urgent:hover { background: rgba(220, 38, 38, 0.25); }
+.csb-activity--urgent i { color: #fca5a5; }
+.csb-urgent-badge { background: #dc2626; color: #fff; font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.4rem; border-radius: 50px; }
+
+.csb-cert {
+    margin: 1.5rem 0.75rem 0; padding: 1.25rem; border-radius: 0.75rem; text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(255, 255, 255, 0.05);
+}
+.csb-cert--ready { border-color: rgba(34, 197, 94, 0.3); background: rgba(34, 197, 94, 0.1); }
+.csb-cert--pending { border-color: rgba(245, 158, 11, 0.3); background: rgba(245, 158, 11, 0.1); }
+.csb-cert-icon { font-size: 1.8rem; display: block; margin-bottom: 0.5rem; }
+.csb-cert--ready .csb-cert-icon { color: #4ade80; }
+.csb-cert--pending .csb-cert-icon { color: #fbbf24; }
+.csb-cert span { display: block; font-size: 0.85rem; font-weight: 600; color: #fff; margin-bottom: 0.75rem; }
+.csb-cert-btn {
+    width: 100%; padding: 0.5rem; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 700;
+    border: none; background: #22c55e; color: #fff; cursor: pointer; transition: background 0.3s ease;
+}
+.csb-cert-btn:hover { background: #16a34a; }
+
+.csb-progress { margin: 1rem 0.75rem; padding: 1rem; background: rgba(0, 0, 0, 0.15); border-radius: 0.75rem; }
+.csb-progress-header { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; color: #fff; margin-bottom: 0.5rem; }
+.csb-progress-pct { color: var(--color-secondary); }
+.csb-progress-track { height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 99px; overflow: hidden; }
+.csb-progress-fill { height: 100%; background: linear-gradient(90deg, var(--color-secondary), var(--orange-accent)); width: 0; transition: width 1s ease; }
+
 /* ── Mobile ───────────────────────────────── */
 .mobile-toggle {
     display: none;

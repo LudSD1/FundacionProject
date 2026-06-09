@@ -22,7 +22,6 @@
 
 <div class="container my-4">
     <div class="tbl-card shadow-lg">
-        {{-- ── HERO HEADER ─────────────────────────────────── --}}
         <div class="tbl-card-hero">
             <div class="tbl-hero-left">
                 <a href="{{ route('Curso', $cuestionario->actividad->subtema->tema->curso->codigoCurso) }}"
@@ -67,7 +66,6 @@
             </div>
         </div>
 
-        {{-- ── TABS ────────────────────────────────────────── --}}
         <div class="adm-tabs-header bg-light border-bottom p-0">
             <ul class="nav adm-tabs-nav" id="preguntasRespuestasTabs" role="tablist">
                 <li class="nav-item" role="presentation">
@@ -89,17 +87,16 @@
                     </button>
                 </li>
             </ul>
+
+            
         </div>
 
-        {{-- ── TAB CONTENT ─────────────────────────────────── --}}
         <div class="p-0">
             <div class="tab-content" id="preguntasRespuestasContent">
-                {{-- Pestaña Preguntas --}}
                 <div class="tab-pane fade show active p-4 p-md-5" id="preguntas" role="tabpanel" aria-labelledby="preguntas-tab">
                     @include('partials.preguntas', ['preguntas' => $cuestionario->preguntas])
                 </div>
 
-                {{-- Pestaña Respuestas --}}
                 <div class="tab-pane fade p-4 p-md-5" id="respuestas" role="tabpanel" aria-labelledby="respuestas-tab">
                     @include('partials.respuestas', ['preguntas' => $cuestionario->preguntas])
                 </div>

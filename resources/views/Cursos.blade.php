@@ -6,6 +6,176 @@
     @include('partials.cursos.course_hero')
 @endsection
 
+@section('nav')
+{{-- ── Contenido del Curso en Sidebar Global ── --}}
+@if($esDocenteOAdmin ?? false || (auth()->user()->hasRole('Estudiante') && ($inscritos ?? false)))
+
+@php
+    $progreso = (auth()->user()->hasRole('Estudiante') && isset($inscritos2))
+        ? $cursos->calcularProgreso($inscritos2->id)
+        : 0;
+    $certificadosActivos    = $cursos->estado === 'Certificado Disponible';
+    $cursoCompletado        = $progreso >= 100;
+    $puedeObtenerCertificado = $cursoCompletado && $certificadosActivos;
+@endphp
+
+<hr class="bg-white opacity-25 my-2">
+
+{{-- Header de sección --}}
+<div class="csb-header">
+    <i class="bi bi-journal-text"></i>
+    <span>Contenido del Curso</span>
+</div>
+
+{{-- Temario general --}}
+<a href="{{ route('Curso', $cursos->codigoCurso) }}#tab-actividades" class="nav-link csb-link">
+    <i class="bi bi-list-ul"></i>
+    <span>Temario General</span>
+</a>
+
+{{-- Temas y subtemas --}}
+@forelse($temas as $tema)
+@php
+    $estaDesbloqueado = auth()->user()->hasRole('Docente') ||
+        (auth()->user()->hasRole('Estudiante') && isset($inscritos2) && $tema->estaDesbloqueado($inscritos2->id));
+@endphp
+
+<div class="csb-tema-group">
+    <button class="csb-tema-toggle"
+            data-bs-toggle="collapse"
+            data-bs-target="#sb-tema-{{ $tema->id }}"
+            aria-expanded="false">
+        <div class="csb-tema-left">
+            <i class="bi bi-folder2"></i>
+            <span>{{ $tema->titulo_tema }}</span>
+        </div>
+        <i class="bi bi-chevron-down csb-chevron"></i>
+    </button>
+
+    <div class="collapse" id="sb-tema-{{ $tema->id }}">
+        @forelse($tema->subtemas as $subtema)
+        @php
+            $desbloqueado = auth()->user()->hasRole('Docente') ||
+                (auth()->user()->hasRole('Estudiante') && isset($inscritos2) && $subtema->estaDesbloqueado($inscritos2->id));
+        @endphp
+        @if($desbloqueado)
+            <a href="{{ route('Curso', $cursos->codigoCurso) }}#subtema-{{ $subtema->id }}" class="nav-link csb-sub">
+                <i class="bi bi-file-text"></i>
+                <span>{{ $subtema->titulo_subtema }}</span>
+            </a>
+        @else
+            <span class="nav-link csb-sub csb-locked">
+                <i class="bi bi-lock-fill"></i>
+                <span>{{ $subtema->titulo_subtema }}</span>
+            </span>
+        @endif
+        @empty
+            <span class="nav-link csb-sub csb-empty">
+                <i class="bi bi-dash-circle"></i>
+                <span>Sin subtemas</span>
+            </span>
+        @endforelse
+    </div>
+</div>
+@empty
+    <span class="nav-link csb-empty">
+        <i class="bi bi-exclamation-triangle"></i>
+        <span>No hay temas disponibles</span>
+    </span>
+@endforelse
+
+{{-- Próximas actividades (solo cursos) --}}
+@if($cursos->tipo == 'curso')
+@php
+    $actividades = collect();
+    foreach ($temas as $tema) {
+        foreach ($tema->subtemas as $subtema) {
+            foreach ($subtema->actividades as $actividad) {
+                if ($actividad->cuestionario && $actividad->cuestionario->fecha_limite) {
+                    $actividades->push([
+                        'tipo'       => 'cuestionario',
+                        'titulo'     => $actividad->cuestionario->titulo,
+                        'fecha'      => $actividad->cuestionario->fecha_limite,
+                        'subtema_id' => $subtema->id,
+                    ]);
+                }
+            }
+        }
+    }
+    $proximasActividades = $actividades
+        ->sortBy('fecha')
+        ->filter(fn($a) => \Carbon\Carbon::parse($a['fecha'])->isFuture())
+        ->take(5);
+@endphp
+
+<div class="csb-section">
+    <div class="csb-section-header">
+        <i class="bi bi-calendar-check-fill"></i>
+        <span>Próximas Actividades</span>
+    </div>
+
+    @if($proximasActividades->count() > 0)
+        @foreach($proximasActividades as $actividad)
+        @php
+            $fecha         = \Carbon\Carbon::parse($actividad['fecha']);
+            $diasRestantes = now()->diffInDays($fecha, false);
+            $esUrgente     = $diasRestantes <= 2;
+        @endphp
+        <a href="{{ route('Curso', $cursos->codigoCurso) }}#subtema-{{ $actividad['subtema_id'] }}"
+           class="csb-activity {{ $esUrgente ? 'csb-activity--urgent' : '' }}">
+            <i class="bi bi-clipboard-check"></i>
+            <div class="csb-activity-info">
+                <div class="csb-activity-title">{{ Str::limit($actividad['titulo'], 22) }}</div>
+                <div class="csb-activity-date">
+                    <i class="bi bi-clock me-1"></i>{{ $fecha->format('d M') }}
+                    @if($esUrgente)
+                        <span class="csb-urgent-badge">!</span>
+                    @endif
+                </div>
+            </div>
+        </a>
+        @endforeach
+    @else
+        <div class="csb-empty-msg">
+            <i class="bi bi-calendar-x"></i>
+            <span>Sin actividades próximas</span>
+        </div>
+    @endif
+</div>
+@endif
+
+{{-- Certificado (solo estudiantes) --}}
+@if(auth()->user()->hasRole('Estudiante') && $cursos->tipo == 'curso')
+    @if($puedeObtenerCertificado)
+    <div class="csb-cert csb-cert--ready">
+        <i class="bi bi-patch-check-fill csb-cert-icon"></i>
+        <span>¡Certificado listo!</span>
+        <button type="button" class="csb-cert-btn"
+                data-bs-toggle="modal" data-bs-target="#certificadoModal">
+            <i class="bi bi-download me-1"></i>Obtener
+        </button>
+    </div>
+    @elseif($cursoCompletado && !$certificadosActivos)
+    <div class="csb-cert csb-cert--pending">
+        <i class="bi bi-hourglass-split csb-cert-icon"></i>
+        <span>Certificados pronto</span>
+    </div>
+    @endif
+
+    {{-- Progreso mini --}}
+    <div class="csb-progress">
+        <div class="csb-progress-header">
+            <span>Progreso</span>
+            <span class="csb-progress-pct">{{ $progreso }}%</span>
+        </div>
+        <div class="csb-progress-track">
+            <div class="csb-progress-fill" style="width: {{ min($progreso, 100) }}%"></div>
+        </div>
+    </div>
+@endif
+
+@endif
+@endsection
 
 @section('content')
 
@@ -21,258 +191,87 @@
     $puedeObtenerCertificado = $cursoCompletado && $certificadosActivos;
 @endphp
 
-<div class="cc-wrap">
-    <div class="container-fluid cc-layout">
+@if(auth()->user()->hasRole('Estudiante') && $cursos->tipo == 'curso')
+<div class="cc-progress-card">
+    <div class="cc-progress-header">
+        <div>
+            <div class="cc-progress-label">
+                <i class="bi bi-graph-up-arrow me-2"></i>Progreso del Curso
+            </div>
+            <div class="cc-progress-sub">Tu avance en el contenido</div>
+        </div>
+        <div class="cc-progress-pct
+            {{ $progreso >= 100 ? 'cc-progress-pct--done' : ($progreso >= 50 ? 'cc-progress-pct--mid' : '') }}">
+            {{ $progreso }}%
+        </div>
+    </div>
+    <div class="cc-progress-track">
+        <div class="cc-progress-fill" data-width="{{ $progreso }}"></div>
+    </div>
+    @if($progreso >= 100)
+    <div class="cc-progress-complete">
+        <i class="bi bi-check-circle-fill me-1"></i> ¡Curso completado!
+    </div>
+    @endif
+</div>
+@endif
 
-        <aside class="cc-sidebar" id="ccSidebar">
-
-            {{-- Header sidebar --}}
-            <div class="cc-sb-header">
-                <div class="cc-sb-icon"><i class="bi bi-journal-text"></i></div>
-                <span class="cc-sb-title">Contenido del Curso</span>
-                {{-- Botón cerrar en mobile --}}
-                <button class="cc-sb-close d-lg-none" id="ccSidebarClose">
-                    <i class="bi bi-x-lg"></i>
+<div class="cc-card">
+    <div class="cc-tabs-wrap">
+        <ul class="cc-tabs nav" id="courseTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="cc-tab nav-link active"
+                        data-bs-toggle="tab"
+                        data-bs-target="#tab-actividades"
+                        type="button" role="tab">
+                    <i class="bi bi-list-check me-2"></i>Temario
                 </button>
-            </div>
-
-            {{-- FIX 7: scroll en sidebar --}}
-            <div class="cc-sb-scroll">
-
-                {{-- Temario general --}}
-                <a href="#tab-actividades" class="cc-sb-link cc-sb-link--active"
-                   data-bs-toggle="tab" role="tab">
-                    <i class="bi bi-list-ul"></i>
-                    <span>Temario General</span>
-                </a>
-
-                {{-- Temas y subtemas --}}
-                @forelse($temas as $tema)
-                @php
-                    $estaDesbloqueado = auth()->user()->hasRole('Docente') ||
-                        (auth()->user()->hasRole('Estudiante') && isset($inscritos2) && $tema->estaDesbloqueado($inscritos2->id));
-                @endphp
-
-                <div class="cc-tema-group">
-                    <button class="cc-tema-toggle"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#sb-tema-{{ $tema->id }}"
-                            aria-expanded="false">
-                        <div class="cc-tema-toggle-left">
-                            <i class="bi bi-folder2 cc-tema-icon"></i>
-                            <span>{{ $tema->titulo_tema }}</span>
-                        </div>
-                        <i class="bi bi-chevron-down cc-tema-chevron"></i>
-                    </button>
-
-                    <div class="collapse" id="sb-tema-{{ $tema->id }}">
-                        @forelse($tema->subtemas as $subtema)
-                        @php
-                            $desbloqueado = auth()->user()->hasRole('Docente') ||
-                                (auth()->user()->hasRole('Estudiante') && isset($inscritos2) && $subtema->estaDesbloqueado($inscritos2->id));
-                        @endphp
-                        @if($desbloqueado)
-                            <a href="#subtema-{{ $subtema->id }}" class="cc-sb-link cc-sb-link--sub">
-                                <i class="bi bi-file-text"></i>
-                                <span>{{ $subtema->titulo_subtema }}</span>
-                            </a>
-                        @else
-                            <span class="cc-sb-link cc-sb-link--sub cc-sb-link--locked">
-                                <i class="bi bi-lock-fill"></i>
-                                <span>{{ $subtema->titulo_subtema }}</span>
-                            </span>
-                        @endif
-                        @empty
-                            <span class="cc-sb-link cc-sb-link--sub cc-sb-link--empty">
-                                <i class="bi bi-dash-circle"></i>
-                                <span>Sin subtemas</span>
-                            </span>
-                        @endforelse
-                    </div>
-                </div>
-                @empty
-                    <span class="cc-sb-link cc-sb-link--empty">
-                        <i class="bi bi-exclamation-triangle"></i>
-                        <span>No hay temas disponibles</span>
-                    </span>
-                @endforelse
-
-                {{-- ── Próximas actividades (solo cursos) ── --}}
-                @if($cursos->tipo == 'curso')
-                @php
-                    $actividades = collect();
-                    foreach ($temas as $tema) {
-                        foreach ($tema->subtemas as $subtema) {
-                            foreach ($subtema->actividades as $actividad) {
-                                if ($actividad->cuestionario && $actividad->cuestionario->fecha_limite) {
-                                    $actividades->push([
-                                        'tipo'       => 'cuestionario',
-                                        'titulo'     => $actividad->cuestionario->titulo,
-                                        'fecha'      => $actividad->cuestionario->fecha_limite,
-                                        'subtema_id' => $subtema->id,
-                                    ]);
-                                }
-                            }
-                        }
-                    }
-                    $proximasActividades = $actividades
-                        ->sortBy('fecha')
-                        ->filter(fn($a) => \Carbon\Carbon::parse($a['fecha'])->isFuture())
-                        ->take(5);
-                @endphp
-
-                <div class="cc-sb-section">
-                    <div class="cc-sb-section-header">
-                        <i class="bi bi-calendar-check-fill"></i>
-                        Próximas Actividades
-                    </div>
-
-                    @if($proximasActividades->count() > 0)
-                        @foreach($proximasActividades as $actividad)
-                        @php
-                            $fecha         = \Carbon\Carbon::parse($actividad['fecha']);
-                            $diasRestantes = now()->diffInDays($fecha, false);
-                            $esUrgente     = $diasRestantes <= 2;
-                        @endphp
-                        <a href="#subtema-{{ $actividad['subtema_id'] }}"
-                           class="cc-activity {{ $esUrgente ? 'cc-activity--urgent' : '' }}">
-                            <div class="cc-activity-icon">
-                                <i class="bi bi-clipboard-check"></i>
-                            </div>
-                            <div class="cc-activity-info">
-                                <div class="cc-activity-title">{{ Str::limit($actividad['titulo'], 28) }}</div>
-                                <div class="cc-activity-date">
-                                    <i class="bi bi-clock me-1"></i>{{ $fecha->format('d M') }}
-                                    @if($esUrgente)
-                                        <span class="cc-urgent-badge">Urgente</span>
-                                    @endif
-                                </div>
-                            </div>
-                        </a>
-                        @endforeach
-                    @else
-                        <div class="cc-sb-empty">
-                            <i class="bi bi-calendar-x"></i>
-                            <span>Sin actividades próximas</span>
-                        </div>
-                    @endif
-                </div>
-                @endif
-
-                {{-- ── Certificado (solo estudiantes) ── --}}
-                @if(auth()->user()->hasRole('Estudiante') && $cursos->tipo == 'curso')
-                    @if($puedeObtenerCertificado)
-                    <div class="cc-cert-card cc-cert-card--ready">
-                        <div class="cc-cert-icon"><i class="bi bi-patch-check-fill"></i></div>
-                        <div class="cc-cert-title">¡Felicitaciones!</div>
-                        <div class="cc-cert-sub">Has completado el curso</div>
-                        <button type="button" class="cc-btn cc-btn-cert"
-                                data-bs-toggle="modal" data-bs-target="#certificadoModal">
-                            <i class="bi bi-download me-2"></i>Obtener Certificado
-                        </button>
-                    </div>
-                    @elseif($cursoCompletado && !$certificadosActivos)
-                    <div class="cc-cert-card cc-cert-card--pending">
-                        <div class="cc-cert-icon"><i class="bi bi-hourglass-split"></i></div>
-                        <div class="cc-cert-title">Curso Completado</div>
-                        <div class="cc-cert-sub">Los certificados estarán disponibles pronto</div>
-                    </div>
-                    @endif
-                @endif
-
-            </div>{{-- /cc-sb-scroll --}}
-        </aside>
-        <main class="cc-main">
-
-            <button class="cc-sb-open d-lg-none" id="ccSidebarOpen">
-                <i class="bi bi-layout-sidebar"></i>
-                <span>Contenido</span>
-            </button>
-
-            @if(auth()->user()->hasRole('Estudiante') && $cursos->tipo == 'curso')
-            <div class="cc-progress-card">
-                <div class="cc-progress-header">
-                    <div>
-                        <div class="cc-progress-label">
-                            <i class="bi bi-graph-up-arrow me-2"></i>Progreso del Curso
-                        </div>
-                        <div class="cc-progress-sub">Tu avance en el contenido</div>
-                    </div>
-                    <div class="cc-progress-pct
-                        {{ $progreso >= 100 ? 'cc-progress-pct--done' : ($progreso >= 50 ? 'cc-progress-pct--mid' : '') }}">
-                        {{ $progreso }}%
-                    </div>
-                </div>
-                <div class="cc-progress-track">
-                    <div class="cc-progress-fill" data-width="{{ $progreso }}"></div>
-                </div>
-                @if($progreso >= 100)
-                <div class="cc-progress-complete">
-                    <i class="bi bi-check-circle-fill me-1"></i> ¡Curso completado!
-                </div>
-                @endif
-            </div>
+            </li>
+            @if($cursos->tipo == 'congreso')
+            <li class="nav-item" role="presentation">
+                <button class="cc-tab nav-link"
+                        data-bs-toggle="tab"
+                        data-bs-target="#tab-expositores"
+                        type="button" role="tab">
+                    <i class="bi bi-mic-fill me-2"></i>Expositores
+                </button>
+            </li>
             @endif
-            <div class="cc-card">
-                <div class="cc-tabs-wrap">
-                    <ul class="cc-tabs nav" id="courseTabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="cc-tab nav-link active"
-                                    data-bs-toggle="tab"
-                                    data-bs-target="#tab-actividades"
-                                    type="button" role="tab">
-                                <i class="bi bi-list-check me-2"></i>Temario
-                            </button>
-                        </li>
-                        @if($cursos->tipo == 'congreso')
-                        <li class="nav-item" role="presentation">
-                            <button class="cc-tab nav-link"
-                                    data-bs-toggle="tab"
-                                    data-bs-target="#tab-expositores"
-                                    type="button" role="tab">
-                                <i class="bi bi-mic-fill me-2"></i>Expositores
-                            </button>
-                        </li>
-                        @endif
-                        <li class="nav-item" role="presentation">
-                            <button class="cc-tab nav-link"
-                                    data-bs-toggle="tab"
-                                    data-bs-target="#tab-foros"
-                                    type="button" role="tab">
-                                <i class="bi bi-chat-dots-fill me-2"></i>Foros
-                                <span class="cc-tab-badge">{{ isset($foros) ? $foros->count() : 0 }}</span>
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="cc-tab nav-link"
-                                    data-bs-toggle="tab"
-                                    data-bs-target="#tab-recursos"
-                                    type="button" role="tab">
-                                <i class="bi bi-folder2-open me-2"></i>Recursos
-                                <span class="cc-tab-badge">{{ isset($recursos) ? $recursos->count() : 0 }}</span>
-                            </button>
-                        </li>
-                    </ul>
-                </div>
+            <li class="nav-item" role="presentation">
+                <button class="cc-tab nav-link"
+                        data-bs-toggle="tab"
+                        data-bs-target="#tab-foros"
+                        type="button" role="tab">
+                    <i class="bi bi-chat-dots-fill me-2"></i>Foros
+                    <span class="cc-tab-badge">{{ isset($foros) ? $foros->count() : 0 }}</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="cc-tab nav-link"
+                        data-bs-toggle="tab"
+                        data-bs-target="#tab-recursos"
+                        type="button" role="tab">
+                    <i class="bi bi-folder2-open me-2"></i>Recursos
+                    <span class="cc-tab-badge">{{ isset($recursos) ? $recursos->count() : 0 }}</span>
+                </button>
+            </li>
+        </ul>
+    </div>
 
-                <div class="cc-card-body">
-                    <div class="tab-content" id="courseTabContent">
+    <div class="cc-card-body">
+        <div class="tab-content" id="courseTabContent">
 
-                        @include('partials.cursos.temario_tab')
+            @include('partials.cursos.temario_tab')
 
-                        {{-- Tab expositores (congresos) --}}
-                        @if($cursos->tipo == 'congreso')
-                        @include('partials.cursos.expositores_tab')
-                        @endif
+            {{-- Tab expositores (congresos) --}}
+            @if($cursos->tipo == 'congreso')
+            @include('partials.cursos.expositores_tab')
+            @endif
 
-                        @include('partials.cursos.foros_tab')
-                        @include('partials.cursos.recursos_tab')
+            @include('partials.cursos.foros_tab')
+            @include('partials.cursos.recursos_tab')
 
-                    </div>
-                </div>
-            </div>
-        </main>
-
+        </div>
     </div>
 </div>
 
@@ -364,8 +363,7 @@
 </div>
 @endforeach
 
-{{-- Overlay sidebar mobile --}}
-<div class="cc-sb-overlay d-lg-none" id="ccSidebarOverlay"></div>
+
 
 @else
 {{-- ── Acceso denegado ── --}}
@@ -412,43 +410,13 @@ document.addEventListener('DOMContentLoaded', function () {
             requestAnimationFrame(() => setTimeout(() => { bar.style.width = w + '%'; }, 80));
         });
 
-        const sidebar  = document.getElementById('ccSidebar');
-        const overlay  = document.getElementById('ccSidebarOverlay');
-        const btnOpen  = document.getElementById('ccSidebarOpen');
-        const btnClose = document.getElementById('ccSidebarClose');
-
-        function openSidebar()  {
-            sidebar?.classList.add('open');
-            overlay?.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-        function closeSidebar() {
-            sidebar?.classList.remove('open');
-            overlay?.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        btnOpen?.addEventListener('click',  openSidebar);
-        btnClose?.addEventListener('click', closeSidebar);
-        overlay?.addEventListener('click',  closeSidebar);
-
-        /* ── 3. FIX 8: sincronizar top del sidebar con la altura real del nav ── */
-        function syncSidebarTop() {
-            if (window.innerWidth <= 991) return; // mobile usa position:fixed
-            const header  = document.getElementById('header');
-            const authNav = document.getElementById('authNavbar');
-            if (!sidebar || !header) return;
-            const hH  = header.getBoundingClientRect().height;
-            const anH = authNav ? authNav.getBoundingClientRect().height : 0;
-            sidebar.style.top = (hH + anH + 16) + 'px'; // 16px de margen
-            sidebar.style.maxHeight = `calc(100vh - ${hH + anH + 32}px)`;
-        }
-        syncSidebarTop();
-        window.addEventListener('resize', syncSidebarTop);
-        window.addEventListener('scroll', syncSidebarTop, { passive: true });
+        document.querySelectorAll('.csb-progress-fill').forEach(bar => {
+            const w = bar.parentNode.previousElementSibling.querySelector('.csb-progress-pct').textContent.replace('%','');
+            requestAnimationFrame(() => setTimeout(() => { bar.style.width = w + '%'; }, 80));
+        });
 
         /* ── 4. Chevron de temas colapso ── */
-        document.querySelectorAll('.cc-tema-toggle').forEach(btn => {
+        document.querySelectorAll('.csb-tema-toggle').forEach(btn => {
             const targetId = btn.getAttribute('data-bs-target');
             const panel    = document.querySelector(targetId);
             if (!panel) return;
@@ -467,15 +435,21 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
         /* ── 6. Tab activo → abrir tema correspondiente en sidebar ── */
-        // Al hacer click en un link de subtema, expande su tema padre
-        document.querySelectorAll('.cc-sb-link--sub').forEach(link => {
+        document.querySelectorAll('.csb-sub').forEach(link => {
             link.addEventListener('click', function () {
                 const collapse = this.closest('.collapse');
                 if (collapse) {
                     const bsCollapse = bootstrap.Collapse.getOrCreateInstance(collapse);
                     bsCollapse.show();
                 }
-                if (window.innerWidth <= 991) closeSidebar();
+                if (window.innerWidth <= 991) {
+                    const sb = document.getElementById('sidebar');
+                    if (sb && sb.classList.contains('show')) {
+                        sb.classList.remove('show');
+                        document.getElementById('sidebarOverlay')?.classList.remove('show');
+                        document.body.style.overflow = '';
+                    }
+                }
             });
         });
 

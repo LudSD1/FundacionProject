@@ -120,7 +120,12 @@ Crear Usuario
                                 <label class="form-label fw-bold text-muted small text-uppercase">País de Residencia</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light"><i class="bi bi-geo-alt text-primary"></i></span>
-                                    <input type="text" name="PaisReside" class="form-control bg-light" value="{{ old('PaisReside') }}" placeholder="Ej. Bolivia">
+                                    <select name="PaisReside" class="form-select bg-light">
+                                        <option value="" disabled {{ old('PaisReside') ? '' : 'selected' }}>Seleccione su país</option>
+                                        @foreach(['Argentina', 'Bolivia', 'Chile', 'Colombia', 'Costa Rica', 'Cuba', 'Ecuador', 'El Salvador', 'España', 'Guatemala', 'Guinea Ecuatorial', 'Honduras', 'México', 'Nicaragua', 'Panamá', 'Paraguay', 'Perú', 'Puerto Rico', 'República Dominicana', 'Uruguay', 'Venezuela'] as $pais)
+                                            <option value="{{ $pais }}" {{ old('PaisReside') == $pais ? 'selected' : '' }}>{{ $pais }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -196,21 +201,7 @@ Crear Usuario
                     </div>
                 </div>
             </form>
-            @if($errors->any())
-                <div class="p-4">
-                    <div class="errors-box">
-                        <div class="errors-title">
-                            <i class="bi bi-exclamation-triangle-fill"></i>
-                            Corrige los siguientes errores:
-                        </div>
-                        <ul>
-                            @foreach($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                </div>
-            @endif
+
         @else
             <div class="p-4 p-md-5">
                 <div class="no-access-box">
@@ -353,6 +344,19 @@ Crear Usuario
     document.addEventListener('DOMContentLoaded', () => {
         showStep(1);
     });
+
+    @if($errors->any())
+        let errorMessages = '';
+        @foreach($errors->all() as $error)
+            errorMessages += '<li>{{ $error }}</li>';
+        @endforeach
+        Swal.fire({
+            icon: 'error',
+            title: 'Errores de Validación',
+            html: '<ul style="text-align: left; margin-bottom: 0;">' + errorMessages + '</ul>',
+            confirmButtonColor: '#ef4444'
+        });
+    @endif
 
     @if(session('success'))
         Swal.fire({ icon: 'success', title: 'Éxito', text: "{{ session('success') }}" });

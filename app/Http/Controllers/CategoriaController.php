@@ -51,12 +51,26 @@ class CategoriaController extends Controller
     {
         // Aquí puedes manejar la lógica para almacenar una nueva categoría
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:categoria,name',
             'slug' => 'required|string|max:255|unique:categoria,slug',
             'description' => 'nullable|string',
             'image' => 'nullable|image|max:2048',
             'parent_id' => 'nullable|exists:categoria,id',
+        ], [
+            'name.required' => 'El nombre de la categoría es obligatorio.',
+            'name.string' => 'El nombre de la categoría debe ser texto.',
+            'name.max' => 'El nombre de la categoría no puede superar los 255 caracteres.',
+            'name.unique' => 'Ya existe una categoría con ese nombre.',
+            'slug.required' => 'El slug es obligatorio.',
+            'slug.string' => 'El slug debe ser texto.',
+            'slug.max' => 'El slug no puede superar los 255 caracteres.',
+            'slug.unique' => 'Ya existe una categoría con ese slug.',
+            'description.string' => 'La descripción debe ser texto.',
+            'image.image' => 'El archivo seleccionado debe ser una imagen válida.',
+            'image.max' => 'La imagen no puede superar los 2 MB.',
+            'parent_id.exists' => 'La categoría padre seleccionada no existe.',
         ]);
+
 
         $categoria = new Categoria();
         $categoria->name = $request->name;
@@ -110,46 +124,45 @@ class CategoriaController extends Controller
         return back()->with('success', 'Categoría actualizada exitosamente.');
     }
 
-public function destroy(Request $request, $id)
-{
-    try {
-        $categoria = Categoria::findOrFail($id);
+    public function destroy(Request $request, $id)
+    {
+        try {
+            $categoria = Categoria::findOrFail($id);
 
-        if ($categoria->hasActiveChildren()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se puede eliminar esta categoría porque tiene subcategorías activas.',
-                'children_count' => $categoria->children->count()
-            ], 422);
+            if ($categoria->hasActiveChildren()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se puede eliminar esta categoría porque tiene subcategorías activas.',
+                    'children_count' => $categoria->children->count()
+                ], 422);
+            }
+
+            $categoria->cursos()->detach();
+            $categoria->delete();
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Categoría eliminada exitosamente.',
+                    'categoria_id' => $categoria->id,
+                    'categoria_name' => $categoria->name
+                ]);
+            }
+
+            return redirect()->back()->with('success', 'Categoría eliminada exitosamente.');
+        } catch (\Exception $e) {
+            dd($e->getMessage()); // Esto mostrará el error real
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error al eliminar la categoría: ' . $e->getMessage()
+                ], 500);
+            }
+
+            return redirect()->back()->with('error', 'Error al eliminar la categoría.');
         }
-
-        $categoria->cursos()->detach();
-        $categoria->delete();
-
-        if ($request->expectsJson() || $request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Categoría eliminada exitosamente.',
-                'categoria_id' => $categoria->id,
-                'categoria_name' => $categoria->name
-            ]);
-        }
-
-        return redirect()->back()->with('success', 'Categoría eliminada exitosamente.');
-
-    } catch (\Exception $e) {
-        dd($e->getMessage()); // Esto mostrará el error real
-
-        if ($request->expectsJson() || $request->ajax()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al eliminar la categoría: ' . $e->getMessage()
-            ], 500);
-        }
-
-        return redirect()->back()->with('error', 'Error al eliminar la categoría.');
     }
-}
 
     public function show($id)
     {
