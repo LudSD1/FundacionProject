@@ -34,7 +34,7 @@ class IntentoCuestionario extends BaseModel
     }
 
     public function inscrito() {
-        return $this->belongsTo(Inscritos::class, 'inscrito_id');
+        return $this->belongsTo(Inscritos::class, 'inscrito_id')->withTrashed();
     }
 
     public static function intentosPerfectos($inscritoId, $cuestionarioId)

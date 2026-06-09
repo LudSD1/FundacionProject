@@ -26,7 +26,7 @@ class Inscritos extends BaseModel
 
     public function estudiantes(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'estudiante_id');
+        return $this->belongsTo(User::class, 'estudiante_id')->withTrashed();
     }
 
     public function intentosCuestionarios(): HasMany

@@ -79,6 +79,13 @@ class UserController extends Controller
     {
         return response()->json(Auth::user());
     }
+
+    public function checkEmail(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+        $exists = User::where('email', $request->email)->exists();
+        return response()->json(['exists' => $exists]);
+    }
     public function logout(Request $request)
     {
         $user = auth()->user();

@@ -59,6 +59,8 @@ Route::get('/login', function () {
     return view('login');
 })->middleware('noCache')->name('login');
 
+Route::post('/api/check-email', [UserController::class, 'checkEmail'])->name('api.check.email');
+
 
 Route::get('/registro', function () {
     return view('CrearUsuario.registrarse');

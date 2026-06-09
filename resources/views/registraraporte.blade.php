@@ -108,7 +108,7 @@
                         <div class="input-group">
                             <input type="number" name="montocancelado" class="form-control bg-light" min="1" step="any" required>
                             <span class="input-group-text">Bs.</span>
-    w                    </div>
+                        </div>
                     </div>
                 </div>
 
