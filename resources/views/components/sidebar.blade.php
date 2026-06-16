@@ -39,24 +39,19 @@
         : asset('./assets/img/user.png');
 @endphp
 
-<!-- Mobile Toggle Button -->
 <button  class="mobile-toggle mt-5" id="mobileToggle" aria-label="Abrir menú">
     <i class="bi bi-list"></i>
 </button>
 
-<!-- Sidebar Overlay -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<!-- Sidebar Principal -->
 <aside class="sidebar" id="sidebar" role="navigation" aria-label="Menú principal">
 
-    <!-- Sidebar Toggle Button (Desktop) -->
     <button class="sidebar-toggler" id="toggleSidebar" aria-label="Contraer/Expandir menú">
         <i class="bi bi-arrow-bar-left" id="toggleIcon"></i>
         <span class="ms-2">Contraer menú</span>
     </button>
 
-    <!-- User Profile Section -->
     <div class="user-profile">
         <div class="dropdown">
             <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle"
@@ -80,7 +75,6 @@
                 </div>
             </a>
 
-            <!-- User Dropdown Menu -->
             <ul class="dropdown-menu shadow-lg border-0" aria-labelledby="userDropdown" style="min-width: 250px;">
 
                 <li class="dropdown-header bg-light py-3">
@@ -127,7 +121,6 @@
         </div>
     </div>
 
-    <!-- Notifications Section -->
     <div class="dropdown mt-3">
         <button class="notification-btn" id="notificationDropdown" data-bs-toggle="dropdown"
             data-bs-display="static" aria-expanded="false" aria-label="Notificaciones">
@@ -194,7 +187,6 @@
 
     <hr class="bg-white opacity-25 my-3">
 
-    <!-- Navigation Menu -->
     <nav class="sidebar-menu" role="menu">
         @foreach ($navItems[$userRole] ?? [] as $item)
             <a href="{{ route($item['route']) }}"
@@ -248,14 +240,8 @@ const Sidebar = (() => {
         document.body.style.overflow = '';
     }
 
-    // ─── Dropdown positioning ────────────────────────────────────────────────────
-    //
-    // Desktop: el menú aparece a la derecha del sidebar.
-    // Móvil:   el menú se centra en pantalla (CSS lo maneja con transform).
-
     function positionDropdown(menu, toggle) {
         if (window.innerWidth < 992) {
-            // En móvil el CSS centra el dropdown via left: 50% y transform: translateX(-50%)
             const toggleRect = toggle.getBoundingClientRect();
             const top = toggleRect.bottom + 8;
 
@@ -343,7 +329,6 @@ const Sidebar = (() => {
         sidebarOverlay  = document.getElementById('sidebarOverlay');
         layoutWrapper   = document.querySelector('.layout-wrapper');
 
-        // Restaurar estado guardado
         const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true' && window.innerWidth >= 992;
         if (isCollapsed) {
             sidebar.classList.add('collapsed');
@@ -351,7 +336,6 @@ const Sidebar = (() => {
         }
         updateLayoutWrapper(isCollapsed);
 
-        // Toggle desktop / mobile unificado
         toggleSidebar?.addEventListener('click', () => {
             if (window.innerWidth >= 992) {
                 const collapsed = sidebar.classList.toggle('collapsed');
@@ -369,14 +353,12 @@ const Sidebar = (() => {
 
         sidebarOverlay?.addEventListener('click', closeMobileSidebar);
 
-        // Cerrar sidebar móvil al navegar
         document.querySelectorAll('.sidebar .nav-link').forEach(link =>
             link.addEventListener('click', () => {
                 if (window.innerWidth < 992) closeMobileSidebar();
             })
         );
 
-        // Resize con debounce
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(() => {
@@ -390,8 +372,6 @@ const Sidebar = (() => {
             }, 250);
         });
 
-        // MutationObserver: si el sidebar se colapsa mientras hay un dropdown abierto,
-        // cerrarlo para evitar posición incorrecta.
         observer = new MutationObserver(mutations => {
             if (mutations.some(m => m.attributeName === 'class')) {
                 document.querySelectorAll('.sidebar [data-bs-toggle="dropdown"]').forEach(toggle => {
@@ -402,7 +382,6 @@ const Sidebar = (() => {
         });
         observer.observe(sidebar, { attributes: true, attributeFilter: ['class'] });
 
-        // Cerrar dropdowns al hacer clic fuera
         document.addEventListener('click', e => {
             document.querySelectorAll('.sidebar .dropdown-menu.show').forEach(menu => {
                 const labelledBy = menu.getAttribute('aria-labelledby');
@@ -416,7 +395,6 @@ const Sidebar = (() => {
             });
         });
 
-        // Bind Bootstrap dropdown events (espera a que esté disponible)
         if (typeof bootstrap !== 'undefined') {
             bindDropdownEvents();
         } else {
@@ -429,7 +407,6 @@ const Sidebar = (() => {
         }
     }
 
-    // ─── Notificaciones ──────────────────────────────────────────────────────────
 
     function markAsRead(event, notificationId) {
         event.preventDefault();
@@ -480,13 +457,10 @@ const Sidebar = (() => {
         }
     }
 
-    // ─── Cleanup ─────────────────────────────────────────────────────────────────
-
     function destroy() {
         observer?.disconnect();
     }
 
-    // API pública
     return { init, markAsRead, markAllAsRead, destroy };
 })();
 

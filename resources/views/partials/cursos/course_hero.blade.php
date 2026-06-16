@@ -304,11 +304,41 @@
 
 
 <div class="modal fade" id="certificadoModal" tabindex="-1" aria-labelledby="certificadoModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="certificadoModalLabel">Descarga tu Certificado</h5>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header border-0 pb-0">
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body text-center pb-5 px-4">
+                <div class="mb-4">
+                    <i class="bi bi-patch-check-fill text-warning drop-shadow" style="font-size: 5rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));"></i>
+                </div>
+                <h4 class="fw-bold mb-3" style="color: var(--color-primary);">¡Felicidades!</h4>
+                <p class="text-muted mb-4">Has completado los requisitos necesarios para obtener tu certificado.</p>
+                
+                @php
+                    $inscripcionActual = null;
+                    if(auth()->check()) {
+                        $inscripcionActual = \App\Models\Inscritos::with('certificado')
+                            ->where('cursos_id', $cursos->id)
+                            ->where('estudiante_id', auth()->id())
+                            ->first();
+                    }
+                @endphp
+
+                @if($inscripcionActual && $inscripcionActual->certificado)
+                    <a href="{{ route('verificar.certificado', $inscripcionActual->certificado->codigo_certificado) }}" target="_blank" class="btn btn-success btn-lg w-100 rounded-pill shadow-sm" style="transition: all 0.3s ease;">
+                        <i class="bi bi-download me-2"></i>Descargar Certificado
+                    </a>
+                @else
+                    <form action="{{ route('certificados.obtener', encrypt($cursos->id)) }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="curso_id" value="{{ $cursos->id }}">
+                        <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill shadow-sm btn-loading" style="transition: all 0.3s ease; background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); border: none;">
+                            <i class="bi bi-award-fill me-2"></i>Generar Mi Certificado
+                        </button>
+                    </form>
+                @endif
             </div>
         </div>
     </div>

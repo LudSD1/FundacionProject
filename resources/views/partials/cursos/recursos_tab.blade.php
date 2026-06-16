@@ -1,16 +1,16 @@
 <div class="tab-pane fade" id="tab-recursos" role="tabpanel" aria-labelledby="recursos-tab">
-
-    <!-- Hero Section -->
-    <div class="tbl-card-hero">
-        <div class="tbl-hero-left">
-            <div class="tbl-hero-eyebrow">
-                <i class="bi bi-folder-fill"></i> Material de Apoyo
+    <div class="tbl-card">
+        <!-- Hero Section -->
+        <div class="tbl-card-hero">
+            <div class="tbl-hero-left">
+                <div class="tbl-hero-eyebrow">
+                    <i class="bi bi-folder-fill"></i> Material de Apoyo
+                </div>
+                <h2 class="tbl-hero-title">Recursos del Curso</h2>
+                <p class="tbl-hero-sub text-white-50">
+                    Accede a todo el material complementario para tu aprendizaje
+                </p>
             </div>
-            <h2 class="tbl-hero-title">Recursos del Curso</h2>
-            <p class="tbl-hero-sub text-white-50">
-                Accede a todo el material complementario para tu aprendizaje
-            </p>
-        </div>
 
         <div class="tbl-hero-controls">
             <!-- Filtro de Tipo -->
@@ -37,7 +37,7 @@
                         <i class="bi bi-plus-lg"></i>
                         <span>Nuevo Recurso</span>
                     </button>
-                    <a href="{{ route('ListaRecursosEliminados', encrypt($cursos->id)) }}" class="tbl-hero-btn tbl-hero-btn-danger">
+                    <a href="{{ route('ListaRecursosEliminados', $cursos->id) }}" class="tbl-hero-btn tbl-hero-btn-danger">
                         <i class="bi bi-trash-fill"></i>
                         <span>Papelera</span>
                     </a>
@@ -47,8 +47,8 @@
     </div>
 
     <!-- Stats Bar -->
-    <div class="tbl-filter-bar bg-light border-bottom">
-        <div class="tbl-filter-bar-left d-flex gap-4">
+    <div class="tbl-filter-bar border-bottom">
+        <div class="tbl-filter-bar-left d-flex flex-wrap gap-4">
             <div class="d-flex align-items-center gap-2">
                 <i class="bi bi-files text-primary"></i>
                 <span><strong>{{ $recursos->count() }}</strong> Recursos totales</span>
@@ -64,7 +64,7 @@
         </div>
     </div>
 
-    <div class="p-4">
+    <div class="px-3 py-4 p-md-4 bg-white">
             @if ($recursos->count() > 0)
 
                 @php
@@ -97,8 +97,8 @@
                     ];
                 @endphp
 
-                <!-- Grid de Tarjetas -->
-                <div class="row g-4" id="resourcesGrid">
+                <!-- Lista de Recursos -->
+                <div class="d-flex flex-column" id="resourcesGrid">
                     @foreach ($recursos as $recurso)
                         @php
                             $tipo = $recurso->tipoRecurso;
@@ -108,105 +108,124 @@
                             $esVideoYouTube = $tipo === 'youtube';
                         @endphp
 
-                        <div class="col-12 col-md-6 col-lg-4 resource-card"
+                        {{-- Extraer videoId una sola vez para YouTube --}}
+                        @php
+                            $videoId = '';
+                            if ($esVideoYouTube) {
+                                // 1. Intentar desde archivoRecurso (URL directa)
+                                $rawUrl = trim($recurso->archivoRecurso ?? '');
+
+                                // 2. Si está vacío, buscar dentro de la descripción (puede tener iframes o URLs)
+                                if (empty($rawUrl)) {
+                                    $rawDesc = $recurso->descripcionRecursos ?? '';
+                                    // Buscar src dentro de un iframe embebido
+                                    if (preg_match('/src=["\']([^"\']+youtube[^"\']+)["\']/i', $rawDesc, $srcMatch)) {
+                                        $rawUrl = html_entity_decode($srcMatch[1]);
+                                    } else {
+                                        // Buscar URL de YouTube en texto plano
+                                        $rawUrl = html_entity_decode(strip_tags($rawDesc));
+                                    }
+                                }
+
+                                // 3. Extraer el video ID de cualquier formato de URL de YouTube
+                                if (preg_match('/(?:youtube\.com\/(?:watch\?.*v=|embed\/|shorts\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/i', $rawUrl, $vidMatch)) {
+                                    $videoId = $vidMatch[1];
+                                }
+                            }
+
+                            // Texto limpio de la descripción (sin iframes ni HTML)
+                            $descLimpia = trim(strip_tags($recurso->descripcionRecursos ?? ''));
+                        @endphp
+
+                        <!-- Elemento de la lista -->
+                        <div class="resource-card border-bottom py-3 px-2 px-md-4 d-flex flex-column flex-md-row gap-3 align-items-md-center"
                             data-name="{{ strtolower($recurso->nombreRecurso) }}"
                             data-type="{{ $cat }}">
 
-                            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
-                                @if($esVideoYouTube)
-                                    @php
-                                        $url = $recurso->archivoRecurso ?? '';
-                                        $videoId = '';
-                                        if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\s]+)/', $url, $matches)) {
-                                            $videoId = $matches[1];
-                                        }
-                                    @endphp
-                                    @if($videoId)
-                                        <div class="position-relative">
-                                            <img src="https://img.youtube.com/vi/{{ $videoId }}/hqdefault.jpg" alt="YouTube Video" class="w-100" style="height: 180px; object-fit: cover;">
-                                            <div class="position-absolute top-50 start-50 translate-middle">
-                                                <div class="bg-danger bg-opacity-90 rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                                                    <i class="bi bi-play-fill text-white" style="font-size: 2rem; margin-left: 3px;"></i>
-                                                </div>
+                            <!-- Grupo Principal: Miniatura + Texto (siempre en fila) -->
+                            <div class="d-flex align-items-center gap-3 flex-grow-1" style="min-width: 0;">
+                                <!-- Icono / Miniatura -->
+                                <div class="flex-shrink-0 position-relative rounded-3 overflow-hidden d-flex align-items-center justify-content-center" style="width: 56px; height: 56px; background-color: #f1f5f9;">
+                                    @if($esVideoYouTube && $videoId)
+                                        <img src="https://img.youtube.com/vi/{{ $videoId }}/hqdefault.jpg"
+                                             alt="YouTube" class="w-100 h-100"
+                                             style="object-fit: cover; transform: scale(1.35);">
+                                        <div class="position-absolute top-50 start-50 translate-middle">
+                                            <div class="bg-danger rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 22px; height: 22px;">
+                                                <i class="bi bi-play-fill text-white" style="font-size: 0.8rem; margin-left: 2px;"></i>
                                             </div>
                                         </div>
+                                    @elseif($tipo === 'imagen' && $recurso->archivoRecurso)
+                                        <img src="{{ asset('storage/' . $recurso->archivoRecurso) }}"
+                                             alt="{{ $recurso->nombreRecurso }}" class="w-100 h-100"
+                                             style="object-fit: cover;">
                                     @else
-                                        <div class="position-relative">
-                                            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
-                                                <i class="bi {{ $icono }}" style="font-size: 4rem; color: {{ $color }};"></i>
-                                            </div>
+                                        <div class="w-100 h-100 d-flex align-items-center justify-content-center" style="background-color: {{ $color }}10;">
+                                            <i class="bi {{ $icono }}" style="font-size: 1.6rem; color: {{ $color }};"></i>
                                         </div>
                                     @endif
-                                @elseif($tipo === 'imagen' && $recurso->archivoRecurso)
-                                    <div class="position-relative">
-                                        <img src="{{ asset('storage/' . $recurso->archivoRecurso) }}" alt="{{ $recurso->nombreRecurso }}" class="w-100" style="height: 180px; object-fit: cover;">
-                                    </div>
-                                @else
-                                    <div class="position-relative">
-                                        <div class="bg-gradient-to-br d-flex align-items-center justify-content-center" style="height: 180px; background: linear-gradient(135deg, {{ $color }}20 0%, {{ $color }}10 100%);">
-                                            <i class="bi {{ $icono }}" style="font-size: 4rem; color: {{ $color }};"></i>
-                                        </div>
-                                    </div>
+                                </div>
+
+                                <!-- Detalles del recurso -->
+                                <div class="flex-grow-1" style="min-width: 0;">
+                                    <h6 class="fw-bold mb-1 text-dark" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ $recurso->nombreRecurso }}">
+                                        {{ $recurso->nombreRecurso }}
+                                        <span class="badge ms-1" style="background-color: {{ $color }}15; color: {{ $color }}; font-size: 0.6rem; vertical-align: middle;">
+                                            {{ ucfirst($tipo) }}
+                                        </span>
+                                    </h6>
+
+                                    @if(!empty($descLimpia))
+                                        <p class="text-muted small mb-1" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;">
+                                            {{ $descLimpia }}
+                                        </p>
+                                    @endif
+
+                                    <small class="text-muted" style="font-size: 0.72rem;">
+                                        <i class="bi bi-calendar3 me-1"></i>{{ $recurso->created_at ? $recurso->created_at->format('d/m/Y') : '—' }}
+                                    </small>
+                                </div>
+                            </div>
+
+                            <!-- Acciones -->
+                            <div class="d-flex align-items-center gap-2 flex-shrink-0 ms-md-auto">
+                                @if($esVideoYouTube && $videoId)
+                                    <button class="btn-action-modern btn-view" onclick="window.open('https://www.youtube.com/watch?v={{ $videoId }}', '_blank')" title="Ver en YouTube">
+                                        <i class="bi bi-play-fill"></i>
+                                    </button>
+                                @elseif($recurso->archivoRecurso)
+                                    <a href="{{ route('recursos.descargar', $recurso->id) }}" class="btn-action-modern btn-download" title="Descargar">
+                                        <i class="bi bi-download"></i>
+                                    </a>
+                                @elseif(!empty($descLimpia))
+                                    @php
+                                        $esPlataformaEnlace = in_array($tipo, ['enlace','drive','docs','forms','zoom','meet','teams','canva','kahoot']);
+                                        $pareceUrl = preg_match('/^(https?:\/\/|www\.)/i', $descLimpia);
+                                    @endphp
+                                    @if($esPlataformaEnlace || $pareceUrl)
+                                        @php
+                                            $urlFinal = $descLimpia;
+                                            if (!preg_match('/^https?:\/\//i', $urlFinal)) {
+                                                $urlFinal = 'https://' . $urlFinal;
+                                            }
+                                        @endphp
+                                        <a href="{{ $urlFinal }}" class="btn-action-modern btn-info" target="_blank" title="Abrir enlace">
+                                            <i class="bi bi-box-arrow-up-right"></i>
+                                        </a>
+                                    @endif
                                 @endif
 
-                                <div class="card-body p-4">
-                                    <div class="d-flex align-items-start gap-3 mb-3">
-                                        <div class="rounded-3 p-2 d-flex align-items-center justify-content-center" style="background-color: {{ $color }}20; width: 48px; height: 48px;">
-                                            <i class="bi {{ $icono }}" style="font-size: 1.5rem; color: {{ $color }};"></i>
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <h5 class="card-title fw-bold mb-1 text-truncate" style="max-width: 250px;" title="{{ $recurso->nombreRecurso }}">{{ $recurso->nombreRecurso }}</h5>
-                                            <span class="badge bg-light text-primary border border-primary-subtle px-3 py-1 rounded-pill fw-bold text-uppercase" style="font-size: 0.65rem;">
-                                                {{ ucfirst($tipo) }}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <p class="card-text text-muted small mb-4" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                                        {!! strip_tags($recurso->descripcionRecursos) !!}
-                                    </p>
-
-                                    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
-                                        <small class="text-muted">
-                                            <i class="bi bi-calendar3 me-1"></i>
-                                            {{ $recurso->created_at ? $recurso->created_at->format('d/m/Y') : '—' }}
-                                        </small>
-
-                                        <div class="d-flex gap-2">
-                                            @if($esVideoYouTube && $videoId)
-                                                <button class="btn btn-outline-primary rounded-pill btn-sm" onclick="window.open('https://www.youtube.com/watch?v={{ $videoId }}', '_blank')">
-                                                    <i class="bi bi-play-circle me-1"></i> Ver
-                                                </button>
-                                            @elseif($recurso->archivoRecurso)
-                                                <a href="{{ route('recursos.descargar', encrypt($recurso->id)) }}" class="btn btn-outline-primary rounded-pill btn-sm">
-                                                    <i class="bi bi-download me-1"></i> Descargar
-                                                </a>
-                                            @elseif($tipo === 'enlace' && $recurso->descripcionRecursos)
-                                                @php
-                                                    $url = strip_tags($recurso->descripcionRecursos);
-                                                    if (!preg_match('/^https?:\/\//', $url)) {
-                                                        $url = 'https://' . $url;
-                                                    }
-                                                @endphp
-                                                <a href="{{ $url }}" class="btn btn-outline-primary rounded-pill btn-sm" target="_blank">
-                                                    <i class="bi bi-box-arrow-up-right me-1"></i> Abrir
-                                                </a>
-                                            @endif
-
-                                            @if (auth()->user()->hasRole('Docente') || auth()->user()->hasRole('Administrador'))
-                                                <button class="btn btn-outline-info rounded-pill btn-sm" data-bs-toggle="modal" data-bs-target="#modalEditarRecurso-{{ $recurso->id }}">
-                                                    <i class="bi bi-pencil"></i>
-                                                </button>
-                                                <form class="d-inline ntf-form-delete-rec" action="{{ route('quitarRecurso', encrypt($recurso->id)) }}" method="POST">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-outline-danger rounded-pill btn-sm">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </form>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
+                                @if (auth()->user()->hasRole('Docente') || auth()->user()->hasRole('Administrador'))
+                                    <button class="btn-action-modern btn-edit" data-bs-toggle="modal" data-bs-target="#modalEditarRecurso-{{ $recurso->id }}" title="Editar">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <form class="d-inline ntf-form-delete-rec m-0 p-0" action="{{ route('quitarRecurso', $recurso->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="btn-action-modern btn-delete" title="Eliminar">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                @endif
                             </div>
                         </div>
                     @endforeach
@@ -225,15 +244,15 @@
                     </button>
                 </div>
             @else
-                <div class="empty-state-table py-5 text-center">
-                    <div class="empty-icon-table">
+                <div class="empty-state-table py-5 text-center bg-white rounded-4 border shadow-sm my-4">
+                    <div class="empty-icon-table" style="font-size: 4rem; color: #cbd5e1; margin-bottom: 1rem;">
                         <i class="bi bi-folder-x"></i>
                     </div>
-                    <h5 class="empty-title-table">No hay recursos disponibles</h5>
-                    <p class="empty-text-table">El instructor aún no ha subido material de apoyo para este curso.</p>
+                    <h5 class="empty-title-table fw-bold text-secondary">No hay recursos disponibles</h5>
+                    <p class="empty-text-table text-muted">El instructor aún no ha subido material de apoyo para este curso.</p>
 
                     @if (auth()->user()->hasRole('Docente') || auth()->user()->hasRole('Administrador'))
-                        <button class="tbl-hero-btn tbl-hero-btn-primary mt-3" style="width: auto;" data-bs-toggle="modal" data-bs-target="#modalCrearRecurso">
+                        <button class="tbl-hero-btn tbl-hero-btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#modalCrearRecurso">
                             <i class="bi bi-plus-lg"></i>
                             Subir Primer Recurso
                         </button>
@@ -241,6 +260,7 @@
                 </div>
             @endif
         </div>
+    </div>
 </div>
 
 <!-- Modal para Crear Recurso -->
@@ -494,15 +514,25 @@
             let count = 0;
 
             resourceCards.forEach(card => {
-                const name = card.getAttribute('data-name');
-                const cat = card.getAttribute('data-type');
+                const name = card.getAttribute('data-name') || '';
+                const cat = card.getAttribute('data-type') || '';
                 const show = name.includes(q) && (type === 'all' || cat === type);
-                card.style.display = show ? '' : 'none';
-                if (show) count++;
+                
+                // Usar classList para evitar conflicto con d-flex !important de Bootstrap
+                if (show) {
+                    card.classList.remove('d-none');
+                    count++;
+                } else {
+                    card.classList.add('d-none');
+                }
             });
 
             if (noResultsMsg) {
-                noResultsMsg.classList.toggle('d-none', count > 0);
+                if (count > 0) {
+                    noResultsMsg.classList.add('d-none');
+                } else {
+                    noResultsMsg.classList.remove('d-none');
+                }
             }
         }
 
@@ -540,14 +570,15 @@
 
 <style>
     .resource-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition: background-color 0.2s ease, transform 0.2s ease;
     }
 
     .resource-card:hover {
-        transform: translateY(-5px);
+        background-color: rgba(20, 93, 160, 0.03) !important;
     }
 
-    .resource-card:hover .card {
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+    /* Eliminar el borde inferior del último elemento de la lista */
+    .resource-card:last-child {
+        border-bottom: none !important;
     }
 </style>
