@@ -12,6 +12,7 @@ use App\Models\NotaEntrega;
 use App\Traits\CalificacionTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Services\XPService;
@@ -96,7 +97,7 @@ class ActividadController extends Controller
 
         // Verificar actividad nocturna
         if (now()->hour >= 0 && now()->hour < 4) {
-            $nightActivities = ActividadCompletion::where('inscrito_id', $inscrito->id)
+            $nightActivities = ActividadCompletion::where('inscritos_id', $inscrito->id)
                 ->whereTime('created_at', '>=', '00:00:00')
                 ->whereTime('created_at', '<', '04:00:00')
                 ->count();
@@ -105,7 +106,7 @@ class ActividadController extends Controller
         }
 
         // Verificar múltiples actividades en un día
-        $actividadesHoy = ActividadCompletion::where('inscrito_id', $inscrito->id)
+        $actividadesHoy = ActividadCompletion::where('inscritos_id', $inscrito->id)
             ->whereDate('created_at', now()->toDateString())
             ->count();
 
@@ -119,9 +120,32 @@ class ActividadController extends Controller
         return back()->with('success', 'Tarea enviada correctamente.');
     }
 
+    public function quitarEntrega($encryptedId)
+    {
+        try {
+            // Desencriptar el ID (soportar IDs encriptados y planos por compatibilidad)
+            try {
+                $id = decrypt($encryptedId);
+            } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+                $id = $encryptedId;
+            }
 
+            $entrega = EntregaArchivo::findOrFail($id);
 
+            // Eliminar archivo del storage si existe
+            if ($entrega->archivo && Storage::disk('public')->exists($entrega->archivo)) {
+                Storage::disk('public')->delete($entrega->archivo);
+            }
 
+            // Eliminar registro
+            $entrega->delete();
+
+            return redirect()->back()->with('success', 'Entrega eliminada correctamente.');
+        } catch (\Exception $e) {
+            \Log::error('Error al quitar entrega: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error al eliminar la entrega.');
+        }
+    }
 
     public function completarActividad(Request $request, $actividadId)
     {

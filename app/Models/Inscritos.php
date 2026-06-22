@@ -106,7 +106,26 @@ class Inscritos extends BaseModel
         $inscrito->actualizarProgreso();
     }
 
-    
+    public function actualizarProgreso()
+    {
+        if ($this->cursos) {
+            $progreso = $this->cursos->calcularProgreso($this->id);
+            
+            // Actualizar la instancia local
+            $this->progreso = $progreso;
+            
+            // Si llega al 100%, marcar como completado
+            if ($progreso >= 100 && !$this->completado) {
+                $this->completado = true;
+                $this->save();
+            }
+            
+            return $progreso;
+        }
+        return 0;
+    }
+
+
 
     public function allXps()
     {

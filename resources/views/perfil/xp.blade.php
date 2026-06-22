@@ -113,7 +113,7 @@
                         @foreach($xpHistory as $event)
                         <tr>
                             <td>{{ \Carbon\Carbon::parse($event->created_at)->format('d/m/Y H:i') }}</td>
-                            <td>{{ $inscripciones->firstWhere('cursos_id', $event->curso_id)->cursos->nombreCurso }}</td>
+                            <td>{{ $inscripciones->firstWhere('cursos_id', $event->curso_id)?->cursos?->nombreCurso ?? 'Curso no disponible' }}</td>
                             <td class="text-success">+{{ $event->xp }}</td>
                             <td>{{ $event->origen_type }}</td>
                         </tr>

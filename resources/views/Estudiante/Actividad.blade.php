@@ -1,8 +1,10 @@
+@section('titulo')
+    Actividad
+@endsection
+
 @section('content')
 
-{{-- ============================================================
-     ESTILOS – DETALLE DE ACTIVIDAD
-     ============================================================ --}}
+
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap');
 
@@ -414,14 +416,10 @@
     .da-anim-2 { animation-delay: .12s; }
     .da-anim-3 { animation-delay: .20s; }
     .da-anim-4 { animation-delay: .28s; }
-</style>
+</style> 
 
-{{-- ============================================================
-     ESTRUCTURA PRINCIPAL
-     ============================================================ --}}
 <div class="da-wrap">
 
-    {{-- ── HERO ──────────────────────────────────────────── --}}
     <div class="da-hero">
         <div class="da-hero-inner">
             <div class="container-fluid">
@@ -451,17 +449,11 @@
         </div>
     </div>
 
-    {{-- ── CONTENIDO (overlap) ────────────────────────────── --}}
     <div class="da-overlap">
         <div class="container-fluid">
             <div class="row g-4">
 
-                {{-- ══════════════════════════════════════
-                     COLUMNA PRINCIPAL
-                     ══════════════════════════════════════ --}}
                 <div class="col-lg-8">
-
-                    {{-- Descripción + fechas + ponderación --}}
                     <div class="da-card da-anim da-anim-1">
                         <div class="da-card-body">
                             <h4 class="da-section-title">

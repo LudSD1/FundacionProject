@@ -33,7 +33,7 @@ class ActividadCompletion extends BaseModel
 
     public function inscrito()
     {
-        return $this->belongsTo(Inscritos::class);
+        return $this->belongsTo(Inscritos::class, 'inscritos_id');
     }
 
     protected static function booted()

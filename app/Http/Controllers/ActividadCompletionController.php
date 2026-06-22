@@ -3,13 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\ActividadCompletion;
-use App\Models\Cuestionario;
 use App\Models\Inscritos;
-use App\Models\Tareas;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-
 class ActividadCompletionController extends Controller
 {
 
