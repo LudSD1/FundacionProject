@@ -165,8 +165,10 @@ class CursosController extends Controller
 
     public function EditCIndex($id)
     {
-
-        $cursos = Cursos::findOrFail($id);
+        $cursos = Cursos::where('codigoCurso', $id)->first();
+        if (!$cursos) {
+            $cursos = Cursos::findOrFail($id);
+        }
         $docente = User::role('Docente')->get();
         $horario = Horario::all();
         $categorias = Categoria::all();
@@ -229,8 +231,10 @@ class CursosController extends Controller
                 'fecha_fin.after_or_equal' => 'La fecha de fin debe ser posterior o igual a la fecha de inicio.',
             ]);
 
-
-            $curso = Cursos::findOrFail($id);
+            $curso = Cursos::where('codigoCurso', $id)->first();
+            if (!$curso) {
+                $curso = Cursos::findOrFail($id);
+            }
 
             // Datos básicos
             $curso->nombreCurso = $request->nombre;

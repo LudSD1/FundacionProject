@@ -516,7 +516,7 @@ class CertificadoController extends Controller
 
         // Validar que el congreso exista
         if (!$curso) {
-            return redirect()->route('Inicio')->with('error', 'El congreso no existe');
+            return back()->with('error', 'El curso no existe');
         }
 
         // Verificar si ya está inscrito
@@ -527,19 +527,27 @@ class CertificadoController extends Controller
 
         // Verificar si ya tiene certificado
         if ($inscripcion->certificado) {
-            return redirect()->route('Inicio')->with('error', 'Ya tienes un certificado para este congreso');
+            return back()->with('error', 'Ya tienes un certificado generado.');
+        }
+
+        // Verificar que exista una plantilla antes de proceder
+        $plantilla = CertificateTemplate::where('curso_id', $congresoId)->first();
+        if (!$plantilla) {
+            return back()->with('error', 'Aún no se ha subido una plantilla de certificado. Por favor, comunícate con el organizador o docente para que la suba.');
         }
 
         // Generar nuevo certificado
-        $certificadoGenerado = $this->generarCertificadoIndividual($congresoId, $inscripcion->id, $user);
+        try {
+            $certificadoGenerado = $this->generarCertificadoIndividual($congresoId, $inscripcion->id, $user);
 
-        if ($certificadoGenerado) {
-            return redirect()->route('Inicio')
-                ->with('success', 'Certificado generado exitosamente');
+            if ($certificadoGenerado) {
+                return back()->with('success', 'Certificado generado exitosamente.');
+            }
+        } catch (\Exception $e) {
+            return back()->with('error', 'Ocurrió un error al generar: ' . $e->getMessage());
         }
 
-        return redirect()->route('Inicio')
-            ->with('error', 'No se pudo generar el certificado');
+        return back()->with('error', 'No se pudo generar el certificado.');
     }
 
     public function inscribir(Request $request)

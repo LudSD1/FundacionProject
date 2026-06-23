@@ -221,7 +221,7 @@ class Cursos extends BaseModel
             // Contar recursos completados por el estudiante
             $recursosCompletados = ActividadCompletion::where('inscritos_id', $inscrito_id)
                 ->whereIn('completable_id', $recursos)
-                ->where('completable_type', Recursos::class)
+                ->where('completable_type', RecursoSubtema::class)
                 ->count();
 
             // Calcular el progreso
@@ -265,6 +265,10 @@ class Cursos extends BaseModel
 
     public function getEstadoAttribute()
     {
+        if ($this->certificados_activados) {
+            return 'Certificado Disponible';
+        }
+
         $hoy = Carbon::today();
 
         if ($this->fecha_ini && $this->fecha_fin) {

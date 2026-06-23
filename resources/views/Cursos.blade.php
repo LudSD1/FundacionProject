@@ -209,9 +209,21 @@
         <div class="cc-progress-fill" data-width="{{ $progreso }}"></div>
     </div>
     @if($progreso >= 100)
-    <div class="cc-progress-complete">
+    <div class="cc-progress-complete mb-2">
         <i class="bi bi-check-circle-fill me-1"></i> ¡Curso completado!
     </div>
+        @if($puedeObtenerCertificado)
+            <div class="mt-2 text-center">
+                <button type="button" class="btn w-100 fw-bold rounded-3 shadow-sm" style="background-color: #f59e0b; color: white;"
+                        data-bs-toggle="modal" data-bs-target="#certificadoModal">
+                    <i class="bi bi-patch-check-fill me-2"></i>Obtener mi Certificado
+                </button>
+            </div>
+        @else
+            <div class="mt-2 text-center">
+                <small class="text-muted"><i class="bi bi-hourglass-split me-1"></i>A la espera de activación del certificado</small>
+            </div>
+        @endif
     @endif
 </div>
 @endif
